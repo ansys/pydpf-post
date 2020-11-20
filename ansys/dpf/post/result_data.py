@@ -28,7 +28,7 @@ class ResultData:
                  el_shape = None, time_step = None, 
                  grouping = None, phase = None):
         self.result_fields_container = None
-        self._result_operator = dpf.Operator(operator_name)
+        self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
         if (location != None):
             self._result_operator.inputs.requested_location.connect(location)
@@ -36,37 +36,37 @@ class ResultData:
             raise Exception("Impossible to use both element_scoping and node_scoping.")
         if (element_scoping != None):
             scoping = element_scoping
-            if not isinstance(element_scoping, dpf.scoping.Scoping):
-                scoping = dpf.Scoping()
+            if not isinstance(element_scoping, dpf.core.scoping.Scoping):
+                scoping = dpf.core.Scoping()
                 scoping.location = 'Elemental'
                 if isinstance(element_scoping, list):
                     scoping.ids = element_scoping
                 elif isinstance(element_scoping, np.array):
                     scoping.ids = element_scoping.tolist()
                 else:
-                    raise Exception("Only dpf.Scoping, numpy.array or list are supported as scoping.")
+                    raise Exception("Only dpf.core.Scoping, numpy.array or list are supported as scoping.")
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (node_scoping != None):
             scoping = node_scoping
-            if not isinstance(node_scoping, dpf.scoping.Scoping):
-                scoping = dpf.Scoping()
+            if not isinstance(node_scoping, dpf.core.scoping.Scoping):
+                scoping = dpf.core.Scoping()
                 scoping.location = 'Nodal'
                 if isinstance(node_scoping, list):
                     scoping.ids = node_scoping
                 elif isinstance(node_scoping, np.array):
                     scoping.ids = node_scoping.tolist()
                 else:
-                    raise Exception("Only dpf.Scoping, numpy.array or list are supported as scoping.")
+                    raise Exception("Only dpf.core.Scoping, numpy.array or list are supported as scoping.")
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (named_selection != None):
-            ns_op = dpf.Operator("scoping_provider_by_ns")
+            ns_op = dpf.core.Operator("scoping_provider_by_ns")
             ns_op.inputs.data_sources.connect(data_sources)
+            ns_op.inputs.named_selection_name.connect(named_selection)
             self._result_operator.inputs.mesh_scoping.connect(ns_op.outputs.mesh_scoping)
         # #!TODO time_step and substep, el_shape, grouping, set 
         # if (grouping != None):
         #     scop_op = Operator("scoping::by_property")
-        #     #mapping entre les noms de proprietes de DPF et l'enum ici.
-        #     #Faire venir de grpc ? !TODO
+        # get a mapping between enums from dataProcessingCore.dll and python. Grpc?
         #     scop_op.inputs.property_name.connect()
         #     self._result_operator.inputs.mesh_scoping.connect(scop_op.outputs)
         if (phase != None):
@@ -80,7 +80,7 @@ class ResultData:
             self.result_fields_container = result_fc
         
     def _get_evaluation_with_sweeping_phase(self, phase):
-        sweeping_phase_op = dpf.Operator("sweeping_phase_fc")
+        sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
         sweeping_phase_op.inputs.fields_container.connect(self._result_operator.outputs.fields_container)
         sweeping_phase_op.inputs.angle.connect(phase)
         sweeping_phase_op.inputs.unit_name.connect("deg")

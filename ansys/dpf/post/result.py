@@ -20,7 +20,7 @@ def result(data_sources=None, channel=None):
     
     Parameters
     ----------
-    Can be a filepath to the file you want to open, or a dpf.DataSources().
+    Can be a filepath to the file you want to open, or a dpf.core.DataSources().
         
     Examples
     --------
