@@ -1,20 +1,18 @@
-##########################################################################
-#                                                                        #
-#          Copyright (C) 2020 ANSYS Inc.  All Rights Reserved            #
-#                                                                        #
-# This file contains proprietary software licensed from ANSYS Inc.       #
-# This header must remain in any source code despite modifications or    #
-# enhancements by any party.                                             #
-#                                                                        #
-##########################################################################
-# Version: 1.0                                                           #
-# Author(s): C.Bellot/R.Lagha/L.Paradis                                  #
-# contact(s): ramdane.lagha@ansys.com                                    #
-##########################################################################
+"""Module containing the common tools for a better usage of the DPF-Post module."""
 
 from enum import Enum
 
+
 class ElShapes(Enum):
+    """Class with Enum inheritance. Must be used to 
+    describe the element shape when API allows it.
+    
+    Example
+    -----
+    from ansys.dpf import post
+    result = post.result("file.rst")
+    disp = result.elemental_stress(element_shape = post.el_shape.shell)
+    """
     solid = 1
     beam = 2
     shell = 3
@@ -22,14 +20,62 @@ class ElShapes(Enum):
     shellmid = 5
     shell_bottom = 6
     
+    
 class Grouping(Enum):
+    """Class with Enum inheritance. Must be used to 
+    describe a grouping command when the API allows it.
+    
+    Example
+    -----
+    from ansys.dpf import post
+    result = post.result("file.rst")
+    disp = result.elemental_stress(element_shape = post.grouping.by_el_shape)
+    """
     by_el_shape = 1
     by_el_type = 2
     by_material = 3
     by_body = 4
-
+    
+    
+class _AvailableKeywords():
+    """Contains all the keywords that can be used inside of 
+    a method from a post.result(file_path) object. 
+    
+    In order to view the complete list of available keywords, use:
+        print(post.available_kewords())
+    """
+    location = "location"
+    node_scoping = "node_scoping"
+    element_scoping = "element_scoping"
+    named_selection = "named_selection"
+    el_shape = "el_shape"
+    time_step = "time_step"
+    substep = "substep"
+    set = "set"
+    grouping = "grouping"
+    phase = "phase"
+    
+    def __str__(self):
+        txt = ""
+        for attr in dir(_AvailableKeywords):
+            if not attr.startswith("__") and not callable(getattr(_AvailableKeywords, attr)):
+                txt += attr
+                txt += "\n"
+        return txt
+    
+    
+class _AnalysisType():
+    """Contains Python analysis type names. For developers usage.
+    """
+    static = "static"
+    modal = "modal"
+    harmonic = "harmonic"
+    transient = "transient"
+    
 
 def _map_property_name(property_enum_value):
+    """Map to get property name from an enum value. For developers usage.
+    """
     if (property_enum_value == 1):
         return "elshape"
     elif (property_enum_value == 2):

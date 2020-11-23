@@ -6,10 +6,7 @@ from io import open as io_open
 from setuptools import setup
 
 install_requires = ['pyvista>=0.24.0',
-                    'matplotlib',
-                    'pillow>=7.0.0',
-                    'pexpect',
-                    'ansys.grpc.dpf',
+                    'matplotlib', 
                     'ansys.dpf.core']
 
 
