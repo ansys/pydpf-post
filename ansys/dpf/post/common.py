@@ -54,6 +54,7 @@ class _AvailableKeywords():
     set = "set"
     grouping = "grouping"
     phase = "phase"
+    subresult = "subresult"
     
     def __str__(self):
         txt = ""

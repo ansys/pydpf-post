@@ -40,8 +40,10 @@ class ResultData:
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
                  el_shape = None, time_step = None, 
-                 grouping = None, phase = None):
+                 grouping = None, phase = None, subresult = None):
         self.result_fields_container = None
+        if (subresult != None):
+            operator_name += subresult
         self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
         if (location != None):

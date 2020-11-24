@@ -68,6 +68,7 @@ class DpfResult:
         time_step = None
         grouping = None
         phase = None
+        subresult = None
         if _AvailableKeywords.phase in kwargs:
             if not isinstance(instance, DpfComplexResult):
                 raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
@@ -86,9 +87,11 @@ class DpfResult:
             time_step = kwargs[_AvailableKeywords.time_step]
         if _AvailableKeywords.grouping in kwargs:
             grouping = kwargs[_AvailableKeywords.grouping]
+        if _AvailableKeywords.subresult in kwargs:
+            subresult = kwargs[_AvailableKeywords.subresult]
         return ResultData(name, data_sources, self, location=location, element_scoping=element_scoping, 
                  node_scoping = node_scoping, named_selection = named_selection, el_shape = el_shape, 
-                 time_step = time_step, grouping = grouping, phase = phase)
+                 time_step = time_step, grouping = grouping, phase = phase, subresult=subresult)
 
     def _check_elemental_location(self, **kwargs):
         """Check if the location keyword with an Elemental value is set. If not, raise Exception."""
@@ -151,6 +154,7 @@ class DpfResult:
     def modal_basis(self, **kwargs):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ModalBasis", self, self._data_sources, **kwargs)
+    
     
     #element nodal results (get result at nodes or at elements)
     def elemental_stress(self, **kwargs):
@@ -341,6 +345,15 @@ class DpfResult:
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_TH", self, self._data_sources, location="Elemental", **kwargs)
 
+
+    #special results
+    def von_mises_stress(self, **kwargs):
+        """von_mises_stress output default location is Nodal. 
+        Use the location keyword with 'ElementalNodal' value to 
+        get an ElementalNodal result, and the 'Elemental' value 
+        to get Elemental result.
+        """
+        return self._get_result_data_function_of_operator("S_eqv", self, self._data_sources, **kwargs)
 
 
 class DpfComplexResult(DpfResult):
