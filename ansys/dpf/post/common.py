@@ -32,9 +32,8 @@ class Grouping(Enum):
     disp = result.elemental_stress(element_shape = post.grouping.by_el_shape)
     """
     by_el_shape = 1
-    by_el_type = 2
-    by_material = 3
-    by_body = 4
+    by_material = 2
+    by_body = 3
     
     
 class _AvailableKeywords():
@@ -49,12 +48,13 @@ class _AvailableKeywords():
     element_scoping = "element_scoping"
     named_selection = "named_selection"
     el_shape = "el_shape"
-    time_step = "time_step"
-    substep = "substep"
+    time = "time"
+    # substep = "substep"
     set = "set"
     grouping = "grouping"
     phase = "phase"
     subresult = "subresult"
+    mapdl_grouping = "mapdl_grouping"
     
     def __str__(self):
         txt = ""

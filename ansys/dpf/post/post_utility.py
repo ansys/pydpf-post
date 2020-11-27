@@ -24,13 +24,13 @@ def result(data_sources=None, channel=None):
     analysis_type = _model.metadata.result_info.analysis_type
     data_sources = _model.metadata.data_sources
     if(analysis_type == _AnalysisType.static):
-        return StaticAnalysisResult(data_sources, _model.metadata)
+        return StaticAnalysisResult(data_sources, _model)
     elif (analysis_type == _AnalysisType.modal):
-        return ModalAnalysisResult(data_sources, _model.metadata)
+        return ModalAnalysisResult(data_sources, _model)
     elif (analysis_type == _AnalysisType.harmonic):
-        return HarmonicAnalysisResult(data_sources, _model.metadata)
+        return HarmonicAnalysisResult(data_sources, _model)
     elif (analysis_type == _AnalysisType.transient):
-        return TransientAnalysisResult(data_sources, _model.metadata)
+        return TransientAnalysisResult(data_sources, _model)
     else:
         raise Exception("Unknown model.metadata.result_info.")
      
