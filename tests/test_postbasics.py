@@ -41,24 +41,24 @@ def test_build_docs():
     
     
 def test_call_result_object_static():
-    result = post.result(STATIC_FILE_PATH)
+    result = post.solution(STATIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.static
     assert isinstance(result, StaticAnalysisResult)
     
     
 def test_call_result_object_modal():
-    result = post.result(MODAL_FILE_PATH)
+    result = post.solution(MODAL_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.modal
     assert isinstance(result, ModalAnalysisResult)
     
     
 def test_call_result_object_harmonic():
-    result = post.result(HARMONIC_FILE_PATH)
+    result = post.solution(HARMONIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.harmonic
     assert isinstance(result, HarmonicAnalysisResult)
     
     
 def test_call_result_object_transient():
-    result = post.result(TRANSIENT_FILE_PATH)
+    result = post.solution(TRANSIENT_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.transient
     assert isinstance(result, TransientAnalysisResult)

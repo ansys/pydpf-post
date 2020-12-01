@@ -1,6 +1,8 @@
 """Module containing the methode to instantiate the result object. Initialization of post objects."""
 
 from ansys.dpf.core.model import Model 
+import os
+from ansys import dpf
  
 from ansys.dpf.post.common import _AnalysisType
 from ansys.dpf.post.static_analysis import StaticAnalysisResult
@@ -9,7 +11,7 @@ from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisResult
 from ansys.dpf.post.transient_analysis import TransientAnalysisResult
         
 
-def result(data_sources=None, channel=None):
+def solution(data_sources=None, channel=None):
     """Return a Result object which can provide information on a given set, on a given scoping...
     
     Parameters
@@ -34,3 +36,25 @@ def result(data_sources=None, channel=None):
     else:
         raise Exception("Unknown model.metadata.result_info.")
      
+        
+def build_docs(path=None):
+    """Build HTML documentation.  This outputs all available
+    operator types for the loaded operators.
+
+    HTML is saved in the directory mentionned as parameters.
+    
+    Example
+    -----
+    from ansys.dpf import post
+    post.build_doc("d:/temp/dpf_doc.html")
+    
+    Parameters
+    -----
+    str: output path for the documentation. Default is current directory.
+    """
+    if path is None:
+        path = os.getcwd()
+        path += "/dataProcessingDoc.html"
+    doc_op = dpf.core.Operator('html_doc')
+    doc_op.inputs.output_path.connect(path)
+    doc_op.run()

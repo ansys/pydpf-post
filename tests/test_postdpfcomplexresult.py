@@ -27,7 +27,7 @@ if not dpf.core.has_local_server():
     
     
 def test_displacement_amplitude():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     assert isinstance(result, HarmonicAnalysisResult)
     assert isinstance(result, DpfComplexResult)
     ampl = result.nodal_displacement_amplitude()
@@ -39,7 +39,7 @@ def test_displacement_amplitude():
     
     
 def test_displacement_at_phase():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     assert isinstance(result, HarmonicAnalysisResult)
     assert isinstance(result, DpfComplexResult)
     disp_at_phase = result.nodal_displacement(phase = 41.)
@@ -51,16 +51,16 @@ def test_displacement_at_phase():
     
     
 def test_has_complex_result():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     assert result.has_complex_result()
     
 
 def test_is_complex_result():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     assert disp.num_fields() == 2
     assert disp.is_complex_result()
-    result = post.result(MODAL_FILE_PATH)
+    result = post.solution(MODAL_FILE_PATH)
     disp = result.nodal_displacement()
     assert disp.num_fields() == 1
     assert disp.is_complex_result()

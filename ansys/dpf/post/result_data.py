@@ -238,17 +238,19 @@ class ResultData:
         #-> Operator("GetSupportFromField") will return the mesh of a given field
         #-> plotter.add_mesh(scalars...)
         #quid si scoping ? Pour l'instant pas ok
-        mesh = self._model.metadata.meshed_region
+        mesh = self._evaluator._model.metadata.meshed_region
         grid = mesh.grid
-        # nan_opacity = 0.1
+        nan_opacity = 0.1
         nan_color = "grey"
-        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, self.result_fields_container[0].component_count) #location will be the same on all fields
+        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, 
+                             self.result_fields_container[0].component_count) #location will be the same on all fields
         if (self.result_fields_container.__len__() == 1):
             field = rescoper.rescope(self.result_fields_container[0])
-            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, stitle = self.result_fields_container[0].name, show_edges=True)
+            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_opacity=nan_opacity, nan_color=nan_color, 
+                             stitle = self.result_fields_container[0].name, show_edges=True)
         else:
             nan_scalars = rescoper.get_nan_field()
-            plotter.add_mesh(grid, scalars = nan_scalars, nan_color=nan_color, show_edges = True)
+            plotter.add_mesh(grid, scalars = nan_scalars, nan_color=nan_color, nan_opacity=nan_opacity, show_edges = True)
             label_spaces = []
             for opt_id in option_id:
                 i = 0
@@ -269,7 +271,7 @@ class ResultData:
                     raise Exception("The label " + label.__str__() + " does not exist in the fields container.")
                 name = self.result_fields_container[0].name.split("_")[0]
                 field = rescoper.rescope(field_to_rescope)
-                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, stitle = name, show_edges=True)
+                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, nan_opacity=nan_opacity, stitle = name, show_edges=True)
         plotter.add_axes()
         plotter.show()
         

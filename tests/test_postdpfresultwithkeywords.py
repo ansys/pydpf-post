@@ -25,7 +25,7 @@ if not dpf.core.has_local_server():
     
     
 def test_displacement_with_scoping():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     #scoping as array
     disp = result.nodal_displacement(node_scoping = [1, 2])
     data = disp.data_at_field(0)
@@ -44,7 +44,7 @@ def test_displacement_with_scoping():
             
 
 def test_node_stress_with_scoping():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     #scoping as array
     disp = result.nodal_stress(element_scoping = [1, 34])
     data = disp.data_at_field(0)
@@ -63,7 +63,7 @@ def test_node_stress_with_scoping():
     
     
 def test_elem_nodal_stress_with_scoping():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     #scoping as array
     disp = result.elemental_nodal_stress(element_scoping = [1, 34])
     data = disp.data_at_field(0)
@@ -82,7 +82,7 @@ def test_elem_nodal_stress_with_scoping():
     
     
 def test_disp_with_component_subresult():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement(subresult="Y")
     assert disp._evaluator._result_operator.name == "UY"
     assert disp.num_fields() == 1
@@ -92,7 +92,7 @@ def test_disp_with_component_subresult():
 
 
 def test_stress_with_component_subresult():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_nodal_stress(subresult="YZ")
     assert stress._evaluator._result_operator.name == "SYZ"
     assert stress.num_fields() == 1
@@ -102,7 +102,7 @@ def test_stress_with_component_subresult():
 
 
 def test_stress_with_invariant_subresult():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_nodal_stress(subresult="3")
     assert stress._evaluator._result_operator.name == "S3"
     assert stress.num_fields() == 2
@@ -116,7 +116,7 @@ def test_von_mises_stress():
     
     
 def test_groupingelshape_nodallocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement(grouping = post.grouping.by_el_shape)
     assert disp.num_fields() == 4
     assert disp.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
@@ -129,7 +129,7 @@ def test_groupingelshape_nodallocation():
 
 
 def test_groupingelshape_elemlocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_stress(grouping = post.grouping.by_el_shape)
     assert stress.num_fields() == 4
     assert stress.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
@@ -142,7 +142,7 @@ def test_groupingelshape_elemlocation():
     
 
 def test_groupingmat_nodallocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement(grouping = post.grouping.by_material)
     assert disp.num_fields() == 11
     assert disp[0].__len__() == 23016
@@ -152,7 +152,7 @@ def test_groupingmat_nodallocation():
     
 
 def test_groupingmat_elemlocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_stress(grouping = post.grouping.by_material)
     assert stress.num_fields() == 11
     # assert stress[0].__len__() == 0
@@ -163,7 +163,7 @@ def test_groupingmat_elemlocation():
     
 
 def test_mapdlgrouping_nodallocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.nodal_displacement(mapdl_grouping = 186)
     try:
         stress.num_fields()
@@ -172,7 +172,7 @@ def test_mapdlgrouping_nodallocation():
     
 
 def test_maplgrouping_elemlocation():
-    result = post.result(TEST_FILE_PATH_RST)
+    result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_stress(mapdl_grouping = 186)
     assert stress.num_fields() == 1
     assert stress.result_fields_container.get_label_space(0) == {'time': 1}
@@ -182,7 +182,7 @@ def test_maplgrouping_elemlocation():
     
 
 def test_set_keyword():
-    result = post.result(TRANSIENT_FILE_PATH)
+    result = post.solution(TRANSIENT_FILE_PATH)
     disp = result.nodal_displacement(set = 3)
     assert disp.num_fields() == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
@@ -191,7 +191,7 @@ def test_set_keyword():
     
 class TestCase(unittest.TestCase):
     def test_both_set_time(self):
-        result = post.result(TRANSIENT_FILE_PATH)
+        result = post.solution(TRANSIENT_FILE_PATH)
         self.assertRaises(Exception, result.nodal_displacement, set=3, time=0.01)
         try:
             result.nodal_displacement(set = 3, time = 0.01)
@@ -203,7 +203,7 @@ class TestCase(unittest.TestCase):
             
 
 def test_time_keyword_in_frequencies():
-    result = post.result(TRANSIENT_FILE_PATH)
+    result = post.solution(TRANSIENT_FILE_PATH)
     disp = result.nodal_displacement(time=0.06)
     assert disp.num_fields() == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 6}
@@ -227,7 +227,7 @@ def test_time_keyword_in_frequencies():
 
 
 def test_time_keyword_not_in_frequencies():
-    result = post.result(TRANSIENT_FILE_PATH)
+    result = post.solution(TRANSIENT_FILE_PATH)
     disp = result.nodal_displacement(time=0.061)
     assert disp.num_fields() == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
@@ -243,7 +243,7 @@ def test_time_keyword_not_in_frequencies():
     
     
 def test_time_scoping_keyword():
-    result = post.result(TRANSIENT_FILE_PATH)
+    result = post.solution(TRANSIENT_FILE_PATH)
     disp = result.nodal_displacement()
     assert disp.num_fields() == 1
     disp1 = result.nodal_displacement(time_scoping=[1,2,4])
