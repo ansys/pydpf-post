@@ -27,7 +27,7 @@ MODAL_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators
                               'modal_allKindOfComplexity.rst')
 
 HARMONIC_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rth_operators',
-                              'fileComplex.rst')
+                              'fileComplex.rst') #with complex results
 
 TRANSIENT_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'expansion', 
                                    'msup', 'Transient', 'plate1','file.rst')
@@ -39,25 +39,26 @@ def test_build_docs():
     os.remove("dataProcessingDoc.html")
     assert not os.path.exists("dataProcessingDoc.html")
     
+    
 def test_call_result_object_static():
     result = post.result(STATIC_FILE_PATH)
-    assert result._model_metadata.result_info.analysis_type == _AnalysisType.static
+    assert result._model.metadata.result_info.analysis_type == _AnalysisType.static
     assert isinstance(result, StaticAnalysisResult)
     
     
 def test_call_result_object_modal():
     result = post.result(MODAL_FILE_PATH)
-    assert result._model_metadata.result_info.analysis_type == _AnalysisType.modal
+    assert result._model.metadata.result_info.analysis_type == _AnalysisType.modal
     assert isinstance(result, ModalAnalysisResult)
     
     
 def test_call_result_object_harmonic():
     result = post.result(HARMONIC_FILE_PATH)
-    assert result._model_metadata.result_info.analysis_type == _AnalysisType.harmonic
+    assert result._model.metadata.result_info.analysis_type == _AnalysisType.harmonic
     assert isinstance(result, HarmonicAnalysisResult)
     
     
 def test_call_result_object_transient():
     result = post.result(TRANSIENT_FILE_PATH)
-    assert result._model_metadata.result_info.analysis_type == _AnalysisType.transient
+    assert result._model.metadata.result_info.analysis_type == _AnalysisType.transient
     assert isinstance(result, TransientAnalysisResult)

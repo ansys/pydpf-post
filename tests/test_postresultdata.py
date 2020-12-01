@@ -15,6 +15,14 @@ TEST_FILE_PATH_RST = os.path.join(unit_test_files, 'DataProcessing', 'rst_operat
                               'allKindOfComplexity.rst')
 
 
+MODAL_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
+                              'modal_allKindOfComplexity.rst')
+
+
+TRANSIENT_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'expansion', 
+                                   'msup', 'Transient', 'plate1','file.rst')
+
+
 if not dpf.core.has_local_server():
     dpf.core.start_local_server()
     
@@ -88,4 +96,22 @@ def test_min_data_at_field():
     disp = result.nodal_displacement()
     val = disp.min_data_at_field(0)
     assert val.__len__() == 3
+    
+    
+def test_get_all_labels():
+    result = post.result(MODAL_FILE_PATH)
+    stress = result.elemental_stress()
+    txt = "{'elshape': 1, 'time': 1}\n{'elshape': 0, 'time': 1}\n"
+    txt_comp = stress.get_all_label_spaces()
+    assert txt == txt_comp
+    
+    
+def test_get_scoping_at_field():
+    result = post.result(TRANSIENT_FILE_PATH)
+    disp = result.nodal_displacement(time_scoping=[1, 2, 4])
+    disp.num_fields()
+    scop = disp.scoping_at_field(2)
+    assert scop.__len__() == 393
+    assert scop[2] == 95
+    
     

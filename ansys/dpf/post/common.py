@@ -3,22 +3,22 @@
 from enum import Enum
 
 
-class ElShapes(Enum):
-    """Class with Enum inheritance. Must be used to 
-    describe the element shape when API allows it.
+# class ElShapes(Enum):
+#     """Class with Enum inheritance. Must be used to 
+#     describe the element shape when API allows it.
     
-    Example
-    -----
-    from ansys.dpf import post
-    result = post.result("file.rst")
-    disp = result.elemental_stress(element_shape = post.el_shape.shell)
-    """
-    solid = 1
-    beam = 2
-    shell = 3
-    shell_top = 4
-    shellmid = 5
-    shell_bottom = 6
+#     Example
+#     -----
+#     from ansys.dpf import post
+#     result = post.result("file.rst")
+#     disp = result.elemental_stress(element_shape = post.el_shape.shell)
+#     """
+#     solid = 1
+#     beam = 2
+#     shell = 3
+#     shell_top = 4
+#     shellmid = 5
+#     shell_bottom = 6
     
     
 class Grouping(Enum):
@@ -32,9 +32,8 @@ class Grouping(Enum):
     disp = result.elemental_stress(element_shape = post.grouping.by_el_shape)
     """
     by_el_shape = 1
-    by_el_type = 2
-    by_material = 3
-    by_body = 4
+    by_material = 2
+    by_body = 3
     
     
 class _AvailableKeywords():
@@ -49,11 +48,14 @@ class _AvailableKeywords():
     element_scoping = "element_scoping"
     named_selection = "named_selection"
     el_shape = "el_shape"
-    time_step = "time_step"
-    substep = "substep"
+    time = "time"
+    # substep = "substep"
     set = "set"
     grouping = "grouping"
     phase = "phase"
+    subresult = "subresult"
+    mapdl_grouping = "mapdl_grouping"
+    time_scoping = "time_scoping"
     
     def __str__(self):
         txt = ""

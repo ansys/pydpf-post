@@ -1,6 +1,5 @@
 import os
 
-from ansys.dpf.post.common import ElShapes as el_shape
 from ansys.dpf.post.common import Grouping as grouping
 from ansys.dpf.post.common import _AvailableKeywords as available_keywords
 from ansys.dpf.post.post_utility import result

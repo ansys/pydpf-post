@@ -128,11 +128,26 @@ def test_nodal_stress():
     assert data[0].__len__() == 6
     field = stress[0]
     assert field.location == locations.nodal
-    
-    
+
+
 def test_elemental_stress():
     result = post.result(TEST_FILE_PATH_RST)
     stress = result.elemental_stress()
+    assert isinstance(stress, ResultData)
+    assert stress.num_fields() == 2
+    data = stress.data_at_field(0)
+    assert data.__len__() == 609
+    assert data[0].__len__() == 6
+    data = stress.data_at_field(1)
+    assert data.__len__() == 9052
+    assert data[0].__len__() == 6
+    field = stress[0]
+    assert field.location == locations.elemental
+
+    
+def test_elemental_nodal_stress():
+    result = post.result(TEST_FILE_PATH_RST)
+    stress = result.elemental_nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields() == 1
     data = stress.data_at_field(0)
