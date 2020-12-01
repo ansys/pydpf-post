@@ -9,7 +9,7 @@ Additionnaly to the classic APIs, the complex result introduces an amplitude eva
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.core import Operator as _Operator
-from ansys.dpf.core.common import types, locations
+from ansys.dpf.core.common import locations
         
 
 class DpfResult:
@@ -71,6 +71,7 @@ class DpfResult:
         subresult = None
         set = None
         mapdl_grouping = None
+        time_scoping = None
         if _AvailableKeywords.phase in kwargs:
             if not isinstance(instance, DpfComplexResult):
                 raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
@@ -95,10 +96,12 @@ class DpfResult:
             mapdl_grouping = kwargs[_AvailableKeywords.mapdl_grouping]
         if _AvailableKeywords.subresult in kwargs:
             subresult = kwargs[_AvailableKeywords.subresult]
+        if _AvailableKeywords.time_scoping in kwargs:
+            time_scoping = kwargs[_AvailableKeywords.time_scoping]
         return ResultData(name, data_sources, self._model, self, location=location, element_scoping=element_scoping, 
                  node_scoping = node_scoping, named_selection = named_selection, el_shape = el_shape, 
                  time = time, grouping = grouping, phase = phase, subresult=subresult, mapdl_grouping=mapdl_grouping, 
-                 set=set)
+                 set=set, time_scoping=time_scoping)
 
     def _check_elemental_location(self, **kwargs):
         """Check if the location keyword with an Elemental value is set. If not, raise Exception."""

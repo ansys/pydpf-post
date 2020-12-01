@@ -5,11 +5,13 @@ import numpy as np
 import pyvista as pv
 import matplotlib.pyplot as pyplot
 import os
+import sys
 from collections import OrderedDict
 from ansys import dpf
 from ansys.dpf.core import Operator
+from ansys.dpf.core.rescoper import Rescoper as _Rescoper
 from ansys.dpf.core.common import types, locations
-from ansys.dpf.post.common import ElShapes, Grouping, _AvailableKeywords
+from ansys.dpf.post.common import Grouping, _AvailableKeywords
 
 
 class ResultData:
@@ -45,7 +47,10 @@ class ResultData:
                  node_scoping = None, named_selection = None, 
                  el_shape = None, time = None, 
                  grouping = None, phase = None, subresult = None, 
-                 mapdl_grouping = None, set = None):
+                 mapdl_grouping = None, set = None, time_scoping = None):
+        #!TODO: all kwargs* as attributes 
+        self.location = location
+        
         self._model = model
         self.result_fields_container = None
         self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
@@ -56,6 +61,7 @@ class ResultData:
         self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
 
+        error_scoping = "Only dpf.core.Scoping list are supported as scoping."
         if (location != None):
             self._result_operator.inputs.requested_location.connect(location)
         if (element_scoping != None and node_scoping != None):
@@ -67,10 +73,8 @@ class ResultData:
                 scoping.location = locations.elemental
                 if isinstance(element_scoping, list):
                     scoping.ids = element_scoping
-                elif isinstance(element_scoping, np.array):
-                    scoping.ids = element_scoping.tolist()
                 else:
-                    raise Exception("Only dpf.core.Scoping, numpy.array or list are supported as scoping.")
+                    raise Exception(error_scoping)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (node_scoping != None):
             scoping = node_scoping
@@ -79,11 +83,18 @@ class ResultData:
                 scoping.location = locations.nodal
                 if isinstance(node_scoping, list):
                     scoping.ids = node_scoping
-                elif isinstance(node_scoping, np.array):
-                    scoping.ids = node_scoping.tolist()
                 else:
-                    raise Exception("Only dpf.core.Scoping, numpy.array or list are supported as scoping.")
+                    raise Exception(error_scoping)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
+        if (time_scoping != None):
+            t_scoping = time_scoping
+            if not isinstance(time_scoping, dpf.core.scoping.Scoping):
+                t_scoping = dpf.core.Scoping()
+                if isinstance(time_scoping, list):
+                    t_scoping.ids = time_scoping
+                else:
+                    raise Exception(error_scoping)
+            self._result_operator.inputs.time_scoping.connect(t_scoping)  
         #chained before the result_operator
         if (named_selection != None):
             self._check_if_scoping(node_scoping, element_scoping)
@@ -215,6 +226,24 @@ class ResultData:
         self._chained_operators[sweeping_phase_op.name] = """This operator will compute the result at a given phase (when result has complex values)."""
         self._result_operator = sweeping_phase_op
         
+    def get_all_label_spaces(self):
+        """Returns all the label spaces contained in a result 
+        as a string.
+        Labels can be used to select fields to plot.
+        
+        Returns
+        -----
+        str
+        """
+        self._evaluate_result()
+        i = 0
+        txt = ""
+        while i < self.result_fields_container.__len__():
+            txt += self.result_fields_container.get_label_space(i).__str__()
+            txt += "\n"
+            i += 1
+        return txt
+    
     def num_fields(self):
         """Returns the number of fields contained in the result."""
         self._evaluate_result()
@@ -233,11 +262,11 @@ class ResultData:
         self._evaluate_result()
         return self.result_fields_container[field_index]
     
-    #!TODO
     def scoping_at_field(self, field_index: int = 0):
         """Returns the scoping of the result."""
         self._evaluate_result()
-        raise Exception("Not implemented yet.")
+        field = self.result_fields_container[field_index]
+        return field.scoping.ids
         
     def _min_max(self, pin):
         """"Chains the operators to compute the min/max values."""
@@ -290,10 +319,12 @@ class ResultData:
         return self._min_max(0).data[field_index]
     
     
-    def plot_contour(self):
+    def _plot_contour_with_vtk_file(self):
         """Plot the contour result on its mesh support. The obtained figure depends on the 
         support (can be a meshed_region or a time_freq_support).
-        If transient analysis, plot the last result."""
+        If transient analysis, plot the last result.
+        
+        This method is private, publishes a vtk file and print (using pyvista) from this file."""
         self._evaluate_result()
         plotter = pv.Plotter()
         mesh_provider = Operator("MeshProvider")
@@ -320,31 +351,75 @@ class ResultData:
         plotter.show()
         
     
-    def _plot_contour_try(self):
-        """Plot contour, does not work yet (plot_contour() must be used instead)."""
+    def plot_contour(self, display_option: str = "time", option_id: [int] = [1]):
+        """Plot the contour result on its mesh support. The obtained figure depends on the 
+        support (can be a meshed_region or a time_freq_support).
+        If transient analysis, plot the last result if no time_scoping has been specified.
+        
+        Parameters
+        -----
+        display_option: str (the name of the label you want to display). Default is "time".
+        option_id: int (the list of label ids you want to display). Default is [1].
+        
+        Help
+        -----
+        The self.get_all_label_spaces() will return a string containing all the label spaces.
+        
+        Example
+        -----
+        The following labels are obtained using the self.get_all_label_spaces():
+            {'mat': 1, 'time': 1}
+            {'mat': 0, 'time': 1}
+            {'mat': 1, 'time': 2}
+            {'mat': 0, 'time': 2}
+        To get the plotted result at the time_step number 2, use: self.plot_contour("time", [1])
+        """
         self._evaluate_result()
+        if not sys.warnoptions:
+            import warnings
+            warnings.simplefilter("ignore")
         plotter = pv.Plotter()
         #comment savoir si je dois plotter en fct du maillage ou du tfq ? 
         #quid des fc qui contiennent des fields séparés pour un même modèle ? (par ex: fct de el_shape)
         #-> Operator("GetSupportFromField") will return the mesh of a given field
         #-> plotter.add_mesh(scalars...)
         #quid si scoping ? Pour l'instant pas ok
+        mesh = self._model.metadata.meshed_region
+        grid = mesh.grid
+        nan_opacity = 0.1
+        nan_color = "grey"
+        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, self.result_fields_container[0].component_count) #location will be the same on all fields
         if (self.result_fields_container.__len__() == 1):
-            grid = self._model.metadata.meshed_region.grid
-            field = self.result_fields_container[0]
-            plotter.add_mesh(grid, scalars = field.data, stitle = field.name, show_edges=True)
+            field = rescoper.rescope(self.result_fields_container[0])
+            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, stitle = self.result_fields_container[0].name, show_edges=True)
         else:
-            name = self.result_fields_container[0].name
-            for field in self.result_fields_container:
-                if (field.name == name):
-                    mesh_op = Operator("GetSupportFromField")
-                    mesh_op.inputs.field.connect(field)
-                    mesh = mesh_op.outputs.mesh()
-                    grid = mesh.grid
-                    plotter.add_mesh(grid, scalars = field.data, stitle = field.name, show_edges=True)
+            nan_scalars = rescoper.get_nan_field()
+            plotter.add_mesh(grid, scalars = nan_scalars, nan_color=nan_color, show_edges = True)
+            label_spaces = []
+            for opt_id in option_id:
+                i = 0
+                while i < self.result_fields_container.__len__():
+                    label_space = {}
+                    label_space[display_option] = opt_id
+                    fc_label = self.result_fields_container.get_label_space(i)
+                    for lab in self.result_fields_container.labels:
+                        if lab != display_option:
+                            if display_option in fc_label:
+                                if fc_label[display_option] == opt_id:
+                                    label_space[lab] = fc_label[lab]
+                    label_spaces.append(label_space)
+                    i += 1
+            for label in label_spaces:
+                field_to_rescope = self.result_fields_container._get_entries(label)
+                if field_to_rescope is None:
+                    raise Exception("The label " + label.__str__() + " does not exist in the fields container.")
+                name = self.result_fields_container[0].name.split("_")[0]
+                field = rescoper.rescope(field_to_rescope)
+                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, stitle = name, show_edges=True)
         plotter.add_axes()
         plotter.show()
         
+    
         
     def plot_chart(self):
         """Plot the minimum/maximum result values over time 

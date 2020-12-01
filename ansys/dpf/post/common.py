@@ -3,22 +3,22 @@
 from enum import Enum
 
 
-class ElShapes(Enum):
-    """Class with Enum inheritance. Must be used to 
-    describe the element shape when API allows it.
+# class ElShapes(Enum):
+#     """Class with Enum inheritance. Must be used to 
+#     describe the element shape when API allows it.
     
-    Example
-    -----
-    from ansys.dpf import post
-    result = post.result("file.rst")
-    disp = result.elemental_stress(element_shape = post.el_shape.shell)
-    """
-    solid = 1
-    beam = 2
-    shell = 3
-    shell_top = 4
-    shellmid = 5
-    shell_bottom = 6
+#     Example
+#     -----
+#     from ansys.dpf import post
+#     result = post.result("file.rst")
+#     disp = result.elemental_stress(element_shape = post.el_shape.shell)
+#     """
+#     solid = 1
+#     beam = 2
+#     shell = 3
+#     shell_top = 4
+#     shellmid = 5
+#     shell_bottom = 6
     
     
 class Grouping(Enum):
@@ -55,6 +55,7 @@ class _AvailableKeywords():
     phase = "phase"
     subresult = "subresult"
     mapdl_grouping = "mapdl_grouping"
+    time_scoping = "time_scoping"
     
     def __str__(self):
         txt = ""

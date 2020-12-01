@@ -242,3 +242,24 @@ def test_time_keyword_not_in_frequencies():
     assert disp.data_at_field(0)[22][2] == -1.7795334817918245e-05
     
     
+def test_time_scoping_keyword():
+    result = post.result(TRANSIENT_FILE_PATH)
+    disp = result.nodal_displacement()
+    assert disp.num_fields() == 1
+    disp1 = result.nodal_displacement(time_scoping=[1,2,4])
+    assert disp1.num_fields() == 3
+    assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
+    assert disp1.data_at_field(0)[40][2] == -2.0115581116044217e-06
+    # disp2 = result.nodal_displacement(time_scoping=np.array([1, 2, 4]))
+    # assert disp2.num_fields() == 3
+    # assert disp2.result_fields_container.get_label_space(0) == {'time': 1}
+    # assert disp2.data_at_field(0)[40][2] == -2.0115581116044217e-06
+    scop = dpf.core.Scoping()
+    scop.ids = [1, 2, 4]
+    disp3 = result.nodal_displacement(time_scoping=scop)
+    assert disp3.num_fields() == 3
+    assert disp3.result_fields_container.get_label_space(0) == {'time': 1}
+    assert disp3.data_at_field(0)[40][2] == -2.0115581116044217e-06
+    
+    
+    
