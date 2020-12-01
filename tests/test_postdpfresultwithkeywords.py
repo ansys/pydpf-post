@@ -84,7 +84,7 @@ def test_elem_nodal_stress_with_scoping():
 def test_disp_with_component_subresult():
     result = post.result(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement(subresult="Y")
-    assert disp._result_operator.name == "UY"
+    assert disp._evaluator._result_operator.name == "UY"
     assert disp.num_fields() == 1
     data = disp.data_at_field(0)
     assert data.__len__() == 15113
@@ -94,7 +94,7 @@ def test_disp_with_component_subresult():
 def test_stress_with_component_subresult():
     result = post.result(TEST_FILE_PATH_RST)
     stress = result.elemental_nodal_stress(subresult="YZ")
-    assert stress._result_operator.name == "SYZ"
+    assert stress._evaluator._result_operator.name == "SYZ"
     assert stress.num_fields() == 1
     data = stress.data_at_field(0)
     assert data.__len__() == 40016
@@ -104,7 +104,7 @@ def test_stress_with_component_subresult():
 def test_stress_with_invariant_subresult():
     result = post.result(TEST_FILE_PATH_RST)
     stress = result.elemental_nodal_stress(subresult="3")
-    assert stress._result_operator.name == "S3"
+    assert stress._evaluator._result_operator.name == "S3"
     assert stress.num_fields() == 2
     data = stress.data_at_field(0)
     assert data.__len__() == 720
