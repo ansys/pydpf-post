@@ -1,4 +1,5 @@
 from ansys.dpf.post.common import Grouping as grouping
+from ansys.dpf.core.common import locations
 from ansys.dpf.post.common import _AvailableKeywords as available_keywords
 from ansys.dpf.post.post_utility import solution, build_docs
 from ansys import dpf

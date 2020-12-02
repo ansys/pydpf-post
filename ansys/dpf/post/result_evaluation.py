@@ -16,19 +16,17 @@ from ansys.dpf.post.common import Grouping, _AvailableKeywords
 class ResultEvaluator:
     """This object will make the evaluation of the fields container 
     wrapped in the ResultData object."""
-    def __init__(self, operator_name: str, data_sources, model, instance,
+    def __init__(self, operator_name: str, data_sources, model,
                  elem_average, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
-                 el_shape = None, time = None, 
-                 grouping = None, phase = None, subresult = None, 
+                 time = None, grouping = None, phase = None, subresult = None, 
                  mapdl_grouping = None, set = None, time_scoping = None):
 
         self.location = location
         self.element_scoping = element_scoping
         self.node_scoping = node_scoping
         self.named_selection = named_selection
-        self.el_shape = el_shape
         self.time = time
         self.grouping = grouping
         self.phase = phase

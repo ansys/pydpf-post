@@ -10,6 +10,11 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.core import Operator as _Operator
 from ansys.dpf.core.common import locations
+
+from ansys.dpf.post.stress import Stress
+from ansys.dpf.post.strain import PlasticStrain, ElasticStrain
+from ansys.dpf.post.temperature import Temperature
+from ansys.dpf.post.displacement import Displacement
         
 
 class DpfResult:
@@ -49,10 +54,12 @@ class DpfResult:
         return self._model.metadata.result_info
     
     def __str__(self):
-        txt = '%s result object.\n\n' % self._model_metadata.result_info.analysis_type.capitalize() +\
-        'The open dataSource has contains the following information:\n'
+        txt = '%s result object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
+        '\n\n\nData Sources\n------------------------------\n'
         ds_str = self._data_sources.__str__()
         txt += ds_str
+        txt += "\n\n"
+        txt += self._model.__str__()
         return txt
         
         
@@ -64,7 +71,6 @@ class DpfResult:
         element_scoping = None
         node_scoping = None
         named_selection = None
-        el_shape = None
         time = None
         grouping = None
         phase = None
@@ -84,8 +90,6 @@ class DpfResult:
             node_scoping = kwargs[_AvailableKeywords.node_scoping]
         if _AvailableKeywords.named_selection in kwargs:
             named_selection = kwargs[_AvailableKeywords.named_selection]
-        if _AvailableKeywords.el_shape in kwargs:
-            el_shape = kwargs[_AvailableKeywords.el_shape]
         if _AvailableKeywords.time in kwargs:
             time = kwargs[_AvailableKeywords.time]
         if _AvailableKeywords.set in kwargs:
@@ -98,8 +102,8 @@ class DpfResult:
             subresult = kwargs[_AvailableKeywords.subresult]
         if _AvailableKeywords.time_scoping in kwargs:
             time_scoping = kwargs[_AvailableKeywords.time_scoping]
-        return ResultData(name, data_sources, self._model, self, b_elem_average, location=location, element_scoping=element_scoping, 
-                 node_scoping = node_scoping, named_selection = named_selection, el_shape = el_shape, 
+        return ResultData(name, data_sources, self._model, b_elem_average, location=location, element_scoping=element_scoping, 
+                 node_scoping = node_scoping, named_selection = named_selection,
                  time = time, grouping = grouping, phase = phase, subresult=subresult, mapdl_grouping=mapdl_grouping, 
                  set=set, time_scoping=time_scoping)
 
@@ -115,6 +119,32 @@ class DpfResult:
             if(kwargs[_AvailableKeywords.location] != locations.nodal):
                 raise Exception("Only a Nodal location can be used with a nodal result.")
     
+    
+    #result classes
+    def _check_phase(self, **kwargs):
+        if _AvailableKeywords.phase in kwargs:
+            if not isinstance(self, DpfComplexResult):
+                raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
+                
+    def stress(self, **kwargs):
+        self._check_phase(**kwargs)
+        return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def elastic_strain(self, **kwargs):
+        self._check_phase(**kwargs)
+        return ElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def plastic_strain(self, **kwargs):
+        self._check_phase(**kwargs)
+        return PlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def displacement(self, **kwargs):
+        self._check_phase(**kwargs)
+        return Displacement(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def temperature(self, **kwargs):
+        self._check_phase(**kwargs)
+        return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
     #nodal results
     def nodal_displacement(self, **kwargs):

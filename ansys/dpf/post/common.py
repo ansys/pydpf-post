@@ -47,7 +47,6 @@ class _AvailableKeywords():
     node_scoping = "node_scoping"
     element_scoping = "element_scoping"
     named_selection = "named_selection"
-    el_shape = "el_shape"
     time = "time"
     # substep = "substep"
     set = "set"

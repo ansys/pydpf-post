@@ -26,7 +26,6 @@ class ResultData:
         - named_selection
         - phase
         - time_step
-        - el_shape
         - grouping
         (...)
         
@@ -41,16 +40,16 @@ class ResultData:
     disp_on_named_selection = result.nodal_displacement(named_selection = "SELECTION")
     """
     
-    def __init__(self, operator_name: str, data_sources, model, instance, 
+    def __init__(self, operator_name: str, data_sources, model, 
                  elem_average: bool, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
-                 el_shape = None, time = None, 
+                 time = None, 
                  grouping = None, phase = None, subresult = None, 
                  mapdl_grouping = None, set = None, time_scoping = None):
         
-        self._evaluator = ResultEvaluator(operator_name, data_sources, model, instance, elem_average, 
-                 location, element_scoping, node_scoping, named_selection, el_shape, time, 
+        self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average, 
+                 location, element_scoping, node_scoping, named_selection, time, 
                  grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
              
@@ -58,15 +57,18 @@ class ResultData:
     def __str__(self):
         self._evaluate_result()
         name = self.result_fields_container[0].name.split("_")
-        txt = "%s result.\n\n" % name[0].capitalize()
+        txt = "%s result.\n" % name[0].capitalize()
+        if (self._evaluator.subresult is not None):
+            txt += "%s component. \n" % self._evaluator.subresult
+        txt += "\n"
         txt += "The result is computed thanks to dpf.core.Operator objects, "
         txt += "that are chained together regarding the following list: \n"
-        for key, val in self._chained_operators.items():
+        for key, val in self._evaluator._chained_operators.items():
             txt += "- %s: " % key
             txt += val
             txt += "\n"
-        txt += "\n\n"
-        txt += self._evaluator._model.__str__()
+        # txt += "\n\n"
+        # txt += self._evaluator._model.__str__()
         return txt
     
     
@@ -233,24 +235,17 @@ class ResultData:
             import warnings
             warnings.simplefilter("ignore")
         plotter = pv.Plotter()
-        #comment savoir si je dois plotter en fct du maillage ou du tfq ? 
-        #quid des fc qui contiennent des fields séparés pour un même modèle ? (par ex: fct de el_shape)
-        #-> Operator("GetSupportFromField") will return the mesh of a given field
-        #-> plotter.add_mesh(scalars...)
-        #quid si scoping ? Pour l'instant pas ok
         mesh = self._evaluator._model.metadata.meshed_region
         grid = mesh.grid
-        nan_opacity = 0.1
         nan_color = "grey"
         rescoper = _Rescoper(mesh, self.result_fields_container[0].location, 
                              self.result_fields_container[0].component_count) #location will be the same on all fields
         if (self.result_fields_container.__len__() == 1):
             field = rescoper.rescope(self.result_fields_container[0])
-            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_opacity=nan_opacity, nan_color=nan_color, 
-                             stitle = self.result_fields_container[0].name, show_edges=True)
+            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, 
+                              stitle = self.result_fields_container[0].name, show_edges=True)
+            
         else:
-            nan_scalars = rescoper.get_nan_field()
-            plotter.add_mesh(grid, scalars = nan_scalars, nan_color=nan_color, nan_opacity=nan_opacity, show_edges = True)
             label_spaces = []
             for opt_id in option_id:
                 i = 0
@@ -271,7 +266,7 @@ class ResultData:
                     raise Exception("The label " + label.__str__() + " does not exist in the fields container.")
                 name = self.result_fields_container[0].name.split("_")[0]
                 field = rescoper.rescope(field_to_rescope)
-                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, nan_opacity=nan_opacity, stitle = name, show_edges=True)
+                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, stitle = name, show_edges=True)
         plotter.add_axes()
         plotter.show()
         
