@@ -1,7 +1,7 @@
-"""Module containing the specific Transient Analysis Result class."""
+"""Module containing the specific Transient Analysis Solution class."""
 
-from ansys.dpf.post.dpf_result import DpfResult
+from ansys.dpf.post.dpf_solution import DpfSolution
 
 
-class TransientAnalysisResult(DpfResult):
-    """Transient result class, which will provide all the API for Transient analysis."""
+class TransientAnalysisSolution(DpfSolution):
+    """Transient solution class, which will provide all the API for Transient analysis."""

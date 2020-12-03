@@ -1,7 +1,7 @@
-"""Module containing the specific Static Analysis Result class."""
+"""Module containing the specific Static Analysis Solution class."""
 
-from ansys.dpf.post.dpf_result import DpfResult
+from ansys.dpf.post.dpf_solution import DpfSolution
 
 
-class StaticAnalysisResult(DpfResult):
-    """Static result class, which will provide all the API for Static analysis."""
+class StaticAnalysisSolution(DpfSolution):
+    """Static solution class, which will provide all the API for Static analysis."""

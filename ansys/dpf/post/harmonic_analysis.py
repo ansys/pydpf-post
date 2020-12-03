@@ -1,7 +1,7 @@
-"""Module containing the specific Hamonic Analysis Result class."""
+"""Module containing the specific Hamonic Analysis Solution class."""
 
-from ansys.dpf.post.dpf_result import DpfComplexResult
+from ansys.dpf.post.dpf_solution import DpfComplexSolution
 
 
-class HarmonicAnalysisResult(DpfComplexResult):
-    """Harmonic result class, which will provide all the API for Harmonic analysis."""
+class HarmonicAnalysisSolution(DpfComplexSolution):
+    """Harmonic solution class, which will provide all the API for Harmonic analysis."""

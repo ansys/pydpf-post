@@ -1,8 +1,8 @@
-"""Module containing the DpfResult class and its childs. 
+"""Module containing the DpfSolution class and its childs. 
 Each class highlights an analysis type, and provides hardcoded 
 methods to get a result object regarding the wanted result type.
 
-Module containing also the DpfComplexResult class, child of DpfResult class.
+Module containing also the DpfComplexSolution class, child of DpfSolution class.
 Additionnaly to the classic APIs, the complex result introduces an amplitude evaluation."""
 
 
@@ -17,11 +17,11 @@ from ansys.dpf.post.temperature import Temperature
 from ansys.dpf.post.displacement import Displacement
         
 
-class DpfResult:
+class DpfSolution:
     """Main class of post result API.
     
     Parameters
-    ----
+    ----------
     None
     """
     def __init__(self, data_sources, model):
@@ -32,15 +32,15 @@ class DpfResult:
         """Returns information about the result file.
         
         Parameters
-        -----
+        ----------
         None
         
-        Example
-        -----
+        Examples
+        --------
         The following code:
-            from ansys.dpf import post
-            result = post.result("file.rst")
-            print(result.get_result_info())
+        >>> from ansys.dpf import post
+        >>> result = post.result("file.rst")
+        >>> print(result.get_result_info())
         
         Will return:
             Static analysis
@@ -49,7 +49,6 @@ class DpfResult:
             Available results:
                  -  displacement                                        
                  -  volume                                        
-        -----
         """
         return self._model.metadata.result_info
     
@@ -79,7 +78,7 @@ class DpfResult:
         mapdl_grouping = None
         time_scoping = None
         if _AvailableKeywords.phase in kwargs:
-            if not isinstance(instance, DpfComplexResult):
+            if not isinstance(instance, DpfComplexSolution):
                 raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
             phase = kwargs[_AvailableKeywords.phase]
         if _AvailableKeywords.location in kwargs:
@@ -457,11 +456,11 @@ class DpfResult:
         return self._get_result_data_function_of_operator("S_eqv", self, self._data_sources, **kwargs)
 
 
-class DpfComplexResult(DpfResult):
-    """Main class of post result if the analysis gives complex result (Modal, Harmonic).
+class DpfComplexSolution(DpfSolution):
+    """Main class of post solution if the analysis gives complex solution (Modal, Harmonic).
     
     Parameters
-    ----
+    ----------
     None
     """
     def _get_amplitude_evaluation(self, result_data):
@@ -481,10 +480,10 @@ class DpfComplexResult(DpfResult):
         return txt
     
     def has_complex_result(self):
-        """Tests if the result object has complex values (check the complex frequencies).
+        """Tests if the solution object has complex values (check the complex frequencies).
         
         Returns
-        -----
+        -------
         Boolean (True if has_complex_result)"""
         tfq_sup = self._model.metadata.time_freq_support
         if not tfq_sup:

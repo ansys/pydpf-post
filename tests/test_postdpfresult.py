@@ -109,8 +109,8 @@ def test_nodal_displacement():
     assert isinstance(disp, ResultData)
     assert disp.num_fields() == 1
     data = disp.data_at_field(0)
-    assert data.__len__() == 15113
-    assert data[0].__len__() == 3
+    assert len(data) == 15113
+    assert len(data[0]) == 3
     field = disp[0]
     assert field.location == locations.nodal
     
@@ -121,11 +121,11 @@ def test_nodal_stress():
     assert isinstance(stress, ResultData)
     assert stress.num_fields() == 2
     data = stress.data_at_field(0)
-    assert data.__len__() == 720
-    assert data[0].__len__() == 6
+    assert len(data) == 720
+    assert len(data[0]) == 6
     data = stress.data_at_field(1)
-    assert data.__len__() == 14826
-    assert data[0].__len__() == 6
+    assert len(data) == 14826
+    assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.nodal
 
@@ -136,11 +136,11 @@ def test_elemental_stress():
     assert isinstance(stress, ResultData)
     assert stress.num_fields() == 2
     data = stress.data_at_field(0)
-    assert data.__len__() == 609
-    assert data[0].__len__() == 6
+    assert len(data) == 609
+    assert len(data[0]) == 6
     data = stress.data_at_field(1)
-    assert data.__len__() == 9052
-    assert data[0].__len__() == 6
+    assert len(data) == 9052
+    assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.elemental
 
@@ -151,8 +151,8 @@ def test_elemental_nodal_stress():
     assert isinstance(stress, ResultData)
     assert stress.num_fields() == 1
     data = stress.data_at_field(0)
-    assert data.__len__() == 40016
-    assert data[0].__len__() == 6
+    assert len(data) == 40016
+    assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.elemental_nodal
     

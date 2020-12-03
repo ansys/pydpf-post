@@ -38,8 +38,8 @@ def test_data_at_field():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     data = disp.data_at_field(0)
-    assert data.__len__() == 15113
-    assert data[0].__len__() == 3
+    assert len(data) == 15113
+    assert len(data[0]) == 3
     
     
 def test_field_getitem():
@@ -54,48 +54,48 @@ def test_max():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     max_val = disp.max()
-    assert max_val.__len__() == 3
-    assert max_val.data.__len__() == 1
-    assert max_val.data[0].__len__() == 3
+    assert len(max_val) == 3
+    assert len(max_val.data) == 1
+    assert len(max_val.data[0]) == 3
 
 
 def test_min():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     min_val = disp.min()
-    assert min_val.__len__() == 3
-    assert min_val.data.__len__() == 1
-    assert min_val.data[0].__len__() == 3
+    assert len(min_val) == 3
+    assert len(min_val.data) == 1
+    assert len(min_val.data[0]) == 3
     
 
 def test_maxdata():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     val = disp.max_data()
-    assert val.__len__() == 1
-    assert val[0].__len__() == 3
+    assert len(val) == 1
+    assert len(val[0]) == 3
     
     
 def test_mindata():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     val = disp.min_data()
-    assert val.__len__() == 1
-    assert val[0].__len__() == 3
+    assert len(val) == 1
+    assert len(val[0]) == 3
     
     
 def test_maxdata_at_field():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     val = disp.max_data_at_field(0)
-    assert val.__len__() == 3
+    assert len(val) == 3
     
     
 def test_min_data_at_field():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement()
     val = disp.min_data_at_field(0)
-    assert val.__len__() == 3
+    assert len(val) == 3
     
     
 def test_get_all_labels():
@@ -111,7 +111,7 @@ def test_get_scoping_at_field():
     disp = result.nodal_displacement(time_scoping=[1, 2, 4])
     disp.num_fields()
     scop = disp.scoping_at_field(2)
-    assert scop.__len__() == 393
+    assert len(scop) == 393
     assert scop[2] == 95
     
     

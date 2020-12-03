@@ -18,26 +18,23 @@ class ResultData:
     Created thanks to the dpf result object, itself instantiated from post.
     
     Parameters
-    -----
+    ----------
     Following list of keywords:
         - location
         - node_scoping
         - element_scoping
-        - named_selection
-        - phase
-        - time_step
+        - time
         - grouping
         (...)
-        
     The whole list of parameters can be found using print(post.available_keywords()).
     
-    Example
-    -----
-    from ansys.dpf import post
-    result = post.result("file.rst")
-    disp = result.nodal_displacement() 
-    disp_on_nodes = result.nodal_displacement(node_scoping = [1, 23]) 
-    disp_on_named_selection = result.nodal_displacement(named_selection = "SELECTION")
+    Examples
+    --------
+    >>> from ansys.dpf import post
+    >>> solution = post.solution("file.rst")
+    >>> disp = solution.nodal_displacement() 
+    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23]) 
+    >>> disp_on_named_selection = solution.nodal_displacement(named_selection = "SELECTION")
     """
     
     def __init__(self, operator_name: str, data_sources, model, 
@@ -88,13 +85,13 @@ class ResultData:
         Labels can be used to select fields to plot.
         
         Returns
-        -----
+        -------
         str
         """
         self._evaluate_result()
         i = 0
         txt = ""
-        while i < self.result_fields_container.__len__():
+        while i < len(self.result_fields_container):
             txt += self.result_fields_container.get_label_space(i).__str__()
             txt += "\n"
             i += 1
@@ -103,7 +100,7 @@ class ResultData:
     def num_fields(self):
         """Returns the number of fields contained in the result."""
         self._evaluate_result()
-        return self.result_fields_container.__len__()
+        return len(self.result_fields_container)
     
     def data_at_field(self, field_index: int = 0):
         """Returns the data at the field with the specified index."""
@@ -213,16 +210,16 @@ class ResultData:
         If transient analysis, plot the last result if no time_scoping has been specified.
         
         Parameters
-        -----
+        ----------
         display_option: str (the name of the label you want to display). Default is "time".
         option_id: int (the list of label ids you want to display). Default is [1].
         
         Help
-        -----
+        ----
         The self.get_all_label_spaces() will return a string containing all the label spaces.
         
-        Example
-        -----
+        Examples
+        --------
         The following labels are obtained using the self.get_all_label_spaces():
             {'mat': 1, 'time': 1}
             {'mat': 0, 'time': 1}
@@ -240,7 +237,7 @@ class ResultData:
         nan_color = "grey"
         rescoper = _Rescoper(mesh, self.result_fields_container[0].location, 
                              self.result_fields_container[0].component_count) #location will be the same on all fields
-        if (self.result_fields_container.__len__() == 1):
+        if (len(self.result_fields_container) == 1):
             field = rescoper.rescope(self.result_fields_container[0])
             plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, 
                               stitle = self.result_fields_container[0].name, show_edges=True)
@@ -249,7 +246,7 @@ class ResultData:
             label_spaces = []
             for opt_id in option_id:
                 i = 0
-                while i < self.result_fields_container.__len__():
+                while i < len(self.result_fields_container):
                     label_space = {}
                     label_space[display_option] = opt_id
                     fc_label = self.result_fields_container.get_label_space(i)

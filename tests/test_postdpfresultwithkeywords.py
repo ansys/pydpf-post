@@ -29,16 +29,16 @@ def test_displacement_with_scoping():
     #scoping as array
     disp = result.nodal_displacement(node_scoping = [1, 2])
     data = disp.data_at_field(0)
-    assert data.__len__() == 2
-    assert data[0].__len__() == 3
+    assert len(data) == 2
+    assert len(data[0]) == 3
     #scoping as dpf.Scoping
     scop = dpf.core.Scoping()
     scop.ids = [1, 2]
     scop.location = locations.nodal
     disp2 = result.nodal_displacement(node_scoping = scop)
     data2 = disp2.data_at_field(0)
-    assert data2.__len__() == 2
-    assert data2[0].__len__() == 3
+    assert len(data2) == 2
+    assert len(data2[0]) == 3
     #values comparison
     assert np.allclose(data, data2)
             
@@ -48,16 +48,16 @@ def test_node_stress_with_scoping():
     #scoping as array
     disp = result.nodal_stress(element_scoping = [1, 34])
     data = disp.data_at_field(0)
-    assert data.__len__() == 40
-    assert data[0].__len__() == 6
+    assert len(data) == 40
+    assert len(data[0]) == 6
     #scoping as dpf.Scoping
     scop = dpf.core.Scoping()
     scop.location = locations.elemental
     scop.ids = [1, 34]
     disp2 = result.nodal_stress(element_scoping = scop)
     data2 = disp2.data_at_field(0)
-    assert data2.__len__() == 40
-    assert data2[0].__len__() == 6
+    assert len(data2) == 40
+    assert len(data2[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
     
@@ -67,16 +67,16 @@ def test_elem_nodal_stress_with_scoping():
     #scoping as array
     disp = result.elemental_nodal_stress(element_scoping = [1, 34])
     data = disp.data_at_field(0)
-    assert data.__len__() == 16
-    assert data[0].__len__() == 6
+    assert len(data) == 16
+    assert len(data[0]) == 6
     #scoping as dpf.Scoping
     scop = dpf.core.Scoping()
     scop.location = locations.elemental
     scop.ids = [1, 34]
     disp2 = result.elemental_nodal_stress(element_scoping = scop)
     data2 = disp2.data_at_field(0)
-    assert data2.__len__() == 16
-    assert data2[0].__len__() == 6
+    assert len(data2) == 16
+    assert len(data2[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
     
@@ -87,7 +87,7 @@ def test_disp_with_component_subresult():
     assert disp._evaluator._result_operator.name == "UY"
     assert disp.num_fields() == 1
     data = disp.data_at_field(0)
-    assert data.__len__() == 15113
+    assert len(data) == 15113
     assert data[0] == 5.130250313479703e-06
 
 
@@ -97,7 +97,7 @@ def test_stress_with_component_subresult():
     assert stress._evaluator._result_operator.name == "SYZ"
     assert stress.num_fields() == 1
     data = stress.data_at_field(0)
-    assert data.__len__() == 40016
+    assert len(data) == 40016
     assert data[1] == 1.0216815465593042e-10
 
 
@@ -107,7 +107,7 @@ def test_stress_with_invariant_subresult():
     assert stress._evaluator._result_operator.name == "S3"
     assert stress.num_fields() == 2
     data = stress.data_at_field(0)
-    assert data.__len__() == 720
+    assert len(data) == 720
     assert data[1] == -4721842.179373354
 
 
@@ -120,10 +120,10 @@ def test_groupingelshape_nodallocation():
     disp = result.nodal_displacement(grouping = post.grouping.by_el_shape)
     assert disp.num_fields() == 4
     assert disp.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
-    assert disp.data_at_field(0).__len__() == 93950
-    assert disp.data_at_field(1).__len__() == 6748
-    assert disp.data_at_field(2).__len__() == 36
-    assert disp.data_at_field(3).__len__() == 4
+    assert len(disp.data_at_field(0)) == 93950
+    assert len(disp.data_at_field(1)) == 6748
+    assert len(disp.data_at_field(2)) == 36
+    assert len(disp.data_at_field(3)) == 4
     assert disp.data_at_field(2)[0][0] == 5.523488975819807e-20
     assert disp[0].location == locations.nodal
 
@@ -133,10 +133,10 @@ def test_groupingelshape_elemlocation():
     stress = result.elemental_stress(grouping = post.grouping.by_el_shape)
     assert stress.num_fields() == 4
     assert stress.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
-    assert stress.data_at_field(0).__len__() == 609
-    assert stress.data_at_field(1).__len__() == 27156
-    assert stress.data_at_field(2).__len__() == 0
-    assert stress.data_at_field(3).__len__() == 0
+    assert len(stress.data_at_field(0)) == 609
+    assert len(stress.data_at_field(1)) == 27156
+    assert len(stress.data_at_field(2)) == 0
+    assert len(stress.data_at_field(3)) == 0
     assert stress.data_at_field(1)[0][0] == -2984789.100540372
     assert stress[0].location == locations.elemental
     
@@ -145,8 +145,8 @@ def test_groupingmat_nodallocation():
     result = post.solution(TEST_FILE_PATH_RST)
     disp = result.nodal_displacement(grouping = post.grouping.by_material)
     assert disp.num_fields() == 11
-    assert disp[0].__len__() == 23016
-    assert disp[2].__len__() == 1848
+    assert len(disp[0]) == 23016
+    assert len(disp[2]) == 1848
     assert disp.data_at_field(2)[0][2] == -6.649053654123576e-07
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
     
@@ -155,8 +155,8 @@ def test_groupingmat_elemlocation():
     result = post.solution(TEST_FILE_PATH_RST)
     stress = result.elemental_stress(grouping = post.grouping.by_material)
     assert stress.num_fields() == 11
-    # assert stress[0].__len__() == 0
-    # assert stress[5].__len__() == 156762
+    # assert len(stress[0]) == 0
+    # assert len(stress[5]) == 156762
     # assert stress.data_at_field(5)[0][2] == 2255995657.8043337
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[0].location == locations.elemental
@@ -176,7 +176,7 @@ def test_maplgrouping_elemlocation():
     stress = result.elemental_stress(mapdl_grouping = 186)
     assert stress.num_fields() == 1
     assert stress.result_fields_container.get_label_space(0) == {'time': 1}
-    assert stress.data_at_field(0).__len__() == 343
+    assert len(stress.data_at_field(0)) == 343
     assert stress.data_at_field(0)[41][2] == -323198.184976747
     assert stress[0].location == locations.elemental
     

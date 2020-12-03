@@ -14,5 +14,6 @@ class Stress(Tensor):
         txt += super().__str__()
         return txt
     
-    def von_mises(**kwargs):
-        pass
+    def von_mises(self, **kwargs):
+        """Returns the von mises stress as a ResultData."""
+        return super()._get_result_data("S_eqv", self._data_sources, self._model, **kwargs)    

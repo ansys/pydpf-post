@@ -2,9 +2,9 @@ import os
 import unittest
 from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.dpf_result import DpfComplexResult
+from ansys.dpf.post.dpf_solution import DpfComplexSolution
 from ansys.dpf.post.result_data import ResultData
-from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisResult
+from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 
 
 if 'AWP_UNIT_TEST_FILES' in os.environ:
@@ -28,26 +28,26 @@ if not dpf.core.has_local_server():
     
 def test_displacement_amplitude():
     result = post.solution(TEST_FILE_PATH_RST)
-    assert isinstance(result, HarmonicAnalysisResult)
-    assert isinstance(result, DpfComplexResult)
+    assert isinstance(result, HarmonicAnalysisSolution)
+    assert isinstance(result, DpfComplexSolution)
     ampl = result.nodal_displacement_amplitude()
     assert isinstance(ampl, ResultData)
     assert ampl.num_fields() == 1
     l = ampl.data_at_field(0)
-    assert l.__len__() == 4802
-    assert l[2].__len__() == 3
+    assert len(l) == 4802
+    assert len(l[2]) == 3
     
     
 def test_displacement_at_phase():
     result = post.solution(TEST_FILE_PATH_RST)
-    assert isinstance(result, HarmonicAnalysisResult)
-    assert isinstance(result, DpfComplexResult)
+    assert isinstance(result, HarmonicAnalysisSolution)
+    assert isinstance(result, DpfComplexSolution)
     disp_at_phase = result.nodal_displacement(phase = 41.)
     assert isinstance(disp_at_phase, ResultData)
     assert disp_at_phase.num_fields() == 1
     l = disp_at_phase.data_at_field(0)
-    assert l.__len__() == 4802
-    assert l[2].__len__() == 3
+    assert len(l) == 4802
+    assert len(l[2]) == 3
     
     
 def test_has_complex_result():

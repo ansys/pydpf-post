@@ -3,10 +3,10 @@ import os
 from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.common import _AnalysisType
-from ansys.dpf.post.static_analysis import StaticAnalysisResult
-from ansys.dpf.post.modal_analysis import ModalAnalysisResult
-from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisResult
-from ansys.dpf.post.transient_analysis import TransientAnalysisResult
+from ansys.dpf.post.static_analysis import StaticAnalysisSolution
+from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
+from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
+from ansys.dpf.post.transient_analysis import TransientAnalysisSolution
 
 
 if not dpf.core.has_local_server():
@@ -32,33 +32,26 @@ HARMONIC_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rth_operat
 TRANSIENT_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'expansion', 
                                    'msup', 'Transient', 'plate1','file.rst')
 
-
-def test_build_docs():
-    post.build_docs()
-    assert os.path.exists("dataProcessingDoc.html")
-    os.remove("dataProcessingDoc.html")
-    assert not os.path.exists("dataProcessingDoc.html")
-    
     
 def test_call_result_object_static():
     result = post.solution(STATIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.static
-    assert isinstance(result, StaticAnalysisResult)
+    assert isinstance(result, StaticAnalysisSolution)
     
     
 def test_call_result_object_modal():
     result = post.solution(MODAL_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.modal
-    assert isinstance(result, ModalAnalysisResult)
+    assert isinstance(result, ModalAnalysisSolution)
     
     
 def test_call_result_object_harmonic():
     result = post.solution(HARMONIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.harmonic
-    assert isinstance(result, HarmonicAnalysisResult)
+    assert isinstance(result, HarmonicAnalysisSolution)
     
     
 def test_call_result_object_transient():
     result = post.solution(TRANSIENT_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.transient
-    assert isinstance(result, TransientAnalysisResult)
+    assert isinstance(result, TransientAnalysisSolution)

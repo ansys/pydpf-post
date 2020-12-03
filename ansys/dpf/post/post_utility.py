@@ -5,56 +5,35 @@ import os
 from ansys import dpf
  
 from ansys.dpf.post.common import _AnalysisType
-from ansys.dpf.post.static_analysis import StaticAnalysisResult
-from ansys.dpf.post.modal_analysis import ModalAnalysisResult
-from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisResult
-from ansys.dpf.post.transient_analysis import TransientAnalysisResult
+from ansys.dpf.post.static_analysis import StaticAnalysisSolution
+from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
+from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
+from ansys.dpf.post.transient_analysis import TransientAnalysisSolution
         
 
-def solution(data_sources=None, channel=None):
+def solution(data_sources):
     """Return a Result object which can provide information on a given set, on a given scoping...
     
     Parameters
     ----------
-    Can be a filepath to the file you want to open, or a dpf.core.DataSources().
+    str
+        Can be a filepath to the file you want to open, or a dpf.core.DataSources().
         
     Examples
     --------
-    result = post.result("file.rst")
+    solution = post.solution("file.rst")
     """
-    _model = Model(data_sources, channel)
+    _model = Model(data_sources)
     analysis_type = _model.metadata.result_info.analysis_type
     data_sources = _model.metadata.data_sources
     if(analysis_type == _AnalysisType.static):
-        return StaticAnalysisResult(data_sources, _model)
+        return StaticAnalysisSolution(data_sources, _model)
     elif (analysis_type == _AnalysisType.modal):
-        return ModalAnalysisResult(data_sources, _model)
+        return ModalAnalysisSolution(data_sources, _model)
     elif (analysis_type == _AnalysisType.harmonic):
-        return HarmonicAnalysisResult(data_sources, _model)
+        return HarmonicAnalysisSolution(data_sources, _model)
     elif (analysis_type == _AnalysisType.transient):
-        return TransientAnalysisResult(data_sources, _model)
+        return TransientAnalysisSolution(data_sources, _model)
     else:
         raise Exception("Unknown model.metadata.result_info.")
      
-        
-def build_docs(path=None):
-    """Build HTML documentation.  This outputs all available
-    operator types for the loaded operators.
-
-    HTML is saved in the directory mentionned as parameters.
-    
-    Example
-    -----
-    from ansys.dpf import post
-    post.build_doc("d:/temp/dpf_doc.html")
-    
-    Parameters
-    -----
-    str: output path for the documentation. Default is current directory.
-    """
-    if path is None:
-        path = os.getcwd()
-        path += "/dataProcessingDoc.html"
-    doc_op = dpf.core.Operator('html_doc')
-    doc_op.inputs.output_path.connect(path)
-    doc_op.run()

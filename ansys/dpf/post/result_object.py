@@ -32,7 +32,7 @@ class Result:
         if _AvailableKeywords.time_scoping in kwargs:
             self._time_scoping = kwargs.pop(_AvailableKeywords.time_scoping)
             
-        if (kwargs.__len__() > 0):
+        if (len(kwargs) > 0):
             txt = "Following keyword arguments could not be computed: \n"
             for key in kwargs:
                 txt += "- " + key + "\n"
@@ -53,7 +53,7 @@ class Result:
                         value_temp = "["
                         for val in value:
                              value_temp += str(val) + ","
-                        value_temp = value_temp[:value_temp.__len__()-1]
+                        value_temp = value_temp[:len(value_temp)-1]
                         value_temp += "]"
                         value = value_temp
                     txt += " - "+ attr
@@ -61,35 +61,36 @@ class Result:
         return txt
     
     @property
-    def location(self):
-        """Location property. Can be set. 
-        Type: str. 
+    def location(self) -> str:
+        """str: Location property. Can be set. 
         post.locations enum can be used.
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.location = post.locations.elemental
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.location = post.locations.elemental
         """
         return self._location
 
     @location.setter
     def location(self, value):
+        if not isinstance(value, str):
+            raise Exception("Expected type is str.")
         self._location = value
         
     @property
-    def element_scoping(self):
+    def element_scoping(self): 
         """Elemental scoping property. Can be set. 
-        Type: list, or dpf.core.Scoping. 
+        Available types: list, or dpf.core.Scoping. 
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.element_scoping = [1, 4]
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.element_scoping = [1, 4]
         """
         return self._element_scoping
 
@@ -98,16 +99,16 @@ class Result:
         self._element_scoping = value
         
     @property
-    def node_scoping(self):
+    def node_scoping(self): 
         """Nodal scoping property. Can be set. 
-        Type: list, or dpf.core.Scoping. 
+        Available types: list, or dpf.core.Scoping. 
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.node_scoping = [1, 4]
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.node_scoping = [1, 4]
         """
         return self._node_scoping
 
@@ -116,54 +117,56 @@ class Result:
         self._node_scoping = value
         
     @property
-    def named_selection(self):
-        """Named selection property. Can be set. 
-        Type: str.
-        The named selection name must be written following upper case.
+    def named_selection(self) -> str:
+        """str: Named selection property. Can be set. 
+        /!\ MAPDL named selection name must be written following upper case.
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.node_scoping = 'SELECTION'
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.node_scoping = 'SELECTION'
         """
         return self._named_selection
 
     @named_selection.setter
     def named_selection(self, value):
+        if not isinstance(value, str):
+            raise Exception("Expected type is str.")
         self._named_selection = value
         
     @property
-    def grouping(self):
-        """Grouping property. Can be set. 
-        Type: str.
+    def grouping(self) -> str:
+        """str: Grouping property. Can be set. 
         post.grouping enum can be used.
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.node_scoping = post.grouping.by_el_shape
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.node_scoping = post.grouping.by_el_shape
         """
         return self._grouping
 
     @grouping.setter
     def grouping(self, value):
+        if not isinstance(value, str):
+            raise Exception("Expected type is str.")
         self._grouping = value
         
     @property
     def time_scoping(self):
         """Time scoping property. Can be set. 
-        Type: list, or dpf.core.Scoping. 
+        Available types: list, or dpf.core.Scoping. 
         
-        Example
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.time_scoping = [1, 4]
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.time_scoping = [1, 4]
         """
         return self._time_scoping
 
@@ -172,21 +175,24 @@ class Result:
         self._time_scoping = value
         
     @property
-    def mapdl_grouping(self):
-        """Mapdl grouping property. Can be set. 
-        Type: int.
+    def mapdl_grouping(self) -> int:
+        """int: Mapdl grouping property. Can be set. 
+        Following is an example to get only solid 186 
+        mapdl element type.
         
-        Example to get only solid 186 mapdl element type:
-        -----
-        from ansys.dpf import post
-        solution = post.solution("file.rst")
-        stress = solution.stress()
-        stress.mapdl_grouping = 186
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.solution("file.rst")
+        >>> stress = solution.stress()
+        >>> stress.mapdl_grouping = 186
         """
         return self._mapdl_grouping
 
     @mapdl_grouping.setter
-    def mapdl_grouping(self, value):
+    def mapdl_grouping(self, value): 
+        if not isinstance(value, int):
+            raise Exception("Expected type is int.")
         self._mapdl_grouping = value
         
         
