@@ -214,3 +214,12 @@ def test_get_scoping_at_field():
     assert scop[2] == 95
     
     
+def test_print():
+    result = post.load_solution(TRANSIENT_FILE_PATH)
+    print(result)
+    d = result.displacement(time_scoping=[1, 2, 4])
+    print(d)
+    disp = d.vector
+    print(disp)
+    
+    

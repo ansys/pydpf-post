@@ -25,7 +25,7 @@ class ResultEvaluator:
         
         self._model = model
         self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
-        
+        self.subresult = subresult
         
         if (subresult != None):
             operator_name += subresult
