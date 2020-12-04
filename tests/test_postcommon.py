@@ -8,7 +8,6 @@ if not dpf.core.has_local_server():
     
 def test_available_keywords():
     txt = post.available_keywords().__str__()
-    assert "el_shape" in txt
     assert "element_scoping" in txt
     assert "grouping" in txt
     assert "location" in txt

@@ -1,7 +1,7 @@
-"""Module containing the specific Modal Analysis Result class."""
+"""Module containing the specific Modal Analysis Solution class."""
 
-from ansys.dpf.post.dpf_result import DpfComplexResult
+from ansys.dpf.post.dpf_solution import DpfComplexSolution
 
 
-class ModalAnalysisResult(DpfComplexResult):
-    """Modal result class, which will provide all the API for Modal analysis."""
+class ModalAnalysisSolution(DpfComplexSolution):
+    """Modal solution class, which will provide all the API for Modal analysis."""

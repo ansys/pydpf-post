@@ -25,11 +25,11 @@ class Grouping(Enum):
     """Class with Enum inheritance. Must be used to 
     describe a grouping command when the API allows it.
     
-    Example
-    -----
-    from ansys.dpf import post
-    result = post.result("file.rst")
-    disp = result.elemental_stress(element_shape = post.grouping.by_el_shape)
+    Examples
+    --------
+    >>> from ansys.dpf import post
+    >>> solution = post.solution("file.rst")
+    >>> disp = solution.elemental_stress(element_shape = post.grouping.by_el_shape)
     """
     by_el_shape = 1
     by_material = 2
@@ -38,7 +38,7 @@ class Grouping(Enum):
     
 class _AvailableKeywords():
     """Contains all the keywords that can be used inside of 
-    a method from a post.result(file_path) object. 
+    a method from a post.solution(file_path) object. 
     
     In order to view the complete list of available keywords, use:
         print(post.available_kewords())
@@ -47,7 +47,6 @@ class _AvailableKeywords():
     node_scoping = "node_scoping"
     element_scoping = "element_scoping"
     named_selection = "named_selection"
-    el_shape = "el_shape"
     time = "time"
     # substep = "substep"
     set = "set"

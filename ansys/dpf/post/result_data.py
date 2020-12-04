@@ -1,17 +1,16 @@
 """Module containing the _ResultData class ("result object") that
-user will be able to compute through the DPF Post API."""
+user will be able to use to compute through the DPF Post API.
 
-import numpy as np
+This is a fields container wrapper."""
+
 import pyvista as pv
 import matplotlib.pyplot as pyplot
 import os
 import sys
-from collections import OrderedDict
-from ansys import dpf
 from ansys.dpf.core import Operator
+from ansys.dpf.core.common import types
 from ansys.dpf.core.rescoper import Rescoper as _Rescoper
-from ansys.dpf.core.common import types, locations
-from ansys.dpf.post.common import Grouping, _AvailableKeywords
+from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
 class ResultData:
@@ -19,212 +18,66 @@ class ResultData:
     Created thanks to the dpf result object, itself instantiated from post.
     
     Parameters
-    -----
+    ----------
     Following list of keywords:
         - location
         - node_scoping
         - element_scoping
-        - named_selection
-        - phase
-        - time_step
-        - el_shape
+        - time
         - grouping
         (...)
-        
     The whole list of parameters can be found using print(post.available_keywords()).
     
-    Example
-    -----
-    from ansys.dpf import post
-    result = post.result("file.rst")
-    disp = result.nodal_displacement() 
-    disp_on_nodes = result.nodal_displacement(node_scoping = [1, 23]) 
-    disp_on_named_selection = result.nodal_displacement(named_selection = "SELECTION")
+    Examples
+    --------
+    >>> from ansys.dpf import post
+    >>> solution = post.solution("file.rst")
+    >>> disp = solution.nodal_displacement() 
+    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23]) 
+    >>> disp_on_named_selection = solution.nodal_displacement(named_selection = "SELECTION")
     """
     
-    def __init__(self, operator_name: str, data_sources, model, instance, 
+    def __init__(self, operator_name: str, data_sources, model, 
+                 elem_average: bool, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
-                 el_shape = None, time = None, 
+                 time = None, 
                  grouping = None, phase = None, subresult = None, 
                  mapdl_grouping = None, set = None, time_scoping = None):
-        #!TODO: all kwargs* as attributes 
-        self.location = location
         
-        self._model = model
+        self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average, 
+                 location, element_scoping, node_scoping, named_selection, time, 
+                 grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
-        self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
-        
-        self._data_sources = data_sources
-        if (subresult != None):
-            operator_name += subresult
-        self._result_operator = dpf.core.Operator(operator_name)
-        self._result_operator.inputs.connect(data_sources)
-
-        error_scoping = "Only dpf.core.Scoping list are supported as scoping."
-        if (location != None):
-            self._result_operator.inputs.requested_location.connect(location)
-        if (element_scoping != None and node_scoping != None):
-            raise Exception("Impossible to use both element_scoping and node_scoping.")
-        if (element_scoping != None):
-            scoping = element_scoping
-            if not isinstance(element_scoping, dpf.core.scoping.Scoping):
-                scoping = dpf.core.Scoping()
-                scoping.location = locations.elemental
-                if isinstance(element_scoping, list):
-                    scoping.ids = element_scoping
-                else:
-                    raise Exception(error_scoping)
-            self._result_operator.inputs.mesh_scoping.connect(scoping)
-        if (node_scoping != None):
-            scoping = node_scoping
-            if not isinstance(node_scoping, dpf.core.scoping.Scoping):
-                scoping = dpf.core.Scoping()
-                scoping.location = locations.nodal
-                if isinstance(node_scoping, list):
-                    scoping.ids = node_scoping
-                else:
-                    raise Exception(error_scoping)
-            self._result_operator.inputs.mesh_scoping.connect(scoping)
-        if (time_scoping != None):
-            t_scoping = time_scoping
-            if not isinstance(time_scoping, dpf.core.scoping.Scoping):
-                t_scoping = dpf.core.Scoping()
-                if isinstance(time_scoping, list):
-                    t_scoping.ids = time_scoping
-                else:
-                    raise Exception(error_scoping)
-            self._result_operator.inputs.time_scoping.connect(t_scoping)  
-        #chained before the result_operator
-        if (named_selection != None):
-            self._check_if_scoping(node_scoping, element_scoping)
-            ns_op = Operator("scoping_provider_by_ns")
-            ns_op.inputs.data_sources.connect(data_sources)
-            ns_op.inputs.named_selection_name.connect(named_selection)
-            self._result_operator.inputs.mesh_scoping.connect(ns_op.outputs.mesh_scoping)
-            self._chained_operators[ns_op.name] = """This operator will compute a scoping from a named selection name. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (grouping != None):
-            self._check_if_scoping(node_scoping, element_scoping)
-            # part for grouping by_material/by_el_shape
-            mesh_provider = Operator("MeshProvider")
-            mesh_provider.inputs.data_sources.connect(self._data_sources)
-            scop_op = Operator("scoping::by_property")
-            scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh) #default output location is elemental
-            if (location != None):
-                if(location == locations.nodal):
-                    scop_op.inputs.requested_location.connect(locations.nodal)
-                else:
-                    scop_op.inputs.requested_location.connect(locations.elemental)
-            else:
-                scop_op.inputs.requested_location.connect(locations.nodal)
-            if (grouping == Grouping.by_material) or (grouping == Grouping.by_body):
-                scop_op.inputs.label1.connect("mat")
-            elif(grouping == Grouping.by_el_shape):
-                 scop_op.inputs.label1.connect("elshape")            
-            else:
-                raise Exception("Grouping impossible. Use the keyword argument as: grouping = grouping.by_el_shape, grouping = grouping.by_material...")
-            self._result_operator.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
-            self._chained_operators[scop_op.name] = """This operator will compute a scoping from a grouping option. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (mapdl_grouping != None):
-            self._check_if_scoping(node_scoping, element_scoping)
-            # part for grouping by_el_type
-            #!TODO, replace grouping.by_el_type_mapdl... by grouping.by_el_type (general case)
-            scop_by_prop_op = Operator("scoping_provider_by_prop")
-            scop_by_prop_op.inputs.property_name.connect("mapdl_element_type")
-            scop_by_prop_op.inputs.data_sources.connect(self._data_sources)
-            scop_by_prop_op.inputs.property_id.connect(mapdl_grouping)
-            scop_by_prop_op.inputs.requested_location.connect(locations.elemental)
-            self._result_operator.inputs.mesh_scoping.connect(scop_by_prop_op.outputs.mesh_scoping)
-            self._chained_operators[scop_by_prop_op.name] = """This operator will compute a scoping from a mapdl elemen type id. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (set != None):
-            if (time != None):
-                raise Exception("'time' and 'set' keyword can not be used simultaneously.")
-            if not isinstance(set, int):
-                raise Exception("Set argument must be an int value.")
-            time_scoping = dpf.core.Scoping()
-            time_scoping.ids = [set]
-            self._result_operator.inputs.time_scoping.connect(time_scoping)
-        #add the result operator
-        self._chained_operators[self._result_operator.name] = "Result operator. Compute the wanted result"
-        #chained after the result_operator
-        if (phase != None):
-            self._get_evaluation_with_sweeping_phase(phase)
-        if (time != None):
-            if (set != None):
-                raise Exception("'time' and 'set' keyword can not be used simultaneously.")
-            if not isinstance(time, float):
-                raise Exception("Time argument must be a float value.")
-            time_scoping = dpf.core.Scoping()
-            tfq = self._model.metadata.time_freq_support
-            data = tfq.frequencies.data
-            temp_array = np.array([])
-            for d in data:
-                temp_array = np.append(temp_array, round(d, 5))
-            if time in temp_array:
-                index = tfq.get_cumulative_index(freq = time)
-                time_scoping.ids = [index + 1]
-                self._result_operator.inputs.time_scoping.connect(time_scoping)
-            else:
-                # centroid when time value is between to time steps
-                lower_index = tfq.get_cumulative_index(freq = time)
-                time_scoping.ids = [lower_index+1, lower_index+2]
-                self._result_operator.inputs.time_scoping.connect(time_scoping)
-                centroid_op = Operator("centroid")
-                time1 = tfq.get_frequency(cumulative_index=lower_index)
-                time2 = tfq.get_frequency(cumulative_index=(lower_index+1))
-                factor = (time - time1) / (time2 - time1)
-                centroid_op.inputs.factor.connect(factor)
-                outp = self._result_operator.outputs.fields_container()
-                fieldA = outp[0]
-                fieldB = outp[1]
-                centroid_op.inputs.fieldA.connect(fieldA)
-                centroid_op.inputs.fieldB.connect(fieldB)
-                self._chained_operators[centroid_op.name] = "This operator will compute the centroid of two fields obtained with a time scoping containing two times."
-                forward_op = Operator("forward_fc")
-                forward_op.inputs.fields.connect(centroid_op.outputs.field)
-                self._result_operator = forward_op
-                
+             
             
     def __str__(self):
         self._evaluate_result()
         name = self.result_fields_container[0].name.split("_")
-        txt = "%s result.\n\n" % name[0].capitalize()
+        txt = "%s result.\n" % name[0].capitalize()
+        if (self._evaluator.subresult is not None):
+            txt += "%s component. \n" % self._evaluator.subresult
+        txt += "\n"
         txt += "The result is computed thanks to dpf.core.Operator objects, "
         txt += "that are chained together regarding the following list: \n"
-        for key, val in self._chained_operators.items():
+        for key, val in self._evaluator._chained_operators.items():
             txt += "- %s: " % key
             txt += val
             txt += "\n"
+        # txt += "\n\n"
+        # txt += self._evaluator._model.__str__()
         return txt
     
-    def _check_if_scoping(self, node_scoping, element_scoping):
-        if (node_scoping != None) or (element_scoping != None):
-            txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/" + _AvailableKeywords.named_selection + " ones."
-            raise Exception(txt)
-      
-    def _check_if_several_grouping(self, grouping, mapdl_grouping):
-        if (grouping != None) and (mapdl_grouping != None):
-            raise Exception("Both keywords grouping and mapdl_grouping can not be used simultaneously.")
-        
+    
     def _evaluate_result(self):
         """First evaluation of the result."""
         if (self.result_fields_container == None):
-            result_fc = self._result_operator.get_output(0, types.fields_container)
-            self.result_fields_container = result_fc
+            self.result_fields_container = self._evaluator.evaluate_result()
             
     def _evaluate_result_forced(self):
         """Re-evaluation of the result."""
-        result_fc = self._result_operator.get_output(0, types.fields_container)
-        self.result_fields_container = result_fc
+        self.result_fields_container = self._evaluator.evaluate_result()
         
-    def _get_evaluation_with_sweeping_phase(self, phase):
-        """Connects needed operator to compute the result regarding the specified phase."""
-        sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
-        sweeping_phase_op.inputs.fields_container.connect(self._result_operator.outputs.fields_container)
-        sweeping_phase_op.inputs.angle.connect(phase)
-        sweeping_phase_op.inputs.unit_name.connect("deg")
-        self._chained_operators[sweeping_phase_op.name] = """This operator will compute the result at a given phase (when result has complex values)."""
-        self._result_operator = sweeping_phase_op
         
     def get_all_label_spaces(self):
         """Returns all the label spaces contained in a result 
@@ -232,13 +85,13 @@ class ResultData:
         Labels can be used to select fields to plot.
         
         Returns
-        -----
+        -------
         str
         """
         self._evaluate_result()
         i = 0
         txt = ""
-        while i < self.result_fields_container.__len__():
+        while i < len(self.result_fields_container):
             txt += self.result_fields_container.get_label_space(i).__str__()
             txt += "\n"
             i += 1
@@ -247,7 +100,7 @@ class ResultData:
     def num_fields(self):
         """Returns the number of fields contained in the result."""
         self._evaluate_result()
-        return self.result_fields_container.__len__()
+        return len(self.result_fields_container)
     
     def data_at_field(self, field_index: int = 0):
         """Returns the data at the field with the specified index."""
@@ -328,7 +181,7 @@ class ResultData:
         self._evaluate_result()
         plotter = pv.Plotter()
         mesh_provider = Operator("MeshProvider")
-        mesh_provider.inputs.data_sources.connect(self._data_sources)
+        mesh_provider.inputs.data_sources.connect(self._evaluator._model.metadata.data_sources)
         vtk_export = Operator("vtk_export")
         path = os.getcwd()
         file_name = "dpf_temporary_hokflb2j9sjd0a3.vtk"
@@ -357,16 +210,16 @@ class ResultData:
         If transient analysis, plot the last result if no time_scoping has been specified.
         
         Parameters
-        -----
+        ----------
         display_option: str (the name of the label you want to display). Default is "time".
         option_id: int (the list of label ids you want to display). Default is [1].
         
         Help
-        -----
+        ----
         The self.get_all_label_spaces() will return a string containing all the label spaces.
         
-        Example
-        -----
+        Examples
+        --------
         The following labels are obtained using the self.get_all_label_spaces():
             {'mat': 1, 'time': 1}
             {'mat': 0, 'time': 1}
@@ -379,26 +232,21 @@ class ResultData:
             import warnings
             warnings.simplefilter("ignore")
         plotter = pv.Plotter()
-        #comment savoir si je dois plotter en fct du maillage ou du tfq ? 
-        #quid des fc qui contiennent des fields séparés pour un même modèle ? (par ex: fct de el_shape)
-        #-> Operator("GetSupportFromField") will return the mesh of a given field
-        #-> plotter.add_mesh(scalars...)
-        #quid si scoping ? Pour l'instant pas ok
-        mesh = self._model.metadata.meshed_region
+        mesh = self._evaluator._model.metadata.meshed_region
         grid = mesh.grid
-        nan_opacity = 0.1
         nan_color = "grey"
-        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, self.result_fields_container[0].component_count) #location will be the same on all fields
-        if (self.result_fields_container.__len__() == 1):
+        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, 
+                             self.result_fields_container[0].component_count) #location will be the same on all fields
+        if (len(self.result_fields_container) == 1):
             field = rescoper.rescope(self.result_fields_container[0])
-            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, stitle = self.result_fields_container[0].name, show_edges=True)
+            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, 
+                              stitle = self.result_fields_container[0].name, show_edges=True)
+            
         else:
-            nan_scalars = rescoper.get_nan_field()
-            plotter.add_mesh(grid, scalars = nan_scalars, nan_color=nan_color, show_edges = True)
             label_spaces = []
             for opt_id in option_id:
                 i = 0
-                while i < self.result_fields_container.__len__():
+                while i < len(self.result_fields_container):
                     label_space = {}
                     label_space[display_option] = opt_id
                     fc_label = self.result_fields_container.get_label_space(i)
