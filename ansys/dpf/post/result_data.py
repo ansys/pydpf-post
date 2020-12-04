@@ -15,7 +15,7 @@ from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 class ResultData:
     """Instance of the result of a dpf result object.
-    Created thanks to the dpf result object, itself instantiated from post.
+    Created thanks to the dpf result object.
     
     Parameters
     ----------
@@ -26,7 +26,7 @@ class ResultData:
         - time
         - grouping
         (...)
-    The whole list of parameters can be found using print(post.available_keywords()).
+    The whole list of parameters can be found using post.print_available_keywords().
     
     Examples
     --------
@@ -86,23 +86,24 @@ class ResultData:
         
         Returns
         -------
-        str
+        list 
+            List of dictionary (list of label space)
         """
         self._evaluate_result()
         i = 0
-        txt = ""
+        list_labels = []
         while i < len(self.result_fields_container):
-            txt += self.result_fields_container.get_label_space(i).__str__()
-            txt += "\n"
+            list_labels.append(self.result_fields_container.get_label_space(i))
             i += 1
-        return txt
+        return list_labels
     
+    @property
     def num_fields(self):
         """Returns the number of fields contained in the result."""
         self._evaluate_result()
         return len(self.result_fields_container)
     
-    def data_at_field(self, field_index: int = 0):
+    def get_data_at_field(self, field_index: int = 0):
         """Returns the data at the field with the specified index."""
         self._evaluate_result()
         return self.result_fields_container[field_index].data
@@ -115,7 +116,7 @@ class ResultData:
         self._evaluate_result()
         return self.result_fields_container[field_index]
     
-    def scoping_at_field(self, field_index: int = 0):
+    def get_scoping_at_field(self, field_index: int = 0):
         """Returns the scoping of the result."""
         self._evaluate_result()
         field = self.result_fields_container[field_index]
@@ -128,7 +129,8 @@ class ResultData:
         max_operator.inputs.connect(self.result_fields_container)
         result = max_operator.get_output(pin, types.field)
         return result
-        
+    
+    @property    
     def max(self):
         """Returns the maximum values field. 
         Chains the result operator to the "min_max_fc" operator, 
@@ -136,6 +138,7 @@ class ResultData:
         """
         return self._min_max(1)
     
+    @property
     def max_data(self):
         """Returns the maximum values field data. 
         Chains the result operator to the "min_max_fc" operator, 
@@ -143,13 +146,14 @@ class ResultData:
         """
         return self._min_max(1).data
     
-    def max_data_at_field(self, field_index: int = 0):
+    def get_max_data_at_field(self, field_index: int = 0):
         """Returns the maximum values field data at field_index. 
         Chains the result operator to the "min_max_fc" operator, 
         returns its result (output from pin 1).
         """
         return self._min_max(1).data[field_index]
     
+    @property
     def min(self):
         """Returns the minimum values field. 
         Chains the result operator to the "min_max_fc" operator, 
@@ -157,6 +161,7 @@ class ResultData:
         """
         return self._min_max(0)
     
+    @property
     def min_data(self):
         """Returns the minimum values field data. 
         Chains the result operator to the "min_max_fc" operator, 
@@ -164,7 +169,7 @@ class ResultData:
         """
         return self._min_max(0).data
     
-    def min_data_at_field(self, field_index: int = 0):
+    def get_min_data_at_field(self, field_index: int = 0):
         """Returns the minimum values field data at field_index. 
         Chains the result operator to the "min_max_fc" operator, 
         returns its result (output from pin 0).

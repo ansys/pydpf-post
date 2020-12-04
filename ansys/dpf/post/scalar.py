@@ -6,9 +6,11 @@ class Scalar(Result):
     """Child class of the Result one.
     Implements a scalar result (temperature).
     """
-    def scalar(self, **kwargs):
+    
+    @property
+    def scalar(self):
         """Returns the scalar values as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model)
     
     def __str__(self):
         txt = "Scalar object. \n\n"

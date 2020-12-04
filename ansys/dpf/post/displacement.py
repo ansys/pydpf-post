@@ -1,6 +1,7 @@
 """This module contains the displacement result class ."""
 
 from ansys.dpf.post.vector import Vector
+from ansys.dpf.core import locations
 
 
 class Displacement(Vector):
@@ -9,8 +10,11 @@ class Displacement(Vector):
         super().__init__(**kwargs)
         self._operator_name = "U"
         
+        if self.definition.location != locations.nodal:
+            raise Exception("The location must be nodal.")
+        
     def __str__(self):
         txt = super().__str__()
         txt += "\n"
-        txt += "This is a displacement result."
+        txt += "This is a displacement object."
         return txt
