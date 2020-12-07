@@ -7,9 +7,10 @@ import pyvista as pv
 import matplotlib.pyplot as pyplot
 import os
 import sys
-from ansys.dpf.core import Operator
+from ansys.dpf.core import Operator, FieldsContainer
 from ansys.dpf.core.common import types
 from ansys.dpf.core.rescoper import Rescoper as _Rescoper
+from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
@@ -184,32 +185,11 @@ class ResultData:
         
         This method is private, publishes a vtk file and print (using pyvista) from this file."""
         self._evaluate_result()
-        plotter = pv.Plotter()
-        mesh_provider = Operator("MeshProvider")
-        mesh_provider.inputs.data_sources.connect(self._evaluator._model.metadata.data_sources)
-        vtk_export = Operator("vtk_export")
-        path = os.getcwd()
-        file_name = "dpf_temporary_hokflb2j9sjd0a3.vtk"
-        path += "/" + file_name
-        vtk_export.inputs.mesh.connect(mesh_provider.outputs.mesh)
-        vtk_export.inputs.fields1.connect(self.result_fields_container)
-        vtk_export.inputs.file_path.connect(path)
-        vtk_export.run()
-        grid = pv.read(path)
-        if os.path.exists(path):
-            os.remove(path)
-        names = grid.array_names
-        field_name = self.result_fields_container[0].name
-        for n in names: #get new name (for example if time_steps)
-            if field_name in n:
-                field_name = n #default: will plot the last time_step 
-        val = grid.get_array(field_name)
-        plotter.add_mesh(grid, scalars=val, stitle = field_name, show_edges=True)
-        plotter.add_axes()
-        plotter.show()
+        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+        pl._plot_contour_using_vtk_file(self.result_fields_container)
         
     
-    def plot_contour(self, display_option: str = "time", option_id: [int] = [1]):
+    def plot_contour(self, display_option: str = "time", option_id = 1):
         """Plot the contour result on its mesh support. The obtained figure depends on the 
         support (can be a meshed_region or a time_freq_support).
         If transient analysis, plot the last result if no time_scoping has been specified.
@@ -233,23 +213,17 @@ class ResultData:
         To get the plotted result at the time_step number 2, use: self.plot_contour("time", [1])
         """
         self._evaluate_result()
-        if not sys.warnoptions:
-            import warnings
-            warnings.simplefilter("ignore")
-        plotter = pv.Plotter()
-        mesh = self._evaluator._model.metadata.meshed_region
-        grid = mesh.grid
-        nan_color = "grey"
-        rescoper = _Rescoper(mesh, self.result_fields_container[0].location, 
-                             self.result_fields_container[0].component_count) #location will be the same on all fields
+        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         if (len(self.result_fields_container) == 1):
-            field = rescoper.rescope(self.result_fields_container[0])
-            plotter.add_mesh(grid, scalars = field, opacity=1.0, nan_color=nan_color, 
-                              stitle = self.result_fields_container[0].name, show_edges=True)
-            
+            pl.plot_contour(self.result_fields_container)
         else:
+            #sorts and createsa new fields_container with only the wanted labels
+            ids = option_id
+            if isinstance(option_id, int):
+                ids = [option_id]
+            new_fields_container = FieldsContainer()
             label_spaces = []
-            for opt_id in option_id:
+            for opt_id in ids:
                 i = 0
                 while i < len(self.result_fields_container):
                     label_space = {}
@@ -262,15 +236,17 @@ class ResultData:
                                     label_space[lab] = fc_label[lab]
                     label_spaces.append(label_space)
                     i += 1
+            lab_names = []
+            for lab_sp in label_spaces:
+                for key, val in lab_sp.items():
+                    if key not in lab_names:
+                        lab_names.append(key)
+            for name in lab_names:
+                new_fields_container.add_label(name)
             for label in label_spaces:
-                field_to_rescope = self.result_fields_container._get_entries(label)
-                if field_to_rescope is None:
-                    raise Exception("The label " + label.__str__() + " does not exist in the fields container.")
-                name = self.result_fields_container[0].name.split("_")[0]
-                field = rescoper.rescope(field_to_rescope)
-                plotter.add_mesh(grid, scalars = field, nan_color=nan_color, stitle = name, show_edges=True)
-        plotter.add_axes()
-        plotter.show()
+                field = self.result_fields_container._get_entries(label)
+                new_fields_container.add_field(label, field)
+            pl.plot_contour(new_fields_container)
         
     
         
@@ -278,24 +254,15 @@ class ResultData:
         """Plot the minimum/maximum result values over time 
         if the time_freq_support contains several time_steps 
         (for example: transient analysis)"""
-        tfq = self._model.metadata.time_freq_support
+        self._evaluate_result()
+        tfq = self._evaluator._model.metadata.time_freq_support
         timeids = list(range(1,tfq.n_sets+1))
-        self._result_operator.inputs.time_scoping.connect(timeids)
-        self._evaluate_result_forced()
-        time_field = tfq.frequencies
-        normOp = Operator("norm_fc")
-        minmaxOp = Operator("min_max_fc")
-        normOp.inputs.fields_container.connect(self.result_fields_container)
-        minmaxOp.inputs.connect(normOp.outputs)
-        fieldMin = minmaxOp.outputs.field_min()
-        fieldMax = minmaxOp.outputs.field_max()
-        pyplot.plot(time_field.data,fieldMax.data,'r',label='Maximum')
-        pyplot.plot(time_field.data,fieldMin.data,'b',label='Minimum')
-        pyplot.xlabel("time (s)")
-        pyplot.ylabel(self._result_operator.name + fieldMin.unit)
-        substr = self.result_fields_container[0].name.split("_")
-        pyplot.title( substr[0] + ": min/max values over time")
-        pyplot.legend()
+        res_op = self._evaluator._result_operator
+        res_op.inputs.time_scoping.connect(timeids)
+        new_fields_container = res_op.get_output(0, types.fields_container)
+        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+        pl.plot_chart(new_fields_container)
+        
         
         
     def is_complex_result(self):
