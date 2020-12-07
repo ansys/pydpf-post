@@ -1,17 +1,15 @@
 """Module containing the methode to instantiate the result object. Initialization of post objects."""
 
 from ansys.dpf.core.model import Model 
-import os
-from ansys import dpf
  
-from ansys.dpf.post.common import _AnalysisType
+from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords
 from ansys.dpf.post.static_analysis import StaticAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.transient_analysis import TransientAnalysisSolution
         
 
-def solution(data_sources):
+def load_solution(data_sources):
     """Return a Result object which can provide information on a given set, on a given scoping...
     
     Parameters
@@ -36,4 +34,9 @@ def solution(data_sources):
         return TransientAnalysisSolution(data_sources, _model)
     else:
         raise Exception("Unknown model.metadata.result_info.")
+        
+        
+def print_available_keywords():
+    txt = _AvailableKeywords().__str__()
+    print(txt)
      

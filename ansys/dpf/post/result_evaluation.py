@@ -22,61 +22,30 @@ class ResultEvaluator:
                  node_scoping = None, named_selection = None, 
                  time = None, grouping = None, phase = None, subresult = None, 
                  mapdl_grouping = None, set = None, time_scoping = None):
-
-        self.location = location
-        self.element_scoping = element_scoping
-        self.node_scoping = node_scoping
-        self.named_selection = named_selection
-        self.time = time
-        self.grouping = grouping
-        self.phase = phase
-        self.subresult = subresult
-        self.mapdl_grouping = mapdl_grouping
-        self.set = set
-        self.time_scoping = time_scoping
         
         self._model = model
         self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
-        
+        self.subresult = subresult
         
         if (subresult != None):
             operator_name += subresult
         self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
         
-        error_scoping = "Only dpf.core.Scoping list are supported as scoping."
         if (location != None):
             self._result_operator.inputs.requested_location.connect(location)
         if (element_scoping != None and node_scoping != None):
             raise Exception("Impossible to use both element_scoping and node_scoping.")
+        if (set != None and time != None) or (set != None and time_scoping != None) or (time != None and time_scoping != None):
+            raise Exception("Set, time and time_scoping keyword arguments must be used independently.")
         if (element_scoping != None):
-            scoping = element_scoping
-            if not isinstance(element_scoping, dpf.core.scoping.Scoping):
-                scoping = dpf.core.Scoping()
-                scoping.location = locations.elemental
-                if isinstance(element_scoping, list):
-                    scoping.ids = element_scoping
-                else:
-                    raise Exception(error_scoping)
+            scoping = self._compute_scoping(element_scoping, locations.elemental)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (node_scoping != None):
-            scoping = node_scoping
-            if not isinstance(node_scoping, dpf.core.scoping.Scoping):
-                scoping = dpf.core.Scoping()
-                scoping.location = locations.nodal
-                if isinstance(node_scoping, list):
-                    scoping.ids = node_scoping
-                else:
-                    raise Exception(error_scoping)
+            scoping = self._compute_scoping(node_scoping, locations.nodal)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (time_scoping != None):
-            t_scoping = time_scoping
-            if not isinstance(time_scoping, dpf.core.scoping.Scoping):
-                t_scoping = dpf.core.Scoping()
-                if isinstance(time_scoping, list):
-                    t_scoping.ids = time_scoping
-                else:
-                    raise Exception(error_scoping)
+            t_scoping = self._compute_scoping(time_scoping)
             self._result_operator.inputs.time_scoping.connect(t_scoping)  
         #chained before the result_operator
         if (named_selection != None):
@@ -120,8 +89,6 @@ class ResultEvaluator:
             self._result_operator.inputs.mesh_scoping.connect(scop_by_prop_op.outputs.mesh_scoping)
             self._chained_operators[scop_by_prop_op.name] = """This operator will compute a scoping from a mapdl elemen type id. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
         if (set != None):
-            if (time != None):
-                raise Exception("'time' and 'set' keyword can not be used simultaneously.")
             if not isinstance(set, int):
                 raise Exception("Set argument must be an int value.")
             time_scoping = dpf.core.Scoping()
@@ -133,8 +100,6 @@ class ResultEvaluator:
         if (phase != None):
             self._get_evaluation_with_sweeping_phase(phase)
         if (time != None):
-            if (set != None):
-                raise Exception("'time' and 'set' keyword can not be used simultaneously.")
             if not isinstance(time, float):
                 raise Exception("Time argument must be a float value.")
             time_scoping = dpf.core.Scoping()
@@ -170,7 +135,22 @@ class ResultEvaluator:
         if elem_average:
             self._elemental_nodal_to_elemental_result()
                 
-                
+    def _compute_scoping(self, in_scoping, in_location = None):
+        out_scoping = in_scoping
+        if not isinstance(in_scoping, dpf.core.scoping.Scoping):
+            out_scoping = dpf.core.Scoping()
+            if in_location != None:
+                out_scoping.location = in_location
+            if isinstance(in_scoping, list):
+                out_scoping.ids = in_scoping
+            elif isinstance(in_scoping, int):
+                l = [in_scoping]
+                out_scoping.ids = l
+            else:
+                error_scoping = "Only dpf.core.Scoping list or int are supported as scoping."
+                raise Exception(error_scoping)
+        return out_scoping
+            
     def _check_if_scoping(self, node_scoping, element_scoping):
         if (node_scoping != None) or (element_scoping != None):
             txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/" + _AvailableKeywords.named_selection + " ones."

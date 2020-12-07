@@ -7,45 +7,55 @@ class Tensor(Result):
     Implements a tensor result (stress, 
     strain).
     """
-    def xx(self, **kwargs):
+    @property
+    def xx(self):
         """Returns XX component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="X", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="X")
     
-    def yy(self, **kwargs):
+    @property
+    def yy(self):
         """Returns YY component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="Y", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="Y")
     
-    def zz(self, **kwargs):
+    @property
+    def zz(self):
         """Returns ZZ component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="Z", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="Z")
     
-    def xy(self, **kwargs):
+    @property
+    def xy(self):
         """Returns XY component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="XY", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="XY")
     
-    def yx(self, **kwargs):
+    @property
+    def yz(self):
         """Returns YZ component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="YZ", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="YZ")
     
-    def xz(self, **kwargs):
+    @property
+    def xz(self):
         """Returns XZ component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="XZ", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="XZ")
     
-    def principal_1(self, **kwargs):
+    @property
+    def principal_1(self):
         """Returns first principal component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="1", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="1")
     
-    def principal_2(self, **kwargs):
+    @property
+    def principal_2(self):
         """Returns second principal component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="2", **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="2")
     
-    def principal_3(self, **kwargs):
+    @property
+    def principal_3(self):
         """Returns third principal component of the tensor as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="3", **kwargs)
-        
-    def tensor(self, **kwargs):
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model, subresult="3")
+    
+    @property    
+    def tensor(self):
         """Returns the tensor values as a ResultData."""
-        return super()._get_result_data(self._operator_name, self._data_sources, self._model, **kwargs)
+        return super()._get_result_data(self._operator_name, self._data_sources, self._model)
     
     def __str__(self):
         txt = "Tensor object. \n\n"

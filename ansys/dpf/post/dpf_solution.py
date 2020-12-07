@@ -97,8 +97,8 @@ class DpfSolution:
             grouping = kwargs[_AvailableKeywords.grouping]
         if _AvailableKeywords.mapdl_grouping in kwargs:
             mapdl_grouping = kwargs[_AvailableKeywords.mapdl_grouping]
-        if _AvailableKeywords.subresult in kwargs:
-            subresult = kwargs[_AvailableKeywords.subresult]
+        if _AvailableKeywords._subresult in kwargs:
+            subresult = kwargs[_AvailableKeywords._subresult]
         if _AvailableKeywords.time_scoping in kwargs:
             time_scoping = kwargs[_AvailableKeywords.time_scoping]
         return ResultData(name, data_sources, self._model, b_elem_average, location=location, element_scoping=element_scoping, 
@@ -122,7 +122,7 @@ class DpfSolution:
     #result classes
     def _check_phase(self, **kwargs):
         if _AvailableKeywords.phase in kwargs:
-            if not isinstance(self, DpfComplexResult):
+            if not isinstance(self, DpfComplexSolution):
                 raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
                 
     def stress(self, **kwargs):

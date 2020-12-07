@@ -34,24 +34,24 @@ TRANSIENT_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'expansion
 
     
 def test_call_result_object_static():
-    result = post.solution(STATIC_FILE_PATH)
+    result = post.load_solution(STATIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.static
     assert isinstance(result, StaticAnalysisSolution)
     
     
 def test_call_result_object_modal():
-    result = post.solution(MODAL_FILE_PATH)
+    result = post.load_solution(MODAL_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.modal
     assert isinstance(result, ModalAnalysisSolution)
     
     
 def test_call_result_object_harmonic():
-    result = post.solution(HARMONIC_FILE_PATH)
+    result = post.load_solution(HARMONIC_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.harmonic
     assert isinstance(result, HarmonicAnalysisSolution)
     
     
 def test_call_result_object_transient():
-    result = post.solution(TRANSIENT_FILE_PATH)
+    result = post.load_solution(TRANSIENT_FILE_PATH)
     assert result._model.metadata.result_info.analysis_type == _AnalysisType.transient
     assert isinstance(result, TransientAnalysisSolution)
