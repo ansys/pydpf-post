@@ -84,7 +84,7 @@ def test_get_result_data_function_of_operator_nophase():
 def test_check_elemental_location():
     result = post.load_solution(TEST_FILE_PATH_RST)
     try:
-        result._nodal_displacement(location="Elemental")
+        result.misc.nodal_displacement(location="Elemental")
     except Exception as e:
         message = "Only a Nodal location can be used with a nodal result."
         e2 = Exception(message)
@@ -95,7 +95,7 @@ def test_check_elemental_location():
 def test_check_nodal_location():
     result = post.load_solution(TEST_FILE_PATH_RST)
     try:
-        result._elemental_stress(location="nodal")
+        result.misc.elemental_stress(location="nodal")
     except Exception as e:
         message = "Only an Elemental location can be used with an elemental result."
         e2 = Exception(message)
@@ -103,9 +103,9 @@ def test_check_nodal_location():
         assert type(e) == type(e2)
 
 
-def test__nodal_displacement_verbose_api():
+def test_nodal_displacement_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result._nodal_displacement()
+    disp = result.misc.nodal_displacement()
     assert isinstance(disp, ResultData)
     assert disp.num_fields == 1
     data = disp.get_data_at_field(0)
@@ -115,7 +115,7 @@ def test__nodal_displacement_verbose_api():
     assert field.location == locations.nodal
     
     
-def test__nodal_displacement():
+def test_nodal_displacement():
     result = post.load_solution(TEST_FILE_PATH_RST)
     d = result.displacement()
     disp = d.vector
@@ -130,7 +130,7 @@ def test__nodal_displacement():
     
 def test_nodal_stress_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result._nodal_stress()
+    stress = result.misc.nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)
@@ -159,9 +159,9 @@ def test_nodal_stress():
     assert field.location == locations.nodal
 
 
-def test__elemental_stress_verbose_api():
+def test_elemental_stress_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result._elemental_stress()
+    stress = result.misc.elemental_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)
@@ -174,7 +174,7 @@ def test__elemental_stress_verbose_api():
     assert field.location == locations.elemental
     
     
-def test__elemental_stress():
+def test_elemental_stress():
     result = post.load_solution(TEST_FILE_PATH_RST)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
@@ -190,9 +190,9 @@ def test__elemental_stress():
     assert field.location == locations.elemental
 
     
-def test__elemental_nodal_stress_verbose_api():
+def test_elemental_nodal_stress_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result._elemental_nodal_stress()
+    stress = result.misc.elementalmisc.nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
@@ -202,7 +202,7 @@ def test__elemental_nodal_stress_verbose_api():
     assert field.location == locations.elemental_nodal
     
     
-def test__elemental_nodal_stress():
+def test_elemental_nodal_stress():
     result = post.load_solution(TEST_FILE_PATH_RST)
     s = result.stress(location=post.locations.elemental_nodal)
     stress = s.tensor
