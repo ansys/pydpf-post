@@ -11,6 +11,7 @@ from ansys import dpf
 from ansys.dpf.core import Operator
 from ansys.dpf.core.common import types, locations
 from ansys.dpf.post.common import Grouping, _AvailableKeywords
+from ansys.dpf.core.scoping import Scoping
 
 
 class ResultEvaluator:
@@ -137,7 +138,7 @@ class ResultEvaluator:
                 
     def _compute_scoping(self, in_scoping, in_location = None):
         out_scoping = in_scoping
-        if not isinstance(in_scoping, dpf.core.scoping.Scoping):
+        if not isinstance(in_scoping, Scoping):
             out_scoping = dpf.core.Scoping()
             if in_location != None:
                 out_scoping.location = in_location
