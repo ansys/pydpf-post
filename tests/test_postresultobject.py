@@ -4,6 +4,9 @@ import unittest
 from ansys.dpf.core import locations
 from ansys.dpf import post
 from ansys.dpf.post.result_data import ResultData
+from ansys.dpf.post.scalar import Scalar, ComplexScalar
+from ansys.dpf.post.vector import Vector, ComplexVector
+from ansys.dpf.post.tensor import Tensor, ComplexTensor
 
 
 if not dpf.core.has_local_server():
@@ -20,10 +23,14 @@ else:
 FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
                               'allKindOfComplexity.rst')
 
+COMPLEX_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rth_operators',
+                              'fileComplex.rst')
+
 
 def test_scalar():
     solution = post.load_solution(FILE_PATH)
     scalar = solution.temperature()
+    assert isinstance(scalar, Scalar)
     txt = scalar.__str__()
     assert txt == "Scalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
     value = scalar.scalar
@@ -35,6 +42,7 @@ def test_scalar():
 def test_vector():
     solution = post.load_solution(FILE_PATH)
     vector = solution.displacement()
+    assert isinstance(vector, Vector)
     txt = vector.__str__()
     assert txt == "Vector object. \n\nObject properties are: \n - location = Nodal\n\nThis is a displacement object."
     value = vector.vector
@@ -59,6 +67,7 @@ def test_vector():
 def test_tensor():
     solution = post.load_solution(FILE_PATH)
     tensor = solution.stress()
+    assert isinstance(tensor, Tensor)
     txt = tensor.__str__()
     assert txt == "Stress. \nTensor object. \n\nObject properties are: \n - location = Nodal\n"
     value = tensor.tensor
@@ -102,6 +111,226 @@ def test_tensor():
     assert isinstance(ppal3, ResultData)
     assert ppal3.num_fields == 2
     assert len(ppal3[0].data) == 720
+    
+    
+def test_scalar_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    scalar = solution.complex_temperature()
+    assert isinstance(scalar, ComplexScalar)
+    txt = scalar.__str__()
+    assert txt == "Complex scalar object. \n\nScalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
+    value = scalar.scalar
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 2
+    assert value[0].data[0] == 22.
+    ampl = scalar.scalar_amplitude
+    assert ampl.num_fields == 1
+    assert ampl[0].data[0] == 31.11269837220809
+    ph = scalar.scalar_at_phase(32.)
+    assert ph.num_fields == 1
+    assert ph[0].data[0] == 6.9988343023108595
+
+
+def test_vector_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    vector = solution.complex_displacement()
+    assert isinstance(vector, ComplexVector)
+    txt = vector.__str__()
+    assert txt == "Complex vector object. \n\nVector object. \n\nObject properties are: \n - location = Nodal\n"
+    value = vector.vector
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 2
+    assert len(value[0].data) == 4802
+    assert len(value[0].data[3]) == 3
+    x = vector.x
+    assert isinstance(x, ResultData)
+    assert x.num_fields == 2
+    assert len(x[0].data) == 4802
+    y = vector.y
+    assert isinstance(y, ResultData)
+    assert y.num_fields == 2
+    assert len(y[0].data) == 4802
+    z = vector.z
+    assert isinstance(z, ResultData)
+    assert z.num_fields == 2
+    assert len(z[0].data) == 4802
+    norm = vector.norm
+    assert isinstance(z, ResultData)
+    assert norm.num_fields == 2
+    assert len(norm[0].data) == 4802
+    value = vector.vector_amplitude
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 1
+    assert len(value[0].data) == 4802
+    assert len(value[0].data[3]) == 3
+    x = vector.x_amplitude
+    assert isinstance(x, ResultData)
+    assert x.num_fields == 1
+    assert len(x[0].data) == 4802
+    y = vector.y_amplitude
+    assert isinstance(y, ResultData)
+    assert y.num_fields == 1
+    assert len(y[0].data) == 4802
+    z = vector.z_amplitude
+    assert isinstance(z, ResultData)
+    assert z.num_fields == 1
+    assert len(z[0].data) == 4802
+    norm = vector.norm_amplitude
+    assert isinstance(z, ResultData)
+    assert norm.num_fields == 1
+    assert len(norm[0].data) == 4802
+    ph = vector.vector_at_phase(59.)
+    assert isinstance(ph, ResultData)
+    assert ph.num_fields == 1
+    assert len(ph[0].data) == 4802
+    assert len(ph[0].data[3]) == 3
+    x_ph = vector.x_at_phase(59.)
+    assert isinstance(x_ph, ResultData)
+    assert x_ph.num_fields == 1
+    assert len(x_ph[0].data) == 4802
+    y_ph = vector.y_at_phase(59.)
+    assert isinstance(y_ph, ResultData)
+    assert y_ph.num_fields == 1
+    assert len(y_ph[0].data) == 4802
+    z_ph = vector.z_at_phase(59.)
+    assert isinstance(z_ph, ResultData)
+    assert z_ph.num_fields == 1
+    assert len(z_ph[0].data) == 4802
+    nrm_ph = vector.norm_at_phase(59.)
+    assert isinstance(nrm_ph, ResultData)
+    assert nrm_ph.num_fields == 1
+    assert len(nrm_ph[0].data) == 4802
+
+
+def test_tensor_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    tensor = solution.complex_stress()
+    assert isinstance(tensor, ComplexTensor)
+    txt = tensor.__str__()
+    assert txt == 'Complex stress. \nComplex tensor object. \n\nStress. \nTensor object. \n\nObject properties are: \n - location = Nodal\n'
+    value = tensor.tensor
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 2
+    assert len(value[0].data) == 4802
+    assert len(value[0].data[3]) == 6
+    xx = tensor.xx
+    assert isinstance(xx, ResultData)
+    assert xx.num_fields == 2
+    assert len(xx[0].data) == 4802
+    yy = tensor.yy
+    assert isinstance(yy, ResultData)
+    assert yy.num_fields == 2
+    assert len(yy[0].data) == 4802
+    zz = tensor.zz
+    assert isinstance(zz, ResultData)
+    assert zz.num_fields == 2
+    assert len(zz[0].data) == 4802
+    xy = tensor.xy
+    assert isinstance(xy, ResultData)
+    assert xy.num_fields == 2
+    assert len(xy[0].data) == 4802
+    yz = tensor.yz
+    assert isinstance(yz, ResultData)
+    assert yz.num_fields == 2
+    assert len(yz[0].data) == 4802
+    xz = tensor.xz
+    assert isinstance(xz, ResultData)
+    assert xz.num_fields == 2
+    assert len(xz[0].data) == 4802
+    ppal1 = tensor.principal_1
+    assert isinstance(ppal1, ResultData)
+    assert ppal1.num_fields == 2
+    assert len(ppal1[0].data) == 4802
+    ppal2 = tensor.principal_2
+    assert isinstance(ppal2, ResultData)
+    assert ppal2.num_fields == 2
+    assert len(ppal2[0].data) == 4802
+    ppal3 = tensor.principal_3
+    assert isinstance(ppal3, ResultData)
+    assert ppal3.num_fields == 2
+    assert len(ppal3[0].data) == 4802
+    value = tensor.tensor_amplitude
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 1
+    assert len(value[0].data) == 4802
+    assert len(value[0].data[3]) == 6
+    xx = tensor.xx_amplitude
+    assert isinstance(xx, ResultData)
+    assert xx.num_fields == 1
+    assert len(xx[0].data) == 4802
+    yy = tensor.yy_amplitude
+    assert isinstance(yy, ResultData)
+    assert yy.num_fields == 1
+    assert len(yy[0].data) == 4802
+    zz = tensor.zz_amplitude
+    assert isinstance(zz, ResultData)
+    assert zz.num_fields == 1
+    assert len(zz[0].data) == 4802
+    xy = tensor.xy_amplitude
+    assert isinstance(xy, ResultData)
+    assert xy.num_fields == 1
+    assert len(xy[0].data) == 4802
+    yz = tensor.yz_amplitude
+    assert isinstance(yz, ResultData)
+    assert yz.num_fields == 1
+    assert len(yz[0].data) == 4802
+    xz = tensor.xz_amplitude
+    assert isinstance(xz, ResultData)
+    assert xz.num_fields == 1
+    assert len(xz[0].data) == 4802
+    ppal1 = tensor.principal_1_amplitude
+    assert isinstance(ppal1, ResultData)
+    assert ppal1.num_fields == 1
+    assert len(ppal1[0].data) == 4802
+    ppal2 = tensor.principal_2_amplitude
+    assert isinstance(ppal2, ResultData)
+    assert ppal2.num_fields == 1
+    assert len(ppal2[0].data) == 4802
+    ppal3 = tensor.principal_3_amplitude
+    assert isinstance(ppal3, ResultData)
+    assert ppal3.num_fields == 1
+    assert len(ppal3[0].data) == 4802
+    value = tensor.tensor_at_phase(61.)
+    assert isinstance(value, ResultData)
+    assert value.num_fields == 1
+    assert len(value[0].data) == 4802
+    assert len(value[0].data[3]) == 6
+    xx = tensor.xx_at_phase(61.)
+    assert isinstance(xx, ResultData)
+    assert xx.num_fields == 1
+    assert len(xx[0].data) == 4802
+    yy = tensor.yy_at_phase(61.)
+    assert isinstance(yy, ResultData)
+    assert yy.num_fields == 1
+    assert len(yy[0].data) == 4802
+    zz = tensor.zz_at_phase(61.)
+    assert isinstance(zz, ResultData)
+    assert zz.num_fields == 1
+    assert len(zz[0].data) == 4802
+    xy = tensor.xy_at_phase(61.)
+    assert isinstance(xy, ResultData)
+    assert xy.num_fields == 1
+    assert len(xy[0].data) == 4802
+    yz = tensor.yz_at_phase(61.)
+    assert isinstance(yz, ResultData)
+    assert yz.num_fields == 1
+    assert len(yz[0].data) == 4802
+    xz = tensor.xz_at_phase(61.)
+    assert isinstance(xz, ResultData)
+    assert xz.num_fields == 1
+    assert len(xz[0].data) == 4802
+    ppal1 = tensor.principal_1_at_phase(61.)
+    assert isinstance(ppal1, ResultData)
+    assert ppal1.num_fields == 1
+    assert len(ppal1[0].data) == 4802
+    ppal2 = tensor.principal_2_at_phase(61.)
+    assert isinstance(ppal2, ResultData)
+    assert ppal2.num_fields == 1
+    assert len(ppal2[0].data) == 4802
+    ppal3 = tensor.principal_3_at_phase(61.)
+    assert isinstance(ppal3, ResultData)
+    assert ppal3.num_fields == 1
+    assert len(ppal3[0].data) == 4802
 
 
 class TestCase(unittest.TestCase):
@@ -134,6 +363,43 @@ def test_displacement():
     assert z[0].data[548] == -8.479408678360313e-07
     nrm = vector.norm
     assert nrm[0].data[34] ==1.2717854105570665e-06
+    
+    
+def test_displacement_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    vector = solution.complex_displacement()
+    print(vector)
+    assert vector._operator_name == "U"
+    value = vector.vector
+    assert value[0].data[3].tolist() == [2.534371453684853e-09, -5.736467209711275e-10, 6.357980303122968e-11]
+    x = vector.x
+    assert x[0].data[41] == 2.685234654323797e-09
+    y = vector.y
+    assert y[0].data[305] == -2.442080637069453e-09
+    z = vector.z
+    assert z[0].data[548] == 1.0919526725085138e-10
+    nrm = vector.norm
+    assert nrm[0].data[34] == 2.967925671058435e-09
+    value = vector.vector_amplitude
+    assert value[0].data[3].tolist() == [2.5343714759693703e-09, 5.736467469384241e-10, 6.358000469996922e-11]
+    x = vector.x_amplitude
+    assert x[0].data[41] == 2.6852347082946467e-09
+    y = vector.y_amplitude
+    assert y[0].data[305] == 2.4420806888088805e-09
+    z = vector.z_amplitude
+    assert z[0].data[548] == 1.0919526860580484e-10
+    nrm = vector.norm_amplitude
+    assert nrm[0].data[34] == 2.967925756112993e-09
+    value = vector.vector_at_phase(61.)
+    assert value[0].data[3].tolist() == [1.2283937136871685e-09, -2.7795848616806165e-10, 3.0964159956496574e-11]
+    x = vector.x_at_phase(61.)
+    assert x[0].data[41] == 1.3013567187124258e-09
+    y = vector.y_at_phase(61.)
+    assert y[0].data[305] == -1.183504518054655e-09
+    z = vector.z_at_phase(61.)
+    assert z[0].data[548] == 5.292387083515219e-11
+    nrm = vector.norm_at_phase(61.)
+    assert nrm[0].data[34] == 0.0
     
 
 def test_stress():
@@ -168,12 +434,98 @@ def test_stress():
     assert ppal3[0].data[41] == -3599488.8478382444
     vm = tensor.von_mises
     assert vm[0].data[41] == 6994761.422404355
-
-
+    
+    
+def test_stress_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    tensor = solution.complex_stress()
+    print(tensor)
+    assert tensor._operator_name == "S"
+    value = tensor.tensor
+    assert value[0].data[3].tolist() == [-1894.3998413085938,
+                                         -99533.1953125,
+                                         -216.0846405029297,
+                                         -15840.79736328125,
+                                         548.1216735839844,
+                                         -3538.7244873046875]
+    xx = tensor.xx
+    yy = tensor.yy
+    zz = tensor.zz
+    xy = tensor.xy
+    yz = tensor.yz
+    xz = tensor.xz
+    ppal1 = tensor.principal_1
+    ppal2 = tensor.principal_2
+    ppal3 = tensor.principal_3
+    vm = tensor.von_mises
+    assert vm.num_fields == 2
+    assert len(vm[0].data) == 4802
+    assert xx[0].data[41] == -41958.8046875
+    assert yy[0].data[41] == -75517.203125
+    assert zz[0].data[41] == -793.2758483886719
+    assert xy[0].data[41] == -50654.06640625
+    assert yz[0].data[41] == -3254.9710693359375
+    assert xz[0].data[41] == 4329.180419921875
+    assert ppal1[0].data[41] == 2795.2100794761645
+    assert ppal2[0].data[41] == -8965.582783669306
+    assert ppal3[0].data[41] == -112098.91095669553
+    assert vm[0].data[41] == 109488.4895262726
+    xx = tensor.xx_amplitude
+    yy = tensor.yy_amplitude
+    zz = tensor.zz_amplitude
+    xy = tensor.xy_amplitude
+    yz = tensor.yz_amplitude
+    xz = tensor.xz_amplitude
+    ppal1 = tensor.principal_1_amplitude
+    ppal2 = tensor.principal_2_amplitude
+    ppal3 = tensor.principal_3_amplitude
+    vm = tensor.von_mises_amplitude
+    assert vm.num_fields == 1
+    assert len(vm[0].data) == 4802
+    assert xx[0].data[41] == 41958.80541595527
+    assert yy[0].data[41] == 75517.21861853577
+    assert zz[0].data[41] == 793.3104230072076
+    assert xy[0].data[41] == 50654.111124516836
+    assert yz[0].data[41] == 3255.0650347243854
+    assert xz[0].data[41] == 4329.302877644564
+    assert ppal1[0].data[41] == 2796.0674775873003
+    assert ppal2[0].data[41] == 8965.60427429267
+    assert ppal3[0].data[41] == 112098.95413919646
+    assert vm[0].data[41] == 109488.58588814907
+    xx = tensor.xx_at_phase(9.)
+    yy = tensor.yy_at_phase(9.)
+    zz = tensor.zz_at_phase(9.)
+    xy = tensor.xy_at_phase(9.)
+    yz = tensor.yz_at_phase(9.)
+    xz = tensor.xz_at_phase(9.)
+    ppal1 = tensor.principal_1_at_phase(9.)
+    ppal2 = tensor.principal_2_at_phase(9.)
+    ppal3 = tensor.principal_3_at_phase(9.)
+    vm = tensor.von_mises_at_phase(9.)
+    assert vm.num_fields == 1
+    assert len(vm[0].data) == 4802
+    assert xx[0].data[41] == -41440.999079450754
+    assert yy[0].data[41] == -74579.8936585364
+    assert zz[0].data[41] == -784.6679315714965
+    assert xy[0].data[41] == -50019.90154956536
+    assert yz[0].data[41] == -3218.7660576056496
+    assert xz[0].data[41] == 4280.974878496336
+    assert ppal1[0].data[41] == 2749.9651388433817
+    assert ppal2[0].data[41] == -8852.130711811371
+    assert ppal3[0].data[41] == -110703.39509659067
+    assert vm[0].data[41] == 108117.78055484823
+    
 
 def test_plastic_strain():
     solution = post.load_solution(FILE_PATH)
     tensor = solution.plastic_strain()
+    print(tensor)
+    assert tensor._operator_name == "EPPL"
+    
+    
+def test_plastic_strain_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    tensor = solution.complex_plastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPPL"
 
@@ -208,6 +560,47 @@ def test_elastic_strain():
     assert ppal2[0].data[41] == 5.982498289469729e-06
     ppal3 = tensor.principal_3
     assert ppal3[0].data[41] == -7.271460770812878e-05
+    
+    
+def test_elastic_strain_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    tensor = solution.complex_elastic_strain()
+    print(tensor)
+    assert tensor._operator_name == "EPEL"
+    value = tensor.tensor
+    assert value[0].data[3].tolist() == [3.031909585615722e-07,
+                                         -7.12252500534305e-07,
+                                         3.211454924212376e-07,
+                                         -1.400326468115054e-07,
+                                         2.5393885882962763e-09,
+                                         -2.6922432283527087e-08]
+    assert tensor.xx
+    assert tensor.yy
+    assert tensor.zz
+    assert tensor.xy
+    assert tensor.yz
+    assert tensor.xz
+    assert tensor.principal_1
+    assert tensor.principal_2
+    assert tensor.principal_3
+    assert tensor.xx_amplitude
+    assert tensor.yy_amplitude
+    assert tensor.zz_amplitude
+    assert tensor.xy_amplitude
+    assert tensor.yz_amplitude
+    assert tensor.xz_amplitude
+    assert tensor.principal_1_amplitude
+    assert tensor.principal_2_amplitude
+    assert tensor.principal_3_amplitude
+    assert tensor.xx_at_phase(14.)
+    assert tensor.yy_at_phase(14.)
+    assert tensor.zz_at_phase(14.)
+    assert tensor.xy_at_phase(14.)
+    assert tensor.yz_at_phase(14.)
+    assert tensor.xz_at_phase(14.)
+    assert tensor.principal_1_at_phase(14.)
+    assert tensor.principal_2_at_phase(14.)
+    assert tensor.principal_3_at_phase(14.)
 
 
 def test_temperature():
@@ -225,4 +618,42 @@ def test_temperature():
     assert value2.num_fields == 1
     assert len(value2[0].data) == 1
     assert value2[0].data[0] == 22.0
+    assert value2[0].location == post.locations.elemental
+    
+    
+def test_temperature_complex():
+    solution = post.load_solution(COMPLEX_FILE_PATH)
+    temp = solution.complex_temperature()
+    print(temp)
+    assert temp._operator_name == "BFE"
+    value = temp.scalar
+    assert value.num_fields == 2
+    assert len(value[0]) == 4802
+    assert value[0].data[0] == 22.0
+    assert value[0].location == post.locations.nodal
+    value = temp.scalar_amplitude
+    assert value.num_fields == 1
+    assert len(value[0]) == 4802
+    assert value[0].data[0] == 31.11269837220809
+    assert value[0].location == post.locations.nodal
+    value = temp.scalar_at_phase(21.)
+    assert value.num_fields == 1
+    assert len(value[0]) == 4802
+    assert value[0].data[0] == 12.654674492941831
+    assert value[0].location == post.locations.nodal
+    temp2 = solution.complex_temperature(element_scoping = 2, location = post.locations.elemental)
+    value2 = temp2.scalar
+    assert value2.num_fields == 2
+    assert len(value2[0].data) == 1
+    assert value2[0].data[0] == 22.0
+    assert value2[0].location == post.locations.elemental
+    value2 = temp2.scalar_amplitude
+    assert value2.num_fields == 1
+    assert len(value2[0].data) == 1
+    assert value2[0].data[0] == 31.11269837220809
+    assert value2[0].location == post.locations.elemental
+    value2 = temp2.scalar_at_phase(21.)
+    assert value2.num_fields == 1
+    assert len(value2[0].data) == 1
+    assert value2[0].data[0] == 12.654674492941835
     assert value2[0].location == post.locations.elemental
