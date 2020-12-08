@@ -27,7 +27,7 @@ if not dpf.core.has_local_server():
 def test_displacement_with_scoping_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
     #scoping as array
-    disp = result.nodal_displacement(node_scoping = [1, 2])
+    disp = result._nodal_displacement(node_scoping = [1, 2])
     data = disp.get_data_at_field(0)
     assert len(data) == 2
     assert len(data[0]) == 3
@@ -35,12 +35,12 @@ def test_displacement_with_scoping_verbose_api():
     scop = dpf.core.Scoping()
     scop.ids = [1, 2]
     scop.location = locations.nodal
-    disp2 = result.nodal_displacement(node_scoping = scop)
+    disp2 = result._nodal_displacement(node_scoping = scop)
     data2 = disp2.get_data_at_field(0)
     assert len(data2) == 2
     assert len(data2[0]) == 3
     #scoping as int
-    disp3 = result.nodal_displacement(node_scoping = 1)
+    disp3 = result._nodal_displacement(node_scoping = 1)
     data3 = disp3.get_data_at_field(0)
     assert len(data3) == 1
     assert len(data3[0]) == 3
@@ -75,7 +75,7 @@ def test_displacement_with_scoping():
 def test_node_stress_with_scoping_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
     #scoping as array
-    disp = result.nodal_stress(element_scoping = [1, 34])
+    disp = result._nodal_stress(element_scoping = [1, 34])
     data = disp.get_data_at_field(0)
     assert len(data) == 40
     assert len(data[0]) == 6
@@ -83,12 +83,12 @@ def test_node_stress_with_scoping_verbose_api():
     scop = dpf.core.Scoping()
     scop.location = locations.elemental
     scop.ids = [1, 34]
-    disp2 = result.nodal_stress(element_scoping = scop)
+    disp2 = result._nodal_stress(element_scoping = scop)
     data2 = disp2.get_data_at_field(0)
     assert len(data2) == 40
     assert len(data2[0]) == 6
     #scoping as int
-    disp3 = result.nodal_stress(element_scoping = 1)
+    disp3 = result._nodal_stress(element_scoping = 1)
     data3 = disp3.get_data_at_field(0)
     assert len(data3) == 20
     assert len(data3[0]) == 6
@@ -123,7 +123,7 @@ def test_node_stress_with_scoping():
 def test_elem_nodal_stress_with_scoping_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
     #scoping as array
-    disp = result.elemental_nodal_stress(element_scoping = [1, 34])
+    disp = result._elemental_nodal_stress(element_scoping = [1, 34])
     data = disp.get_data_at_field(0)
     assert len(data) == 16
     assert len(data[0]) == 6
@@ -131,12 +131,12 @@ def test_elem_nodal_stress_with_scoping_verbose_api():
     scop = dpf.core.Scoping()
     scop.location = locations.elemental
     scop.ids = [1, 34]
-    disp2 = result.elemental_nodal_stress(element_scoping = scop)
+    disp2 = result._elemental_nodal_stress(element_scoping = scop)
     data2 = disp2.get_data_at_field(0)
     assert len(data2) == 16
     assert len(data2[0]) == 6
     #scoping as int
-    disp3 = result.elemental_nodal_stress(element_scoping = 1)
+    disp3 = result._elemental_nodal_stress(element_scoping = 1)
     data3 = disp3.get_data_at_field(0)
     assert len(data3) == 8
     assert len(data3[0]) == 6
@@ -170,7 +170,7 @@ def test_elem_nodal_stress_with_scoping():
     
 def test_disp_with_component_subresult_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement(subresult="Y")
+    disp = result._nodal_displacement(subresult="Y")
     assert disp._evaluator._result_operator.name == "UY"
     assert disp.num_fields == 1
     data = disp.get_data_at_field(0)
@@ -191,7 +191,7 @@ def test_disp_with_component_subresult():
 
 def test_stress_with_component_subresult_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.elemental_nodal_stress(subresult="YZ")
+    stress = result._elemental_nodal_stress(subresult="YZ")
     assert stress._evaluator._result_operator.name == "SYZ"
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
@@ -212,7 +212,7 @@ def test_stress_with_component_subresult():
 
 def test_stress_with_invariant_subresult_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.elemental_nodal_stress(subresult="3")
+    stress = result._elemental_nodal_stress(subresult="3")
     assert stress._evaluator._result_operator.name == "S3"
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)
@@ -233,7 +233,7 @@ def test_stress_with_invariant_subresult():
     
 def test_groupingelshape_nodallocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement(grouping = post.grouping.by_el_shape)
+    disp = result._nodal_displacement(grouping = post.grouping.by_el_shape)
     assert disp.num_fields == 4
     assert disp.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
     assert len(disp.get_data_at_field(0)) == 93950
@@ -260,7 +260,7 @@ def test_groupingelshape_nodallocation():
 
 def test_groupingelshape_elemlocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.elemental_stress(grouping = post.grouping.by_el_shape)
+    stress = result._elemental_stress(grouping = post.grouping.by_el_shape)
     assert stress.num_fields == 4
     assert stress.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
     assert len(stress.get_data_at_field(0)) == 609
@@ -287,7 +287,7 @@ def test_groupingelshape_elemlocation():
 
 def test_groupingmat_nodallocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement(grouping = post.grouping.by_material)
+    disp = result._nodal_displacement(grouping = post.grouping.by_material)
     assert disp.num_fields == 11
     assert len(disp[0]) == 23016
     assert len(disp[2]) == 1848
@@ -308,7 +308,7 @@ def test_groupingmat_nodallocation():
 
 def test_groupingmat_elemlocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.elemental_stress(grouping = post.grouping.by_material)
+    stress = result._elemental_stress(grouping = post.grouping.by_material)
     assert stress.num_fields == 11
     # assert len(stress[0]) == 0
     # assert len(stress[5]) == 156762
@@ -331,7 +331,7 @@ def test_groupingmat_elemlocation():
 
 def test_mapdlgrouping_nodallocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement(mapdl_grouping = 186)
+    disp = result._nodal_displacement(mapdl_grouping = 186)
     try:
         disp.num_fields
     except:
@@ -350,7 +350,7 @@ def test_mapdlgrouping_nodallocation():
 
 def test_maplgrouping_elemlocation_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.elemental_stress(mapdl_grouping = 186)
+    stress = result._elemental_stress(mapdl_grouping = 186)
     assert stress.num_fields == 1
     assert stress.result_fields_container.get_label_space(0) == {'time': 1}
     assert len(stress.get_data_at_field(0)) == 343
@@ -371,7 +371,7 @@ def test_maplgrouping_elemlocation():
 
 def test_set_keyword_verbose_api():
     result = post.load_solution(TRANSIENT_FILE_PATH)
-    disp = result.nodal_displacement(set = 3)
+    disp = result._nodal_displacement(set = 3)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
     assert disp.get_data_at_field(0)[2][2] == 2.3955190605044603e-05
@@ -389,9 +389,9 @@ def test_set_keyword():
 class TestCase(unittest.TestCase):
     def test_both_set_time_verbose_api(self):
         result = post.load_solution(TRANSIENT_FILE_PATH)
-        self.assertRaises(Exception, result.nodal_displacement, set=3, time=0.01)
+        self.assertRaises(Exception, result._nodal_displacement, set=3, time=0.01)
         try:
-            result.nodal_displacement(set = 3, time = 0.01)
+            result._nodal_displacement(set = 3, time = 0.01)
         except Exception as e:
             message = "Set, time and time_scoping keyword arguments must be used independently."
             e2 = Exception(message)
@@ -401,23 +401,23 @@ class TestCase(unittest.TestCase):
 
 def test_time_keyword_in_frequencies_verbose_api():
     result = post.load_solution(TRANSIENT_FILE_PATH)
-    disp = result.nodal_displacement(time=0.06)
+    disp = result._nodal_displacement(time=0.06)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 6}
     assert disp.get_data_at_field(0)[2][2] == 6.449354759605568e-05
-    disp = result.nodal_displacement(time=0.02)
+    disp = result._nodal_displacement(time=0.02)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 2}
     assert disp.get_data_at_field(0)[40][2] == -9.555678764252377e-06
-    disp = result.nodal_displacement(time=0.14)
+    disp = result._nodal_displacement(time=0.14)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 14}
     assert disp.get_data_at_field(0)[22][2] == -5.9753488295405e-06
-    disp = result.nodal_displacement(time=0.15)
+    disp = result._nodal_displacement(time=0.15)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 15}
     assert disp.get_data_at_field(0)[101][2] == 1.2454347438346573e-05
-    disp = result.nodal_displacement(time=0.2)
+    disp = result._nodal_displacement(time=0.2)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 20}
     assert disp.get_data_at_field(0)[345][2] == 6.931130871751968e-05
@@ -454,15 +454,15 @@ def test_time_keyword_in_frequencies():
 
 def test_time_keyword_not_in_frequencies_verbose_api():
     result = post.load_solution(TRANSIENT_FILE_PATH)
-    disp = result.nodal_displacement(time=0.061)
+    disp = result._nodal_displacement(time=0.061)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
     assert disp.get_data_at_field(0)[2][2] == 6.466312449668174e-05
-    disp = result.nodal_displacement(time=0.023)
+    disp = result._nodal_displacement(time=0.023)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
     assert disp.get_data_at_field(0)[40][2] == -1.3341949773184135e-05
-    disp = result.nodal_displacement(time=0.1499)
+    disp = result._nodal_displacement(time=0.1499)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
     assert disp.get_data_at_field(0)[22][2] == -1.7795334817918245e-05
@@ -489,23 +489,23 @@ def test_time_keyword_not_in_frequencies():
     
 def test_time_scoping_keyword_verbose_api():
     result = post.load_solution(TRANSIENT_FILE_PATH)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     assert disp.num_fields == 1
-    disp1 = result.nodal_displacement(time_scoping=[1,2,4])
+    disp1 = result._nodal_displacement(time_scoping=[1,2,4])
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
     assert disp1.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
-    # disp2 = result.nodal_displacement(time_scoping=np.array([1, 2, 4]))
+    # disp2 = result._nodal_displacement(time_scoping=np.array([1, 2, 4]))
     # assert disp2.num_fields == 3
     # assert disp2.result_fields_container.get_label_space(0) == {'time': 1}
     # assert disp2.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
     scop = dpf.core.Scoping()
     scop.ids = [1, 2, 4]
-    disp3 = result.nodal_displacement(time_scoping=scop)
+    disp3 = result._nodal_displacement(time_scoping=scop)
     assert disp3.num_fields == 3
     assert disp3.result_fields_container.get_label_space(0) == {'time': 1}
     assert disp3.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
-    disp4 = result.nodal_displacement(time_scoping=2)
+    disp4 = result._nodal_displacement(time_scoping=2)
     assert disp4.num_fields == 1
     assert disp4.result_fields_container.get_label_space(0) == {'time': 2}
     assert disp4.get_data_at_field(0)[40][2] == -9.555678764252377e-06
@@ -521,7 +521,7 @@ def test_time_scoping_keyword():
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
     assert disp1.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
-    # disp2 = result.nodal_displacement(time_scoping=np.array([1, 2, 4]))
+    # disp2 = result._nodal_displacement(time_scoping=np.array([1, 2, 4]))
     # assert disp2.num_fields == 3
     # assert disp2.result_fields_container.get_label_space(0) == {'time': 1}
     # assert disp2.get_data_at_field(0)[40][2] == -2.0115581116044217e-06

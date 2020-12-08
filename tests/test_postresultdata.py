@@ -29,7 +29,7 @@ if not dpf.core.has_local_server():
     
 def test_num_fields_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     assert isinstance(disp, ResultData)
     assert disp.num_fields == 1
     
@@ -44,7 +44,7 @@ def test_num_fields():
     
 def test_data_at_field_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     data = disp.get_data_at_field(0)
     assert len(data) == 15113
     assert len(data[0]) == 3
@@ -61,7 +61,7 @@ def test_data_at_field():
     
 def test_field_getitem_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     field = disp[0]
     assert isinstance(field, dpf.core.Field)
     assert field.location == locations.nodal
@@ -78,7 +78,7 @@ def test_field_getitem():
     
 def test_max_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     max_val = disp.max
     assert len(max_val) == 3
     assert len(max_val.data) == 1
@@ -97,7 +97,7 @@ def test_max():
 
 def test_min_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     min_val = disp.min
     assert len(min_val) == 3
     assert len(min_val.data) == 1
@@ -116,7 +116,7 @@ def test_min():
 
 def test_maxdata_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     val = disp.max_data
     assert len(val) == 1
     assert len(val[0]) == 3
@@ -133,7 +133,7 @@ def test_maxdata():
     
 def test_mindata_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     val = disp.min_data
     assert len(val) == 1
     assert len(val[0]) == 3
@@ -150,7 +150,7 @@ def test_mindata():
     
 def test_maxdata_at_field_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     val = disp.get_max_data_at_field(0)
     assert len(val) == 3
     
@@ -165,7 +165,7 @@ def test_maxdata_at_field():
     
 def test_min_data_at_field_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    disp = result.nodal_displacement()
+    disp = result._nodal_displacement()
     val = disp.get_min_data_at_field(0)
     assert len(val) == 3
     
@@ -180,7 +180,7 @@ def test_min_data_at_field():
     
 def test_get_all_labels_verbose_api():
     result = post.load_solution(MODAL_FILE_PATH)
-    stress = result.elemental_stress()
+    stress = result._elemental_stress()
     l = [{'elshape': 1, 'time': 1},{'elshape': 0, 'time': 1}]
     l_comp = stress.get_all_label_spaces()
     assert l == l_comp
@@ -197,7 +197,7 @@ def test_get_all_labels():
     
 def test_get_scoping_at_field_verbose_api():
     result = post.load_solution(TRANSIENT_FILE_PATH)
-    disp = result.nodal_displacement(time_scoping=[1, 2, 4])
+    disp = result._nodal_displacement(time_scoping=[1, 2, 4])
     assert disp.num_fields == 3
     scop = disp.get_scoping_at_field(2)
     assert len(scop) == 393
