@@ -3,9 +3,10 @@
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.core import locations
-from ansys import dpf
+from ansys.dpf.post import dpf_solution
+from ansys.dpf.core import Operator as _Operator
 
-class Misc(dpf.post.dpf_solution.DpfSolution):
+class Misc():
     """This class contains miscellaneous results."""
     
     def __init__(self, model, data_sources):
@@ -28,8 +29,8 @@ class Misc(dpf.post.dpf_solution.DpfSolution):
         mapdl_grouping = None
         time_scoping = None
         if _AvailableKeywords.phase in kwargs:
-            if not isinstance(instance, dpf.post.dpf_solution.DpfComplexSolution):
-                raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
+            # if not isinstance(instance, dpf_solution.DpfComplexSolution):
+            #     raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
             phase = kwargs[_AvailableKeywords.phase]
         if _AvailableKeywords.location in kwargs:
             location = kwargs[_AvailableKeywords.location]
@@ -377,3 +378,31 @@ class Misc(dpf.post.dpf_solution.DpfSolution):
         to get Elemental result.
         """
         return self._get_result_data_function_of_operator("S_eqv", self, self._data_sources, **kwargs)
+
+
+class ComplexMisc(Misc):
+    """This class contains miscellaneous results."""
+    
+    #tools
+    def _get_amplitude_evaluation(self, result_data):
+        # resultData = self._get_result_data_function_of_operator(name, self, self._data_sources, **kwargs)
+        resultData = result_data
+        modulus_op = _Operator("modulus")
+        modulus_op.inputs.fields_container.connect(resultData._evaluator._result_operator.outputs.fields_container) 
+        resultData._evaluator._chained_operators[modulus_op.name] = """This operator will compute the amplitude of the result (when result has complex values)."""
+        # resultData.result_fields_container = modulus_op.get_output(0, types.fields_container)
+        resultData._evaluator._result_operator = modulus_op
+        return resultData
+    
+    #results
+    def nodal_displacement_amplitude(self, **kwargs):
+        result_data = self.nodal_displacement(**kwargs)
+        return self._get_amplitude_evaluation(result_data)
+    
+    def elemental_stress_amplitude(self, **kwargs):
+        result_data = self.elemental_stress(**kwargs)
+        return self._get_amplitude_evaluation(result_data)
+    
+    def nodal_stress_amplitude(self, **kwargs):
+        result_data = self.nodal_stress(**kwargs)
+        return self._get_amplitude_evaluation(result_data)  

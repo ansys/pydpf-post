@@ -31,38 +31,38 @@ def test_get_result_info():
 
 def test_get_result_data_function_of_operator_no_keyword():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    result_data = result._get_result_data_function_of_operator("U", result, result._data_sources)
+    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources)
     assert isinstance(result_data, ResultData)
     
     
 def test_get_result_data_function_of_operator_ns():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    result_data = result._get_result_data_function_of_operator("U", result, result._data_sources, named_selection="SELECTION")
+    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, named_selection="SELECTION")
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_location():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    result_data = result._get_result_data_function_of_operator("U", result, result._data_sources, location="Elemental")
+    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, location="Elemental")
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_node_scop():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    result_data = result._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3])
+    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3])
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_elem_scop():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    result_data = result._get_result_data_function_of_operator("U", result, result._data_sources, element_scoping=[1, 2, 3])
+    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, element_scoping=[1, 2, 3])
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_bothscop():
     result = post.load_solution(TEST_FILE_PATH_RST)
     try:
-        result._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3], element_scoping=[1, 2, 3])
+        result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3], element_scoping=[1, 2, 3])
     except Exception as e:
         message = "Impossible to use both element_scoping and node_scoping."
         e2 = Exception(message)
@@ -70,15 +70,15 @@ def test_get_result_data_function_of_operator_bothscop():
         assert type(e) == type(e2)
 
 
-def test_get_result_data_function_of_operator_nophase():
-    result = post.load_solution(TEST_FILE_PATH_RST)
-    try:
-        result._get_result_data_function_of_operator("U", result, result._data_sources, phase=30.)
-    except Exception as e:
-        message = "Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...)."
-        e2 = Exception(message)
-        assert e.args == e2.args
-        assert type(e) == type(e2)
+# def test_get_result_data_function_of_operator_nophase():
+#     result = post.load_solution(TEST_FILE_PATH_RST)
+#     try:
+#         result.misc._get_result_data_function_of_operator("U", result, result._data_sources, phase=30.)
+#     except Exception as e:
+#         message = "Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...)."
+#         e2 = Exception(message)
+#         assert e.args == e2.args
+#         assert type(e) == type(e2)
 
 
 def test_check_elemental_location():
@@ -192,7 +192,7 @@ def test_elemental_stress():
     
 def test_elemental_nodal_stress_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.misc.elementalmisc.nodal_stress()
+    stress = result.misc.elemental_nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)

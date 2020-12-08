@@ -123,7 +123,7 @@ def test_node_stress_with_scoping():
 def test_elemnodal_stress_with_scoping_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
     #scoping as array
-    disp = result.misc.elementalmisc.nodal_stress(element_scoping = [1, 34])
+    disp = result.misc.elemental_nodal_stress(element_scoping = [1, 34])
     data = disp.get_data_at_field(0)
     assert len(data) == 16
     assert len(data[0]) == 6
@@ -131,12 +131,12 @@ def test_elemnodal_stress_with_scoping_verbose_api():
     scop = dpf.core.Scoping()
     scop.location = locations.elemental
     scop.ids = [1, 34]
-    disp2 = result.misc.elementalmisc.nodal_stress(element_scoping = scop)
+    disp2 = result.misc.elemental_nodal_stress(element_scoping = scop)
     data2 = disp2.get_data_at_field(0)
     assert len(data2) == 16
     assert len(data2[0]) == 6
     #scoping as int
-    disp3 = result.misc.elementalmisc.nodal_stress(element_scoping = 1)
+    disp3 = result.misc.elemental_nodal_stress(element_scoping = 1)
     data3 = disp3.get_data_at_field(0)
     assert len(data3) == 8
     assert len(data3[0]) == 6
@@ -191,7 +191,7 @@ def test_disp_with_component_subresult():
 
 def test_stress_with_component_subresult_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.misc.elementalmisc.nodal_stress(subresult="YZ")
+    stress = result.misc.elemental_nodal_stress(subresult="YZ")
     assert stress._evaluator._result_operator.name == "SYZ"
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
@@ -212,7 +212,7 @@ def test_stress_with_component_subresult():
 
 def test_stress_with_invariant_subresult_verbose_api():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    stress = result.misc.elementalmisc.nodal_stress(subresult="3")
+    stress = result.misc.elemental_nodal_stress(subresult="3")
     assert stress._evaluator._result_operator.name == "S3"
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)

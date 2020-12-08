@@ -15,7 +15,7 @@ from ansys.dpf.post.strain import PlasticStrain, ComplexPlasticStrain
 from ansys.dpf.post.temperature import Temperature, ComplexTemperature
 from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
 
-from ansys import dpf
+from ansys.dpf.post.misc_results import Misc, ComplexMisc
         
 
 class DpfSolution:
@@ -28,7 +28,7 @@ class DpfSolution:
     def __init__(self, data_sources, model):
         self._data_sources = data_sources
         self._model = model
-        self.misc = dpf.post.misc_results.Misc(self._data_sources, self._model)
+        self.misc = Misc(model, data_sources)
            
     def get_result_info(self):
         """Returns information about the result file.
@@ -99,15 +99,9 @@ class DpfComplexSolution(DpfSolution):
     ----------
     None
     """
-    def _get_amplitude_evaluation(self, result_data):
-        # resultData = self._get_result_data_function_of_operator(name, self, self._data_sources, **kwargs)
-        resultData = result_data
-        modulus_op = _Operator("modulus")
-        modulus_op.inputs.fields_container.connect(resultData._evaluator._result_operator.outputs.fields_container) 
-        resultData._evaluator._chained_operators[modulus_op.name] = """This operator will compute the amplitude of the result (when result has complex values)."""
-        # resultData.result_fields_container = modulus_op.get_output(0, types.fields_container)
-        resultData._evaluator._result_operator = modulus_op
-        return resultData
+    def __init__(self, data_sources, model):
+        super().__init__(data_sources, model)
+        self.misc = ComplexMisc(model, data_sources)
     
     def __str__(self):
         txt = super().__str__()
@@ -149,17 +143,6 @@ class DpfComplexSolution(DpfSolution):
         self._check_phase(**kwargs)
         return ComplexStress(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    
-    def _nodal_displacement_amplitude(self, **kwargs):
-        result_data = self._nodal_displacement(**kwargs)
-        return self._get_amplitude_evaluation(result_data)
-    
-    def _elemental_stress_amplitude(self, **kwargs):
-        result_data = self._elemental_stress(**kwargs)
-        return self._get_amplitude_evaluation(result_data)
-    
-    def _nodal_stress_amplitude(self, **kwargs):
-        result_data = self._nodal_stress(**kwargs)
-        return self._get_amplitude_evaluation(result_data)    
+  
 
     
