@@ -64,7 +64,8 @@ def test_get_result_data_function_of_operator_bothscop():
     try:
         result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3], element_scoping=[1, 2, 3])
     except Exception as e:
-        message = "Impossible to use both element_scoping and node_scoping."
+        # message = "Impossible to use both element_scoping and node_scoping."
+        message = "Only one of the following keywords can be used at the same time: element_scoping/node_scoping/grouping/named_selection/mapdl_grouping."
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)

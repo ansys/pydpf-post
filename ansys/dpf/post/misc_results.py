@@ -7,7 +7,10 @@ from ansys.dpf.post import dpf_solution
 from ansys.dpf.core import Operator as _Operator
 
 class Misc():
-    """This class contains miscellaneous results."""
+    """This class contains miscellaneous results.
+    
+    Here the phase keyword is also available while calling results.
+    """
     
     def __init__(self, model, data_sources):
         self._model = model

@@ -35,8 +35,10 @@ class ResultEvaluator:
         
         if (location != None):
             self._result_operator.inputs.requested_location.connect(location)
-        if (element_scoping != None and node_scoping != None):
-            raise Exception("Impossible to use both element_scoping and node_scoping.")
+        # if (element_scoping != None and node_scoping != None):
+        #     raise Exception("Impossible to use both element_scoping and node_scoping.")
+        self._check_if_several_mesh_scoping(node_scoping, element_scoping, 
+                                            grouping, mapdl_grouping, named_selection)
         if (set != None and time != None) or (set != None and time_scoping != None) or (time != None and time_scoping != None):
             raise Exception("Set, time and time_scoping keyword arguments must be used independently.")
         if (element_scoping != None):
@@ -154,13 +156,30 @@ class ResultEvaluator:
             
     def _check_if_scoping(self, node_scoping, element_scoping):
         if (node_scoping != None) or (element_scoping != None):
-            txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/" + _AvailableKeywords.named_selection + " ones."
+            txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + " ones."
             raise Exception(txt)
       
     def _check_if_several_grouping(self, grouping, mapdl_grouping):
         if (grouping != None) and (mapdl_grouping != None):
             raise Exception("Both keywords grouping and mapdl_grouping can not be used simultaneously.")
-           
+    
+    def _check_if_several_mesh_scoping(self, node_scoping, element_scoping, 
+                                       grouping, mapdl_grouping, named_selection):
+        count = 0
+        if (node_scoping != None):
+            count += 1
+        if (element_scoping != None):
+            count += 1
+        if (named_selection != None):
+            count += 1
+        if (grouping != None):
+            count += 1
+        if (mapdl_grouping != None):
+            count += 1
+        if (count > 1):
+            txt = "Only one of the following keywords can be used at the same time: " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + "/" + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + "."
+            raise Exception(txt)
+       
     def _get_evaluation_with_sweeping_phase(self, phase):
         """Connects needed operator to compute the result regarding the specified phase."""
         sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
@@ -175,6 +194,7 @@ class ResultEvaluator:
         fc_to_connect = self._result_operator.outputs.fields_container
         avg.inputs.fields_container.connect(fc_to_connect)
         self._result_operator = avg
+        self._chained_operators[avg.name] = "This operator will compute the elemental averaging of a fields container."
             
     def evaluate_result(self):
         """Re-evaluation of the result."""
