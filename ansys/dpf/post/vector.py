@@ -104,7 +104,7 @@ class ComplexVector(Vector):
         norm_op.inputs.fields_container.connect(out_op.outputs.fields_container)
         result_data._evaluator._result_operator = norm_op
         result_data._evaluator._chained_operators[norm_op.name] = """This operator will compute the norm of the result."""
-        return Result._get_amplitude_evaluation(self, result_data)
+        return result_data
     
     def __str__(self):
         txt = "Complex vector object. \n\n"

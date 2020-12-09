@@ -115,7 +115,7 @@ def test_tensor():
     
 def test_scalar_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    scalar = solution.complex_temperature()
+    scalar = solution.temperature()
     assert isinstance(scalar, ComplexScalar)
     txt = scalar.__str__()
     assert txt == "Complex scalar object. \n\nScalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
@@ -133,7 +133,7 @@ def test_scalar_complex():
 
 def test_vector_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    vector = solution.complex_displacement()
+    vector = solution.displacement()
     assert isinstance(vector, ComplexVector)
     txt = vector.__str__()
     assert txt == "Complex vector object. \n\nVector object. \n\nObject properties are: \n - location = Nodal\n"
@@ -204,7 +204,7 @@ def test_vector_complex():
 
 def test_tensor_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    tensor = solution.complex_stress()
+    tensor = solution.stress()
     assert isinstance(tensor, ComplexTensor)
     txt = tensor.__str__()
     assert txt == 'Complex stress. \nComplex tensor object. \n\nStress. \nTensor object. \n\nObject properties are: \n - location = Nodal\n'
@@ -367,7 +367,7 @@ def test_displacement():
     
 def test_displacement_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    vector = solution.complex_displacement()
+    vector = solution.displacement()
     print(vector)
     assert vector._operator_name == "U"
     value = vector.vector
@@ -399,7 +399,7 @@ def test_displacement_complex():
     z = vector.z_at_phase(61.)
     assert z[0].data[548] == 5.292387083515219e-11
     nrm = vector.norm_at_phase(61.)
-    assert nrm[0].data[34] == 0.0
+    assert nrm[0].data[34] == 1.438258083761136e-09
     
 
 def test_stress():
@@ -438,7 +438,7 @@ def test_stress():
     
 def test_stress_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    tensor = solution.complex_stress()
+    tensor = solution.stress()
     print(tensor)
     assert tensor._operator_name == "S"
     value = tensor.tensor
@@ -525,7 +525,7 @@ def test_plastic_strain():
     
 def test_plastic_strain_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    tensor = solution.complex_plastic_strain()
+    tensor = solution.plastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPPL"
 
@@ -564,7 +564,7 @@ def test_elastic_strain():
     
 def test_elastic_strain_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    tensor = solution.complex_elastic_strain()
+    tensor = solution.elastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPEL"
     value = tensor.tensor
@@ -623,7 +623,7 @@ def test_temperature():
     
 def test_temperature_complex():
     solution = post.load_solution(COMPLEX_FILE_PATH)
-    temp = solution.complex_temperature()
+    temp = solution.temperature()
     print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
@@ -641,7 +641,7 @@ def test_temperature_complex():
     assert len(value[0]) == 4802
     assert value[0].data[0] == 12.654674492941831
     assert value[0].location == post.locations.nodal
-    temp2 = solution.complex_temperature(element_scoping = 2, location = post.locations.elemental)
+    temp2 = solution.temperature(element_scoping = 2, location = post.locations.elemental)
     value2 = temp2.scalar
     assert value2.num_fields == 2
     assert len(value2[0].data) == 1

@@ -13,4 +13,3 @@ def test_available_keywords():
     assert "location" in txt
     assert "named_selection" in txt
     assert "node_scoping" in txt
-    assert "phase" in txt

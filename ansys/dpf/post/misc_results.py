@@ -28,10 +28,10 @@ class Misc():
         set = None
         mapdl_grouping = None
         time_scoping = None
-        if _AvailableKeywords.phase in kwargs:
+        if _AvailableKeywords._phase in kwargs:
             # if not isinstance(instance, dpf_solution.DpfComplexSolution):
             #     raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
-            phase = kwargs[_AvailableKeywords.phase]
+            phase = kwargs[_AvailableKeywords._phase]
         if _AvailableKeywords.location in kwargs:
             location = kwargs[_AvailableKeywords.location]
         if _AvailableKeywords.element_scoping in kwargs:

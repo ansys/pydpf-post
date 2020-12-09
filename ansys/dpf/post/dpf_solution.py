@@ -63,32 +63,85 @@ class DpfSolution:
         txt += self._model.__str__()
         return txt
         
-    
-    #tools
-    def _check_phase(self, **kwargs):
-        if _AvailableKeywords.phase in kwargs:
-            if not isinstance(self, DpfComplexSolution):
-                raise Exception("Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...).")
-    
     #result classes            
     def stress(self, **kwargs):
-        self._check_phase(**kwargs)
+        """Returns a stress object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+            
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> stress = solution.stress(node_scoping = [1, 43])
+        """
         return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def elastic_strain(self, **kwargs):
-        self._check_phase(**kwargs)
+        """Returns an elastic strain object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
+        """
         return ElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def plastic_strain(self, **kwargs):
-        self._check_phase(**kwargs)
+        """Returns a plastic strain object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
+        """
         return PlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def displacement(self, **kwargs):
-        self._check_phase(**kwargs)
+        """Returns a displacement object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> displacement = solution.displacement(node_scoping = [1, 43])
+        """
         return Displacement(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def temperature(self, **kwargs):
-        self._check_phase(**kwargs)
+        """Returns a temperature object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> temperature = solution.temperature(node_scoping = [1, 43])
+        """
         return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
 
@@ -123,24 +176,84 @@ class DpfComplexSolution(DpfSolution):
         return True
     
     
-    def complex_displacement(self, **kwargs):
-        self._check_phase(**kwargs)
+    def displacement(self, **kwargs):
+        """Returns a displacement object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> displacement = solution.displacement(node_scoping = [1, 43])
+        """
         return ComplexDisplacement(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def complex_temperature(self, **kwargs):
-        self._check_phase(**kwargs)
+    def temperature(self, **kwargs):
+        """Returns a temperature object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> temperature = solution.temperature(node_scoping = [1, 43])
+        """
         return ComplexTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def complex_plastic_strain(self, **kwargs):
-        self._check_phase(**kwargs)
+    def plastic_strain(self, **kwargs):
+        """Returns a plastic strain object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
+        """
         return ComplexPlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def complex_elastic_strain(self, **kwargs):
-        self._check_phase(**kwargs)
+    def elastic_strain(self, **kwargs):
+        """Returns an elastic strain object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
+        """
         return ComplexElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def complex_stress(self, **kwargs):
-        self._check_phase(**kwargs)
+    def stress(self, **kwargs):
+        """Returns a stress object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kawrgs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> stress = solution.stress(node_scoping = [1, 43])
+        """
         return ComplexStress(data_sources=self._data_sources, model=self._model, **kwargs)
     
   

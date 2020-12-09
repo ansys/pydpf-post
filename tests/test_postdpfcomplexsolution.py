@@ -43,7 +43,7 @@ def test_displacement_amplitude():
     sol = post.load_solution(TEST_FILE_PATH_RST)
     assert isinstance(sol, HarmonicAnalysisSolution)
     assert isinstance(sol, DpfComplexSolution)
-    complex_disp = sol.complex_displacement()
+    complex_disp = sol.displacement()
     assert isinstance(complex_disp, ComplexDisplacement)
     ampl = complex_disp.vector_amplitude
     assert isinstance(ampl, ResultData)
@@ -71,7 +71,7 @@ def test_displacement_at_phase():
     result = post.load_solution(TEST_FILE_PATH_RST)
     assert isinstance(result, HarmonicAnalysisSolution)
     assert isinstance(result, DpfComplexSolution)
-    complex_disp = result.complex_displacement()
+    complex_disp = result.displacement()
     assert isinstance(complex_disp, ComplexDisplacement)
     disp_at_phase = complex_disp.vector_at_phase(phase = 41.)
     assert isinstance(disp_at_phase, ResultData)
@@ -100,7 +100,7 @@ def test_is_complex_result_verbose_api():
     
 def test_is_complex_result():
     result = post.load_solution(TEST_FILE_PATH_RST)
-    compl_disp = result.complex_displacement()
+    compl_disp = result.displacement()
     disp = compl_disp.vector
     assert disp.num_fields == 2
     assert disp.is_complex_result()
