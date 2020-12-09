@@ -69,7 +69,7 @@ class DpfSolution:
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
             
         Examples
@@ -85,7 +85,7 @@ class DpfSolution:
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -101,7 +101,7 @@ class DpfSolution:
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -117,7 +117,7 @@ class DpfSolution:
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -133,7 +133,7 @@ class DpfSolution:
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -181,7 +181,7 @@ class DpfComplexSolution(DpfSolution):
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -197,7 +197,7 @@ class DpfComplexSolution(DpfSolution):
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -213,7 +213,7 @@ class DpfComplexSolution(DpfSolution):
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -229,7 +229,7 @@ class DpfComplexSolution(DpfSolution):
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
@@ -245,7 +245,7 @@ class DpfComplexSolution(DpfSolution):
         
         Parameters
         ----------
-        **kawrgs
+        **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
         
         Examples
