@@ -221,5 +221,35 @@ def test_print():
     print(d)
     disp = d.vector
     print(disp)
+ 
+    
+def test_plot_chart():
+    transient_sol = post.load_solution(TRANSIENT_FILE_PATH)
+    disp = transient_sol.displacement(time_scoping=list(range(1, 21)))
+    vector = disp.vector
+    vector.num_fields
+    vector.plot_chart()
+    
+
+def test_plot_contour_one_field():
+    solution = post.load_solution(TRANSIENT_FILE_PATH)
+    stress = solution.stress(location=post.locations.elemental, time_scoping=[1]) 
+    s = stress.tensor
+    s.plot_contour("time", 1)
+    s.plot_contour()
     
     
+def test_plot_contour_two_fields():
+    #splitted shell/solid
+    solution = post.load_solution(TEST_FILE_PATH_RST)
+    stress = solution.stress(location=post.locations.elemental, time_scoping=[1]) 
+    s = stress.tensor
+    s.plot_contour("time", 1)
+    s.plot_contour()
+    
+    
+def test_plot_with_vtk_file():
+    solution = post.load_solution(TEST_FILE_PATH_RST)
+    stress = solution.stress(location=post.locations.elemental, time_scoping=[1]) 
+    s = stress.tensor
+    s._plot_contour_with_vtk_file()
