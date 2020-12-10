@@ -28,6 +28,18 @@ def test_get_result_info():
     assert res_info.physics_type
     assert res_info.available_results
     
+    
+def test_solution_mesh():
+    sol = post.load_solution(TEST_FILE_PATH_RST)
+    mesh = sol.mesh
+    assert len(mesh.nodes) == 15129
+
+
+def test_solution_tfq():
+    sol = post.load_solution(TEST_FILE_PATH_RST)
+    tfq = sol.time_freq_support
+    assert tfq.frequencies.data[0] == 1.
+    
 
 def test_get_result_data_function_of_operator_no_keyword():
     result = post.load_solution(TEST_FILE_PATH_RST)

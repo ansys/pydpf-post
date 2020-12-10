@@ -24,6 +24,14 @@ class DpfSolution:
         self._data_sources = data_sources
         self._model = model
         self.misc = Misc(model, data_sources)
+        
+    @property
+    def mesh(self):
+        return self._model.metadata.meshed_region
+    
+    @property
+    def time_freq_support(self):
+        return self._model.metadata.time_freq_support
            
     def get_result_info(self):
         """Returns information about the result file.
