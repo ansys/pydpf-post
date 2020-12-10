@@ -21,16 +21,22 @@ from ansys.dpf.post.misc_results import Misc, ComplexMisc
 class DpfSolution:
     """Main class of post result API."""
     def __init__(self, data_sources, model):
+        """Initialization of the solution using data_sources 
+        and dpf.core.Model object."""
         self._data_sources = data_sources
         self._model = model
         self.misc = Misc(model, data_sources)
         
     @property
     def mesh(self):
+        """Mesh representation of the model. 
+        Based on the dpf.core.MeshedRegion class."""
         return self._model.metadata.meshed_region
     
     @property
     def time_freq_support(self):
+        """Description of the temporal/frequency 
+        analysis of the model."""
         return self._model.metadata.time_freq_support
            
     def get_result_info(self):
