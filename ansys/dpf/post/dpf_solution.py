@@ -19,12 +19,7 @@ from ansys.dpf.post.misc_results import Misc, ComplexMisc
         
 
 class DpfSolution:
-    """Main class of post result API.
-    
-    Parameters
-    ----------
-    None
-    """
+    """Main class of post result API."""
     def __init__(self, data_sources, model):
         self._data_sources = data_sources
         self._model = model
@@ -32,10 +27,6 @@ class DpfSolution:
            
     def get_result_info(self):
         """Returns information about the result file.
-        
-        Parameters
-        ----------
-        None
         
         Examples
         --------
