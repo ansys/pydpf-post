@@ -5,29 +5,10 @@ from ansys.dpf.post.dpf_solution import DpfComplexSolution
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.displacement import ComplexDisplacement
-
-
-if 'AWP_UNIT_TEST_FILES' in os.environ:
-    unit_test_files = os.environ['AWP_UNIT_TEST_FILES']
-else:
-    raise KeyError('Please add the location of the DataProcessing '
-                   'test files "AWP_UNIT_TEST_FILES" to your env')
-    
-
-TEST_FILE_PATH_RST = os.path.join(unit_test_files, 'DataProcessing', 'rth_operators',
-                              'fileComplex.rst')
-
-
-MODAL_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
-                              'modal_allKindOfComplexity.rst')
-
-
-if not dpf.core.has_local_server():
-    dpf.core.start_local_server()
     
     
-def test_displacement_amplitude_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_displacement_amplitude_verbose_api(complex_model):
+    result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
     assert isinstance(result, DpfComplexSolution)
     ampl = result.misc.nodal_displacement_amplitude()
@@ -39,8 +20,8 @@ def test_displacement_amplitude_verbose_api():
     assert l[2][1] == 2.863712949981395e-10
     
 
-def test_displacement_amplitude():
-    sol = post.load_solution(TEST_FILE_PATH_RST)
+def test_displacement_amplitude(complex_model):
+    sol = post.load_solution(complex_model)
     assert isinstance(sol, HarmonicAnalysisSolution)
     assert isinstance(sol, DpfComplexSolution)
     complex_disp = sol.displacement()
@@ -54,8 +35,8 @@ def test_displacement_amplitude():
     assert l[2][1] == 2.863712949981395e-10
     
     
-def test_displacement_at_phase_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_displacement_at_phase_verbose_api(complex_model):
+    result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
     assert isinstance(result, DpfComplexSolution)
     disp_at_phase = result.misc.nodal_displacement(phase = 41.)
@@ -67,8 +48,8 @@ def test_displacement_at_phase_verbose_api():
     assert l[2][1] == -2.1606921923925902e-10
     
 
-def test_displacement_at_phase():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_displacement_at_phase(complex_model):
+    result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
     assert isinstance(result, DpfComplexSolution)
     complex_disp = result.displacement()
@@ -82,29 +63,35 @@ def test_displacement_at_phase():
     assert l[2][1] == -2.1606921923925902e-10
     
     
-def test_has_complex_result():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_has_complex_result(complex_model):
+    result = post.load_solution(complex_model)
     assert result.has_complex_result()
     
 
-def test_is_complex_result_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_is_complex_result_verbose_api(complex_model):
+    result = post.load_solution(complex_model)
     disp = result.misc.nodal_displacement()
     assert disp.num_fields == 2
     assert disp.is_complex_result()
-    result = post.load_solution(MODAL_FILE_PATH)
+    
+    
+def test_is_complex_result_verbose_api_modal(modalallkindofcomplexity):
+    result = post.load_solution(modalallkindofcomplexity)
     disp = result.misc.nodal_displacement()
     assert disp.num_fields == 1
     assert disp.is_complex_result()
     
     
-def test_is_complex_result():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_is_complex_result(complex_model):
+    result = post.load_solution(complex_model)
     compl_disp = result.displacement()
     disp = compl_disp.vector
     assert disp.num_fields == 2
     assert disp.is_complex_result()
-    result = post.load_solution(MODAL_FILE_PATH)
+    
+    
+def test_is_complex_result_modal(modalallkindofcomplexity):
+    result = post.load_solution(modalallkindofcomplexity)
     disp = result.misc.nodal_displacement()
     assert disp.num_fields == 1
     assert disp.is_complex_result()

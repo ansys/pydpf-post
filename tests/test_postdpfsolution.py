@@ -5,23 +5,8 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.core.common import locations
 
 
-if 'AWP_UNIT_TEST_FILES' in os.environ:
-    unit_test_files = os.environ['AWP_UNIT_TEST_FILES']
-else:
-    raise KeyError('Please add the location of the DataProcessing '
-                   'test files "AWP_UNIT_TEST_FILES" to your env')
-    
-
-TEST_FILE_PATH_RST = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
-                              'allKindOfComplexity.rst')
-
-
-if not dpf.core.has_local_server():
-    dpf.core.start_local_server()
-    
-    
-def test_get_result_info():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_info(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     res_info = result.get_result_info()
     assert res_info.analysis_type
     assert res_info.unit_system
@@ -29,50 +14,50 @@ def test_get_result_info():
     assert res_info.available_results
     
     
-def test_solution_mesh():
-    sol = post.load_solution(TEST_FILE_PATH_RST)
+def test_solution_mesh(allkindofcomplexity):
+    sol = post.load_solution(allkindofcomplexity)
     mesh = sol.mesh
     assert len(mesh.nodes) == 15129
 
 
-def test_solution_tfq():
-    sol = post.load_solution(TEST_FILE_PATH_RST)
+def test_solution_tfq(allkindofcomplexity):
+    sol = post.load_solution(allkindofcomplexity)
     tfq = sol.time_freq_support
     assert tfq.frequencies.data[0] == 1.
     
 
-def test_get_result_data_function_of_operator_no_keyword():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_no_keyword(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources)
     assert isinstance(result_data, ResultData)
     
     
-def test_get_result_data_function_of_operator_ns():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_ns(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, named_selection="SELECTION")
     assert isinstance(result_data, ResultData)
 
 
-def test_get_result_data_function_of_operator_location():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_location(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, location="Elemental")
     assert isinstance(result_data, ResultData)
 
 
-def test_get_result_data_function_of_operator_node_scop():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_node_scop(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3])
     assert isinstance(result_data, ResultData)
 
 
-def test_get_result_data_function_of_operator_elem_scop():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_elem_scop(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, element_scoping=[1, 2, 3])
     assert isinstance(result_data, ResultData)
 
 
-def test_get_result_data_function_of_operator_bothscop():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_get_result_data_function_of_operator_bothscop(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     try:
         result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3], element_scoping=[1, 2, 3])
     except Exception as e:
@@ -94,8 +79,8 @@ def test_get_result_data_function_of_operator_bothscop():
 #         assert type(e) == type(e2)
 
 
-def test_check_elemental_location():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_check_elemental_location(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     try:
         result.misc.nodal_displacement(location="Elemental")
     except Exception as e:
@@ -105,8 +90,8 @@ def test_check_elemental_location():
         assert type(e) == type(e2)
         
 
-def test_check_nodal_location():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_check_nodal_location(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     try:
         result.misc.elemental_stress(location="nodal")
     except Exception as e:
@@ -116,8 +101,8 @@ def test_check_nodal_location():
         assert type(e) == type(e2)
 
 
-def test_nodal_displacement_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_nodal_displacement_verbose_api(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement()
     assert isinstance(disp, ResultData)
     assert disp.num_fields == 1
@@ -128,8 +113,8 @@ def test_nodal_displacement_verbose_api():
     assert field.location == locations.nodal
     
     
-def test_nodal_displacement():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_nodal_displacement(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     d = result.displacement()
     disp = d.vector
     assert isinstance(disp, ResultData)
@@ -141,8 +126,8 @@ def test_nodal_displacement():
     assert field.location == locations.nodal
     
     
-def test_nodal_stress_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_nodal_stress_verbose_api(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     stress = result.misc.nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 2
@@ -156,8 +141,8 @@ def test_nodal_stress_verbose_api():
     assert field.location == locations.nodal
     
     
-def test_nodal_stress():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_nodal_stress(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     s = result.stress(location = post.locations.nodal)
     stress = s.tensor
     assert isinstance(stress, ResultData)
@@ -172,8 +157,8 @@ def test_nodal_stress():
     assert field.location == locations.nodal
 
 
-def test_elemental_stress_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_elemental_stress_verbose_api(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 2
@@ -187,8 +172,8 @@ def test_elemental_stress_verbose_api():
     assert field.location == locations.elemental
     
     
-def test_elemental_stress():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_elemental_stress(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
     assert isinstance(stress, ResultData)
@@ -203,8 +188,8 @@ def test_elemental_stress():
     assert field.location == locations.elemental
 
     
-def test_elemental_nodal_stress_verbose_api():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_elemental_nodal_stress_verbose_api(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_nodal_stress()
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 1
@@ -215,8 +200,8 @@ def test_elemental_nodal_stress_verbose_api():
     assert field.location == locations.elemental_nodal
     
     
-def test_elemental_nodal_stress():
-    result = post.load_solution(TEST_FILE_PATH_RST)
+def test_elemental_nodal_stress(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
     s = result.stress(location=post.locations.elemental_nodal)
     stress = s.tensor
     assert isinstance(stress, ResultData)

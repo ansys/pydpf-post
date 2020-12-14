@@ -189,15 +189,20 @@ class ResultData:
         pl._plot_contour_using_vtk_file(self.result_fields_container)
         
     
-    def plot_contour(self, display_option: str = "time", option_id = 1):
+    def plot_contour(self, display_option: str = "time", option_id = 1, notebook = True):
         """Plot the contour result on its mesh support. The obtained figure depends on the 
         support (can be a meshed_region or a time_freq_support).
         If transient analysis, plot the last result if no time_scoping has been specified.
         
         Parameters
         ----------
-        display_option: str (the name of the label you want to display). Default is "time".
-        option_id: int (the list of label ids you want to display). Default is [1].
+        display_option
+            str (the name of the label you want to display). Default is "time".
+        option_id
+            int (the list of label ids you want to display). Default is [1].
+        notebook
+            bool (defines if the plotting is made on a notebook -2D - or not - 3D -). 
+            Default is True.
         
         Help
         ----
@@ -246,7 +251,7 @@ class ResultData:
             for label in label_spaces:
                 field = self.result_fields_container._get_entries(label)
                 new_fields_container.add_field(label, field)
-            pl.plot_contour(new_fields_container)
+            pl.plot_contour(new_fields_container, notebook)
         
     
         

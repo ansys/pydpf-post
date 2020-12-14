@@ -7,28 +7,11 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.scalar import Scalar, ComplexScalar
 from ansys.dpf.post.vector import Vector, ComplexVector
 from ansys.dpf.post.tensor import Tensor, ComplexTensor
+import pytest
 
 
-if not dpf.core.has_local_server():
-    dpf.core.start_local_server()
-    
-    
-if 'AWP_UNIT_TEST_FILES' in os.environ:
-    unit_test_files = os.environ['AWP_UNIT_TEST_FILES']
-else:
-    raise KeyError('Please add the location of the DataProcessing '
-                   'test files "AWP_UNIT_TEST_FILES" to your env')
-    
-
-FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
-                              'allKindOfComplexity.rst')
-
-COMPLEX_FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rth_operators',
-                              'fileComplex.rst')
-
-
-def test_scalar():
-    solution = post.load_solution(FILE_PATH)
+def test_scalar(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     scalar = solution.temperature()
     assert isinstance(scalar, Scalar)
     txt = scalar.__str__()
@@ -39,8 +22,8 @@ def test_scalar():
     assert value[0].data[0] == 22.
 
 
-def test_vector():
-    solution = post.load_solution(FILE_PATH)
+def test_vector(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     vector = solution.displacement()
     assert isinstance(vector, Vector)
     txt = vector.__str__()
@@ -64,8 +47,8 @@ def test_vector():
     assert len(z[0].data) == 15113
 
 
-def test_tensor():
-    solution = post.load_solution(FILE_PATH)
+def test_tensor(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     tensor = solution.stress()
     assert isinstance(tensor, Tensor)
     txt = tensor.__str__()
@@ -113,8 +96,8 @@ def test_tensor():
     assert len(ppal3[0].data) == 720
     
     
-def test_scalar_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_scalar_complex(complex_model):
+    solution = post.load_solution(complex_model)
     scalar = solution.temperature()
     assert isinstance(scalar, ComplexScalar)
     txt = scalar.__str__()
@@ -131,8 +114,8 @@ def test_scalar_complex():
     assert ph[0].data[0] == 6.9988343023108595
 
 
-def test_vector_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_vector_complex(complex_model):
+    solution = post.load_solution(complex_model)
     vector = solution.displacement()
     assert isinstance(vector, ComplexVector)
     txt = vector.__str__()
@@ -202,8 +185,8 @@ def test_vector_complex():
     assert len(nrm_ph[0].data) == 4802
 
 
-def test_tensor_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_tensor_complex(complex_model):
+    solution = post.load_solution(complex_model)
     tensor = solution.stress()
     assert isinstance(tensor, ComplexTensor)
     txt = tensor.__str__()
@@ -334,8 +317,13 @@ def test_tensor_complex():
 
 
 class TestCase(unittest.TestCase):
+    
+    @pytest.fixture(autouse=True)
+    def set_filepath(self, allkindofcomplexity):
+        self._filepath = allkindofcomplexity
+        
     def test_displacement_elemental_location(self):
-        solution = post.load_solution(FILE_PATH)
+        solution = post.load_solution(self._filepath)
         self.assertRaises(Exception, solution.displacement, location=locations.elemental)
         try:
             solution.displacement(location=locations.elemental)
@@ -346,8 +334,8 @@ class TestCase(unittest.TestCase):
             assert type(e) == type(e2)
             
             
-def test_displacement():
-    solution = post.load_solution(FILE_PATH)
+def test_displacement(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     vector = solution.displacement()
     print(vector)
     assert vector._operator_name == "U"
@@ -365,8 +353,8 @@ def test_displacement():
     assert nrm[0].data[34] ==1.2717854105570665e-06
     
     
-def test_displacement_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_displacement_complex(complex_model):
+    solution = post.load_solution(complex_model)
     vector = solution.displacement()
     print(vector)
     assert vector._operator_name == "U"
@@ -402,8 +390,8 @@ def test_displacement_complex():
     assert nrm[0].data[34] == 1.438258083761136e-09
     
 
-def test_stress():
-    solution = post.load_solution(FILE_PATH)
+def test_stress(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     tensor = solution.stress()
     print(tensor)
     assert tensor._operator_name == "S"
@@ -436,8 +424,8 @@ def test_stress():
     assert vm[0].data[41] == 6994761.422404355
     
     
-def test_stress_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_stress_complex(complex_model):
+    solution = post.load_solution(complex_model)
     tensor = solution.stress()
     print(tensor)
     assert tensor._operator_name == "S"
@@ -516,22 +504,22 @@ def test_stress_complex():
     assert vm[0].data[41] == 108117.78055484823
     
 
-def test_plastic_strain():
-    solution = post.load_solution(FILE_PATH)
+def test_plastic_strain(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     tensor = solution.plastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPPL"
     
     
-def test_plastic_strain_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_plastic_strain_complex(complex_model):
+    solution = post.load_solution(complex_model)
     tensor = solution.plastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPPL"
 
 
-def test_elastic_strain():
-    solution = post.load_solution(FILE_PATH)
+def test_elastic_strain(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     tensor = solution.elastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPEL"
@@ -562,8 +550,8 @@ def test_elastic_strain():
     assert ppal3[0].data[41] == -7.271460770812878e-05
     
     
-def test_elastic_strain_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_elastic_strain_complex(complex_model):
+    solution = post.load_solution(complex_model)
     tensor = solution.elastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPEL"
@@ -603,8 +591,8 @@ def test_elastic_strain_complex():
     assert tensor.principal_3_at_phase(14.)
 
 
-def test_temperature():
-    solution = post.load_solution(FILE_PATH)
+def test_temperature(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     temp = solution.temperature()
     print(temp)
     assert temp._operator_name == "BFE"
@@ -621,8 +609,8 @@ def test_temperature():
     assert value2[0].location == post.locations.elemental
     
     
-def test_temperature_complex():
-    solution = post.load_solution(COMPLEX_FILE_PATH)
+def test_temperature_complex(complex_model):
+    solution = post.load_solution(complex_model)
     temp = solution.temperature()
     print(temp)
     assert temp._operator_name == "BFE"
