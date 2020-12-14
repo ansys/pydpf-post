@@ -37,6 +37,14 @@ def load_solution(data_sources):
         
         
 def print_available_keywords():
+    """Print the keywords that can be used into the result object.
+    
+    Examples
+    --------
+    >>> from ansys.dpf import post
+    >>> solution = post.load_solution('file.rst')
+    >>> stress = solution.stress(PRINTED_KEYWORDS_CAN_be_USED_HERE)
+    """
     txt = _AvailableKeywords().__str__()
     print(txt)
      

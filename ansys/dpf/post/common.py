@@ -48,10 +48,9 @@ class _AvailableKeywords():
     element_scoping = "element_scoping"
     named_selection = "named_selection"
     time = "time"
-    # substep = "substep"
     set = "set"
     grouping = "grouping"
-    phase = "phase"
+    _phase = "phase"
     _subresult = "subresult"
     mapdl_grouping = "mapdl_grouping"
     time_scoping = "time_scoping"
@@ -61,8 +60,30 @@ class _AvailableKeywords():
         for attr in dir(_AvailableKeywords):
             if not attr.startswith("__") and not attr.startswith("_") and not callable(getattr(_AvailableKeywords, attr)):
                 txt += attr
+                txt += ": "
+                txt += self._description_mapping(attr)
                 txt += "\n"
         return txt
+    
+    def _description_mapping(self, attr_name):
+        if (attr_name == self.location):
+            return "str. Use post.locations.(...) as helper."
+        if (attr_name == self.node_scoping):
+            return "list, int or dpf.core.Scoping"
+        if (attr_name == self.element_scoping):
+            return "list, int or dpf.core.Scoping"
+        if (attr_name == self.time_scoping):
+            return "list, int or dpf.core.Scoping"
+        if (attr_name == self.named_selection):
+            return "str. Name of named_selection."
+        if (attr_name == self.time):
+            return "float"
+        if (attr_name == self.set):
+            return "int"
+        if (attr_name == self.mapdl_grouping):
+            return "int. Write 186 to get mapdl_elements solid_186."
+        if (attr_name == self.grouping):
+            return "str. Use post.grouping.(...) as helper."
     
     
 class _AnalysisType():

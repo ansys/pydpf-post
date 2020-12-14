@@ -4,23 +4,8 @@ from ansys.dpf import post
 from ansys.dpf.post.result_definition import Definition
 
 
-if not dpf.core.has_local_server():
-    dpf.core.start_local_server()
-    
-    
-if 'AWP_UNIT_TEST_FILES' in os.environ:
-    unit_test_files = os.environ['AWP_UNIT_TEST_FILES']
-else:
-    raise KeyError('Please add the location of the DataProcessing '
-                   'test files "AWP_UNIT_TEST_FILES" to your env')
-    
-
-FILE_PATH = os.path.join(unit_test_files, 'DataProcessing', 'rst_operators',
-                              'allKindOfComplexity.rst')
-
-
-def test_resultdefinition_init():
-    solution = post.load_solution(FILE_PATH)
+def test_resultdefinition_init(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     definition = stress.definition
     assert isinstance(definition, Definition)
@@ -46,72 +31,72 @@ def test_resultdefinition_init():
     assert definition4.location == post.locations.nodal
 
 
-def test_resdef_location():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_location(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.location == post.locations.nodal
     stress.definition.location = post.locations.elemental
     assert stress.definition.location == post.locations.elemental
     
 
-def test_resdef_nodescoping():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_nodescoping(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.node_scoping == None
     stress.definition.node_scoping = 2
     assert stress.definition.node_scoping == 2
 
 
-def test_resdef_elemscoping():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_elemscoping(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.element_scoping == None
     stress.definition.element_scoping = 2
     assert stress.definition.element_scoping == 2
 
 
-def test_resdef_timescoping():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_timescoping(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.time_scoping == None
     stress.definition.time_scoping = 2
     assert stress.definition.time_scoping == 2
 
 
-def test_resdef_namedsel():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_namedsel(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.named_selection == None
     stress.definition.named_selection = "S"
     assert stress.definition.named_selection == "S"
 
 
-def test_resdef_grouping():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_grouping(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.grouping == None
     stress.definition.grouping = post.grouping.by_el_shape
     assert stress.definition.grouping == post.grouping.by_el_shape
 
 
-def test_resdef_mapdlgrouping():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_mapdlgrouping(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.mapdl_grouping == None
     stress.definition.mapdl_grouping = 186
     assert stress.definition.mapdl_grouping == 186
 
 
-def test_resdef_time():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_time(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.time == None
     stress.definition.time = 0.1
     assert stress.definition.time == 0.1
 
 
-def test_resdef_set():
-    solution = post.load_solution(FILE_PATH)
+def test_resdef_set(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress()
     assert stress.definition.set == None
     stress.definition.set = 3
