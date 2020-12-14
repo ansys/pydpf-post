@@ -158,8 +158,8 @@ def test_disp_with_component_subresult_verbose_api(allkindofcomplexity):
     assert disp.num_fields == 1
     data = disp.get_data_at_field(0)
     assert len(data) == 15113
-    assert data[0] == 5.130250313479703e-06
-    
+    assert np.isclose(data[0], 5.130250313479703e-06)
+
     
 def test_disp_with_component_subresult(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -169,7 +169,7 @@ def test_disp_with_component_subresult(allkindofcomplexity):
     assert disp.num_fields == 1
     data = disp.get_data_at_field(0)
     assert len(data) == 15113
-    assert data[0] == 5.130250313479703e-06
+    assert np.isclose(data[0], 5.130250313479703e-06)
 
 
 def test_stress_with_component_subresult_verbose_api(allkindofcomplexity):
@@ -179,7 +179,7 @@ def test_stress_with_component_subresult_verbose_api(allkindofcomplexity):
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
     assert len(data) == 40016
-    assert data[1] == 1.0216815465593042e-10
+    assert np.isclose(data[1], 1.0216815465593042e-10)
     
     
 def test_stress_with_component_subresult(allkindofcomplexity):
@@ -190,7 +190,7 @@ def test_stress_with_component_subresult(allkindofcomplexity):
     assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
     assert len(data) == 40016
-    assert data[1] == 1.0216815465593042e-10
+    assert np.isclose(data[1], 1.0216815465593042e-10)
 
 
 def test_stress_with_invariant_subresult_verbose_api(allkindofcomplexity):
@@ -200,7 +200,7 @@ def test_stress_with_invariant_subresult_verbose_api(allkindofcomplexity):
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)
     assert len(data) == 720
-    assert data[1] == -4721842.179373354
+    assert np.isclose(data[1], -4721842.179373354)
     
 
 def test_stress_with_invariant_subresult(allkindofcomplexity):
@@ -211,7 +211,7 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
     assert stress.num_fields == 2
     data = stress.get_data_at_field(0)
     assert len(data) == 720
-    assert data[1] == -4721842.179373354
+    assert np.isclose(data[1], -4721842.179373354)
     
     
 def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
@@ -223,7 +223,7 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     assert len(disp.get_data_at_field(1)) == 6748
     assert len(disp.get_data_at_field(2)) == 36
     assert len(disp.get_data_at_field(3)) == 4
-    assert disp.get_data_at_field(2)[0][0] == 5.523488975819807e-20
+    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
     
     
@@ -237,7 +237,7 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert len(disp.get_data_at_field(1)) == 6748
     assert len(disp.get_data_at_field(2)) == 36
     assert len(disp.get_data_at_field(3)) == 4
-    assert disp.get_data_at_field(2)[0][0] == 5.523488975819807e-20
+    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
 
@@ -250,7 +250,7 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     assert len(stress.get_data_at_field(1)) == 27156
     assert len(stress.get_data_at_field(2)) == 0
     assert len(stress.get_data_at_field(3)) == 0
-    assert stress.get_data_at_field(1)[0][0] == -2984789.100540372
+    assert np.isclose(stress.get_data_at_field(1)[0][0], -2984789.100540372)
     assert stress[0].location == locations.elemental
     
     
@@ -264,7 +264,7 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert len(stress.get_data_at_field(1)) == 27156
     assert len(stress.get_data_at_field(2)) == 0
     assert len(stress.get_data_at_field(3)) == 0
-    assert stress.get_data_at_field(1)[0][0] == -2984789.100540372
+    assert np.isclose(stress.get_data_at_field(1)[0][0], -2984789.100540372)
     assert stress[0].location == locations.elemental
     
 
@@ -274,7 +274,7 @@ def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     assert disp.num_fields == 11
     assert len(disp[0]) == 23016
     assert len(disp[2]) == 1848
-    assert disp.get_data_at_field(2)[0][2] == -6.649053654123576e-07
+    assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
     
     
@@ -285,7 +285,7 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     assert disp.num_fields == 11
     assert len(disp[0]) == 23016
     assert len(disp[2]) == 1848
-    assert disp.get_data_at_field(2)[0][2] == -6.649053654123576e-07
+    assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
     
 
@@ -339,7 +339,7 @@ def test_maplgrouping_elemlocation_verbose_api(allkindofcomplexity):
     assert stress.num_fields == 1
     assert stress.result_fields_container.get_label_space(0) == {'time': 1}
     assert len(stress.get_data_at_field(0)) == 343
-    assert stress.get_data_at_field(0)[41][2] == -323198.184976747
+    assert np.isclose(stress.get_data_at_field(0)[41][2], -323198.184976747)
     assert stress[0].location == locations.elemental
     
     
@@ -350,7 +350,7 @@ def test_maplgrouping_elemlocation(allkindofcomplexity):
     assert stress.num_fields == 1
     assert stress.result_fields_container.get_label_space(0) == {'time': 1}
     assert len(stress.get_data_at_field(0)) == 343
-    assert stress.get_data_at_field(0)[41][2] == -323198.184976747
+    assert np.isclose(stress.get_data_at_field(0)[41][2], -323198.184976747)
     assert stress[0].location == locations.elemental
     
 
@@ -359,7 +359,7 @@ def test_set_keyword_verbose_api(plate_msup):
     disp = result.misc.nodal_displacement(set = 3)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
-    assert disp.get_data_at_field(0)[2][2] == 2.3955190605044603e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 2.3955190605044603e-05)
     
     
 def test_set_keyword(plate_msup):
@@ -368,7 +368,7 @@ def test_set_keyword(plate_msup):
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
-    assert disp.get_data_at_field(0)[2][2] == 2.3955190605044603e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 2.3955190605044603e-05)
     
     
 class TestCase(unittest.TestCase):
@@ -394,23 +394,23 @@ def test_time_keyword_in_frequencies_verbose_api(plate_msup):
     disp = result.misc.nodal_displacement(time=0.06)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 6}
-    assert disp.get_data_at_field(0)[2][2] == 6.449354759605568e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 6.449354759605568e-05)
     disp = result.misc.nodal_displacement(time=0.02)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 2}
-    assert disp.get_data_at_field(0)[40][2] == -9.555678764252377e-06
+    assert np.isclose(disp.get_data_at_field(0)[40][2], -9.555678764252377e-06)
     disp = result.misc.nodal_displacement(time=0.14)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 14}
-    assert disp.get_data_at_field(0)[22][2] == -5.9753488295405e-06
+    assert np.isclose(disp.get_data_at_field(0)[22][2], -5.9753488295405e-06)
     disp = result.misc.nodal_displacement(time=0.15)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 15}
-    assert disp.get_data_at_field(0)[101][2] == 1.2454347438346573e-05
+    assert np.isclose(disp.get_data_at_field(0)[101][2], 1.2454347438346573e-05)
     disp = result.misc.nodal_displacement(time=0.2)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 20}
-    assert disp.get_data_at_field(0)[345][2] == 6.931130871751968e-05
+    assert np.isclose(disp.get_data_at_field(0)[345][2], 6.931130871751968e-05)
     
     
 def test_time_keyword_in_frequencies(plate_msup):
@@ -419,27 +419,27 @@ def test_time_keyword_in_frequencies(plate_msup):
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 6}
-    assert disp.get_data_at_field(0)[2][2] == 6.449354759605568e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 6.449354759605568e-05)
     d = result.displacement(time=0.02)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 2}
-    assert disp.get_data_at_field(0)[40][2] == -9.555678764252377e-06
+    assert np.isclose(disp.get_data_at_field(0)[40][2], -9.555678764252377e-06)
     d = result.displacement(time=0.14)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 14}
-    assert disp.get_data_at_field(0)[22][2] == -5.9753488295405e-06
+    assert np.isclose(disp.get_data_at_field(0)[22][2], -5.9753488295405e-06)
     d = result.displacement(time=0.15)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 15}
-    assert disp.get_data_at_field(0)[101][2] == 1.2454347438346573e-05
+    assert np.isclose(disp.get_data_at_field(0)[101][2], 1.2454347438346573e-05)
     d = result.displacement(time=0.2)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 20}
-    assert disp.get_data_at_field(0)[345][2] == 6.931130871751968e-05
+    assert np.isclose(disp.get_data_at_field(0)[345][2], 6.931130871751968e-05)
 
 
 def test_time_keyword_not_in_frequencies_verbose_api(plate_msup):
@@ -447,15 +447,15 @@ def test_time_keyword_not_in_frequencies_verbose_api(plate_msup):
     disp = result.misc.nodal_displacement(time=0.061)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[2][2] == 6.466312449668174e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 6.466312449668174e-05)
     disp = result.misc.nodal_displacement(time=0.023)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[40][2] == -1.3341949773184135e-05
+    assert np.isclose(disp.get_data_at_field(0)[40][2], -1.3341949773184135e-05)
     disp = result.misc.nodal_displacement(time=0.1499)
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[22][2] == -1.7795334817918245e-05
+    assert np.isclose(disp.get_data_at_field(0)[22][2], -1.7795334817918245e-05)
     
     
 def test_time_keyword_not_in_frequencies(plate_msup):
@@ -464,17 +464,17 @@ def test_time_keyword_not_in_frequencies(plate_msup):
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[2][2] == 6.466312449668174e-05
+    assert np.isclose(disp.get_data_at_field(0)[2][2], 6.466312449668174e-05)
     d = result.displacement(time=0.023)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[40][2] == -1.3341949773184135e-05
+    assert np.isclose(disp.get_data_at_field(0)[40][2], -1.3341949773184135e-05)
     d = result.displacement(time=0.1499)
     disp = d.vector
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
-    assert disp.get_data_at_field(0)[22][2] == -1.7795334817918245e-05
+    assert np.isclose(disp.get_data_at_field(0)[22][2], -1.7795334817918245e-05)
     
     
 def test_time_scoping_keyword_verbose_api(plate_msup):
@@ -484,21 +484,21 @@ def test_time_scoping_keyword_verbose_api(plate_msup):
     disp1 = result.misc.nodal_displacement(time_scoping=[1,2,4])
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
-    assert disp1.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    assert np.isclose(disp1.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     # disp2 = result.misc.nodal_displacement(time_scoping=np.array([1, 2, 4]))
     # assert disp2.num_fields == 3
     # assert disp2.result_fields_container.get_label_space(0) == {'time': 1}
-    # assert disp2.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    # assert np.isclose(disp2.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     scop = dpf.core.Scoping()
     scop.ids = [1, 2, 4]
     disp3 = result.misc.nodal_displacement(time_scoping=scop)
     assert disp3.num_fields == 3
     assert disp3.result_fields_container.get_label_space(0) == {'time': 1}
-    assert disp3.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    assert np.isclose(disp3.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     disp4 = result.misc.nodal_displacement(time_scoping=2)
     assert disp4.num_fields == 1
     assert disp4.result_fields_container.get_label_space(0) == {'time': 2}
-    assert disp4.get_data_at_field(0)[40][2] == -9.555678764252377e-06
+    assert np.isclose(disp4.get_data_at_field(0)[40][2], -9.555678764252377e-06)
     
     
 def test_time_scoping_keyword(plate_msup):
@@ -510,23 +510,23 @@ def test_time_scoping_keyword(plate_msup):
     disp1 = d1.vector
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
-    assert disp1.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    assert np.isclose(disp1.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     # disp2 = result.misc.nodal_displacement(time_scoping=np.array([1, 2, 4]))
     # assert disp2.num_fields == 3
     # assert disp2.result_fields_container.get_label_space(0) == {'time': 1}
-    # assert disp2.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    # assert np.isclose(disp2.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     scop = dpf.core.Scoping()
     scop.ids = [1, 2, 4]
     d3 = result.displacement(time_scoping=scop)
     disp3 = d3.vector
     assert disp3.num_fields == 3
     assert disp3.result_fields_container.get_label_space(0) == {'time': 1}
-    assert disp3.get_data_at_field(0)[40][2] == -2.0115581116044217e-06
+    assert np.isclose(disp3.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
     d4 = result.displacement(time_scoping=2)
     disp4 = d4.vector
     assert disp4.num_fields == 1
     assert disp4.result_fields_container.get_label_space(0) == {'time': 2}
-    assert disp4.get_data_at_field(0)[40][2] == -9.555678764252377e-06
+    assert np.isclose(disp4.get_data_at_field(0)[40][2], -9.555678764252377e-06)
     
     
     

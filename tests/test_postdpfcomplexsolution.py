@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.dpf_solution import DpfComplexSolution
@@ -17,7 +18,7 @@ def test_displacement_amplitude_verbose_api(complex_model):
     l = ampl.get_data_at_field(0)
     assert len(l) == 4802
     assert len(l[2]) == 3
-    assert l[2][1] == 2.863712949981395e-10
+    assert np.isclose(l[2][1], 2.863712949981395e-10)
     
 
 def test_displacement_amplitude(complex_model):
@@ -32,7 +33,7 @@ def test_displacement_amplitude(complex_model):
     l = ampl.get_data_at_field(0)
     assert len(l) == 4802
     assert len(l[2]) == 3
-    assert l[2][1] == 2.863712949981395e-10
+    assert np.isclose(l[2][1], 2.863712949981395e-10)
     
     
 def test_displacement_at_phase_verbose_api(complex_model):
@@ -45,7 +46,7 @@ def test_displacement_at_phase_verbose_api(complex_model):
     l = disp_at_phase.get_data_at_field(0)
     assert len(l) == 4802
     assert len(l[2]) == 3
-    assert l[2][1] == -2.1606921923925902e-10
+    assert np.isclose(l[2][1], -2.1606921923925902e-10)
     
 
 def test_displacement_at_phase(complex_model):
@@ -60,7 +61,7 @@ def test_displacement_at_phase(complex_model):
     l = disp_at_phase.get_data_at_field(0)
     assert len(l) == 4802
     assert len(l[2]) == 3
-    assert l[2][1] == -2.1606921923925902e-10
+    assert np.isclose(l[2][1], -2.1606921923925902e-10)
     
     
 def test_has_complex_result(complex_model):
