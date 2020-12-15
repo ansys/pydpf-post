@@ -84,8 +84,9 @@ class Definition:
 
     @location.setter
     def location(self, value):
-        if not isinstance(value, str):
-            raise Exception("Expected type is str.")
+        if value is not None:
+            if not isinstance(value, str):
+                raise Exception("Expected type is str.")
         self._location = value
         
     @property

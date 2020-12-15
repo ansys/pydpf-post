@@ -97,10 +97,6 @@ class Misc():
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("M", self, self._data_sources, **kwargs)
     
-    def nodal_temperature(self, **kwargs):
-        self._check_nodal_location(**kwargs)
-        return self._get_result_data_function_of_operator("TEMP", self, self._data_sources, **kwargs)
-    
     def nodal_raw_displacement(self, **kwargs):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("UTOT", self, self._data_sources, **kwargs)
@@ -108,14 +104,6 @@ class Misc():
     def nodal_raw_reaction_force(self, **kwargs):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("RFTOT", self, self._data_sources, **kwargs)
-    
-    def nodal_electric_field(self, **kwargs):
-        self._check_nodal_location(**kwargs)
-        return self._get_result_data_function_of_operator("EF", self, self._data_sources, **kwargs)
-    
-    def nodal_electric_potential(self, **kwargs):
-        self._check_nodal_location(**kwargs)
-        return self._get_result_data_function_of_operator("VOLT", self, self._data_sources, **kwargs)
     
     def modal_basis(self, **kwargs):
         self._check_nodal_location(**kwargs)
@@ -398,6 +386,7 @@ class ComplexMisc(Misc):
         return resultData
     
     #results
+    #!TODO
     def nodal_displacement_amplitude(self, **kwargs):
         result_data = self.nodal_displacement(**kwargs)
         return self._get_amplitude_evaluation(result_data)
@@ -409,3 +398,24 @@ class ComplexMisc(Misc):
     def nodal_stress_amplitude(self, **kwargs):
         result_data = self.nodal_stress(**kwargs)
         return self._get_amplitude_evaluation(result_data)  
+    
+    
+class ThermalMisc(Misc):
+    """This class contains miscellaneous results for thermal analysis.
+    
+    Here the phase keyword is also available while calling results.
+    """
+    
+    def nodal_electric_field(self, **kwargs):
+        self._check_nodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("EF", self, self._data_sources, **kwargs)
+    
+    def nodal_electric_potential(self, **kwargs):
+        self._check_nodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("VOLT", self, self._data_sources, **kwargs)
+    
+    def nodal_temperature(self, **kwargs):
+        self._check_nodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("TEMP", self, self._data_sources, **kwargs)
+    
+    
