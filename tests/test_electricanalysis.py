@@ -33,7 +33,7 @@ def test_electricfield_nodscoping():
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.elemental
-    assert len(s[0].data) == 3
+    assert len(s[0].data[0]) == 3
     assert np.allclose(s[0].data.tolist(), [-3.41948692e-14,  1.95629520e+01,  7.77156117e-15])
     ef = solution.electric_field(location = post.locations.elemental_nodal, node_scoping = [2])
     s = ef.vector
