@@ -25,8 +25,7 @@ def test_steadystate_nodscoping():
     s = temp.scalar
     assert s.num_fields == 1
     assert len(s[0].data) == 2
-    #assert np.allclose(s[0].data.tolist(), [41.8243869 , 40.29943406])
-    raise Exception(to_return)
+    assert np.allclose(s[0].data.tolist(), [41.8243869 , 40.29943406])
 
 
 def test_steadystate_elemscoping():
@@ -110,13 +109,12 @@ def test_transient_nodscoping():
     s = temp.scalar
     assert s.num_fields == 1
     assert len(s[0].data) == 2
-    #assert np.allclose(s[0].data.tolist(), [27.01872925, 25.61222966])
-    raise Exception(to_return)
+    assert np.allclose(s[0].data.tolist(), [27.01872925, 25.61222966])
 
 
 def test_transient_elemscoping():
     solution = post.load_solution(filepath_transient)
-    temp = solution.temperature(node_scoping = [2, 45])
+    temp = solution.temperature(element_scoping = [2, 45])
     s = temp.scalar
     assert s.num_fields == 1
     assert len(s[0].data) == 2
