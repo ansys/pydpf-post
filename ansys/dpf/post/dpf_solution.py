@@ -18,7 +18,7 @@ from ansys.dpf.post.temperature import Temperature
 from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
 from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
-from ansys.dpf.post.misc_results import Misc, ComplexMisc, ThermalMisc
+from ansys.dpf.post.misc_results import Misc, MecanicMisc, ComplexMecanicMisc, ThermalMisc
         
 
 class DpfSolution:
@@ -28,7 +28,6 @@ class DpfSolution:
         and dpf.core.Model object."""
         self._data_sources = data_sources
         self._model = model
-        self.misc = Misc(model, data_sources)
         
     @property
     def mesh(self):
@@ -73,6 +72,10 @@ class DpfSolution:
     
     
 class DpfMecanicSolution(DpfSolution):
+    
+    def __init__(self, data_sources, model):
+        super().__init__(data_sources, model)
+        self.misc = MecanicMisc(model, data_sources)
         
     #result classes            
     def stress(self, **kwargs):
@@ -160,7 +163,7 @@ class DpfMecanicComplexSolution(DpfSolution):
     """Main class of post solution if the analysis gives complex solution (Modal, Harmonic)."""
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
-        self.misc = ComplexMisc(model, data_sources)
+        self.misc = ComplexMecanicMisc(model, data_sources)
     
     def __str__(self):
         txt = super().__str__()
@@ -267,7 +270,7 @@ class DpfThermalSolution(DpfSolution):
     """Main class of post solution if thermal analysis."""
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
-        self.misc = ThermalMisc(model, data_sources)
+        #self.misc = ThermalMisc(model, data_sources)
         
         
     def __str__(self):

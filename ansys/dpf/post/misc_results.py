@@ -72,6 +72,9 @@ class Misc():
             if(kwargs[_AvailableKeywords.location] != locations.nodal):
                 raise Exception("Only a Nodal location can be used with a nodal result.")
     
+    
+class MecanicMisc(Misc):
+    
     #nodal results
     def nodal_displacement(self, **kwargs):
         self._check_nodal_location(**kwargs)
@@ -371,7 +374,7 @@ class Misc():
         return self._get_result_data_function_of_operator("S_eqv", self, self._data_sources, **kwargs)
 
 
-class ComplexMisc(Misc):
+class ComplexMecanicMisc(MecanicMisc):
     """This class contains miscellaneous results."""
     
     #tools
