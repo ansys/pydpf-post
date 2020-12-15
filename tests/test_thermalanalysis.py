@@ -5,12 +5,9 @@ import numpy as np
 import unittest
 import pytest
 
-filepath_steady = "d:/rst/rth_steady.rth"
-filepath_transient = "d:/rst/rth_transient.rth"
 
-
-def test_thermal_steadystate():
-    solution = post.load_solution(filepath_steady)
+def test_thermal_steadystate(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     assert solution._model.metadata.result_info.physics_type == _PhysicsType.thermal
     temp = solution.temperature()
     assert isinstance(temp, Temperature)
@@ -19,8 +16,8 @@ def test_thermal_steadystate():
     assert np.isclose(s[0].data[23], 29.6247641917003)
 
 to_return = "node scoping and element scoping returns the same"
-def test_steadystate_nodscoping():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_nodscoping(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(node_scoping = [2, 45])
     s = temp.scalar
     assert s.num_fields == 1
@@ -28,8 +25,8 @@ def test_steadystate_nodscoping():
     assert np.allclose(s[0].data.tolist(), [41.8243869 , 40.29943406])
 
 
-def test_steadystate_elemscoping():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_elemscoping(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(element_scoping = [2, 45])
     s = temp.scalar
     assert s.num_fields == 1
@@ -38,8 +35,8 @@ def test_steadystate_elemscoping():
     raise Exception(to_return)
 
 
-def test_steadystate_nodlocation():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_nodlocation(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(location = post.locations.nodal)
     s = temp.scalar
     assert s.num_fields == 1
@@ -49,8 +46,8 @@ def test_steadystate_nodlocation():
 class TestCase1(unittest.TestCase):
     
     @pytest.fixture(autouse=True)
-    def set_filepath(self, allkindofcomplexity):
-        self._filepath = filepath_steady
+    def set_filepath(self, rth_steady_state):
+        self._filepath = rth_steady_state
         
     def test_steadystate_elemlocation(self):
         solution = post.load_solution(self._filepath)
@@ -63,8 +60,8 @@ class TestCase1(unittest.TestCase):
         self.assertRaises(Exception, s = temp.scalar)
 
 
-def test_steadystate_timescoping():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_timescoping(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(time_scoping = 1)
     s = temp.scalar
     assert s.num_fields == 1
@@ -73,8 +70,8 @@ def test_steadystate_timescoping():
     assert np.isclose(s[0].data[24], 30.387240610202973)
 
 
-def test_steadystate_time():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_time(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(time = 1.)
     s = temp.scalar
     assert s.num_fields == 1
@@ -83,8 +80,8 @@ def test_steadystate_time():
     assert np.isclose(s[0].data[24], 30.387240610202973)
 
 
-def test_steadystate_set():
-    solution = post.load_solution(filepath_steady)
+def test_steadystate_set(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(set = 1)
     s = temp.scalar
     assert s.num_fields == 1
@@ -93,8 +90,9 @@ def test_steadystate_set():
     assert np.isclose(s[0].data[24], 30.387240610202973)
 
 
-def test_thermal_transient():
-    solution = post.load_solution(filepath_transient)
+
+def test_thermal_transient(rth_transient):
+    solution = post.load_solution(rth_transient)
     assert solution._model.metadata.result_info.physics_type == _PhysicsType.thermal
     temp = solution.temperature()
     assert isinstance(temp, Temperature)
@@ -103,8 +101,8 @@ def test_thermal_transient():
     assert np.isclose(s[0].data[23], 22.159122145252788)
 
 
-def test_transient_nodscoping():
-    solution = post.load_solution(filepath_transient)
+def test_transient_nodscoping(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(node_scoping = [2, 45])
     s = temp.scalar
     assert s.num_fields == 1
@@ -112,8 +110,8 @@ def test_transient_nodscoping():
     assert np.allclose(s[0].data.tolist(), [27.01872925, 25.61222966])
 
 
-def test_transient_elemscoping():
-    solution = post.load_solution(filepath_transient)
+def test_transient_elemscoping(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(element_scoping = [2, 45])
     s = temp.scalar
     assert s.num_fields == 1
@@ -122,8 +120,8 @@ def test_transient_elemscoping():
     raise Exception(to_return)
 
 
-def test_transient_nodlocation():
-    solution = post.load_solution(filepath_transient)
+def test_transient_nodlocation(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(location = post.locations.nodal)
     s = temp.scalar
     assert s.num_fields == 1
@@ -134,8 +132,8 @@ def test_transient_nodlocation():
 class TestCase2(unittest.TestCase):
     
     @pytest.fixture(autouse=True)
-    def set_filepath(self, allkindofcomplexity):
-        self._filepath = filepath_transient
+    def set_filepath(self, rth_transient):
+        self._filepath = rth_transient
         
     def test_steadystate_elemlocation(self):
         solution = post.load_solution(self._filepath)
@@ -148,8 +146,8 @@ class TestCase2(unittest.TestCase):
         self.assertRaises(Exception, s = temp.scalar)
 
 
-def test_transient_timescoping():
-    solution = post.load_solution(filepath_transient)
+def test_transient_timescoping(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(time_scoping = [2, 15])
     s = temp.scalar
     assert s.num_fields == 2
@@ -158,8 +156,8 @@ def test_transient_timescoping():
     assert np.isclose(s[0].data[24], 21.999999999992536)
 
 
-def test_transient_time():
-    solution = post.load_solution(filepath_transient)
+def test_transient_time(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(set = 2)
     s = temp.scalar
     assert s.num_fields == 1
@@ -168,8 +166,8 @@ def test_transient_time():
     assert np.isclose(s[0].data[24], 21.999999999992536)
 
 
-def test_transient_set():
-    solution = post.load_solution(filepath_transient)
+def test_transient_set(rth_transient):
+    solution = post.load_solution(rth_transient)
     temp = solution.temperature(time = 0.0223)
     s = temp.scalar
     assert s.num_fields == 1
