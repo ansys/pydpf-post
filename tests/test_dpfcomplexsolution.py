@@ -2,7 +2,7 @@ import os
 import numpy as np
 from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.dpf_solution import DpfComplexSolution
+from ansys.dpf.post.dpf_solution import DpfMecanicComplexSolution
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.displacement import ComplexDisplacement
@@ -11,7 +11,7 @@ from ansys.dpf.post.displacement import ComplexDisplacement
 def test_displacement_amplitude_verbose_api(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
-    assert isinstance(result, DpfComplexSolution)
+    assert isinstance(result, DpfMecanicComplexSolution)
     ampl = result.misc.nodal_displacement_amplitude()
     assert isinstance(ampl, ResultData)
     assert ampl.num_fields == 1
@@ -24,7 +24,7 @@ def test_displacement_amplitude_verbose_api(complex_model):
 def test_displacement_amplitude(complex_model):
     sol = post.load_solution(complex_model)
     assert isinstance(sol, HarmonicAnalysisSolution)
-    assert isinstance(sol, DpfComplexSolution)
+    assert isinstance(sol, DpfMecanicComplexSolution)
     complex_disp = sol.displacement()
     assert isinstance(complex_disp, ComplexDisplacement)
     ampl = complex_disp.vector_amplitude
@@ -39,7 +39,7 @@ def test_displacement_amplitude(complex_model):
 def test_displacement_at_phase_verbose_api(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
-    assert isinstance(result, DpfComplexSolution)
+    assert isinstance(result, DpfMecanicComplexSolution)
     disp_at_phase = result.misc.nodal_displacement(phase = 41.)
     assert isinstance(disp_at_phase, ResultData)
     assert disp_at_phase.num_fields == 1
@@ -52,7 +52,7 @@ def test_displacement_at_phase_verbose_api(complex_model):
 def test_displacement_at_phase(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
-    assert isinstance(result, DpfComplexSolution)
+    assert isinstance(result, DpfMecanicComplexSolution)
     complex_disp = result.displacement()
     assert isinstance(complex_disp, ComplexDisplacement)
     disp_at_phase = complex_disp.vector_at_phase(phase = 41.)

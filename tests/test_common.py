@@ -1,9 +1,5 @@
 from ansys import dpf
 from ansys.dpf import post
-
-
-if not dpf.core.has_local_server():
-    dpf.core.start_local_server()
     
     
 def test_available_keywords():

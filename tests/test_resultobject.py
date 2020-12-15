@@ -14,7 +14,7 @@ from ansys.dpf.post.tensor import Tensor, ComplexTensor
 
 def test_scalar(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
-    scalar = solution.temperature()
+    scalar = solution.structural_temperature()
     assert isinstance(scalar, Scalar)
     txt = scalar.__str__()
     assert txt == "Scalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
@@ -100,7 +100,7 @@ def test_tensor(allkindofcomplexity):
     
 def test_scalar_complex(complex_model):
     solution = post.load_solution(complex_model)
-    scalar = solution.temperature()
+    scalar = solution.structural_temperature()
     assert isinstance(scalar, ComplexScalar)
     txt = scalar.__str__()
     assert txt == "Complex scalar object. \n\nScalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
@@ -601,7 +601,7 @@ def test_elastic_strain_complex(complex_model):
 
 def test_temperature(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
-    temp = solution.temperature()
+    temp = solution.structural_temperature()
     print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
@@ -609,7 +609,7 @@ def test_temperature(allkindofcomplexity):
     assert len(value[0]) == 720
     assert value[0].data[0] == 22.0
     assert value[0].location == post.locations.nodal
-    temp2 = solution.temperature(element_scoping = 2, location = post.locations.elemental)
+    temp2 = solution.structural_temperature(element_scoping = 2, location = post.locations.elemental)
     value2 = temp2.scalar
     assert value2.num_fields == 1
     assert len(value2[0].data) == 1
@@ -619,7 +619,7 @@ def test_temperature(allkindofcomplexity):
     
 def test_temperature_complex(complex_model):
     solution = post.load_solution(complex_model)
-    temp = solution.temperature()
+    temp = solution.structural_temperature()
     print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
@@ -637,7 +637,7 @@ def test_temperature_complex(complex_model):
     assert len(value[0]) == 4802
     assert np.isclose(value[0].data[0], 12.654674492941831)
     assert value[0].location == post.locations.nodal
-    temp2 = solution.temperature(element_scoping = 2, location = post.locations.elemental)
+    temp2 = solution.structural_temperature(element_scoping = 2, location = post.locations.elemental)
     value2 = temp2.scalar
     assert value2.num_fields == 2
     assert len(value2[0].data) == 1
