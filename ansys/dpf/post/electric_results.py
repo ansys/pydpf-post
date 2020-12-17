@@ -6,7 +6,7 @@ from ansys.dpf.core.common import locations
     
     
 class ElectricField(Vector):
-    """Defines the temperature object for thermal analysis, that is a scalar object."""
+    """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EF"
@@ -27,7 +27,7 @@ class ElectricField(Vector):
     
     
 class ElectricPotential(Scalar):
-    """Defines the temperature object for thermal analysis, that is a scalar object."""
+    """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "VOLT"

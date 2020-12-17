@@ -14,7 +14,7 @@ from ansys.dpf.post.strain import ElasticStrain, ComplexElasticStrain
 from ansys.dpf.post.strain import PlasticStrain, ComplexPlasticStrain
 from ansys.dpf.post.temperature import StructuralTemperature
 from ansys.dpf.post.temperature import ComplexStructuralTemperature
-from ansys.dpf.post.temperature import Temperature
+from ansys.dpf.post.temperature import Temperature, HeatFlux
 from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
 from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
@@ -291,9 +291,25 @@ class DpfThermalSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution(file.rst)
-        >>> elastic_strain = solution.temperature(node_scoping = [1, 43])
+        >>> temp = solution.temperature(node_scoping = [1, 43])
         """
         return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def heat_flux(self, **kwargs):
+        """Returns a heat flux object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kwargs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> hf = solution.heat_flux(node_scoping = [1, 43])
+        """
+        return HeatFlux(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def electric_potential(self, **kwargs):
         """Returns an electric potential object from which it is possible to get ResultData.
@@ -307,12 +323,12 @@ class DpfThermalSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution(file.rst)
-        >>> elastic_strain = solution.electric_potential(node_scoping = [1, 43])
+        >>> ep = solution.electric_potential(node_scoping = [1, 43])
         """
         return ElectricPotential(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def electric_field(self, **kwargs):
-        """Returns an electric potential object from which it is possible to get ResultData.
+        """Returns an electric field object from which it is possible to get ResultData.
         
         Parameters
         ----------
@@ -323,7 +339,7 @@ class DpfThermalSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution(file.rst)
-        >>> elastic_strain = solution.electric_field(node_scoping = [1, 43])
+        >>> ef = solution.electric_field(node_scoping = [1, 43])
         """
         return ElectricField(data_sources=self._data_sources, model=self._model, **kwargs)
     
