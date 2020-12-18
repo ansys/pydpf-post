@@ -17,6 +17,8 @@ class Definition:
         self._time = None
         self._set = None 
         
+        self.__location_locked = False
+        
         if _AvailableKeywords.location in kwargs:
             self._location = kwargs.pop(_AvailableKeywords.location)
         if _AvailableKeywords.element_scoping in kwargs:
@@ -47,7 +49,7 @@ class Definition:
     def __str__(self):
         txt = "Object properties are: \n"
         for attr, value in vars(self).items():
-            if not (attr.startswith('__') or attr.startswith('_data_sources') or attr.startswith('_model')):
+            if not (attr.startswith('__') or attr.startswith('_data_sources') or attr.startswith('_model') or attr.startswith('_Definition')):
                 if value is not None:
                     if attr.startswith('_'):
                         attr = attr[1:]
@@ -84,8 +86,11 @@ class Definition:
 
     @location.setter
     def location(self, value):
-        if not isinstance(value, str):
-            raise Exception("Expected type is str.")
+        if self.__location_locked:
+            raise Exception("Location can not be set outside of the instantiation of the result object in this case.")
+        if value is not None:
+            if not isinstance(value, str):
+                raise Exception("Expected type is str.")
         self._location = value
         
     @property

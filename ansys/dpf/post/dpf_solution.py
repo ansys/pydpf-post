@@ -12,10 +12,13 @@ from ansys.dpf.core import Operator as _Operator
 from ansys.dpf.post.stress import Stress, ComplexStress
 from ansys.dpf.post.strain import ElasticStrain, ComplexElasticStrain
 from ansys.dpf.post.strain import PlasticStrain, ComplexPlasticStrain
-from ansys.dpf.post.temperature import Temperature, ComplexTemperature
+from ansys.dpf.post.temperature import StructuralTemperature
+from ansys.dpf.post.temperature import ComplexStructuralTemperature
+from ansys.dpf.post.temperature import Temperature, HeatFlux
 from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
+from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
-from ansys.dpf.post.misc_results import Misc, ComplexMisc
+from ansys.dpf.post.misc_results import Misc, MecanicMisc, ComplexMecanicMisc, ThermalMisc
         
 
 class DpfSolution:
@@ -25,7 +28,6 @@ class DpfSolution:
         and dpf.core.Model object."""
         self._data_sources = data_sources
         self._model = model
-        self.misc = Misc(model, data_sources)
         
     @property
     def mesh(self):
@@ -67,6 +69,13 @@ class DpfSolution:
         txt += "\n\n"
         txt += self._model.__str__()
         return txt
+    
+    
+class DpfMecanicSolution(DpfSolution):
+    
+    def __init__(self, data_sources, model):
+        super().__init__(data_sources, model)
+        self.misc = MecanicMisc(model, data_sources)
         
     #result classes            
     def stress(self, **kwargs):
@@ -133,7 +142,7 @@ class DpfSolution:
         """
         return Displacement(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def temperature(self, **kwargs):
+    def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
         
         Parameters
@@ -145,21 +154,16 @@ class DpfSolution:
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution(file.rst)
-        >>> temperature = solution.temperature(node_scoping = [1, 43])
+        >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
-        return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
+        return StructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
 
-class DpfComplexSolution(DpfSolution):
-    """Main class of post solution if the analysis gives complex solution (Modal, Harmonic).
-    
-    Parameters
-    ----------
-    None
-    """
+class DpfMecanicComplexSolution(DpfSolution):
+    """Main class of post solution if the analysis gives complex solution (Modal, Harmonic)."""
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
-        self.misc = ComplexMisc(model, data_sources)
+        self.misc = ComplexMecanicMisc(model, data_sources)
     
     def __str__(self):
         txt = super().__str__()
@@ -197,7 +201,7 @@ class DpfComplexSolution(DpfSolution):
         """
         return ComplexDisplacement(data_sources=self._data_sources, model=self._model, **kwargs)
     
-    def temperature(self, **kwargs):
+    def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
         
         Parameters
@@ -209,9 +213,9 @@ class DpfComplexSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution(file.rst)
-        >>> temperature = solution.temperature(node_scoping = [1, 43])
+        >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
-        return ComplexTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexStructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def plastic_strain(self, **kwargs):
         """Returns a plastic strain object from which it is possible to get ResultData.
@@ -262,5 +266,81 @@ class DpfComplexSolution(DpfSolution):
         return ComplexStress(data_sources=self._data_sources, model=self._model, **kwargs)
     
   
-
+class DpfThermalSolution(DpfSolution):
+    """Main class of post solution if thermal analysis."""
+    def __init__(self, data_sources, model):
+        super().__init__(data_sources, model)
+        #self.misc = ThermalMisc(model, data_sources)
+        
+        
+    def __str__(self):
+        txt = super().__str__()
+        txt += "\n"
+        txt += "This can contain complex result."
+        return txt
+    
+    def temperature(self, **kwargs):
+        """Returns a temperature object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kwargs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> temp = solution.temperature(node_scoping = [1, 43])
+        """
+        return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def heat_flux(self, **kwargs):
+        """Returns a heat flux object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kwargs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> hf = solution.heat_flux(node_scoping = [1, 43])
+        """
+        return HeatFlux(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def electric_potential(self, **kwargs):
+        """Returns an electric potential object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kwargs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> ep = solution.electric_potential(node_scoping = [1, 43])
+        """
+        return ElectricPotential(data_sources=self._data_sources, model=self._model, **kwargs)
+    
+    def electric_field(self, **kwargs):
+        """Returns an electric field object from which it is possible to get ResultData.
+        
+        Parameters
+        ----------
+        **kwargs
+            The list of keyword-arguments can be found using post.print_available_keywords().
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution(file.rst)
+        >>> ef = solution.electric_field(node_scoping = [1, 43])
+        """
+        return ElectricField(data_sources=self._data_sources, model=self._model, **kwargs)
+    
     

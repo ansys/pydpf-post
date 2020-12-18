@@ -87,12 +87,17 @@ class _AvailableKeywords():
     
     
 class _AnalysisType():
-    """Contains Python analysis type names. For developers usage.
-    """
+    """Contains Python analysis type names. For developers usage."""
     static = "static"
     modal = "modal"
     harmonic = "harmonic"
     transient = "transient"
+    
+    
+class _PhysicsType():
+    """Contains Python physics type names. For developers usage."""
+    mecanic = "mecanic"
+    thermal = "thermal"
     
 
         

@@ -18,7 +18,7 @@ class ResultEvaluator:
     """This object will make the evaluation of the fields container 
     wrapped in the ResultData object."""
     def __init__(self, operator_name: str, data_sources, model,
-                 elem_average, 
+                 elem_average, op_average, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
                  time = None, grouping = None, phase = None, subresult = None, 
@@ -137,6 +137,8 @@ class ResultEvaluator:
         # outside post-processing instruction         
         if elem_average:
             self._elemental_nodal_to_elemental_result()
+        if op_average:
+            self._average_result(op_average)
                 
     def _compute_scoping(self, in_scoping, in_location = None):
         out_scoping = in_scoping
@@ -195,7 +197,14 @@ class ResultEvaluator:
         avg.inputs.fields_container.connect(fc_to_connect)
         self._result_operator = avg
         self._chained_operators[avg.name] = "This operator will compute the elemental averaging of a fields container."
-            
+        
+    def _average_result(self, op_name):
+        avg = Operator(op_name)
+        fc_to_connect = self._result_operator.outputs.fields_container
+        avg.inputs.fields_container.connect(fc_to_connect)
+        self._result_operator = avg
+        self._chained_operators[avg.name] = "This operator will compute the averaging of a fields container."
+        
     def evaluate_result(self):
         """Re-evaluation of the result."""
         result_fc = self._result_operator.get_output(0, types.fields_container)

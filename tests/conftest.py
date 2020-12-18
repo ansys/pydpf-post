@@ -73,3 +73,21 @@ def plate_msup():
     """
     return resolve_test_file('plate1.rst', 'msup_transient')
 
+
+@pytest.fixture()
+def rth_transient():
+    """Resolve the path of the "rth/rth_transient.rth" result file."""
+    return resolve_test_file('rth_transient.rth', 'rth')
+
+
+@pytest.fixture()
+def rth_steady_state():
+    """Resolve the path of the "rth/rth_steady_state.rth" result file."""
+    return resolve_test_file('rth_steady.rth', 'rth')
+
+
+@pytest.fixture()
+def rth_electric():
+    """Resolve the path of the "rth/rth_electric.rth" result file."""
+    return resolve_test_file('rth_electric.rth', 'rth')
+
