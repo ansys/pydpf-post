@@ -219,7 +219,7 @@ class ResultData:
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         if (len(self.result_fields_container) == 1):
-            pl.plot_contour(self.result_fields_container)
+            pl.plot_contour(self.result_fields_container, notebook = notebook)
         else:
             #sorts and createsa new fields_container with only the wanted labels
             ids = option_id
@@ -250,7 +250,7 @@ class ResultData:
             for label in label_spaces:
                 field = self.result_fields_container._get_entries(label)
                 new_fields_container.add_field(label, field)
-            pl.plot_contour(new_fields_container, notebook)
+            pl.plot_contour(new_fields_container, notebook = notebook)
         
     
         
