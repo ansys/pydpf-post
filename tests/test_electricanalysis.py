@@ -42,6 +42,7 @@ def test_electricfield_nodscoping(rth_electric):
     assert np.allclose(s[0].data.tolist(), [-3.41948692e-14,  1.95629520e+01,  7.77156117e-15])
 
 
+@pytest.mark.skipif(True, reason="element scoping not available with electrical results.")
 def test_electricfield_elemscoping(rth_electric):
     raise Exception("Element scoping on electric_field does not work.")
     solution = post.load_solution(rth_electric)
@@ -157,6 +158,7 @@ def test_electricpotential_nodscoping(rth_electric):
     assert np.isclose(s[0].data[0], 0.048907380036668786)
 
 
+@pytest.mark.skipif(True, reason="element scoping not available with electrical results.")
 def test_electricpotential_elemscoping(rth_electric):
     solution = post.load_solution(rth_electric)
     ef = solution.electric_potential(node_scoping = [2])

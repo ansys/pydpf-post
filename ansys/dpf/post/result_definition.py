@@ -18,6 +18,7 @@ class Definition:
         self._set = None 
         
         self.__location_locked = False
+        self.__element_scoping_locked = False
         
         if _AvailableKeywords.location in kwargs:
             self._location = kwargs.pop(_AvailableKeywords.location)
@@ -109,6 +110,8 @@ class Definition:
 
     @element_scoping.setter
     def element_scoping(self, value):
+        if self.__element_scoping_locked:
+            raise Exception("Element scoping can not be set outside of the instantiation of the result object in this case.")
         self._element_scoping = value
         
     @property

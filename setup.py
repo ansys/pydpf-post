@@ -7,7 +7,7 @@ from setuptools import setup
 
 install_requires = ['pyvista>=0.24.0',
                     'matplotlib', 
-                    'ansys.dpf.core']
+                    'ansys.dpf.core>=0.1.2']
 
 
 # Get version from version info
@@ -22,8 +22,9 @@ readme_file = os.path.join(filepath, 'README.md')
 
 setup(
     name='ansys.dpf',
-    packages=['ansys', 'ansys.dpf.post'],
+    packages=['ansys.dpf.post'],
     version=__version__,
+    
     description='DPF Python gRPC client',
     # long_description=io_open(readme_file, encoding="utf-8").read(),
     classifiers=[
@@ -37,6 +38,6 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
 
-    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*',
+    python_requires='>=3.5.*',
     install_requires=install_requires,
 )

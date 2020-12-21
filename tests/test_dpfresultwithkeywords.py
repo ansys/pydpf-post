@@ -289,29 +289,27 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
     
 
-@pytest.mark.skipif(True, reason="grouping by materials has an issue while elemental location.")
 def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_stress(grouping = post.grouping.by_material)
     assert stress.num_fields == 11
-    # assert len(stress[0]) == 0
-    # assert len(stress[5]) == 156762
-    # assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
+    assert len(stress[1]) == 9828
+    assert len(stress[5]) == 156762
+    assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
-    assert stress[0].location == locations.elemental
+    assert stress[1].location == locations.elemental
     
 
-@pytest.mark.skipif(True, reason="grouping by materials has an issue while elemental location.")    
 def test_groupingmat_elemlocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(grouping = post.grouping.by_material, location=post.locations.elemental)
     stress = s.tensor
     assert stress.num_fields == 11
-    # assert len(stress[0]) == 0
-    # assert len(stress[5]) == 156762
-    # assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
+    assert len(stress[1]) == 9828
+    assert len(stress[5]) == 156762
+    assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
-    assert stress[0].location == locations.elemental
+    assert stress[1].location == locations.elemental
     
 
 def test_mapdlgrouping_nodallocation_verbose_api(allkindofcomplexity):

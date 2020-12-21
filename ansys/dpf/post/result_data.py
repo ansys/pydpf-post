@@ -9,7 +9,6 @@ import os
 import sys
 from ansys.dpf.core import Operator, FieldsContainer
 from ansys.dpf.core.common import types
-from ansys.dpf.core.rescoper import Rescoper as _Rescoper
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
@@ -220,7 +219,7 @@ class ResultData:
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         if (len(self.result_fields_container) == 1):
-            pl.plot_contour(self.result_fields_container)
+            pl.plot_contour(self.result_fields_container, notebook = notebook)
         else:
             #sorts and createsa new fields_container with only the wanted labels
             ids = option_id
@@ -251,22 +250,32 @@ class ResultData:
             for label in label_spaces:
                 field = self.result_fields_container._get_entries(label)
                 new_fields_container.add_field(label, field)
-            pl.plot_contour(new_fields_container, notebook)
+            pl.plot_contour(new_fields_container, notebook = notebook)
         
     
         
     def plot_chart(self):
-        """Plot the minimum/maximum result values over time 
-        if the time_freq_support contains several time_steps 
-        (for example: transient analysis)"""
+        """Plot the minimum/maximum result values over time if the time_freq_support contains 
+        several time_steps (for example: transient analysis).
+        A time_scoping keyword must be used to select all the time_steps of the result.
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution('file.rst')
+        >>> stress = solution.stress(mapdl_grouping = 181, location = 'Nodal', 
+                                     time_scoping = list(range(1, len(solution.time_freq_support.frequencies) + 1)))
+        >>> s = stress.tensor
+        >>> s.plot_chart()
+        """
         self._evaluate_result()
-        tfq = self._evaluator._model.metadata.time_freq_support
-        timeids = list(range(1,tfq.n_sets+1))
-        res_op = self._evaluator._result_operator
-        res_op.inputs.time_scoping.connect(timeids)
-        new_fields_container = res_op.get_output(0, types.fields_container)
+        # tfq = self._evaluator._model.metadata.time_freq_support
+        # timeids = list(range(1,tfq.n_sets+1))
+        # res_op = self._evaluator._result_operator
+        # res_op.inputs.time_scoping.connect(timeids)
+        # new_fields_container = res_op.get_output(0, types.fields_container)
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        pl.plot_chart(new_fields_container)
+        pl.plot_chart(self.result_fields_container)
         
         
         
