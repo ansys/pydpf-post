@@ -25,6 +25,7 @@ def test_steadystate_nodscoping(rth_steady_state):
     assert np.allclose(s[0].data.tolist(), [41.8243869 , 40.29943406])
 
 
+@pytest.mark.skipif(True, reason="element scoping not available with thermal results.")
 def test_steadystate_elemscoping(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(element_scoping = [2, 45])
@@ -110,6 +111,7 @@ def test_transient_nodscoping(rth_transient):
     assert np.allclose(s[0].data.tolist(), [27.01872925, 25.61222966])
 
 
+@pytest.mark.skipif(True, reason="element scoping not available with thermal results.")
 def test_transient_elemscoping(rth_transient):
     solution = post.load_solution(rth_transient)
     temp = solution.temperature(element_scoping = [2, 45])
