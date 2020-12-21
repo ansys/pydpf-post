@@ -2,6 +2,8 @@ from ansys import dpf
 import os
 from ansys.dpf import post
 from ansys.dpf.post.result_definition import Definition
+import unittest
+import pytest
 
 
 def test_resultdefinition_init(allkindofcomplexity):
@@ -101,3 +103,109 @@ def test_resdef_set(allkindofcomplexity):
     assert stress.definition.set == None
     stress.definition.set = 3
     assert stress.definition.set == 3
+    
+    
+class TestCase(unittest.TestCase):
+    
+    @pytest.fixture(autouse=True)
+    def set_filepath(self, rth_electric):
+        self._filepath = rth_electric
+        
+    def test_location_locked_electric_field(self):
+        solution = post.load_solution(self._filepath)
+        ef = solution.electric_field(location = 'Nodal')
+        self.assertRaises(Exception, ef.definition.location, None)
+        try:
+            ef.definition.location = None
+        except Exception as e:
+            message = "Location can not be set outside of the instantiation of the result object in this case."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2) 
+    
+    def test_elemscoping_locked_electric_field(self):
+        solution = post.load_solution(self._filepath)
+        self.assertRaises(Exception, solution.electric_field, element_scoping = [2])
+        try:
+            ef = solution.electric_field(element_scoping = [2])
+        except Exception as e:
+            message = "Element scoping is not available with thermal/electric results."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+        ef = solution.electric_field()
+        self.assertRaises(Exception, ef.definition.element_scoping, [2])
+        try:
+            ef.definition.element_scoping = [2]
+        except Exception as e:
+            message = "Element scoping can not be set outside of the instantiation of the result object in this case."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+    def test_elemscoping_locked_electric_potential(self):
+        solution = post.load_solution(self._filepath)
+        self.assertRaises(Exception, solution.electric_potential, element_scoping = [2])
+        try:
+            ef = solution.electric_potential(element_scoping = [2])
+        except Exception as e:
+            message = "Element scoping is not available with thermal/electric results."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+        ef = solution.electric_potential()
+        self.assertRaises(Exception, ef.definition.element_scoping, [2])
+        try:
+            ef.definition.element_scoping = [2]
+        except Exception as e:
+            message = "Element scoping can not be set outside of the instantiation of the result object in this case."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+    def test_elemscoping_locked_temperature(self):
+        solution = post.load_solution(self._filepath)
+        self.assertRaises(Exception, solution.temperature, element_scoping = [2])
+        try:
+            ef = solution.temperature(element_scoping = [2])
+        except Exception as e:
+            message = "Element scoping is not available with thermal/electric results."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+        ef = solution.temperature()
+        self.assertRaises(Exception, ef.definition.element_scoping, [2])
+        try:
+            ef.definition.element_scoping = [2]
+        except Exception as e:
+            message = "Element scoping can not be set outside of the instantiation of the result object in this case."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+    def test_elemscoping_locked_heat_flux(self):
+        solution = post.load_solution(self._filepath)
+        self.assertRaises(Exception, solution.heat_flux, element_scoping = [2])
+        try:
+            ef = solution.heat_flux(element_scoping = [2])
+        except Exception as e:
+            message = "Element scoping is not available with thermal/electric results."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+        ef = solution.heat_flux()
+        self.assertRaises(Exception, ef.definition.element_scoping, [2])
+        try:
+            ef.definition.element_scoping = [2]
+        except Exception as e:
+            message = "Element scoping can not be set outside of the instantiation of the result object in this case."
+            e2 = Exception(message)
+            assert e.args == e2.args
+            assert type(e) == type(e2)
+            
+    
+    
