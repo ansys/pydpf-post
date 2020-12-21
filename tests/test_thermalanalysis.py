@@ -176,8 +176,8 @@ def test_transient_set(rth_transient):
     assert np.isclose(s[0].data[24], 21.999999999992323)
     
 
-def test_heat_flux(rth_steady_state):    
-    solution = post.load_solution(rth_steady_state)
+def test_heat_flux(rth_transient):    
+    solution = post.load_solution(rth_transient)
     hf = solution.heat_flux(location=post.locations.elemental)
     s = hf.vector
     assert len(s[0].data) == 784
