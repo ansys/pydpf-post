@@ -255,17 +255,27 @@ class ResultData:
     
         
     def plot_chart(self):
-        """Plot the minimum/maximum result values over time 
-        if the time_freq_support contains several time_steps 
-        (for example: transient analysis)"""
+        """Plot the minimum/maximum result values over time if the time_freq_support contains 
+        several time_steps (for example: transient analysis).
+        A time_scoping keyword must be used to select all the time_steps of the result.
+        
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution('file.rst')
+        >>> stress = solution.stress(mapdl_grouping = 181, location = 'Nodal', 
+                                     time_scoping = list(range(1, len(solution.time_freq_support.frequencies) + 1)))
+        >>> s = stress.tensor
+        >>> s.plot_chart()
+        """
         self._evaluate_result()
-        tfq = self._evaluator._model.metadata.time_freq_support
-        timeids = list(range(1,tfq.n_sets+1))
-        res_op = self._evaluator._result_operator
-        res_op.inputs.time_scoping.connect(timeids)
-        new_fields_container = res_op.get_output(0, types.fields_container)
+        # tfq = self._evaluator._model.metadata.time_freq_support
+        # timeids = list(range(1,tfq.n_sets+1))
+        # res_op = self._evaluator._result_operator
+        # res_op.inputs.time_scoping.connect(timeids)
+        # new_fields_container = res_op.get_output(0, types.fields_container)
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        pl.plot_chart(new_fields_container)
+        pl.plot_chart(self.result_fields_container)
         
         
         
