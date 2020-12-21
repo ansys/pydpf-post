@@ -9,7 +9,6 @@ import os
 import sys
 from ansys.dpf.core import Operator, FieldsContainer
 from ansys.dpf.core.common import types
-from ansys.dpf.core.rescoper import Rescoper as _Rescoper
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
