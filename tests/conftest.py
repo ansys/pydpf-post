@@ -65,6 +65,12 @@ def complex_model():
 
 
 @pytest.fixture()
+def model_ns():
+    """Resolve the path of the "model_with_ns.rst" result file."""
+    return resolve_test_file('model_with_ns.rst')
+
+
+@pytest.fixture()
 def plate_msup():
     """Resolve the path of the "msup/plate1.rst" result file.
 
