@@ -25,7 +25,7 @@ class ResultData:
         - element_scoping
         - time
         - grouping
-        (...)
+
     The whole list of parameters can be found using post.print_available_keywords().
     
     Examples
@@ -192,6 +192,7 @@ class ResultData:
         """Plot the contour result on its mesh support. The obtained figure depends on the 
         support (can be a meshed_region or a time_freq_support).
         If transient analysis, plot the last result if no time_scoping has been specified.
+        The self.get_all_label_spaces() will return a string containing all the label spaces.
         
         Parameters
         ----------
@@ -203,18 +204,15 @@ class ResultData:
             bool (defines if the plotting is made on a notebook -2D - or not - 3D -). 
             Default is True.
         
-        Help
-        ----
-        The self.get_all_label_spaces() will return a string containing all the label spaces.
-        
         Examples
         --------
-        The following labels are obtained using the self.get_all_label_spaces():
-            {'mat': 1, 'time': 1}
-            {'mat': 0, 'time': 1}
-            {'mat': 1, 'time': 2}
-            {'mat': 0, 'time': 2}
-        To get the plotted result at the time_step number 2, use: self.plot_contour("time", [1])
+        >>> # The following labels are obtained using the self.get_all_label_spaces():
+        >>> #    {'mat': 1, 'time': 1}
+        >>> #    {'mat': 0, 'time': 1}
+        >>> #    {'mat': 1, 'time': 2}
+        >>> #    {'mat': 0, 'time': 2}
+        >>> # To get the plotted result at the time_step number 2, use: 
+        >>> self.plot_contour("time", [1])
         """
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
