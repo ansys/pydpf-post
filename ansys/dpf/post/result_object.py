@@ -19,6 +19,14 @@ class Result:
         txt = self.definition.__str__()
         return txt
     
+    def has_complex_frequencies(self):
+        """Returns True if the result support contains complex frequencies."""
+        tfq = self._model.metadata.time_freq_support
+        if (tfq.complex_frequencies != None):
+            return True
+        else:
+            return False
+    
     def _get_amplitude_evaluation(self, result_data):
         # resultData = self._get_result_data_function_of_operator(name, self, self._data_sources, **kwargs)
         resultData = result_data

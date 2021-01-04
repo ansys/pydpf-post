@@ -277,15 +277,5 @@ class ResultData:
         
         
         
-    def is_complex_result(self):
-        """Returns True if the result contains complex frequencies."""
-        self._evaluate_result()
-        tfq = self.result_fields_container.time_freq_support
-        if (tfq.complex_frequencies != None):
-            return True
-        else:
-            return False
-        
-        
         
     

@@ -69,30 +69,29 @@ def test_has_complex_result(complex_model):
     assert result.has_complex_result()
     
 
-def test_is_complex_result_verbose_api(complex_model):
-    result = post.load_solution(complex_model)
-    disp = result.misc.nodal_displacement()
-    assert disp.num_fields == 2
-    assert disp.is_complex_result()
+# def test_is_complex_result_verbose_api(complex_model):
+#     result = post.load_solution(complex_model)
+#     disp = result.misc.nodal_displacement()
+#     assert disp.num_fields == 2
     
     
-def test_is_complex_result_verbose_api_modal(modalallkindofcomplexity):
-    result = post.load_solution(modalallkindofcomplexity)
-    disp = result.misc.nodal_displacement()
-    assert disp.num_fields == 1
-    assert disp.is_complex_result()
+# def test_is_complex_result_verbose_api_modal(modalallkindofcomplexity):
+#     result = post.load_solution(modalallkindofcomplexity)
+#     disp = result.misc.nodal_displacement()
+#     assert disp.num_fields == 1
     
     
 def test_is_complex_result(complex_model):
     result = post.load_solution(complex_model)
     compl_disp = result.displacement()
+    assert compl_disp.has_complex_frequencies()
     disp = compl_disp.vector
     assert disp.num_fields == 2
-    assert disp.is_complex_result()
     
     
 def test_is_complex_result_modal(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
-    disp = result.misc.nodal_displacement()
+    compl_disp = result.displacement()
+    assert compl_disp.has_complex_frequencies()
+    disp = compl_disp.vector
     assert disp.num_fields == 1
-    assert disp.is_complex_result()
