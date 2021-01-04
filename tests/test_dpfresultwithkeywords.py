@@ -527,4 +527,25 @@ def test_time_scoping_keyword(plate_msup):
     assert np.isclose(disp4.get_data_at_field(0)[40][2], -9.555678764252377e-06)
     
     
+def test_named_selection_keyword_verbose_api(model_ns):
+    result = post.load_solution(model_ns)
+    stress = result.misc.elemental_stress(named_selection="SELECTION")
+    assert stress.num_fields == 1
+    assert len(stress[0]) == 1260
+    assert len(stress[0].data[20]) == 6
+    assert np.isclose(stress.get_data_at_field(0)[40][2], -898513431744.8938)
+    assert stress[0].location == post.locations.elemental
+    
+    
+def test_named_selection_keyword(model_ns):
+    result = post.load_solution(model_ns)
+    s = result.stress(location=post.locations.elemental, named_selection="SELECTION")
+    stress = s.tensor
+    assert stress.num_fields == 1
+    assert len(stress[0]) == 1260
+    assert len(stress[0].data[20]) == 6
+    assert np.isclose(stress.get_data_at_field(0)[40][2], -898513431744.8938)
+    assert stress[0].location == post.locations.elemental
+    
+    
     
