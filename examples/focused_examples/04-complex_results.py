@@ -1,8 +1,8 @@
 """
 .. _ref_complex_results:
 
-ANSYS DPF Computes complex result with the POST Api
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ANSYS DPF Compute complex result (modal or harmonic analysis)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This tutorial shows how to access the complex API 
 of the POST module.
 """
@@ -24,8 +24,14 @@ solution.has_complex_result()
 # **Get displacement result** (it will contain a field for real values and a 
 # field for imaginary values)
 disp_result = solution.displacement()
+
+###############################################################################
+# **Check if the support has complex frequencies**
+disp_result.has_complex_frequencies()
+
+###############################################################################
+# **Compute the result**
 disp = disp_result.vector
-disp.is_complex_result()
 disp.num_fields
 
 ###############################################################################
