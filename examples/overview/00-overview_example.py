@@ -1,9 +1,9 @@
 """
 .. _ref_overview_example:
 
-ANSYS DPF Overview of the Post API
+ANSYS DPF Overview of the POST Api
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This tutorial shows quickly how to use the Post API.
+This tutorial shows quickly how to use the POST Api.
 It introduces the whole API. For more details, you 
 can read the detailed tutorials.
 """

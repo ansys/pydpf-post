@@ -9,11 +9,11 @@ usage.
 """
 
 ###############################################################################
-# Get started
+# **Get started**
 from ansys.dpf import post
 
 ###############################################################################
-# Get the solution object: must be instantiated with the result filepath
+# **Get the solution object**: must be instantiated with the result filepath
 import os
 path = os.getcwd()
 path += "/../../tests/testfiles/allKindOfComplexity.rst"
@@ -21,14 +21,14 @@ path += "/../../tests/testfiles/allKindOfComplexity.rst"
 solution = post.load_solution(path)
 
 ###############################################################################
-# Get a displacement result from the result object
+# **Get a displacement result from the result object**
 # First will be created a displacement result.
 
 displacement_result = solution.displacement()
 displacement = displacement_result.vector
 
 ###############################################################################
-# Use the displacement result
+# **Use the displacement result**
 displacement.num_fields
 disp_data = displacement.get_data_at_field(0)
 len(disp_data)
@@ -41,7 +41,7 @@ displacement.get_max_data_at_field(0)
 displacement.min_data
 
 ###############################################################################
-# Get a stress result from the result object (nodal or elemental location)
+# **Get a stress result from the result object (nodal or elemental location)**
 el_stress_result = solution.stress(location = post.locations.elemental)
 nod_stress_result = solution.stress(location = post.locations.nodal) #note: the default location is nodal
 

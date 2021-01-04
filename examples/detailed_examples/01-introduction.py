@@ -9,11 +9,11 @@ to access some basic help.
 """
 
 ###############################################################################
-# Get started
+# **Get started**
 from ansys.dpf import post
 
 ###############################################################################
-# Load a solution: this must be instantiated with the result filepath.
+# **Load a solution**: this must be instantiated with the result filepath.
 import os
 path = os.getcwd()
 path += "/../../tests/testfiles/ASimpleBar.rst"
@@ -24,15 +24,15 @@ solution = post.load_solution(path)
 # ~~~~~~~~~~~~~~~
 
 ###############################################################################
-# Solution information
+# **Solution information**
 print(solution)
 
 ###############################################################################
-# Locations information: the locations are used to defined where the result 
+# **Locations information**: the locations are used to defined where the result 
 # must be set.
 help(post.locations)
 
 ###############################################################################
-# Get the available keywords that can be used as attribute of a result object. 
+# **Get the available keywords** that can be used as attribute of a result object. 
 post.print_available_keywords()
 

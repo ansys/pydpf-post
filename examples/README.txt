@@ -1,4 +1,4 @@
-.. _ref_examples:
+.. _gallery:
 
 DPF-Post examples
 =================
