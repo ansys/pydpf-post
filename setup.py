@@ -6,7 +6,7 @@ from io import open as io_open
 from setuptools import setup
 
 install_requires = ['pyvista>=0.24.0',
-                    'matplotlib', 
+                    'matplotlib',
                     'ansys.dpf.core>=0.1.2']
 
 
@@ -21,10 +21,10 @@ with io_open(version_file, mode='r') as fd:
 readme_file = os.path.join(filepath, 'README.md')
 
 setup(
-    name='ansys.dpf',
+    name='ansys-dpf-post',
     packages=['ansys.dpf.post'],
     version=__version__,
-    
+
     description='DPF Python gRPC client',
     # long_description=io_open(readme_file, encoding="utf-8").read(),
     classifiers=[
