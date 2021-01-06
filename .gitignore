@@ -1,5 +1,3 @@
-
-
 #########################
 ## DPF
 #########################
@@ -21,3 +19,16 @@
 #other
 /perso
 /examples/Jupyter lab/.ipynb_checkpoints
+
+# compiled documentation
+docs/_build
+docs/source/examples
+
+# pip files
+*.egg-info
+build/
+dist/
+
+# emacs temp files
+*~
+.#*

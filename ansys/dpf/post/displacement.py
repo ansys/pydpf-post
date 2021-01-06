@@ -1,8 +1,8 @@
-"""This module contains the displacement result class ."""
+"""This module contains the displacement result class."""
 
 from ansys.dpf.post.vector import Vector, ComplexVector
 from ansys.dpf.core import locations
-
+from ansys.dpf.post.errors import NodalLocationError
 
 class Displacement(Vector):
     """Defines the displacement object, that is a vector object."""
@@ -11,7 +11,7 @@ class Displacement(Vector):
         self._operator_name = "U"
         
         if self.definition.location != locations.nodal:
-            raise Exception("The location must be nodal.")
+            raise NodalLocationError
         
     def __str__(self):
         txt = super().__str__()
@@ -27,4 +27,4 @@ class ComplexDisplacement(ComplexVector):
         self._operator_name = "U"
         
         if self.definition.location != locations.nodal:
-            raise Exception("The location must be nodal.")
+            raise NodalLocationError

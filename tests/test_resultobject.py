@@ -1,5 +1,3 @@
-import os
-import unittest
 import pytest
 import numpy as np
 
@@ -10,6 +8,7 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.scalar import Scalar, ComplexScalar
 from ansys.dpf.post.vector import Vector, ComplexVector
 from ansys.dpf.post.tensor import Tensor, ComplexTensor
+from ansys.dpf.post import errors
 
 
 def test_scalar(allkindofcomplexity):
@@ -17,7 +16,7 @@ def test_scalar(allkindofcomplexity):
     scalar = solution.structural_temperature()
     assert isinstance(scalar, Scalar)
     txt = scalar.__str__()
-    assert txt == "Scalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
+    assert txt == 'Scalar object. \n\nObject properties:\n - location   : Nodal\n\nThis is a temperature object.'
     value = scalar.scalar
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -29,7 +28,7 @@ def test_vector(allkindofcomplexity):
     vector = solution.displacement()
     assert isinstance(vector, Vector)
     txt = vector.__str__()
-    assert txt == "Vector object. \n\nObject properties are: \n - location = Nodal\n\nThis is a displacement object."
+    assert txt == 'Vector object. \n\nObject properties:\n - location   : Nodal\n\nThis is a displacement object.'
     value = vector.vector
     assert isinstance(value, ResultData)
     assert value.num_fields == 1
@@ -54,7 +53,7 @@ def test_tensor(allkindofcomplexity):
     tensor = solution.stress()
     assert isinstance(tensor, Tensor)
     txt = tensor.__str__()
-    assert txt == "Stress. \nTensor object. \n\nObject properties are: \n - location = Nodal\n"
+    assert txt == 'Stress Tensor object. \n\nObject properties:\n - location   : Nodal\n'
     value = tensor.tensor
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -103,7 +102,7 @@ def test_scalar_complex(complex_model):
     scalar = solution.structural_temperature()
     assert isinstance(scalar, ComplexScalar)
     txt = scalar.__str__()
-    assert txt == "Complex scalar object. \n\nScalar object. \n\nObject properties are: \n - location = Nodal\n\nThis is a temperature object."
+    assert txt == 'Complex scalar object. \n\nScalar object. \n\nObject properties:\n - location   : Nodal\n\nThis is a temperature object.'
     value = scalar.scalar
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -121,7 +120,7 @@ def test_vector_complex(complex_model):
     vector = solution.displacement()
     assert isinstance(vector, ComplexVector)
     txt = vector.__str__()
-    assert txt == "Complex vector object. \n\nVector object. \n\nObject properties are: \n - location = Nodal\n"
+    assert txt == 'Complex vector object. \n\nVector object. \n\nObject properties:\n - location   : Nodal\n'
     value = vector.vector
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -192,7 +191,7 @@ def test_tensor_complex(complex_model):
     tensor = solution.stress()
     assert isinstance(tensor, ComplexTensor)
     txt = tensor.__str__()
-    assert txt == 'Complex stress. \nComplex tensor object. \n\nStress. \nTensor object. \n\nObject properties are: \n - location = Nodal\n'
+    assert txt == 'Complex stress. \nComplex tensor object. \n\nStress Tensor object. \n\nObject properties:\n - location   : Nodal\n'
     value = tensor.tensor
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -318,24 +317,13 @@ def test_tensor_complex(complex_model):
     assert len(ppal3[0].data) == 4802
 
 
-class TestCase(unittest.TestCase):
-    
-    @pytest.fixture(autouse=True)
-    def set_filepath(self, allkindofcomplexity):
-        self._filepath = allkindofcomplexity
-        
-    def test_displacement_elemental_location(self):
-        solution = post.load_solution(self._filepath)
-        self.assertRaises(Exception, solution.displacement, location=locations.elemental)
-        try:
-            solution.displacement(location=locations.elemental)
-        except Exception as e:
-            message = "The location must be nodal."
-            e2 = Exception(message)
-            assert e.args == e2.args
-            assert type(e) == type(e2)
-            
-            
+
+def test_raise_displacement_elemental_location(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
+    with pytest.raises(errors.NodalLocationError):
+        solution.displacement(location=locations.elemental)
+
+
 def test_displacement(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     vector = solution.displacement()

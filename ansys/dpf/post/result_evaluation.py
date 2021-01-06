@@ -15,7 +15,7 @@ from ansys.dpf.core.scoping import Scoping
 
 
 class ResultEvaluator:
-    """This object will make the evaluation of the fields container 
+    """This object will make the evaluation of the fields container
     wrapped in the ResultData object."""
     def __init__(self, operator_name: str, data_sources, model,
                  elem_average, op_average, 
@@ -28,44 +28,44 @@ class ResultEvaluator:
         self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
         self.subresult = subresult
         
-        if (subresult != None):
+        if (subresult is not None):
             operator_name += subresult
         self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
         
-        if (location != None):
+        if (location is not None):
             self._result_operator.inputs.requested_location.connect(location)
-        # if (element_scoping != None and node_scoping != None):
+        # if (element_scoping is not None and node_scoping is not None):
         #     raise Exception("Impossible to use both element_scoping and node_scoping.")
         self._check_if_several_mesh_scoping(node_scoping, element_scoping, 
                                             grouping, mapdl_grouping, named_selection)
-        if (set != None and time != None) or (set != None and time_scoping != None) or (time != None and time_scoping != None):
+        if (set is not None and time is not None) or (set is not None and time_scoping is not None) or (time is not None and time_scoping is not None):
             raise Exception("Set, time and time_scoping keyword arguments must be used independently.")
-        if (element_scoping != None):
+        if (element_scoping is not None):
             scoping = self._compute_scoping(element_scoping, locations.elemental)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
-        if (node_scoping != None):
+        if (node_scoping is not None):
             scoping = self._compute_scoping(node_scoping, locations.nodal)
             self._result_operator.inputs.mesh_scoping.connect(scoping)
-        if (time_scoping != None):
+        if (time_scoping is not None):
             t_scoping = self._compute_scoping(time_scoping)
             self._result_operator.inputs.time_scoping.connect(t_scoping)  
         #chained before the result_operator
-        if (named_selection != None):
+        if (named_selection is not None):
             self._check_if_scoping(node_scoping, element_scoping)
             ns_op = Operator("scoping_provider_by_ns")
             ns_op.inputs.data_sources.connect(data_sources)
             ns_op.inputs.named_selection_name.connect(named_selection)
             self._result_operator.inputs.mesh_scoping.connect(ns_op.outputs.mesh_scoping)
             self._chained_operators[ns_op.name] = """This operator will compute a scoping from a named selection name. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (grouping != None):
+        if (grouping is not None):
             self._check_if_scoping(node_scoping, element_scoping)
             # part for grouping by_material/by_el_shape
             mesh_provider = Operator("MeshProvider")
             mesh_provider.inputs.data_sources.connect(data_sources)
             scop_op = Operator("scoping::by_property")
             scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh) #default output location is elemental
-            if (location != None):
+            if (location is not None):
                 if(location == locations.nodal):
                     scop_op.inputs.requested_location.connect(locations.nodal)
                 else:
@@ -80,7 +80,7 @@ class ResultEvaluator:
                 raise Exception("Grouping impossible. Use the keyword argument as: grouping = grouping.by_el_shape, grouping = grouping.by_material...")
             self._result_operator.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
             self._chained_operators[scop_op.name] = """This operator will compute a scoping from a grouping option. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (mapdl_grouping != None):
+        if (mapdl_grouping is not None):
             self._check_if_scoping(node_scoping, element_scoping)
             # part for grouping by_el_type
             #!TODO, replace grouping.by_el_type_mapdl... by grouping.by_el_type (general case)
@@ -90,21 +90,21 @@ class ResultEvaluator:
             scop_by_prop_op.inputs.property_id.connect(mapdl_grouping)
             scop_by_prop_op.inputs.requested_location.connect(locations.elemental)
             self._result_operator.inputs.mesh_scoping.connect(scop_by_prop_op.outputs.mesh_scoping)
-            self._chained_operators[scop_by_prop_op.name] = """This operator will compute a scoping from a mapdl elemen type id. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
-        if (set != None):
+            self._chained_operators[scop_by_prop_op.name] = """This operator will compute a scoping from a mapdl element type id. Its output (mesh_scoping) will be connected with the mesh_scoping input of the result operator."""
+        if (set is not None):
             if not isinstance(set, int):
-                raise Exception("Set argument must be an int value.")
+                raise TypeError("Set argument must be an int value.")
             time_scoping = dpf.core.Scoping()
             time_scoping.ids = [set]
             self._result_operator.inputs.time_scoping.connect(time_scoping)
         #add the result operator
-        self._chained_operators[self._result_operator.name] = "Result operator. Compute the wanted result"
+        self._chained_operators[self._result_operator.name] = "Result operator. Compute the desired result."
         #chained after the result_operator
-        if (phase != None):
+        if phase is not None:
             self._get_evaluation_with_sweeping_phase(phase)
-        if (time != None):
+        if time is not None:
             if not isinstance(time, float):
-                raise Exception("Time argument must be a float value.")
+                raise TypeError("Time argument must be a float value.")
             time_scoping = dpf.core.Scoping()
             tfq = self._model.metadata.time_freq_support
             data = tfq.frequencies.data
@@ -139,44 +139,46 @@ class ResultEvaluator:
             self._elemental_nodal_to_elemental_result()
         if op_average:
             self._average_result(op_average)
-                
-    def _compute_scoping(self, in_scoping, in_location = None):
+
+    def _compute_scoping(self, in_scoping, in_location=None):
         out_scoping = in_scoping
         if not isinstance(in_scoping, Scoping):
             out_scoping = dpf.core.Scoping()
-            if in_location != None:
+            if in_location is not None:
                 out_scoping.location = in_location
             if isinstance(in_scoping, list):
                 out_scoping.ids = in_scoping
+            elif isinstance(in_scoping, range):
+                out_scoping.ids = list(in_scoping)
             elif isinstance(in_scoping, int):
                 l = [in_scoping]
                 out_scoping.ids = l
             else:
                 error_scoping = "Only dpf.core.Scoping list or int are supported as scoping."
-                raise Exception(error_scoping)
+                raise TypeError(error_scoping)
         return out_scoping
             
     def _check_if_scoping(self, node_scoping, element_scoping):
-        if (node_scoping != None) or (element_scoping != None):
+        if (node_scoping is not None) or (element_scoping is not None):
             txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + " ones."
             raise Exception(txt)
       
     def _check_if_several_grouping(self, grouping, mapdl_grouping):
-        if (grouping != None) and (mapdl_grouping != None):
+        if (grouping is not None) and (mapdl_grouping is not None):
             raise Exception("Both keywords grouping and mapdl_grouping can not be used simultaneously.")
     
     def _check_if_several_mesh_scoping(self, node_scoping, element_scoping, 
                                        grouping, mapdl_grouping, named_selection):
         count = 0
-        if (node_scoping != None):
+        if (node_scoping is not None):
             count += 1
-        if (element_scoping != None):
+        if (element_scoping is not None):
             count += 1
-        if (named_selection != None):
+        if (named_selection is not None):
             count += 1
-        if (grouping != None):
+        if (grouping is not None):
             count += 1
-        if (mapdl_grouping != None):
+        if (mapdl_grouping is not None):
             count += 1
         if (count > 1):
             txt = "Only one of the following keywords can be used at the same time: " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + "/" + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + "."

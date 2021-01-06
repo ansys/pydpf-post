@@ -1,9 +1,11 @@
-"""Module containing the DpfSolution class and its childs. 
-Each class highlights an analysis type, and provides hardcoded 
-methods to get a result object regarding the wanted result type.
+"""Module containing the DpfSolution class and its children.  Each class
+highlights an analysis type, and provides hard-coded methods to get a
+result object regarding the wanted result type.
 
-Module containing also the DpfComplexSolution class, child of DpfSolution class.
-Additionnaly to the classic APIs, the complex result introduces an amplitude evaluation."""
+Module containing also the DpfComplexSolution class, child of
+DpfSolution class.  In addition to the classic APIs, the complex
+result introduces an amplitude evaluation.
+"""
 
 
 from ansys.dpf.post.common import _AvailableKeywords
@@ -168,7 +170,7 @@ class DpfMecanicComplexSolution(DpfSolution):
     def __str__(self):
         txt = super().__str__()
         txt += "\n"
-        txt += "This can contain complex result."
+        txt += "This may contain complex results."
         return txt
     
     def has_complex_result(self):
@@ -276,7 +278,7 @@ class DpfThermalSolution(DpfSolution):
     def __str__(self):
         txt = super().__str__()
         txt += "\n"
-        txt += "This can contain complex result."
+        txt += "This may contain complex results."
         return txt
     
     def temperature(self, **kwargs):

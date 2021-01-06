@@ -9,6 +9,7 @@ import pytest
 import pyvista as pv
 
 from ansys.dpf import core
+from ansys.dpf.post import examples
 
 # enable off_screen plotting to avoid test interruption
 pv.OFF_SCREEN = True
@@ -18,13 +19,12 @@ pv.OFF_SCREEN = True
 running_docker = os.environ.get('DPF_DOCKER', False)
 
 
-
 def resolve_test_file(basename, additional_path=''):
-    """Resolves a test file's full path based on the base name and the enviornment.
+    """Resolves a test file's full path based on the base name and the
+    environment.
 
     Normally returns local path unless server is running on docker and
     this repository has been mapped to the docker image at /dpf.
-
     """
     if running_docker:
         # assumes repository root is mounted at '/dpf'
@@ -43,31 +43,31 @@ def resolve_test_file(basename, additional_path=''):
 @pytest.fixture()
 def allkindofcomplexity():
     """Resolve the path of the "allKindOfComplexity.rst" result file."""
-    return resolve_test_file('allKindOfComplexity.rst')
+    return examples.download_all_kinds_of_complexity()
 
 
 @pytest.fixture()
 def modalallkindofcomplexity():
     """Resolve the path of the "allKindOfComplexity.rst" result file."""
-    return resolve_test_file('modal_allKindOfComplexity.rst')
+    return examples.download_all_kinds_of_complexity_modal()
 
 
 @pytest.fixture()
 def simple_bar():
     """Resolve the path of the "ASimpleBar.rst" result file."""
-    return resolve_test_file('ASimpleBar.rst')
+    return examples.simple_bar
 
 
 @pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
-    return resolve_test_file('fileComplex.rst', 'complex')
+    return examples.complex_rst
 
 
 @pytest.fixture()
 def model_ns():
     """Resolve the path of the "model_with_ns.rst" result file."""
-    return resolve_test_file('model_with_ns.rst')
+    return examples.multishells_rst
 
 
 @pytest.fixture()
@@ -77,23 +77,22 @@ def plate_msup():
     Originally:
     UnitTestDataFiles/DataProcessing/expansion/msup/Transient/plate1/file.rst
     """
-    return resolve_test_file('plate1.rst', 'msup_transient')
+    return examples.msup_transient
 
 
 @pytest.fixture()
 def rth_transient():
     """Resolve the path of the "rth/rth_transient.rth" result file."""
-    return resolve_test_file('rth_transient.rth', 'rth')
+    return examples.transient_therm
 
 
 @pytest.fixture()
 def rth_steady_state():
     """Resolve the path of the "rth/rth_steady_state.rth" result file."""
-    return resolve_test_file('rth_steady.rth', 'rth')
+    return examples.steady_therm
 
 
 @pytest.fixture()
 def rth_electric():
     """Resolve the path of the "rth/rth_electric.rth" result file."""
-    return resolve_test_file('rth_electric.rth', 'rth')
-
+    return examples.electric_therm

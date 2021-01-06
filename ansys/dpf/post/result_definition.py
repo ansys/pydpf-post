@@ -4,8 +4,9 @@ from ansys.dpf.core.common import locations
 from ansys.dpf.post.common import _AvailableKeywords
 
 class Definition:
-    """Class containing the attributes as property (with setter and getter) 
+    """Class containing the attributes as property (with setter and getter)
     of the result object."""
+
     def __init__(self, **kwargs):
         self._location = locations.nodal
         self._element_scoping = None
@@ -15,11 +16,11 @@ class Definition:
         self._mapdl_grouping = None
         self._time_scoping = None
         self._time = None
-        self._set = None 
-        
+        self._set = None
+
         self.__location_locked = False
         self.__element_scoping_locked = False
-        
+
         if _AvailableKeywords.location in kwargs:
             self._location = kwargs.pop(_AvailableKeywords.location)
         if _AvailableKeywords.element_scoping in kwargs:
@@ -38,7 +39,7 @@ class Definition:
             self._time = kwargs.pop(_AvailableKeywords.time)
         if _AvailableKeywords.set in kwargs:
             self._set = kwargs.pop(_AvailableKeywords.set)
-            
+
         if (len(kwargs) > 0):
             txt = "Following keyword argument(s) could not be computed: \n"
             for key in kwargs:
@@ -46,9 +47,9 @@ class Definition:
                 txt += "\n"
                 txt += "Use 'post.print_available_keywords()' to see which keywords can be used."
             raise Exception(txt)
-            
+
     def __str__(self):
-        txt = "Object properties are: \n"
+        txt = "Object properties:\n"
         for attr, value in vars(self).items():
             if not (attr.startswith('__') or attr.startswith('_data_sources') or attr.startswith('_model') or attr.startswith('_Definition')):
                 if value is not None:
@@ -63,19 +64,18 @@ class Definition:
                     if isinstance(value, list):
                         value_temp = "["
                         for val in value:
-                             value_temp += str(val) + ","
+                            value_temp += str(val) + ","
                         value_temp = value_temp[:len(value_temp)-1]
                         value_temp += "]"
                         value = value_temp
-                    txt += " - "+ attr
-                    txt += " = " + value + "\n"
+                    txt += f" - {attr:10} : " + value + "\n"
         return txt
-            
+
     @property
     def location(self) -> str:
-        """str: Location property. Can be set. 
+        """str: Location property. Can be set.
         post.locations enum can be used.
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -91,14 +91,14 @@ class Definition:
             raise Exception("Location can not be set outside of the instantiation of the result object in this case.")
         if value is not None:
             if not isinstance(value, str):
-                raise Exception("Expected type is str.")
+                raise TypeError("Expected type is str.")
         self._location = value
-        
+
     @property
-    def element_scoping(self): 
-        """Elemental scoping property. Can be set. 
-        Available types: list, or dpf.core.Scoping. 
-        
+    def element_scoping(self):
+        """Elemental scoping property. Can be set.
+        Available types: list, or dpf.core.Scoping.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -113,12 +113,12 @@ class Definition:
         if self.__element_scoping_locked:
             raise Exception("Element scoping can not be set outside of the instantiation of the result object in this case.")
         self._element_scoping = value
-        
+
     @property
-    def node_scoping(self): 
-        """Nodal scoping property. Can be set. 
-        Available types: list, or dpf.core.Scoping. 
-        
+    def node_scoping(self):
+        """Nodal scoping property. Can be set.
+        Available types: list, or dpf.core.Scoping.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -131,12 +131,14 @@ class Definition:
     @node_scoping.setter
     def node_scoping(self, value):
         self._node_scoping = value
-        
+
     @property
     def named_selection(self) -> str:
-        """str: Named selection property. Can be set. 
-        /!\ MAPDL named selection name must be written following upper case.
-        
+        """str: Named selection property. Can be set.
+
+        MAPDL named selections are in upper-case.  Lower case name
+        selections will automatically be set to uppercase.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -149,14 +151,14 @@ class Definition:
     @named_selection.setter
     def named_selection(self, value):
         if not isinstance(value, str):
-            raise Exception("Expected type is str.")
-        self._named_selection = value
-        
+            raise TypeError("Expected type is str.")
+        self._named_selection = value.upper()
+
     @property
     def grouping(self) -> str:
-        """str: Grouping property. Can be set. 
+        """str: Grouping property. Can be set.
         post.grouping enum can be used.
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -169,14 +171,14 @@ class Definition:
     @grouping.setter
     def grouping(self, value):
         if not isinstance(value, str):
-            raise Exception("Expected type is str.")
+            raise TypeError("Expected type is str.")
         self._grouping = value
-        
+
     @property
     def time_scoping(self):
-        """Time scoping property. Can be set. 
-        Available types: list, or dpf.core.Scoping. 
-        
+        """Time scoping property. Can be set.
+        Available types: list, or dpf.core.Scoping.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -189,13 +191,13 @@ class Definition:
     @time_scoping.setter
     def time_scoping(self, value):
         self._time_scoping = value
-        
+
     @property
     def mapdl_grouping(self) -> int:
-        """int: Mapdl grouping property. Can be set. 
-        Following is an example to get only solid 186 
+        """int: Mapdl grouping property. Can be set.
+        Following is an example to get only solid 186
         mapdl element type.
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -206,15 +208,15 @@ class Definition:
         return self._mapdl_grouping
 
     @mapdl_grouping.setter
-    def mapdl_grouping(self, value): 
+    def mapdl_grouping(self, value):
         if not isinstance(value, int):
-            raise Exception("Expected type is int.")
+            raise TypeError("Expected type is int.")
         self._mapdl_grouping = value
-          
+
     @property
     def time(self) -> float:
-        """float: time step property. Can be set. 
-        
+        """float: time step property. Can be set.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -225,15 +227,15 @@ class Definition:
         return self._time
 
     @time.setter
-    def time(self, value): 
+    def time(self, value):
         if not isinstance(value, float):
-            raise Exception("Expected type is float.")
+            raise TypeError("Expected type is float.")
         self._time = value
-        
+
     @property
     def set(self) -> int:
-        """int: Set property. Can be set. 
-        
+        """int: Set property. Can be set.
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -244,7 +246,7 @@ class Definition:
         return self._set
 
     @set.setter
-    def set(self, value): 
+    def set(self, value):
         if not isinstance(value, int):
-            raise Exception("Expected type is int.")
+            raise TypeError("Expected type is int.")
         self._set = value

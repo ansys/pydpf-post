@@ -1,13 +1,11 @@
-"""Installation file for python dpf module
-"""
+"""Installation file for ansys-dpf-post module"""
 import os
 from io import open as io_open
-
 from setuptools import setup
 
 install_requires = ['pyvista>=0.24.0',
-                    'matplotlib', 
-                    'ansys.dpf.core>=0.1.2']
+                    'matplotlib',
+                    'ansys.dpf.core==0.2.0']
 
 
 # Get version from version info
@@ -21,10 +19,10 @@ with io_open(version_file, mode='r') as fd:
 readme_file = os.path.join(filepath, 'README.md')
 
 setup(
-    name='ansys.dpf',
-    packages=['ansys.dpf.post'],
+    name='ansys-dpf-post',
+    packages=['ansys.dpf.post', 'ansys.dpf.post.examples'],
     version=__version__,
-    
+
     description='DPF Python gRPC client',
     # long_description=io_open(readme_file, encoding="utf-8").read(),
     classifiers=[
@@ -36,6 +34,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
 
     python_requires='>=3.5.*',
