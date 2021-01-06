@@ -3,10 +3,13 @@ user will be able to use to compute through the DPF Post API.
 
 This is a fields container wrapper."""
 
-import pyvista as pv
-import matplotlib.pyplot as pyplot
+from textwrap import wrap
 import os
 import sys
+
+import pyvista as pv
+import matplotlib.pyplot as pyplot
+
 from ansys.dpf.core import Operator, FieldsContainer
 from ansys.dpf.core.common import types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
@@ -16,7 +19,7 @@ from ansys.dpf.post.result_evaluation import ResultEvaluator
 class ResultData:
     """Instance of the result of a dpf result object.
     Created thanks to the dpf result object.
-    
+
     Parameters
     ----------
     Following list of keywords:
@@ -26,15 +29,16 @@ class ResultData:
         - time
         - grouping
 
-    The whole list of parameters can be found using post.print_available_keywords().
-    
+    The entire list of parameters can be found using
+     ``post.print_available_keywords()``.
+
     Examples
     --------
     >>> from ansys.dpf import post
     >>> solution = post.solution("file.rst")
-    >>> disp = solution.nodal_displacement() 
-    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23]) 
-    >>> disp_on_named_selection = solution.nodal_displacement(named_selection = "SELECTION")
+    >>> disp = solution.nodal_displacement()
+    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23])
+    >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
     """
     
     def __init__(self, operator_name: str, data_sources, model, 
@@ -58,8 +62,9 @@ class ResultData:
         if (self._evaluator.subresult is not None):
             txt += "%s component. \n" % self._evaluator.subresult
         txt += "\n"
-        txt += "The result is computed thanks to dpf.core.Operator objects, "
-        txt += "that are chained together regarding the following list: \n"
+        desc = "This result has been computed using dpf.core.Operator objects, which "
+        desc += "have been chained together according to the following list:"
+        txt += '\n'.join(wrap(desc)) + '\n'
         for key, val in self._evaluator._chained_operators.items():
             txt += "- %s: " % key
             txt += val
@@ -67,18 +72,16 @@ class ResultData:
         # txt += "\n\n"
         # txt += self._evaluator._model.__str__()
         return txt
-    
-    
+
     def _evaluate_result(self):
         """First evaluation of the result."""
-        if (self.result_fields_container == None):
+        if self.result_fields_container is None:
             self.result_fields_container = self._evaluator.evaluate_result()
-            
+
     def _evaluate_result_forced(self):
         """Re-evaluation of the result."""
         self.result_fields_container = self._evaluator.evaluate_result()
-        
-        
+
     def get_all_label_spaces(self):
         """Returns all the label spaces contained in a result 
         as a string.
@@ -188,38 +191,54 @@ class ResultData:
         pl._plot_contour_using_vtk_file(self.result_fields_container)
         
     
-    def plot_contour(self, display_option: str = "time", option_id = 1, notebook = True):
-        """Plot the contour result on its mesh support. The obtained figure depends on the 
-        support (can be a meshed_region or a time_freq_support).
-        If transient analysis, plot the last result if no time_scoping has been specified.
-        The self.get_all_label_spaces() will return a string containing all the label spaces.
-        
+    def plot_contour(self, display_option: str = "time", option_id=1,
+                     off_screen=None, notebook=None, **kwargs):
+        """Plot the contour result on its mesh support.
+
+        The obtained figure depends on the support (can be a
+        meshed_region or a time_freq_support).  If transient analysis,
+        plot the last result if no time_scoping has been specified.
+        The self.get_all_label_spaces() will return a string
+        containing all the label spaces.
+
         Parameters
         ----------
-        display_option
-            str (the name of the label you want to display). Default is "time".
-        option_id
-            int (the list of label ids you want to display). Default is [1].
-        notebook
-            bool (defines if the plotting is made on a notebook -2D - or not - 3D -). 
-            Default is True.
-        
+        display_option : str, optional
+            The name of the label you want to display. Default is ``"time"``.
+        option_id: int, optional
+             The list of label ids you want to display. Default is ``[1]``.
+        off_screen : bool, optional
+            Renders off screen when ``True``.  Useful for automated screenshots.
+        notebook : bool, optional
+            Option to force plotting within a jupyter notebook or
+            external to the notebook as an interactive figure.
+        **kwargs : optional
+            Additional keyword arguments for the plotter.  See
+            ``help(pyvista.plot)`` for additional keyword arguments.
+
         Examples
         --------
-        >>> # The following labels are obtained using the self.get_all_label_spaces():
-        >>> #    {'mat': 1, 'time': 1}
-        >>> #    {'mat': 0, 'time': 1}
-        >>> #    {'mat': 1, 'time': 2}
-        >>> #    {'mat': 0, 'time': 2}
-        >>> # To get the plotted result at the time_step number 2, use: 
-        >>> self.plot_contour("time", [1])
+        Plot a result at the time_step number 1
+
+        >>> from ansys.dpf import post
+        >>> solution = post.load_solution('file.rst')
+        >>> stress = solution.stress(location=post.locations.nodal)
+        >>> sx = stress.xx
+        >>> sx.plot_contour("time", [1])
+
+        The labels can be obtained using:
+
+        >>> sx.get_all_label_spaces()
+
+        [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        if (len(self.result_fields_container) == 1):
-            pl.plot_contour(self.result_fields_container, notebook = notebook)
+        if len(self.result_fields_container) == 1:
+            pl.plot_contour(self.result_fields_container, off_screen=off_screen,
+                            notebook=notebook, **kwargs)
         else:
-            #sorts and createsa new fields_container with only the wanted labels
+            # sorts and creates a new fields_container with only the desired labels
             ids = option_id
             if isinstance(option_id, int):
                 ids = [option_id]
@@ -248,21 +267,25 @@ class ResultData:
             for label in label_spaces:
                 field = self.result_fields_container._get_entries(label)
                 new_fields_container.add_field(label, field)
-            pl.plot_contour(new_fields_container, notebook = notebook)
-        
-    
-        
+            pl.plot_contour(new_fields_container, off_screen=off_screen,
+                            notebook=notebook, **kwargs)
+
     def plot_chart(self):
-        """Plot the minimum/maximum result values over time if the time_freq_support contains 
-        several time_steps (for example: transient analysis).
-        A time_scoping keyword must be used to select all the time_steps of the result.
-        
+        """Plot the minimum/maximum result values over time.
+
+        This method works if the time_freq_support contains
+        several time_steps (for example, a transient analysis).
+
+        A time_scoping keyword must be used to select all the
+        time_steps of the result.
+
         Examples
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution('file.rst')
-        >>> stress = solution.stress(mapdl_grouping = 181, location = 'Nodal', 
-                                     time_scoping = list(range(1, len(solution.time_freq_support.frequencies) + 1)))
+        >>> tscope = list(range(1, len(solution.time_freq_support.frequencies) + 1))
+        >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
+                                     time_scoping=tscope
         >>> s = stress.tensor
         >>> s.plot_chart()
         """
@@ -274,8 +297,3 @@ class ResultData:
         # new_fields_container = res_op.get_output(0, types.fields_container)
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl.plot_chart(self.result_fields_container)
-        
-        
-        
-        
-    
