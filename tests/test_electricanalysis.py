@@ -187,12 +187,12 @@ class TestCase2(unittest.TestCase):
     def test_electricpotential_elemlocation(self):
         solution = post.load_solution(self._filepath)
         pot = solution.electric_potential(location = post.locations.elemental)
-        self.assertRaises(Exception, s = pot.scalar)
+        self.assertRaises(Exception, pot.scalar)
     
     def test_electricpotential_elemnodallocation(self):
         solution = post.load_solution(self._filepath)
         pot = solution.electric_potential(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, s = pot.scalar)
+        self.assertRaises(Exception, pot.scalar)
 
 
 def test_electricpotential_timescoping(rth_electric):

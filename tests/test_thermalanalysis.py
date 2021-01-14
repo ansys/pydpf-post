@@ -53,12 +53,12 @@ class TestCase1(unittest.TestCase):
     def test_steadystate_elemlocation(self):
         solution = post.load_solution(self._filepath)
         temp = solution.temperature(location = post.locations.elemental)
-        self.assertRaises(Exception, s = temp.scalar)
+        self.assertRaises(Exception, temp.scalar)
     
     def test_steadystate_elemnodallocation(self):
         solution = post.load_solution(self._filepath)
         temp = solution.temperature(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, s = temp.scalar)
+        self.assertRaises(Exception, temp.scalar)
 
 
 def test_steadystate_timescoping(rth_steady_state):
@@ -140,12 +140,12 @@ class TestCase2(unittest.TestCase):
     def test_steadystate_elemlocation(self):
         solution = post.load_solution(self._filepath)
         temp = solution.temperature(location = post.locations.elemental)
-        self.assertRaises(Exception, s = temp.scalar)
+        self.assertRaises(Exception, temp.scalar)
     
     def test_steadystate_elemnodallocation(self):
         solution = post.load_solution(self._filepath)
         temp = solution.temperature(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, s = temp.scalar)
+        self.assertRaises(Exception, temp.scalar)
 
 
 def test_transient_timescoping(rth_transient):
