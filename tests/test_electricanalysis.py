@@ -4,6 +4,8 @@ from ansys.dpf import post
 import numpy as np
 import unittest
 import pytest
+from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.core import errors as core_errors
 
 
 def test_electricfield(rth_electric):
@@ -181,14 +183,17 @@ def test_electricpotential_nodlocation(rth_electric):
 def test_electricpotential_elemlocation(rth_electric):
     solution = post.load_solution(rth_electric)
     pot = solution.electric_potential(location = post.locations.elemental)
-    with pytest.raises(Exception):
-        pot.scalar
+    s = pot.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
+        
 
 def test_electricpotential_elemnodallocation(rth_electric):
     solution = post.load_solution(rth_electric)
     pot = solution.electric_potential(location = post.locations.elemental_nodal)
-    with pytest.raises(Exception):
-        pot.scalar
+    s = pot.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 
 def test_electricpotential_timescoping(rth_electric):

@@ -4,6 +4,8 @@ from ansys.dpf import post
 import numpy as np
 import unittest
 import pytest
+from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.core import errors as core_errors
 
 
 def test_thermal_steadystate(rth_steady_state):
@@ -48,15 +50,17 @@ def test_steadystate_nodlocation(rth_steady_state):
 def test_steadystate_elemlocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(location = post.locations.elemental)
-    with pytest.raises(Exception):
-        temp.scalar
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
     
 
 def test_steadystate_elemnodallocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
     temp = solution.temperature(location = post.locations.elemental_nodal)
-    with pytest.raises(Exception):
-        temp.scalar
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 
 def test_steadystate_timescoping(rth_steady_state):
@@ -132,14 +136,16 @@ def test_transient_nodlocation(rth_transient):
 def test_transient_elemlocation(rth_transient):
     solution = post.load_solution(rth_transient)
     temp = solution.temperature(location = post.locations.elemental)
-    with pytest.raises(Exception):
-        temp.scalar
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 def test_transient_elemnodallocation(rth_transient):
     solution = post.load_solution(rth_transient)
     temp = solution.temperature(location = post.locations.elemental_nodal)
-    with pytest.raises(Exception):
-        temp.scalar
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 
 def test_transient_timescoping(rth_transient):
