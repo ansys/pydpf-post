@@ -177,22 +177,18 @@ def test_electricpotential_nodlocation(rth_electric):
     assert s.num_fields == 1
     assert s[0].location == post.locations.nodal
 
+  
+def test_electricpotential_elemlocation(rth_electric):
+    solution = post.load_solution(rth_electric)
+    pot = solution.electric_potential(location = post.locations.elemental)
+    with pytest.raises(Exception):
+        pot.scalar
 
-class TestCase2(unittest.TestCase):
-    
-    @pytest.fixture(autouse=True)
-    def set_filepath(self, rth_electric):
-        self._filepath = rth_electric
-        
-    def test_electricpotential_elemlocation(self):
-        solution = post.load_solution(self._filepath)
-        pot = solution.electric_potential(location = post.locations.elemental)
-        self.assertRaises(Exception, pot.scalar)
-    
-    def test_electricpotential_elemnodallocation(self):
-        solution = post.load_solution(self._filepath)
-        pot = solution.electric_potential(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, pot.scalar)
+def test_electricpotential_elemnodallocation(rth_electric):
+    solution = post.load_solution(rth_electric)
+    pot = solution.electric_potential(location = post.locations.elemental_nodal)
+    with pytest.raises(Exception):
+        pot.scalar
 
 
 def test_electricpotential_timescoping(rth_electric):
