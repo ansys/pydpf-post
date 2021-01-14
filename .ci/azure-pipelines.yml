@@ -104,12 +104,9 @@ jobs:
         versionSpec: '$(python.version)'
       displayName: 'Use Python $(python.version)'
 
-    - task: PipAuthenticate@1
-      inputs:
-        artifactFeeds: 'pyansys'
-        onlyAddExtraIndex: true
-
     - script: |
+        ls -lh .ci
+        chmod +x .ci/setup_headless_display.sh
         .ci/setup_headless_display.sh
         pip install -r .ci/requirements_test_xvfb.txt
         python .ci/display_test.py
