@@ -15,9 +15,6 @@ class Stress(Tensor):
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
     >>> stress = solution.stress(location=post.locations.nodal, time_scoping=[1])
-
-    Extract the princ
-
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
