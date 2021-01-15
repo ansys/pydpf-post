@@ -1,54 +1,23 @@
-.. _ref_api_index:
+============
+DPF-Post API
+============
+This guide provides a general overview of the API of DPF-Post.
 
-API Reference
-=============
-Details of the DPF API.
+The DPF-Post API is based on three main manipulable objects: 
 
+1. the **solution**: it is the reflexion of the result file information.
 
-Solution Object
----------------
-The solution object instantiates an object that is built on the result
-file.  Use the following code to instantiate a solution object.
+2. the **result object**: it gives the access to a specific result information.
 
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
+3. the **result data**: it provides an access to the data. This is a DPF-Core "Fields Container" concept wrapper.
 
 
-Result Object
--------------
-The result object can be manipulated to get different result data.
+Index of the API guide: 
 
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
-    >>> # Displacement result object
-    >>> displacement = solution.displacement()
-    >>> # Stress result object
-    >>> stress = solution.stress()
-    >>> # Elastic strain result object
-    >>> elastic_strain = solution.elastic_strain()
-
-
-ResultData Class
-----------------
-The ``ResultData`` class is instantiated from a result object.  It
-enables easy access to the data contained within the result
-object. The following example shows how to get an instance of
-``ResultData``.
-    
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> solution = post.load_solution(r'../../../testfiles/tests/model_with_ns.rst')
-    >>> displacement = solution.displacement()
-    >>> result = displacement.vector
-    >>> # access the data
-    >>> vector.get_data_at_field(0)
-    
-.. autoclass:: ansys.dpf.post.result_data.ResultData
-    :members:
+.. toctree::
+   :maxdepth: 2
+   
+  
+   solution
+   result_object
+   result_data
