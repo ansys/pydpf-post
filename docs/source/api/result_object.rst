@@ -18,16 +18,6 @@ The ``result object`` can be manipulated to get different result data.
     >>> # Elastic strain result object
     >>> elastic_strain = solution.elastic_strain()
 
-A result object is available for each main DPF-Post result type. 
-See the following list to know which result can be accessed this way. 
-
-List of available result objects using DPF-Post API:
-
-* displacement
-* stress
-* elastic_strain
-* plastic_strain
-* structural_temperature
-
-See the :ref:`user_guide_accessing_results` section to get more information 
+A result object is available for each main DPF-Post result type. See 
+the :ref:`user_guide_accessing_results` section to get more information 
 about the API of each specific result object. 

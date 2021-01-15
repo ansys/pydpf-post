@@ -29,11 +29,14 @@ code shows how to proceed:
 	
 **Each result object can be instantiated with a bunch of keyword arguments.** 
 For a **full example using keyword arguments**, see :ref:`ref_result_keywords`.
+
+Two different types of files can be accessed using the dpf-Post module: **.rst (mecanics)**
+and **.rth (thermal/electric)** files.
 	
 A result object is available for each main DPF-Post result type. 
 See the following list to know which result can be accessed this way. 
 
-List of available result objects using DPF-Post API:
+List of available mecanic result objects using DPF-Post API (available from .rst files):
 
 * displacement
 * stress
@@ -41,9 +44,20 @@ List of available result objects using DPF-Post API:
 * plastic_strain
 * structural_temperature
 
+List of available thermal/electric result objects using DPF-Post API (available from .rth files):
+
+* temperature
+* heat flux
+* electric field
+* electric potential
+
 **Before calling a result object, you need to be sure that the result information 
 is contained is your result file.** 
-	
+
+.rst files
+==========
+
+.rst files are Ansys result files for mecanics analysis.
 
 Displacement
 ------------
@@ -192,4 +206,177 @@ To access the temperature scalar data, the following proceedure can be followed:
 	>>> temperature.get_data_at_field()
 
 .. autoclass:: ansys.dpf.post.temperature.StructuralTemperature
+	:inherited-members:
+	
+	
+Other results
+-------------
+
+Other results can be accessed from the solution, directly providing
+result data. 
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # get the result data
+	>>> acceleration = solution.misc.nodal_acceleration()
+
+**All the keywords** introduced in :ref:`ref_result_keywords`
+**can be used**. One more must be added: the "subresult" one.
+
+For example, to get the acceleration Y component, the following
+proceedure must be followed: 
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # get the result data
+	>>> acceleration = solution.misc.nodal_acceleration(subresult="Y")  
+	
+
+.rth files
+==========
+
+.rst files are Ansys result files for thermal/electric analysis.
+
+
+Temperature
+-----------
+Temperature can be called as a result object, using the following code:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.steady_therm)
+	>>> # instantiate the temperature result object 
+	>>> temperature = solution.temperature()
+
+Then, the data can be accessed through a result data object. The whole ResultData 
+API can be found following :ref:`ref_api_result_data`.
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # instantiate the temperature result object 
+	>>> temperature = solution.temperature()
+	>>> # get the y temperature result data 
+	>>> temp = temperature.scalar
+	>>> temp.get_data_at_field()
+
+.. autoclass:: ansys.dpf.post.temperature.Temperature
+	:inherited-members:
+
+
+Heat flux
+---------
+Heat flux can be called as a result object, using the following code:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.steady_therm)
+	>>> # instantiate the heat_flux result object 
+	>>> heat_flux = solution.heat_flux()
+
+Then, the data can be accessed through a result data object. The whole ResultData 
+API can be found following :ref:`ref_api_result_data`.
+
+For example, to acces the heat flux X component, the following proceedure can be used:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # instantiate the temperature result object 
+	>>> heat_flux = solution.heat_flux()
+	>>> # get the y heat_flux result data 
+	>>> heat_flux_x = heat_flux.x
+	>>> heat_flux_x.get_data_at_field()
+	
+Other subresults and the whole vector data can be accessed the same way.
+
+.. autoclass:: ansys.dpf.post.temperature.HeatFlux
+	:inherited-members:
+	
+
+Electric field
+--------------
+Electric field can be called as a result object, using the following code:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.electric_therm)
+	>>> # instantiate the electric field result object 
+	>>> electric_field = solution.electric_field()
+
+Then, the data can be accessed through a result data object. The whole ResultData 
+API can be found following :ref:`ref_api_result_data`.
+
+For example, to acces the electric field X component, the following proceedure can be used:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # instantiate the electric field result object 
+	>>> electric_field = solution.electric_field()
+	>>> # get the y electricfield result data 
+	>>> electric_field_x = electric_field.x
+	>>> electric_field_x.get_data_at_field()
+	
+Other subresults and the whole vector data can be accessed the same way.
+
+.. autoclass:: ansys.dpf.post.electric_results.ElectricField
+	:inherited-members:
+	
+	
+Electric potential
+------------------
+Electric potential can be called as a result object, using the following code:
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.steady_therm)
+	>>> # instantiate the electric potential result object 
+	>>> electric_potential = solution.electric_potential()
+
+Then, the data can be accessed through a result data object. The whole ResultData 
+API can be found following :ref:`ref_api_result_data`.
+
+.. code:: python
+
+	>>> # instantiate the solution object 
+	>>> from ansys.dpf import post
+	>>> from ansys.dpf.post import examples
+	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> # instantiate the electric potential result object 
+	>>> electric_potential = solution.electric_potential()
+	>>> # get the y electric potential result data 
+	>>> ep = electric_potential.scalar
+	>>> ep.get_data_at_field()
+
+.. autoclass:: ansys.dpf.post.electric_results.ElectricPotential
 	:inherited-members:
