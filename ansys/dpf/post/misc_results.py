@@ -80,7 +80,7 @@ class MecanicMisc(Misc):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("U", self, self._data_sources, **kwargs)
     
-    def nodal_speed(self, **kwargs):
+    def nodal_velocity(self, **kwargs):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("V", self, self._data_sources, **kwargs)
     
