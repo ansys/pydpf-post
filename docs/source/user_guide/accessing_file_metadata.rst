@@ -7,7 +7,7 @@ Accessing results file metadata
 The DPF-Post module provides an simplified Python interface to DPF, 
 thus enabling rapid post-processing. To proceed, a solution object 
 must be instantiated first.
-Refer to the previous part to proceed (:ref:`_user_guide_post_processing'). 
+Refer to the previous part to proceed (:ref:`user_guide_post_processing`). 
 
 Once the solution is instantiated, it is possible to read the file metadata. 
 
@@ -25,7 +25,7 @@ The result information will provide the result file's analysis type.
 	>>> result_info = solution.get_result_info()
 	>>> print(result_info)
 	
-There are four different analysis type covered here:
+There are four different analysis types covered using the DPF-Post module:
 - static analysis
 - modal analysis 
 - harmonic analysis

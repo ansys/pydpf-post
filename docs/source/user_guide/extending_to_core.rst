@@ -14,7 +14,7 @@ files as well as several neutral formats. Various **operators** are available al
 the manipulation and the transformation of this data. It allows simple and/or 
 complex evaluations by chaining operators. The data in DPF is defined based 
 on physics agnostic mathematical quantities described in a self-sufficient 
-entity called **field**. The **fields container** entity will contain fields.
+entity called **field**. The **fields container** contain field(s).
 
 This module is based on the DPF-Core module, that allows more 
 capabilities. A few will be introduced below.
