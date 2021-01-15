@@ -36,7 +36,7 @@ Two different types of simulation can be accessed using the dpf-Post module thro
 A result object is available for each main DPF-Post result type. 
 See the following list to know which result can be accessed this way. 
 
-List of available mecanic result objects using DPF-Post API (available from .rst files):
+List of available mecanic result objects using DPF-Post API:
 
 * displacement
 * stress
@@ -44,7 +44,7 @@ List of available mecanic result objects using DPF-Post API (available from .rst
 * plastic_strain
 * structural_temperature
 
-List of available thermal/electric result objects using DPF-Post API (available from .rth files):
+List of available thermal/electric result objects using DPF-Post API:
 
 * temperature
 * heat flux
