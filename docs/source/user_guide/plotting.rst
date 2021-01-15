@@ -3,18 +3,16 @@
 ********
 Plotting
 ********
-
-The DPF-Post module provides an simplified Python interface to DPF, 
-thus enabling rapid post-processing. To proceed, a solution object 
-must be instantiated first.
-Refer to the part to proceed (:ref:`user_guide_post_processing'). 
-
+The DPF-Post module provides an simplified Python interface to DPF,
+thus enabling rapid post-processing. To proceed, a solution object
+must be instantiated first. Refer to the part to proceed (:ref:`user_guide_post_processing').
+#
 Once the solution is instantiated, it is possible to access to the 
-contained results.
-Refer to the previous part to proceed (:ref:`user_guide_accessing_results'). 
-
+contained results. Refer to the previous part to proceed 
+(:ref:`user_guide_accessing_results').
+#
 Results can be manipulated as result data objects. The API allows to 
-plot the wanted result on its mesh. 
+plot the wanted result on its mesh.
 
 
 Total deformation 

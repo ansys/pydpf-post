@@ -24,4 +24,4 @@ writting.
 	model = dpf.Model('/home/user/file.rst')
 
 
-For a full and easy example using the solution, see :ref:`_ref_basics`.
+For a full and easy example using the solution, see :ref:`ref_basics`.

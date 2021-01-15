@@ -2,7 +2,7 @@
 .. _ref_harmonic_analysis:
 
 ANSYS DPF-Post: Harmonic Analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This tutorial shows how post-process a harmonic analysis result file
 using API of the DPF-POST module.
 """
