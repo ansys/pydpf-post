@@ -224,8 +224,9 @@ result data.
 	>>> # get the result data
 	>>> acceleration = solution.misc.nodal_acceleration()
 
-**All the keywords** introduced in :ref:`ref_result_keywords`
-**can be used**. One more must be added: the "subresult" one.
+All **the keywords** introduced in :ref:`ref_result_keywords`
+**can be used**, excepting the location one (as it is set before). One 
+more must be added: the "subresult" one.
 
 For example, to get the acceleration Y component, the following
 proceedure must be followed: 
@@ -239,6 +240,11 @@ proceedure must be followed:
 	>>> # get the result data
 	>>> acceleration = solution.misc.nodal_acceleration(subresult="Y")  
 	
+Before using any of the following method, be sure that the result is contained
+in the result file. 
+
+.. autoclass:: ansys.dpf.post.misc_results.MecanicMisc
+	:members:
 
 .rth files
 ==========
