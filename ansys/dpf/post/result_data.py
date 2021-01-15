@@ -270,7 +270,7 @@ class ResultData:
             pl.plot_contour(new_fields_container, off_screen=off_screen,
                             notebook=notebook, **kwargs)
 
-    def plot_chart(self):
+    def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
 
         This method works if the time_freq_support contains

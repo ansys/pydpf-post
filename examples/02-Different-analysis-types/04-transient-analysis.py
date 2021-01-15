@@ -85,13 +85,6 @@ solid_field = stress[0]
 stress.plot_contour()
 
 ###############################################################################
-# **Plot a min/max value over time_freq_support chart**
-time_scoping = range(1, len(solution.time_freq_support.frequencies) + 1)
-stress_over_time_result = solution.stress(time_scoping=time_scoping)
-stress_over_time = stress_over_time_result.tensor
-stress_over_time.plot_chart()
-
-###############################################################################
 # Get an elastic_strain result and plot a chart
 # =============================================
 

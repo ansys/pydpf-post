@@ -212,7 +212,7 @@ def test_plot_chart(plate_msup):
     disp = transient_sol.displacement(time_scoping=list(range(1, 21)))
     vector = disp.vector
     vector.num_fields
-    vector.plot_chart()
+    vector._plot_chart()
 
 
 def test_plot_contour_one_field(plate_msup):
