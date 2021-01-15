@@ -48,18 +48,9 @@ class DpfSolution:
         
         Examples
         --------
-        The following code:
         >>> from ansys.dpf import post
         >>> result = post.result("file.rst")
-        >>> print(result.get_result_info())
-        
-        Will return:
-            Static analysis
-            Unit system: Metric (m, kg, N, s, V, A)
-            Physics Type: Mecanic
-            Available results:
-                 -  displacement                                        
-                 -  volume                                        
+        >>> print(result.get_result_info())                                     
         """
         return self._model.metadata.result_info
     
