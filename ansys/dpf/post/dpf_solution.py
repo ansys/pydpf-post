@@ -64,7 +64,7 @@ class DpfSolution:
         return self._model.metadata.result_info
     
     def __str__(self):
-        txt = '%s result object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
+        txt = '%s solution object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
         '\n\n\nData Sources\n------------------------------\n'
         ds_str = self._data_sources.__str__()
         txt += ds_str
