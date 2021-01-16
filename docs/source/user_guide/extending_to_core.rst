@@ -1,23 +1,23 @@
 .. _user_guide_extending_to_core:
 
-**********************************************
-Extending DPF-Post capabilities using DPF-Core
-**********************************************
+*****************************************
+Using DPF-Core for more general operators
+*****************************************
 
-The DPF-Post module provides an simplified Python interface to DPF, 
-thus enabling rapid post-processing. Another DPF module can be used 
-with a Python interface: DPF-Core. The Post module is based on the 
-concepts of the Core one. 
+The DPF-Post package provides a Python interface to DPF (Data Processing Framework) 
+that is streamlined for post-processing. It also works hand-in-hand with the wider DPF-Core package that 
+is especially suited for representing more general data transformations with the use of 
+powerful, scalable operators. 
 
-The Data Processing Framework (DPF-Core) can access data from solver result 
-files as well as several neutral formats. Various **operators** are available allowing 
-the manipulation and the transformation of this data. It allows simple and/or 
-complex evaluations by chaining operators. The data in DPF is defined based 
-on physics agnostic mathematical quantities described in a self-sufficient 
-entity called **field**. The **fields container** contain field(s).
+DPF-Core is equipped to access data from Ansys solver result 
+files as well as third-party formats. Various **operators** are available to facilitate
+data manipulation and transformation. DPF-Core allows arbitrarily complex workflows to be assembled 
+from simpler building blocks, by chaining together operators. The data in DPF is represented by
+physics-agnostic mathematical quantities described in a self-sufficient 
+entity called a **field**.
 
-This module is based on the DPF-Core module, that allows more 
-capabilities. A few will be introduced below.
+Because DPF-Post is based on DPF-Core, it is helpful to see their interplay to appreciate
+their range of capabilities, as done in the following examples.
 
 
 Export VTK

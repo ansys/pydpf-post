@@ -3,23 +3,16 @@
 ********
 Plotting
 ********
-The DPF-Post module provides an simplified Python interface to DPF,
-thus enabling rapid post-processing. To proceed, a solution object
-must be instantiated first. Refer to the part to proceed (:ref:`user_guide_post_processing').
-#
-Once the solution is instantiated, it is possible to access to the 
-contained results. Refer to the previous part to proceed 
-(:ref:`user_guide_accessing_results').
-#
-Results can be manipulated as result data objects. The API allows to 
-plot the wanted result on its mesh.
+The DPF-Post package also provides functionality to conveniently plot your result.
+It suffices to load the ``Solution`` object with the results file, request a ``Result`` object, 
+and obtain the scalar field of interest.  The ``plot_contour`` method will be ready to render it.
 
 
 Total deformation 
 -----------------
 
-The following code shows how to proceed to **plot the total deformation** 
-(norm of the displacement vector):
+Use the following code to **plot the total deformation** 
+(norm of the displacement vector field):
 
 .. code:: python
 
@@ -39,7 +32,7 @@ The following code shows how to proceed to **plot the total deformation**
 Stress XX component
 -------------------
 
-The following code shows how to proceed to **plot the stress XX component**:
+Use the following code to **plot the normal x-component of stress**:
 
 .. code:: python
 

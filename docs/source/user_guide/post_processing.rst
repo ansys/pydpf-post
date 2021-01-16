@@ -1,27 +1,22 @@
 .. _user_guide_post_processing:
 
-****************************
-Post-processing results file
-****************************
+*******************
+Loading the results
+*******************
 
-The DPF-Post module provides an simplified Python interface to DPF, 
-thus enabling rapid post-processing.
+The DPF-Post package provides a Python interface to DPF (Data Processing Framework) 
+that is streamlined for post-processing. 
 
-To proceed, a solution object must be instantiated first.
-It is an object that is built on the result file. 
-Use the following code to instantiate a solution object.
-
-To create a ``Solution`` instance, import ``dpf-post`` and load a file.  The
-path provided must be an absolute path or a path relative to the file you are 
-writting.
+A central concept in DPF-Post is the ``Solution`` object. It is the entry point
+for browsing the contents of a result file.  It can be obtained as follows:
 
 .. code:: python
 
 	from ansys.dpf import post
 	from ansys.dpf.post import examples
-	solution = post.load_solution('C:/Users/user/file.rst')
+	solution = post.load_solution(r'C:/Users/user/file.rst')
 	# or on linux
-	model = dpf.Model('/home/user/file.rst')
+	model = dpf.Model(r'/home/user/file.rst')
 
-
-For a full and easy example using the solution, see :ref:`ref_basics`.
+For a a more detailed example on interacting with the ``Solution`` object, 
+see :ref:`ref_basics`.
