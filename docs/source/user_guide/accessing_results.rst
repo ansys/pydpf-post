@@ -30,13 +30,13 @@ code shows how to proceed:
 **Each result object can be instantiated with a bunch of keyword arguments.** 
 For a **full example using keyword arguments**, see :ref:`ref_result_keywords`.
 
-Two different types of files can be accessed using the dpf-Post module: **.rst (mecanics)**
-and **.rth (thermal/electric)** files.
+Two different types of simulation can be accessed using the dpf-Post module through 
+**mechanics** and **thermal/electric** result files.
 	
 A result object is available for each main DPF-Post result type. 
 See the following list to know which result can be accessed this way. 
 
-List of available mecanic result objects using DPF-Post API (available from .rst files):
+List of available mecanic result objects using DPF-Post API:
 
 * displacement
 * stress
@@ -44,7 +44,7 @@ List of available mecanic result objects using DPF-Post API (available from .rst
 * plastic_strain
 * structural_temperature
 
-List of available thermal/electric result objects using DPF-Post API (available from .rth files):
+List of available thermal/electric result objects using DPF-Post API:
 
 * temperature
 * heat flux
@@ -54,10 +54,10 @@ List of available thermal/electric result objects using DPF-Post API (available 
 **Before calling a result object, you need to be sure that the result information 
 is contained is your result file.** 
 
-.rst files
-==========
+Mechanics files
+===============
 
-.rst files are Ansys result files for mecanics analysis.
+Mechanics files are Ansys result files for mechanics analysis.
 
 Displacement
 ------------
@@ -246,10 +246,10 @@ in the result file.
 .. autoclass:: ansys.dpf.post.misc_results.MecanicMisc
 	:members:
 
-.rth files
-==========
+Thermal/electric files
+======================
 
-.rst files are Ansys result files for thermal/electric analysis.
+Thermal/electric files are Ansys result files for thermal/electric analysis.
 
 
 Temperature
