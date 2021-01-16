@@ -1,8 +1,8 @@
 .. _user_guide_post_processing:
 
-*******************
-Loading the results
-*******************
+************************
+Loading the results file
+************************
 
 The DPF-Post package provides a Python interface to DPF (Data Processing Framework) 
 that is streamlined for post-processing. 

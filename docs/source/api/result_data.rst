@@ -1,13 +1,11 @@
 .. _ref_api_result_data:
 
-****************
-ResultData Class
-****************
+*****************
+ResultData object
+*****************
 
-The ``ResultData`` class is instantiated from a result object.  It
-enables easy access to the data contained within the result
-object. The following example shows how to get an instance of
-``ResultData``.
+The ``ResultData`` object is obtained from a ``Result``.  It
+provides access to the result values contained within, as shown in the following example:
     
 .. code:: python
 

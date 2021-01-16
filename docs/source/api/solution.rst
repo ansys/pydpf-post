@@ -1,11 +1,11 @@
 .. _ref_api_solution:
 
-**************
-Solution Class
-**************
+***************
+Solution object
+***************
 
-The ``solution`` object instantiates an object that is built on the result
-file.  Use the following code to instantiate a solution object.
+The ``Solution`` object is the entry point for browsing the contents of the results file.  
+Use the following code to load the file and obtain the instance.
 
 .. code:: python
 

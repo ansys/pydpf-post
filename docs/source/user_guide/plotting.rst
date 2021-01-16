@@ -29,8 +29,8 @@ Use the following code to **plot the total deformation**
 	>>> norm.plot_contour()
 
 
-Stress XX component
--------------------
+Normal Stresses
+---------------
 
 Use the following code to **plot the normal x-component of stress**:
 

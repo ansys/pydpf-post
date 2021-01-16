@@ -1,18 +1,18 @@
 ============
 DPF-Post API
 ============
-This guide provides a general overview of the API of DPF-Post.
+This guide provides an overview of the DPF-Post API.
 
-The DPF-Post API is based on three main manipulable objects: 
+DPF-Post leverages three main categories of objects: 
 
-1. the **solution**: it is the reflexion of the result file information.
+1. **Solution**: it is the entry point to the results file, its metadata and contents.
 
-2. the **result object**: it gives the access to a specific result information.
+2. **Result**: it provides access to specific result types, in accordance with the type of analysis.
 
-3. the **result data**: it provides an access to the data. This is a DPF-Core "Fields Container" concept wrapper.
+3. **ResultData**: it provides access to the actual data values and closely relates to the DPF-Core "Fields Container" concept.
 
 
-Index of the API guide: 
+Contents: 
 
 .. toctree::
    :maxdepth: 2

@@ -4,7 +4,8 @@
 Result object
 *************
 
-The ``result object`` can be manipulated to get different result data.
+The ``Result`` object provides access to different types of result data.
+See the example below for access to displacements, stresses and elastic strains.
 
 .. code:: python
 
@@ -18,6 +19,6 @@ The ``result object`` can be manipulated to get different result data.
     >>> # Elastic strain result object
     >>> elastic_strain = solution.elastic_strain()
 
-A result object is available for each main DPF-Post result type. See 
-the :ref:`user_guide_accessing_results` section to get more information 
-about the API of each specific result object. 
+DPF-Post features separate ``Result`` classes for each supported result type. See 
+the :ref:`user_guide_accessing_results` section for information 
+on the available types and their interfaces. 

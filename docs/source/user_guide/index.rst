@@ -1,7 +1,11 @@
 ==========
 User Guide
 ==========
-General overview of the usage of DPF-Post API along with several (basic) examples showing general usage.
+
+The DPF-Post package provides a Python interface to DPF (Data Processing Framework) 
+that is streamlined for post-processing. 
+
+The following materials explain the conceptual model of DPF-Post along with typical usage.
 
 .. toctree::
    :maxdepth: 3
