@@ -4,8 +4,9 @@
 Solution object
 ***************
 
-The ``Solution`` object is the entry point for browsing the contents of the results file.  
-Use the following code to load the file and obtain the instance.
+The ``Solution`` object is the entry point for browsing the contents
+of the results file.  Use the following code to load the file and
+obtain the instance.
 
 .. code:: python
 
