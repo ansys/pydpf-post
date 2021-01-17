@@ -62,13 +62,13 @@ jobs:
           sudo apt-get install pandoc -qy
           pip install -r requirements_docs.txt
           make -C docs html
-          touch docs/build/html/.nojekyll
+          touch docs/_build/html/.nojekyll
   
       - name: Upload Documentation
         uses: actions/upload-artifact@v2.2.1
         with:
           name: Documentation
-          path: docs/build/html
+          path: docs/_build/html
           retention-days: 7
 
       - name: Deploy
@@ -77,5 +77,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs/build/html
+          FOLDER: docs/_build/html
           CLEAN: true
