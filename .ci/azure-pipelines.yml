@@ -120,6 +120,14 @@ jobs:
         python -c "from ansys.dpf import post; print(post.Report())"
       displayName: Install ansys-dpf-post
 
+    # this step is necessary as we're running in docker and the
+    # examples directory must be local to the docker enviornment
+    - script: |
+       EXAMPLES_DIR=$(python -c "from ansys.dpf.core import examples; import os; print(os.path.dirname(examples.__file__))")
+       mkdir -p ansys/dpf/core
+       cp -r $EXAMPLES_DIR ansys/dpf/core
+      displayName: Copy ansys.dpf.core examples to local directory
+
     - script: |
         set -ex
         echo $(PAT) | docker login -u $(GH_USERNAME) --password-stdin docker.pkg.github.com
