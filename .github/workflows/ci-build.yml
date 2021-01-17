@@ -27,6 +27,7 @@ jobs:
 
       - name: Install, start, and test the virtual framebuffer
         run: |
+          chmod +x .ci/setup_headless_display.sh
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
           python .ci/display_test.py        
