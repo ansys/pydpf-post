@@ -3,6 +3,8 @@ from ansys.dpf.core.common import locations
 from ansys.dpf.post.post_utility import load_solution, print_available_keywords
 from ansys import dpf
 
+from ansys.dpf.post.misc import Report
+
 """Post-processing module. Using Data Processing Framework.
 Allow to create a result object, then use it to get wanted results.
 
@@ -17,6 +19,3 @@ Examples
 #dpf.core.start_local_server()
 
     
-
-
-

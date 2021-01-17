@@ -4,6 +4,8 @@ from ansys.dpf import post
 import numpy as np
 import unittest
 import pytest
+from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.core import errors as core_errors
 
 
 def test_thermal_steadystate(rth_steady_state):
@@ -44,21 +46,21 @@ def test_steadystate_nodlocation(rth_steady_state):
     assert len(s[0].data) == 4125
     assert s[0].location == post.locations.nodal
 
-class TestCase1(unittest.TestCase):
-    
-    @pytest.fixture(autouse=True)
-    def set_filepath(self, rth_steady_state):
-        self._filepath = rth_steady_state
         
-    def test_steadystate_elemlocation(self):
-        solution = post.load_solution(self._filepath)
-        temp = solution.temperature(location = post.locations.elemental)
-        self.assertRaises(Exception, s = temp.scalar)
+def test_steadystate_elemlocation(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
+    temp = solution.temperature(location = post.locations.elemental)
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
     
-    def test_steadystate_elemnodallocation(self):
-        solution = post.load_solution(self._filepath)
-        temp = solution.temperature(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, s = temp.scalar)
+
+def test_steadystate_elemnodallocation(rth_steady_state):
+    solution = post.load_solution(rth_steady_state)
+    temp = solution.temperature(location = post.locations.elemental_nodal)
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 
 def test_steadystate_timescoping(rth_steady_state):
@@ -131,21 +133,19 @@ def test_transient_nodlocation(rth_transient):
     assert s[0].location == post.locations.nodal
 
 
-class TestCase2(unittest.TestCase):
-    
-    @pytest.fixture(autouse=True)
-    def set_filepath(self, rth_transient):
-        self._filepath = rth_transient
-        
-    def test_steadystate_elemlocation(self):
-        solution = post.load_solution(self._filepath)
-        temp = solution.temperature(location = post.locations.elemental)
-        self.assertRaises(Exception, s = temp.scalar)
-    
-    def test_steadystate_elemnodallocation(self):
-        solution = post.load_solution(self._filepath)
-        temp = solution.temperature(location = post.locations.elemental_nodal)
-        self.assertRaises(Exception, s = temp.scalar)
+def test_transient_elemlocation(rth_transient):
+    solution = post.load_solution(rth_transient)
+    temp = solution.temperature(location = post.locations.elemental)
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
+
+def test_transient_elemnodallocation(rth_transient):
+    solution = post.load_solution(rth_transient)
+    temp = solution.temperature(location = post.locations.elemental_nodal)
+    s = temp.scalar
+    with pytest.raises(core_errors.DPFServerException):
+        s.num_fields
 
 
 def test_transient_timescoping(rth_transient):

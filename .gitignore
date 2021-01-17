@@ -2,9 +2,10 @@
 ## DPF
 #########################
 
-/__pycache__
+__pycache__
 /.pytest_cache
 /.spyproject
+
 
 #tests
 /tests/__pycache__
