@@ -1,54 +1,24 @@
-.. _ref_api_index:
+============
+DPF-Post API
+============
+This guide provides an overview of the DPF-Post API.
 
-API Reference
-=============
-Details of the DPF API.
+DPF-Post leverages three main categories of objects: 
 
+1. **Solution**: it is the entry point to the results file, its
+   metadata and contents.
 
-Solution Object
----------------
-The solution object instantiates an object that is built on the result
-file.  Use the following code to instantiate a solution object.
+2. **Result**: it provides access to specific result types, in
+   accordance with the type of analysis.
 
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
+3. **ResultData**: it provides access to the actual data values and
+   closely relates to the DPF-Core "Fields Container" concept.
 
 
-Result Object
--------------
-The result object can be manipulated to get different result data.
-
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
-    >>> # Displacement result object
-    >>> displacement = solution.displacement()
-    >>> # Stress result object
-    >>> stress = solution.stress()
-    >>> # Elastic strain result object
-    >>> elastic_strain = solution.elastic_strain()
-
-
-ResultData Class
-----------------
-The ``ResultData`` class is instantiated from a result object.  It
-enables easy access to the data contained within the result
-object. The following example shows how to get an instance of
-``ResultData``.
-    
-.. code:: python
-
-    >>> from ansys.dpf import post
-    >>> solution = post.load_solution(r'../../../testfiles/tests/model_with_ns.rst')
-    >>> displacement = solution.displacement()
-    >>> result = displacement.vector
-    >>> # access the data
-    >>> vector.get_data_at_field(0)
-    
-.. autoclass:: ansys.dpf.post.result_data.ResultData
-    :members:
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents
+  
+   solution
+   result_object
+   result_data

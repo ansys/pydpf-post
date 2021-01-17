@@ -77,289 +77,359 @@ class MecanicMisc(Misc):
     
     #nodal results
     def nodal_displacement(self, **kwargs):
+        """Returns a nodal_displacement result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("U", self, self._data_sources, **kwargs)
     
-    def nodal_speed(self, **kwargs):
+    def nodal_velocity(self, **kwargs):
+        """Returns a nodal_velocity result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("V", self, self._data_sources, **kwargs)
     
     def nodal_acceleration(self, **kwargs):
+        """Returns a nodal_acceleration result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("A", self, self._data_sources, **kwargs)
     
     def nodal_reaction_force(self, **kwargs):
+        """Returns a nodal_reaction_force result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("RF", self, self._data_sources, **kwargs)
     
     def nodal_force(self, **kwargs):
+        """Returns a nodal_force result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("F", self, self._data_sources, **kwargs)
     
     def nodal_moment(self, **kwargs):
+        """Returns a nodal_moment result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("M", self, self._data_sources, **kwargs)
     
     def nodal_raw_displacement(self, **kwargs):
+        """Returns a nodal_raw_displacement result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("UTOT", self, self._data_sources, **kwargs)
     
     def nodal_raw_reaction_force(self, **kwargs):
+        """Returns a nodal_raw_reaction_force result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("RFTOT", self, self._data_sources, **kwargs)
     
     def modal_basis(self, **kwargs):
+        """Returns a modal_basis result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ModalBasis", self, self._data_sources, **kwargs)
     
     
     #element nodal results (get result at nodes or at elements)
     def elemental_stress(self, **kwargs):
+        """Returns a elemental_stress result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("S", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_stress(self, **kwargs):
+        """Returns a elemental_nodal_stress result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("S", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_stress(self, **kwargs):
+        """Returns a nodal_stress result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("S", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_elastic_strain(self, **kwargs):
+        """Returns a elemental_elastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("EPEL", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_elastic_strain(self, **kwargs):
+        """Returns a elemental_nodal_elastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("EPEL", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_elastic_strain(self, **kwargs):
+        """Returns a nodal_elastic_strain result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("EPEL", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_plastic_strain(self, **kwargs):
+        """Returns a elemental_plastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("EPPL", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_plastic_strain(self, **kwargs):
+        """Returns a elemental_nodal_plastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("EPPL", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_plastic_strain(self, **kwargs):
+        """Returns a nodal_plastic_strain result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("EPPL", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_structural_temperature(self, **kwargs):
+        """Returns a elemental_structural_temperature result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("BFE", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_structural_temperature(self, **kwargs):
+        """Returns a elemental_nodal_structural_temperature result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("BFE", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_structural_temperature(self, **kwargs):
+        """Returns a nodal_structural_temperature result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("BFE", self, self._data_sources, location="Nodal", **kwargs)
         
     def elemental_thermal_strains(self, **kwargs):
+        """Returns a elemental_thermal_strains result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ETH", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_thermal_strains(self, **kwargs):
+        """Returns a elemental_nodal_thermal_strains result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ETH", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_thermal_strains(self, **kwargs):
+        """Returns a nodal_thermal_strains result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ETH", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_eqv_stress_parameter(self, **kwargs):
+        """Returns a elemental_eqv_stress_parameter result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SEPL", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_eqv_stress_parameter(self, **kwargs):
+        """Returns a elemental_nodal_eqv_stress_parameter result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SEPL", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_eqv_stress_parameter(self, **kwargs):
+        """Returns a nodal_eqv_stress_parameter result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SEPL", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_stress_ratio(self, **kwargs):
+        """Returns a elemental_stress_ratio result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SRAT", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_stress_ratio(self, **kwargs):
+        """Returns a elemental_nodal_stress_ratio result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SRAT", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_stress_ratio(self, **kwargs):
+        """Returns a nodal_stress_ratio result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_SRAT", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_hydrostatic_pressure(self, **kwargs):
+        """Returns a elemental_hydrostatic_pressure result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_HPRES", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_hydrostatic_pressure(self, **kwargs):
+        """Returns a elemental_nodal_hydrostatic_pressure result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_HPRES", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_hydrostatic_pressure(self, **kwargs):
+        """Returns a nodal_hydrostatic_pressure result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_HPRES", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_accu_eqv_plastic_strain(self, **kwargs):
+        """Returns a elemental_accu_eqv_plastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_EPEQ", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_accu_eqv_plastic_strain(self, **kwargs):
+        """Returns a elemental_nodal_accu_eqv_plastic_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_EPEQ", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_accu_eqv_plastic_strain(self, **kwargs):
+        """Returns a nodal_accu_eqv_plastic_strain result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_EPEQ", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_plastic_state_variable(self, **kwargs):
+        """Returns a elemental_plastic_state_variable result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PSV", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_plastic_state_variable(self, **kwargs):
+        """Returns a elemental_nodal_plastic_state_variable result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PSV", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_plastic_state_variable(self, **kwargs):
+        """Returns a nodal_plastic_state_variable result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PSV", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_accu_eqv_creep_strain(self, **kwargs):
+        """Returns a elemental_accu_eqv_creep_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CREQ", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_accu_eqv_creep_strain(self, **kwargs):
+        """Returns a elemental_nodal_accu_eqv_creep_strain result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CREQ", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_accu_eqv_creep_strain(self, **kwargs):
+        """Returns a nodal_accu_eqv_creep_strain result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CREQ", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_plastic_strain_energy_density(self, **kwargs):
+        """Returns a elemental_plastic_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PLWK", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_plastic_strain_energy_density(self, **kwargs):
+        """Returns a elemental_nodal_plastic_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PLWK", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_plastic_strain_energy_density(self, **kwargs):
+        """Returns a nodal_plastic_strain_energy_density result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_PLWK", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_creep_strain_energy_density(self, **kwargs):
+        """Returns a elemental_creep_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CRWK", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_creep_strain_energy_density(self, **kwargs):
+        """Returns a elemental_nodal_creep_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CRWK", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_creep_strain_energy_density(self, **kwargs):
+        """Returns a nodal_creep_strain_energy_density result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_CRWK", self, self._data_sources, location="Nodal", **kwargs)
     
     def elemental_elastic_strain_energy_density(self, **kwargs):
+        """Returns a elemental_elastic_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="Elemental", b_elem_average = True, **kwargs)
     
     def elemental_nodal_elastic_strain_energy_density(self, **kwargs):
+        """Returns a elemental_nodal_elastic_strain_energy_density result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="Elemental", **kwargs)
     
     def nodal_elastic_strain_energy_density(self, **kwargs):
+        """Returns a nodal_elastic_strain_energy_density result data."""
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="Nodal", **kwargs)
     
     
     #element nodal result (here only elemental result given because the nodal one is given in nodal category)
     def elemental_force(self, **kwargs):
+        """Returns a elemental_force result data."""
         self._check_elemental_location(**kwargs)
         resData = self._get_result_data_function_of_operator("ENF", self, self._data_sources, location="Elemental", **kwargs)
         return self._elemental_nodal_to_elemental_result(resData)
     
     def elemental_nodal_force(self, **kwargs):
+        """Returns a elemental_nodal_force result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENF", self, self._data_sources, location="Elemental", **kwargs)
     
     
     #element results
     def elemental_contact_status(self, **kwargs):
+        """Returns a elemental_contact_status result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_STAT", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_penetration(self, **kwargs):
+        """Returns a elemental_contact_penetration result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_PENE", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_pressure(self, **kwargs):
+        """Returns a elemental_contact_pressure result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_PRES", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_friction_stress(self, **kwargs):
+        """Returns a elemental_contact_friction_stress result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_SFRIC", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_total_stress(self, **kwargs):
+        """Returns a elemental_contact_total_stress result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_STOT", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_sliding_distance(self, **kwargs):
+        """Returns a elemental_contact_sliding_distance result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_SLIDE", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contactgap_distance(self, **kwargs):
+        """Returns a elemental_contactgap_distance result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_GAP", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_surface_heat_flux(self, **kwargs):
+        """Returns a elemental_contact_surface_heat_flux result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_FLUX", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_contact_fluid_penetration_pressure(self, **kwargs):
+        """Returns a elemental_contact_fluid_penetration_pressure result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ECT_FRES", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_volume(self, **kwargs):
+        """Returns a elemental_volume result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_VOL", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_mass(self, **kwargs):
+        """Returns a elemental_mass result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ElementalMass", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_stiffness_matrix_energy(self, **kwargs):
+        """Returns a elemental_stiffness_matrix_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_SE", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_artificial_hourglass_energy(self, **kwargs):
+        """Returns a elemental_artificial_hourglass_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_AHO", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_kinetic_energy(self, **kwargs):
+        """Returns a elemental_kinetic_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_KE", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_co_energy(self, **kwargs):
+        """Returns a elemental_co_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_CO", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_incremental_energy(self, **kwargs):
+        """Returns a elemental_incremental_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_INC", self, self._data_sources, location="Elemental", **kwargs)
     
     def elemental_thermal_dissipation_energy(self, **kwargs):
+        """Returns a elemental_thermal_dissipation_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_TH", self, self._data_sources, location="Elemental", **kwargs)
 

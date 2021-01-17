@@ -20,6 +20,8 @@ __pycache__
 #other
 /perso
 /examples/Jupyter lab/.ipynb_checkpoints
+*checkpoint.py
+*checkpoint.ipynb
 
 # compiled documentation
 docs/_build

@@ -12,10 +12,8 @@ access some basic help.
 from ansys.dpf.post import examples
 from ansys.dpf import post
 
-
 ###############################################################################
 # **Load a solution**: this must be instantiated with the result filepath.
-
 # Load a simple  example file included with DPF-Post
 simple_bar = examples.simple_bar
 solution = post.load_solution(simple_bar)
@@ -35,5 +33,5 @@ help(post.locations)
 
 ###############################################################################
 # **Get the available keywords** that can be used as attribute of a
-# **result object.
+# **result object**.
 post.print_available_keywords()

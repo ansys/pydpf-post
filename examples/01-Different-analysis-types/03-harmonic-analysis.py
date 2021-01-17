@@ -1,10 +1,10 @@
 """
-.. _ref_trasient_analysis:
+.. _ref_harmonic_analysis:
 
-ANSYS DPF-Post: Transient Anaysis
+ANSYS DPF-Post: Harmonic Analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This tutorial shows how post-process a transient analysis result file
-using API of the POST module.
+This tutorial shows how post-process a harmonic analysis result file
+using API of the DPF-POST module.
 """
 
 ###############################################################################
@@ -16,11 +16,11 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get the solution object
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# The following file is the result of a transient analysis computed
+# The following file is the result of a harmonic analysis computed
 # using Ansys Mechanical.
 #
-# here we load the solution
-solution = post.load_solution(examples.msup_transient)
+# Here we load the solution
+solution = post.load_solution(examples.complex_rst)
 print(solution)
 
 ###############################################################################
@@ -28,11 +28,12 @@ print(solution)
 # ~~~~~~~~~~~~~~~~~~
 
 ###############################################################################
-# Get a displacement result and compute data
-# ==========================================
+# Get a displacement result
+# =========================
 
 ###############################################################################
-# **Get the result**
+# **Get the result**: it will contain a field for real values and a
+# field for imaginary values.
 disp_result = solution.displacement()
 disp = disp_result.vector
 
@@ -61,14 +62,23 @@ disp.get_max_data_at_field(0)
 disp.get_min_data_at_field(0)
 
 ###############################################################################
-# Get a stress result and plot a contour
-# ======================================
+# Get a stress result and deals with amplitude
+# ============================================
 
 ###############################################################################
 # **Get the result**
 stress_result = solution.stress()
+
+###############################################################################
+# **Check if the support has complex frequencies**
+stress_result.has_complex_frequencies()
+
+###############################################################################
+# **Get the tensor result**
 stress = stress_result.tensor
 # shell and solid elements are in distinct fields.
+# so we have four fields : the solid-real one, the solid-imaginary one, 
+# the shell-real one and the shell_imaginary one. 
 stress.num_fields
 
 ###############################################################################
@@ -78,29 +88,32 @@ shell_field.shell_layers
 
 ###############################################################################
 # **Get the solid field field**
-solid_field = stress[0]
+solid_field = stress[1]
 
 ###############################################################################
-# **Plot the contour**
-stress.plot_contour()
+# **Plot the amplitude contour**
+amplitude = stress_result.tensor_amplitude
+amplitude.plot_contour()
 
 ###############################################################################
-# **Plot a min/max value over time_freq_support chart**
-time_scoping = range(1, len(solution.time_freq_support.frequencies) + 1)
-stress_over_time_result = solution.stress(time_scoping=time_scoping)
-stress_over_time = stress_over_time_result.tensor
-stress_over_time.plot_chart()
+# Get an elastic_strain result and deals with phase
+# =================================================
 
 ###############################################################################
-# Get an elastic_strain result and plot a chart
-# =============================================
-
-###############################################################################
-# **Get the result**
+# **Get the result**: it will contain a field for real values and a
+# field for imaginary values.
 elastic_strain_result = solution.elastic_strain()
 elastic_strain = elastic_strain_result.tensor
 # shell and solid elements are in distinct fields.
 elastic_strain.num_fields
+
+###############################################################################
+# **Deal with phase**: phase unit is degree, phase must be a float.
+es_at_phase = elastic_strain_result.tensor_at_phase(39.)
+es_at_phase.max_data
+es_at_phase.num_fields
+real_field = elastic_strain_result.tensor_at_phase(0.)
+img_field = elastic_strain_result.tensor_at_phase(90.)
 
 ###############################################################################
 # **It is also possible to deal with plastic_strain and temperature this way.**
