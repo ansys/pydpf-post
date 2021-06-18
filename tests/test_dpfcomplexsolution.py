@@ -88,10 +88,3 @@ def test_is_complex_result(complex_model):
     disp = compl_disp.vector
     assert disp.num_fields == 2
     
-    
-def test_is_complex_result_modal(modalallkindofcomplexity):
-    result = post.load_solution(modalallkindofcomplexity)
-    compl_disp = result.displacement()
-    assert compl_disp.has_complex_frequencies()
-    disp = compl_disp.vector
-    assert disp.num_fields == 1
