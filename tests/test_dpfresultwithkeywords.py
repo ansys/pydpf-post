@@ -197,10 +197,11 @@ def test_stress_with_invariant_subresult_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_nodal_stress(subresult="3")
     assert stress._evaluator._result_operator.name == "S3"
-    assert stress.num_fields == 2
+    assert stress.num_fields == 1 # is elemental nodal so one field even if shell and solid mix
     data = stress.get_data_at_field(0)
-    assert len(data) == 720
-    assert np.isclose(data[1], -4721842.179373354)
+    assert len(data) == 40016
+    assert np.isclose(data[1], -2728919.8998654075)
+    assert stress.result_fields_container[0].location == locations.elemental_nodal
     
 
 def test_stress_with_invariant_subresult(allkindofcomplexity):
@@ -208,10 +209,11 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
     s = result.stress(location=post.locations.elemental_nodal)
     stress = s.principal_3
     assert stress._evaluator._result_operator.name == "S3"
-    assert stress.num_fields == 2
+    assert stress.num_fields == 1
     data = stress.get_data_at_field(0)
-    assert len(data) == 720
-    assert np.isclose(data[1], -4721842.179373354)
+    assert len(data) == 40016
+    assert np.isclose(data[1], -2728919.8998654075)
+    assert stress.result_fields_container[0].location == locations.elemental_nodal
     
     
 def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
@@ -219,9 +221,9 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     disp = result.misc.nodal_displacement(grouping = post.grouping.by_el_shape)
     assert disp.num_fields == 4
     assert disp.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
-    assert len(disp.get_data_at_field(0)) == 93950
-    assert len(disp.get_data_at_field(1)) == 6748
-    assert len(disp.get_data_at_field(2)) == 36
+    assert len(disp.get_data_at_field(0)) == 14826
+    assert len(disp.get_data_at_field(1)) == 1486
+    assert len(disp.get_data_at_field(2)) == 19
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
@@ -233,9 +235,9 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     disp = d.vector
     assert disp.num_fields == 4
     assert disp.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
-    assert len(disp.get_data_at_field(0)) == 93950
-    assert len(disp.get_data_at_field(1)) == 6748
-    assert len(disp.get_data_at_field(2)) == 36
+    assert len(disp.get_data_at_field(0)) == 14826
+    assert len(disp.get_data_at_field(1)) == 1486
+    assert len(disp.get_data_at_field(2)) == 19
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
@@ -247,10 +249,10 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     assert stress.num_fields == 4
     assert stress.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
     assert len(stress.get_data_at_field(0)) == 609
-    assert len(stress.get_data_at_field(1)) == 27156
+    assert len(stress.get_data_at_field(1)) == 9052
     assert len(stress.get_data_at_field(2)) == 0
     assert len(stress.get_data_at_field(3)) == 0
-    assert np.isclose(stress.get_data_at_field(1)[0][0], -2984789.100540372)
+    assert np.isclose(stress.get_data_at_field(1)[0][0], 10531735.798152419)
     assert stress[0].location == locations.elemental
     
     
@@ -261,10 +263,10 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert stress.num_fields == 4
     assert stress.result_fields_container.get_label_space(3) == {'elshape': 3, 'time': 1}
     assert len(stress.get_data_at_field(0)) == 609
-    assert len(stress.get_data_at_field(1)) == 27156
+    assert len(stress.get_data_at_field(1)) == 9052
     assert len(stress.get_data_at_field(2)) == 0
     assert len(stress.get_data_at_field(3)) == 0
-    assert np.isclose(stress.get_data_at_field(1)[0][0], -2984789.100540372)
+    assert np.isclose(stress.get_data_at_field(1)[0][0], 10531735.798152419)
     assert stress[0].location == locations.elemental
     
 
@@ -272,21 +274,26 @@ def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping = post.grouping.by_material)
     assert disp.num_fields == 11
-    assert len(disp[0]) == 23016
-    assert len(disp[2]) == 1848
+    assert len(disp[0]) == 6288
+    assert len(disp[2]) == 744
     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
-    
+    for field in disp:
+        assert len(field) != 0
+        assert field.location == locations.nodal
     
 def test_groupingmat_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping = post.grouping.by_material)
     disp = d.vector
     assert disp.num_fields == 11
-    assert len(disp[0]) == 23016
-    assert len(disp[2]) == 1848
+    assert len(disp[0]) == 6288
+    assert len(disp[2]) == 744
     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
     assert disp.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 10}
+    for field in disp:
+        assert len(field) != 0
+        assert field.location == locations.nodal
     
 
 def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
@@ -294,8 +301,8 @@ def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
     stress = result.misc.elemental_stress(grouping = post.grouping.by_material)
     assert stress.num_fields == 11
     assert len(stress[1]) == 9828
-    assert len(stress[5]) == 156762
-    assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
+    assert len(stress[5]) == 52254
+    assert stress.get_data_at_field(5)[0][2] == 2089125611.1128974
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
     
@@ -306,8 +313,8 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     stress = s.tensor
     assert stress.num_fields == 11
     assert len(stress[1]) == 9828
-    assert len(stress[5]) == 156762
-    assert stress.get_data_at_field(5)[0][2] == 2255995657.8043337
+    assert len(stress[5]) == 52254
+    assert stress.get_data_at_field(5)[0][2] == 2089125611.1128974
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
     
@@ -548,4 +555,7 @@ def test_named_selection_keyword(model_ns):
     assert stress[0].location == post.locations.elemental
     
     
+if __name__ == "__main__":
+    allkindofcomplexity = "d:/AnsysDev/DPFUnitTestDataFiles/rst_operators/allKindOfComplexity.rst"
+    test_groupingmat_elemlocation_verbose_api(allkindofcomplexity)
     

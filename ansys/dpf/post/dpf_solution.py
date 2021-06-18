@@ -10,6 +10,7 @@ result introduces an amplitude evaluation.
 
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.core import Operator as _Operator
+from ansys.dpf.core import locations
 
 from ansys.dpf.post.stress import Stress, ComplexStress
 from ansys.dpf.post.strain import ElasticStrain, ComplexElasticStrain
@@ -21,7 +22,8 @@ from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
 from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
 from ansys.dpf.post.misc_results import Misc, MecanicMisc, ComplexMecanicMisc, ThermalMisc
-        
+
+from ansys.dpf.post.errors import NodalLocationError        
 
 class DpfSolution:
     """Main class of post result API."""
@@ -53,6 +55,12 @@ class DpfSolution:
         >>> print(result.get_result_info())                                     
         """
         return self._model.metadata.result_info
+    
+    def _check_nodal_location(self, **kwargs):
+        if _AvailableKeywords.location in kwargs:
+            location = kwargs.pop(_AvailableKeywords.location)
+            if location != locations.nodal:
+                raise NodalLocationError()
     
     def __str__(self):
         txt = '%s solution object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
@@ -286,6 +294,7 @@ class DpfThermalSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> temp = solution.temperature(node_scoping = [1, 43])
         """
+        self._check_nodal_location(**kwargs)
         return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def heat_flux(self, **kwargs):
@@ -318,6 +327,7 @@ class DpfThermalSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> ep = solution.electric_potential(node_scoping = [1, 43])
         """
+        self._check_nodal_location(**kwargs)
         return ElectricPotential(data_sources=self._data_sources, model=self._model, **kwargs)
     
     def electric_field(self, **kwargs):

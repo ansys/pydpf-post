@@ -265,7 +265,7 @@ class ResultData:
             for name in lab_names:
                 new_fields_container.add_label(name)
             for label in label_spaces:
-                field = self.result_fields_container._get_entries(label)
+                field = self.result_fields_container.get_field(label)
                 new_fields_container.add_field(label, field)
             pl.plot_contour(new_fields_container, off_screen=off_screen,
                             notebook=notebook, **kwargs)
@@ -283,7 +283,7 @@ class ResultData:
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution('file.rst')
-        >>> tscope = list(range(1, len(solution.time_freq_support.frequencies) + 1))
+        >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
         >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
                                      time_scoping=tscope
         >>> s = stress.tensor

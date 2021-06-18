@@ -49,18 +49,14 @@ def test_steadystate_nodlocation(rth_steady_state):
         
 def test_steadystate_elemlocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
-    temp = solution.temperature(location = post.locations.elemental)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental)
     
 
 def test_steadystate_elemnodallocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
-    temp = solution.temperature(location = post.locations.elemental_nodal)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental_nodal)
 
 
 def test_steadystate_timescoping(rth_steady_state):
@@ -135,18 +131,13 @@ def test_transient_nodlocation(rth_transient):
 
 def test_transient_elemlocation(rth_transient):
     solution = post.load_solution(rth_transient)
-    temp = solution.temperature(location = post.locations.elemental)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental)
 
 def test_transient_elemnodallocation(rth_transient):
     solution = post.load_solution(rth_transient)
-    temp = solution.temperature(location = post.locations.elemental_nodal)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
-
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental_nodal)
 
 def test_transient_timescoping(rth_transient):
     solution = post.load_solution(rth_transient)

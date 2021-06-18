@@ -23,7 +23,7 @@ def test_solution_mesh(allkindofcomplexity):
 def test_solution_tfq(allkindofcomplexity):
     sol = post.load_solution(allkindofcomplexity)
     tfq = sol.time_freq_support
-    assert tfq.frequencies.data[0] == 1.
+    assert tfq.time_frequencies.data[0] == 1.
     
 
 def test_get_result_data_function_of_operator_no_keyword(allkindofcomplexity):

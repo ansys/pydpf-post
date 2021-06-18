@@ -86,8 +86,8 @@ class TestCase1(unittest.TestCase):
         
     def test_electricpotential_changelocation(self):
         solution = post.load_solution(self._filepath)
-        pot = solution.electric_potential(location = post.locations.elemental)
-        self.assertRaises(Exception, pot.definition.location, post.locations.nodal)
+        pot = solution.electric_potential(location = post.locations.nodal)
+        self.assertRaises(Exception, pot.definition.location, post.locations.elemental)
 
 
 def test_electricfield_elemlocation(rth_electric):
@@ -182,18 +182,14 @@ def test_electricpotential_nodlocation(rth_electric):
   
 def test_electricpotential_elemlocation(rth_electric):
     solution = post.load_solution(rth_electric)
-    pot = solution.electric_potential(location = post.locations.elemental)
-    s = pot.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        pot = solution.electric_potential(location = post.locations.elemental)
         
 
 def test_electricpotential_elemnodallocation(rth_electric):
     solution = post.load_solution(rth_electric)
-    pot = solution.electric_potential(location = post.locations.elemental_nodal)
-    s = pot.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        pot = solution.electric_potential(location = post.locations.elemental_nodal)
 
 
 def test_electricpotential_timescoping(rth_electric):
@@ -224,3 +220,9 @@ def test_electricpotential_set(rth_electric):
     assert len(s[0].data) == 4125
     assert s[0].location == post.locations.nodal
     assert np.isclose(s[0].data[0], 0.07336107005500624)
+    
+    
+if __name__ == "__main__":
+    rth_electric = "d:/AnsysDev/DPF-Core/ansys/dpf/core/examples/rth/rth_electric.rth"
+    test_electricpotential_elemlocation(rth_electric)
+    

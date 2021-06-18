@@ -47,10 +47,10 @@ class Result:
         #write correct arguments regarding location
         b_elem_average = False
         location_to_compute = self.definition._location
-        if self.definition._location == locations.elemental_nodal:
-            location_to_compute = locations.elemental
-        if self.definition._location == locations.elemental:
-            b_elem_average = True
+        # if self.definition._location == locations.elemental_nodal:
+        #     location_to_compute = locations.elemental
+        # if self.definition._location == locations.elemental:
+        #     b_elem_average = True
 
         return ResultData(operator_name=operator_name, data_sources=data_sources,
                           model=model, elem_average=b_elem_average, op_average=self._op_average, location=location_to_compute,

@@ -34,7 +34,11 @@ class ResultEvaluator:
         self._result_operator.inputs.connect(data_sources)
         
         if (location is not None):
-            self._result_operator.inputs.requested_location.connect(location)
+            if hasattr(self._result_operator.inputs, "requested_location"):
+                self._result_operator.inputs.requested_location.connect(location)
+            # else:
+            #     msg = location + " location can not be set on " + self._result_operator.name + " operator."
+            #     raise Exception(msg)
         # if (element_scoping is not None and node_scoping is not None):
         #     raise Exception("Impossible to use both element_scoping and node_scoping.")
         self._check_if_several_mesh_scoping(node_scoping, element_scoping, 
@@ -107,7 +111,7 @@ class ResultEvaluator:
                 raise TypeError("Time argument must be a float value.")
             time_scoping = dpf.core.Scoping()
             tfq = self._model.metadata.time_freq_support
-            data = tfq.frequencies.data
+            data = tfq.time_frequencies.data
             temp_array = np.array([])
             for d in data:
                 temp_array = np.append(temp_array, round(d, 5))
