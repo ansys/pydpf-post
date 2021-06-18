@@ -26,22 +26,23 @@ def test_electricfield_nodscoping(rth_electric):
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.nodal
-    assert len(s[0].data) == 20
+    assert len(s[0].data) == 1
     assert len(s[0].data[0]) == 3
-    assert np.allclose(s[0].data[0].tolist(), [2.63128894e-11, 1.95629520e+01, 2.62733394e-11])
+    assert np.allclose(s[0].data[0].tolist(), [5.25223311e-14, 1.95629520e+01, 2.82945325e-14])
     ef = solution.electric_field(location = post.locations.elemental, node_scoping = [2])
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.elemental
+    assert len(s[0].data) == 8
     assert len(s[0].data[0]) == 3
-    assert np.allclose(s[0].data.tolist(), [-3.41948692e-14,  1.95629520e+01,  7.77156117e-15])
+    assert np.allclose(s[0].data[0].tolist(), [-3.41948692e-14,  1.95629520e+01,  7.77156117e-15])
     ef = solution.electric_field(location = post.locations.elemental_nodal, node_scoping = [2])
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.elemental_nodal
     assert len(s[0].data) == 8
     assert len(s[0].data[0]) == 3
-    assert np.allclose(s[0].data.tolist(), [-3.41948692e-14,  1.95629520e+01,  7.77156117e-15])
+    assert np.allclose(s[0].data.tolist(), [ 2.63128894e-11,  1.95629520e+01,  2.62733394e-11])
 
 
 @pytest.mark.skipif(True, reason="element scoping not available with electrical results.")
@@ -76,18 +77,6 @@ def test_electricfield_nodlocation(rth_electric):
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.nodal
-
-
-class TestCase1(unittest.TestCase):
-    
-    @pytest.fixture(autouse=True)
-    def set_filepath(self, rth_electric):
-        self._filepath = rth_electric
-        
-    def test_electricpotential_changelocation(self):
-        solution = post.load_solution(self._filepath)
-        pot = solution.electric_potential(location = post.locations.nodal)
-        self.assertRaises(Exception, pot.definition.location, post.locations.elemental)
 
 
 def test_electricfield_elemlocation(rth_electric):
@@ -224,5 +213,5 @@ def test_electricpotential_set(rth_electric):
     
 if __name__ == "__main__":
     rth_electric = "d:/AnsysDev/DPF-Core/ansys/dpf/core/examples/rth/rth_electric.rth"
-    test_electricpotential_elemlocation(rth_electric)
+    test_electricfield(rth_electric)
     
