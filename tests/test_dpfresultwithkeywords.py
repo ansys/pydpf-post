@@ -554,8 +554,3 @@ def test_named_selection_keyword(model_ns):
     assert np.isclose(stress.get_data_at_field(0)[40][2], -898513431744.8938)
     assert stress[0].location == post.locations.elemental
     
-    
-if __name__ == "__main__":
-    allkindofcomplexity = "d:/AnsysDev/DPFUnitTestDataFiles/rst_operators/allKindOfComplexity.rst"
-    test_groupingmat_elemlocation_verbose_api(allkindofcomplexity)
-    
