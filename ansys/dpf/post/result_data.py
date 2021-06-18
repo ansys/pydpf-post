@@ -42,7 +42,7 @@ class ResultData:
     """
     
     def __init__(self, operator_name: str, data_sources, model, 
-                 elem_average: bool, op_average = None, 
+                 elem_average: bool, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
                  time = None, 
@@ -50,7 +50,7 @@ class ResultData:
                  mapdl_grouping = None, set = None, time_scoping = None):
         
         self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average, 
-                 op_average, location, element_scoping, node_scoping, named_selection, time, 
+                 location, element_scoping, node_scoping, named_selection, time, 
                  grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
              

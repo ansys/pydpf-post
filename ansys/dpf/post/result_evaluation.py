@@ -18,7 +18,7 @@ class ResultEvaluator:
     """This object will make the evaluation of the fields container
     wrapped in the ResultData object."""
     def __init__(self, operator_name: str, data_sources, model,
-                 elem_average, op_average, 
+                 elem_average, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
                  time = None, grouping = None, phase = None, subresult = None, 
@@ -141,8 +141,6 @@ class ResultEvaluator:
         # outside post-processing instruction         
         if elem_average:
             self._elemental_nodal_to_elemental_result()
-        if op_average:
-            self._average_result(op_average)
 
     def _compute_scoping(self, in_scoping, in_location=None):
         out_scoping = in_scoping
