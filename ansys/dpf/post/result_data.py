@@ -255,7 +255,8 @@ class ResultData:
                             if display_option in fc_label:
                                 if fc_label[display_option] == opt_id:
                                     label_space[lab] = fc_label[lab]
-                    label_spaces.append(label_space)
+                    if (len(fc_label) == len(label_space)):
+                        label_spaces.append(label_space)
                     i += 1
             lab_names = []
             for lab_sp in label_spaces:
