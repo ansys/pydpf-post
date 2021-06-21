@@ -28,6 +28,11 @@ def test_thermal_steadystate(rth_steady_state):
     assert fc[0].location == s[0].location
     assert len(fc[0].data) == len(s[0].data)
     assert np.allclose(s[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(s.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
 
 to_return = "node scoping and element scoping returns the same"
 def test_steadystate_nodscoping(rth_steady_state):
@@ -201,3 +206,8 @@ def test_heat_flux(rth_transient):
     assert fc[0].location == s[0].location
     assert len(fc[0].data) == len(s[0].data)
     assert np.allclose(s[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(s.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
