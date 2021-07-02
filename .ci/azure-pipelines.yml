@@ -45,6 +45,7 @@ jobs:
         cd tests=$(System.DefaultWorkingDirectory)
         set AWP_ROOT212=%THISDIR%\server\v212
         pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml --reruns 3
+        echo %PATH%
         
       displayName: Test Post API
       
@@ -149,6 +150,8 @@ jobs:
         pip install -r requirements_test.txt
         pip install pytest-azurepipelines        
         export AWP_ROOT212=${SYSTEM_DEFAULTWORKINGDIRECTORY}/server/v212
+        chmod 755 ${AWP_ROOT212}/aisol/bin/linx64/Ans.Dpf.Grpc.sh
+        chmod 755 ${AWP_ROOT212}/aisol/bin/linx64/Ans.Dpf.Grpc.exe   
         cd tests
         pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml  --reruns 3      
         export PATH=`pwd`
