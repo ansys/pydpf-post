@@ -96,3 +96,10 @@ def rth_steady_state():
 def rth_electric():
     """Resolve the path of the "rth/rth_electric.rth" result file."""
     return examples.electric_therm
+
+@pytest.fixture(scope="session", autouse=True)
+def cleanup(request):
+    """Cleanup a testing directory once we are finished."""
+    def close_servers():
+        core.server.shutdown_all_session_servers()
+    request.addfinalizer(close_servers)
