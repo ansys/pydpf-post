@@ -67,13 +67,7 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: $(PYPI_TOKEN)
         TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"   
-        
-        
-    - script: |
-        type $(System.DefaultWorkingDirectory)\server\v212\aisol\bin\winx64\log.txt
-      displayName:  'Show DPF Server Logs'
-      condition: always() 
-    
+         
     - template: templates\kill-servers-windows.yml 
     
 
