@@ -26,8 +26,6 @@ jobs:
     python.version: '3.8'
     DISPLAY: ':99.0'
     PYANSYS_OFF_SCREEN: True
-    DPF_PORT: 32772
-    DPF_START_SERVER: False
   pool:
     vmImage: 'windows-2019'
 
@@ -83,7 +81,6 @@ jobs:
     python.version: '3.7'  # due to VTK 8.1.2 requirement for docbuild
     DISPLAY: ':99.0'
     PYANSYS_OFF_SCREEN: True
-    DPF_PORT: 50055
     TEMP: $(System.DefaultWorkingDirectory)/temp
     
   pool:
@@ -140,20 +137,6 @@ jobs:
         env
       displayName: Display env
 
-    - script: |
-        echo $0
-        export THISDIR=${SYSTEM_DEFAULTWORKINGDIRECTORY}
-        echo ${THISDIR}
-        export AWP_ROOT212=${THISDIR}/server/v212
-        cd ${THISDIR}/server/v212/aisol/bin/linx64
-        pwd
-        chmod 755 Ans.Dpf.Grpc.sh
-        chmod 755 Ans.Dpf.Grpc.exe        
-        ./Ans.Dpf.Grpc.sh --port 50054 & > log.txt
-        export DPF_IP=$(hostname -i)
-        python -c "from ansys.dpf import core; core.connect_to_server(ip= '${DPF_IP}', port=50054); print('Python Connected')"
-      displayName: Start DPF Server
-
     # this step is necessary as we're running in docker and the
     # examples directory must be local to the docker enviornment
     - script: |
@@ -167,7 +150,6 @@ jobs:
         pip install pytest-azurepipelines        
         export AWP_ROOT212=${SYSTEM_DEFAULTWORKINGDIRECTORY}/server/v212
         cd tests
-        export DPF_IP=$(hostname -i)
         pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml  --reruns 3      
         export PATH=`pwd`
         echo ${PATH} 
