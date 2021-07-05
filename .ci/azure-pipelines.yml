@@ -178,7 +178,7 @@ jobs:
     DISPLAY: ':99.0'
     PYANSYS_OFF_SCREEN: True
     DPF_PORT: 32772
-    GH_DOC_BRANCH: 'gh-pages'
+    GH_DOC_BRANCH: 'anslpa/merge_0.2.0'
   pool:
     vmImage: 'windows-2019'
 
@@ -227,6 +227,6 @@ jobs:
         git push -u origin $(GH_DOC_BRANCH) --force
       displayName: "Publish GitHub Pages merge commit"
       workingDirectory: docs\_build\html
-      condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+      # condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
           
     - template: templates\kill-servers-windows.yml   
