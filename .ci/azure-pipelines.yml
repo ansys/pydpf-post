@@ -118,15 +118,7 @@ jobs:
         vstsFeedPackage: 'dpf-linux' #TODO: update hash of packages
         vstsPackageVersion: '21.2.5'
         
-    - script : |
-        echo $0
-        if pgrep -x "Ans.Dpf.Grpc" > /dev/null
-        then
-            pkill -f Ans.Dpf.Grpc.exe
-        fi
-      displayName: 'Kill all servers'
-      condition: always()
-      continueOnError: true
+    - template: templates\kill-servers-linux.yml 
       
     - script: |
         env
@@ -162,15 +154,7 @@ jobs:
       condition: always()
       
       
-    - script : |
-        echo $0
-        if pgrep -x "Ans.Dpf.Grpc" > /dev/null
-        then
-            pkill -f Ans.Dpf.Grpc.exe
-        fi
-      displayName: 'Kill all servers'
-      condition: always()
-      continueOnError: true
+    - template: templates\kill-servers-linux.yml 
       
 - job: DocumentationWindows
   variables:
