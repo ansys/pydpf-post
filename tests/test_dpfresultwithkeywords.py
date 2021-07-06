@@ -371,7 +371,7 @@ def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
     assert stress.num_fields == 11
     assert len(stress[1]) == 9828
     assert len(stress[5]) == 52254
-    assert stress.get_data_at_field(5)[0][2] == 2089125611.1128974
+    assert np.isclose(stress.get_data_at_field(5)[0][2], 2089125611.1128974)
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
     
@@ -383,7 +383,7 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     assert stress.num_fields == 11
     assert len(stress[1]) == 9828
     assert len(stress[5]) == 52254
-    assert stress.get_data_at_field(5)[0][2] == 2089125611.1128974
+    assert np.isclose(stress.get_data_at_field(5)[0][2], 2089125611.1128974)
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
     
