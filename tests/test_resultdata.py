@@ -230,7 +230,24 @@ def test_plot_contour_two_fields(allkindofcomplexity):
     s = stress.tensor
     s.plot_contour("time", 1)
     s.plot_contour()
-
+    
+def test_plot_contour_with_keys(allkindofcomplexity):
+    result = post.load_solution(allkindofcomplexity)
+    d = result.displacement(grouping = post.grouping.by_el_shape)
+    disp = d.vector
+    disp.plot_contour('elshape', 1)
+    
+    d = result.displacement(grouping = post.grouping.by_material)
+    disp = d.vector
+    disp.plot_contour('mat', 1)
+    
+    s = result.stress(grouping = post.grouping.by_el_shape, location=post.locations.elemental)
+    stress = s.tensor
+    stress.plot_contour('elshape', 1)
+    
+    s = result.stress(grouping = post.grouping.by_material, location=post.locations.elemental)
+    stress = s.tensor
+    stress.plot_contour('mat', 1)
 
 @pytest.mark.skipif(RUNNING_DOCKER, reason='Path hidden within docker container')
 def test_plot_with_vtk_file(allkindofcomplexity):

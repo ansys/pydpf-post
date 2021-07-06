@@ -242,8 +242,6 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
     
-    disp.plot_contour('elshape', 1)
-    
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("U")
@@ -294,8 +292,6 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert np.isclose(stress.get_data_at_field(1)[0][0], 10531735.798152419)
     assert stress[0].location == locations.elemental
     
-    stress.plot_contour('elshape', 1)
-    
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("S")
@@ -345,8 +341,6 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
         assert len(field) != 0
         assert field.location == locations.nodal
         
-    disp.plot_contour('mat', 1)
-        
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("U")
@@ -392,8 +386,6 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     assert stress.get_data_at_field(5)[0][2] == 2089125611.1128974
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
-    
-    stress.plot_contour('mat', 1)
     
     # with dpf.core operator
     from ansys.dpf import core
