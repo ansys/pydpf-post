@@ -12,13 +12,6 @@ class ElectricField(Vector):
         super().__init__(**kwargs)
         self._operator_name = "EF"
         
-        if self.definition.location == locations.nodal:
-            self._op_average = "to_nodal_fc"
-        if self.definition.location == locations.elemental:
-            self._op_average = "to_elemental_fc"
-        self.definition.location = None
-        self.definition._Definition__location_locked = True
-        
         #disable element scoping
         if _AvailableKeywords.element_scoping in kwargs:
             raise Exception("Element scoping is not available with thermal/electric results.")

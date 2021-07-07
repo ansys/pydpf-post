@@ -42,7 +42,7 @@ class ResultData:
     """
     
     def __init__(self, operator_name: str, data_sources, model, 
-                 elem_average: bool, op_average = None, 
+                 elem_average: bool, 
                  location: str = None, element_scoping = None, 
                  node_scoping = None, named_selection = None, 
                  time = None, 
@@ -50,7 +50,7 @@ class ResultData:
                  mapdl_grouping = None, set = None, time_scoping = None):
         
         self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average, 
-                 op_average, location, element_scoping, node_scoping, named_selection, time, 
+                 location, element_scoping, node_scoping, named_selection, time, 
                  grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
              
@@ -255,7 +255,8 @@ class ResultData:
                             if display_option in fc_label:
                                 if fc_label[display_option] == opt_id:
                                     label_space[lab] = fc_label[lab]
-                    label_spaces.append(label_space)
+                    if (len(fc_label) == len(label_space)):
+                        label_spaces.append(label_space)
                     i += 1
             lab_names = []
             for lab_sp in label_spaces:
@@ -265,7 +266,7 @@ class ResultData:
             for name in lab_names:
                 new_fields_container.add_label(name)
             for label in label_spaces:
-                field = self.result_fields_container._get_entries(label)
+                field = self.result_fields_container.get_field(label)
                 new_fields_container.add_field(label, field)
             pl.plot_contour(new_fields_container, off_screen=off_screen,
                             notebook=notebook, **kwargs)
@@ -283,7 +284,7 @@ class ResultData:
         --------
         >>> from ansys.dpf import post
         >>> solution = post.load_solution('file.rst')
-        >>> tscope = list(range(1, len(solution.time_freq_support.frequencies) + 1))
+        >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
         >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
                                      time_scoping=tscope
         >>> s = stress.tensor

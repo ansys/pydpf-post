@@ -16,6 +16,23 @@ def test_thermal_steadystate(rth_steady_state):
     s = temp.scalar
     assert s.num_fields == 1
     assert np.isclose(s[0].data[23], 29.6247641917003)
+    assert s[0].location == post.locations.nodal
+    
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("TEMP")
+    # op.inputs.requested_location.connect(core.locations.nodal)
+    op.inputs.data_sources.connect(core.DataSources(rth_steady_state))
+    fc = op.outputs.fields_container()
+    assert len(fc) == s.num_fields
+    assert fc[0].location == s[0].location
+    assert len(fc[0].data) == len(s[0].data)
+    assert np.allclose(s[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(s.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
 
 to_return = "node scoping and element scoping returns the same"
 def test_steadystate_nodscoping(rth_steady_state):
@@ -49,18 +66,14 @@ def test_steadystate_nodlocation(rth_steady_state):
         
 def test_steadystate_elemlocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
-    temp = solution.temperature(location = post.locations.elemental)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental)
     
 
 def test_steadystate_elemnodallocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
-    temp = solution.temperature(location = post.locations.elemental_nodal)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental_nodal)
 
 
 def test_steadystate_timescoping(rth_steady_state):
@@ -135,18 +148,13 @@ def test_transient_nodlocation(rth_transient):
 
 def test_transient_elemlocation(rth_transient):
     solution = post.load_solution(rth_transient)
-    temp = solution.temperature(location = post.locations.elemental)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental)
 
 def test_transient_elemnodallocation(rth_transient):
     solution = post.load_solution(rth_transient)
-    temp = solution.temperature(location = post.locations.elemental_nodal)
-    s = temp.scalar
-    with pytest.raises(core_errors.DPFServerException):
-        s.num_fields
-
+    with pytest.raises(dpf_errors.NodalLocationError):
+        temp = solution.temperature(location = post.locations.elemental_nodal)
 
 def test_transient_timescoping(rth_transient):
     solution = post.load_solution(rth_transient)
@@ -187,3 +195,19 @@ def test_heat_flux(rth_transient):
     assert np.allclose(s[0].data[24], [-3.85171006e-10, 
                                        -9.35413524e-10,  
                                        1.81041315e+03])
+    
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("TF")
+    op.inputs.requested_location.connect(core.locations.elemental)
+    op.inputs.data_sources.connect(core.DataSources(rth_transient))
+    fc = op.outputs.fields_container()
+    assert len(fc) == s.num_fields
+    assert fc[0].location == s[0].location
+    assert len(fc[0].data) == len(s[0].data)
+    assert np.allclose(s[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(s.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True

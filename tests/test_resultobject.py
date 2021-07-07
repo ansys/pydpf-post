@@ -342,6 +342,22 @@ def test_displacement(allkindofcomplexity):
     nrm = vector.norm
     assert np.isclose(nrm[0].data[34], 1.2717854105570665e-06)
     
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("U")
+    # op.inputs.requested_location.connect(core.locations.nodal)
+    op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+    fc = op.outputs.fields_container()
+    assert len(fc) == value.num_fields
+    assert fc[0].location == value[0].location
+    assert len(fc[0].data) == len(value[0].data)
+    assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
+    
     
 def test_displacement_complex(complex_model):
     solution = post.load_solution(complex_model)
@@ -418,6 +434,22 @@ def test_stress(allkindofcomplexity):
     assert np.isclose(ppal3[0].data[41], -3599488.8478382444)
     vm = tensor.von_mises
     assert np.isclose(vm[0].data[41], 6994761.422404355)
+    
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("S")
+    op.inputs.requested_location.connect(core.locations.nodal)
+    op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+    fc = op.outputs.fields_container()
+    assert len(fc) == value.num_fields
+    assert fc[0].location == value[0].location
+    assert len(fc[0].data) == len(value[0].data)
+    assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
     
     
 def test_stress_complex(complex_model):
@@ -545,6 +577,22 @@ def test_elastic_strain(allkindofcomplexity):
     ppal3 = tensor.principal_3
     assert np.isclose(ppal3[0].data[41], -7.271460770812878e-05)
     
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("EPEL")
+    op.inputs.requested_location.connect(core.locations.nodal)
+    op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+    fc = op.outputs.fields_container()
+    assert len(fc) == value.num_fields
+    assert fc[0].location == value[0].location
+    assert len(fc[0].data) == len(value[0].data)
+    assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
+    
     
 def test_elastic_strain_complex(complex_model):
     solution = post.load_solution(complex_model)
@@ -603,6 +651,22 @@ def test_temperature(allkindofcomplexity):
     assert len(value2[0].data) == 1
     assert value2[0].data[0] == 22.0
     assert value2[0].location == post.locations.elemental
+    
+    # with dpf.core operator
+    from ansys.dpf import core
+    op = core.Operator("BFE")
+    op.inputs.requested_location.connect(core.locations.nodal)
+    op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+    fc = op.outputs.fields_container()
+    assert len(fc) == value.num_fields
+    assert fc[0].location == value[0].location
+    assert len(fc[0].data) == len(value[0].data)
+    assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
     
     
 def test_temperature_complex(complex_model):

@@ -11,7 +11,6 @@ class Result:
         self._data_sources = data_sources
         self._model = model
         self.definition = Definition(**kwargs)
-        self._op_average = None
 
     def __str__(self):
         txt = self.definition.__str__()
@@ -47,13 +46,13 @@ class Result:
         #write correct arguments regarding location
         b_elem_average = False
         location_to_compute = self.definition._location
-        if self.definition._location == locations.elemental_nodal:
-            location_to_compute = locations.elemental
-        if self.definition._location == locations.elemental:
-            b_elem_average = True
+        # if self.definition._location == locations.elemental_nodal:
+        #     location_to_compute = locations.elemental
+        # if self.definition._location == locations.elemental:
+        #     b_elem_average = True
 
         return ResultData(operator_name=operator_name, data_sources=data_sources,
-                          model=model, elem_average=b_elem_average, op_average=self._op_average, location=location_to_compute,
+                          model=model, elem_average=b_elem_average, location=location_to_compute,
                           element_scoping=self.definition.element_scoping, node_scoping=self.definition.node_scoping,
                           named_selection=self.definition.named_selection,
                           time=self.definition.time, grouping=self.definition.grouping,

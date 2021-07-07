@@ -1,0 +1,44 @@
+steps:  
+    - powershell: |
+        Set-StrictMode -Version Latest
+        $ErrorActionPreference = "Stop"
+        $PSDefaultParameterValues['*:ErrorAction']='Stop'
+        git clone --depth 1 git://github.com/pyvista/gl-ci-helpers.git
+        powershell gl-ci-helpers/appveyor/install_opengl.ps1
+      displayName: 'Install OpenGL'
+
+    - powershell: |
+        .ci/setup_headless_display.sh
+        pip install -r .ci/requirements_test_xvfb.txt
+        python .ci/display_test.py
+      displayName: Install test offscreen rendering
+      
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(python.version)
+        addToPath: true
+
+    - task: PipAuthenticate@1
+      inputs:
+        artifactFeeds: 'pyansys'
+        onlyAddExtraIndex: true
+        
+    - script: |
+        pip install -r requirements_build.txt
+        python setup.py bdist_wheel
+        FOR /F %%a in ('dir /s/b dist\*.whl') do SET WHEELPATH=%%a
+        ECHO %WHEELPATH% 
+        pip install %WHEELPATH%
+        cd tests
+        python -c "from ansys.dpf import post; print(post.Report(gpu=False))"           
+      
+      displayName: Install ansys-dpf-post
+
+    - task: UniversalPackages@0
+      inputs:
+        command: 'download'
+        downloadDirectory: '$(System.DefaultWorkingDirectory)'
+        feedsToUse: 'internal'
+        vstsFeed: '705e121a-9631-49f5-8aaf-c7142856f923'
+        vstsFeedPackage: 'dpf-windows'
+        vstsPackageVersion: '21.2.3'

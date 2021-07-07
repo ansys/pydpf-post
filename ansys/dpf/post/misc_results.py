@@ -65,6 +65,12 @@ class Misc():
         if _AvailableKeywords.location in kwargs:
             if(kwargs[_AvailableKeywords.location] != locations.elemental):
                 raise Exception("Only an Elemental location can be used with an elemental result.")
+                
+    def _check_elemnodal_location(self, **kwargs):
+        """Check if the location keyword with an Elemental value is set. If not, raise Exception."""
+        if _AvailableKeywords.location in kwargs:
+            if(kwargs[_AvailableKeywords.location] != locations.elemntal_nodal):
+                raise Exception("Only an ElementalNodal location can be used with an elemental nodal result.")
 
     def _check_nodal_location(self, **kwargs):
         """Check if the location keyword with an Elemental value is set. If not, raise Exception."""
@@ -130,8 +136,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_stress(self, **kwargs):
         """Returns a elemental_nodal_stress result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("S", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("S", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_stress(self, **kwargs):
         """Returns a nodal_stress result data."""
@@ -145,8 +151,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_elastic_strain(self, **kwargs):
         """Returns a elemental_nodal_elastic_strain result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("EPEL", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("EPEL", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_elastic_strain(self, **kwargs):
         """Returns a nodal_elastic_strain result data."""
@@ -160,8 +166,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_plastic_strain(self, **kwargs):
         """Returns a elemental_nodal_plastic_strain result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("EPPL", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("EPPL", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_plastic_strain(self, **kwargs):
         """Returns a nodal_plastic_strain result data."""
@@ -175,8 +181,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_structural_temperature(self, **kwargs):
         """Returns a elemental_nodal_structural_temperature result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("BFE", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("BFE", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_structural_temperature(self, **kwargs):
         """Returns a nodal_structural_temperature result data."""
@@ -190,8 +196,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_thermal_strains(self, **kwargs):
         """Returns a elemental_nodal_thermal_strains result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ETH", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ETH", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_thermal_strains(self, **kwargs):
         """Returns a nodal_thermal_strains result data."""
@@ -205,8 +211,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_eqv_stress_parameter(self, **kwargs):
         """Returns a elemental_nodal_eqv_stress_parameter result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_SEPL", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_SEPL", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_eqv_stress_parameter(self, **kwargs):
         """Returns a nodal_eqv_stress_parameter result data."""
@@ -220,8 +226,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_stress_ratio(self, **kwargs):
         """Returns a elemental_nodal_stress_ratio result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_SRAT", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_SRAT", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_stress_ratio(self, **kwargs):
         """Returns a nodal_stress_ratio result data."""
@@ -235,8 +241,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_hydrostatic_pressure(self, **kwargs):
         """Returns a elemental_nodal_hydrostatic_pressure result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_HPRES", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_HPRES", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_hydrostatic_pressure(self, **kwargs):
         """Returns a nodal_hydrostatic_pressure result data."""
@@ -250,8 +256,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_accu_eqv_plastic_strain(self, **kwargs):
         """Returns a elemental_nodal_accu_eqv_plastic_strain result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_EPEQ", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_EPEQ", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_accu_eqv_plastic_strain(self, **kwargs):
         """Returns a nodal_accu_eqv_plastic_strain result data."""
@@ -265,8 +271,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_plastic_state_variable(self, **kwargs):
         """Returns a elemental_nodal_plastic_state_variable result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_PSV", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_PSV", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_plastic_state_variable(self, **kwargs):
         """Returns a nodal_plastic_state_variable result data."""
@@ -280,8 +286,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_accu_eqv_creep_strain(self, **kwargs):
         """Returns a elemental_nodal_accu_eqv_creep_strain result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_CREQ", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_CREQ", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_accu_eqv_creep_strain(self, **kwargs):
         """Returns a nodal_accu_eqv_creep_strain result data."""
@@ -295,8 +301,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_plastic_strain_energy_density(self, **kwargs):
         """Returns a elemental_nodal_plastic_strain_energy_density result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_PLWK", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_PLWK", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_plastic_strain_energy_density(self, **kwargs):
         """Returns a nodal_plastic_strain_energy_density result data."""
@@ -310,8 +316,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_creep_strain_energy_density(self, **kwargs):
         """Returns a elemental_nodal_creep_strain_energy_density result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_CRWK", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_CRWK", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_creep_strain_energy_density(self, **kwargs):
         """Returns a nodal_creep_strain_energy_density result data."""
@@ -325,8 +331,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_elastic_strain_energy_density(self, **kwargs):
         """Returns a elemental_nodal_elastic_strain_energy_density result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     def nodal_elastic_strain_energy_density(self, **kwargs):
         """Returns a nodal_elastic_strain_energy_density result data."""
@@ -343,8 +349,8 @@ class MecanicMisc(Misc):
     
     def elemental_nodal_force(self, **kwargs):
         """Returns a elemental_nodal_force result data."""
-        self._check_elemental_location(**kwargs)
-        return self._get_result_data_function_of_operator("ENF", self, self._data_sources, location="Elemental", **kwargs)
+        self._check_elemnodal_location(**kwargs)
+        return self._get_result_data_function_of_operator("ENF", self, self._data_sources, location="ElementalNodal", **kwargs)
     
     
     #element results

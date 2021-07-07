@@ -5,7 +5,7 @@ from setuptools import setup
 
 install_requires = ['pyvista>=0.24.0',
                     'matplotlib',
-                    'ansys.dpf.core>=0.2.0']
+                    'ansys.dpf.core==0.3.0']
 
 
 # Get version from version info
