@@ -203,6 +203,5 @@ jobs:
         git push -u origin $(GH_DOC_BRANCH) --force
       displayName: "Publish GitHub Pages merge commit"
       workingDirectory: docs\_build\html
-      condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
           
     - template: templates\kill-servers-windows.yml   
