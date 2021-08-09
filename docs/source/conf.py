@@ -123,6 +123,7 @@ html_theme = 'pyansys_sphinx_theme'
 html_logo = '_static/pyansys-logo-black-cropped.png'
 html_theme_options = {
     "github_url": "https://github.com/pyansys/DPF-Post",
+    "show_prev_next": False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
