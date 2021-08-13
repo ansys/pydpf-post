@@ -6,7 +6,7 @@ from ansys.dpf.post.common import _AvailableKeywords
 
 
 class StructuralTemperature(Scalar):
-    """Defines the strctural temperature object, that is a scalar object."""
+    """Defines the structural temperature object, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "BFE"
@@ -19,7 +19,7 @@ class StructuralTemperature(Scalar):
     
     
 class ComplexStructuralTemperature(ComplexScalar):
-    """Defines the complex strctural temperature object, that is a scalar object."""
+    """Defines the complex structural temperature object, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "BFE"
