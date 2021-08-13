@@ -125,7 +125,7 @@ e.g., the normal y-stresses, access the following subresult:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object 
+    Instantiate the stress result object 
 
     >>> stress = solution.stress()
 
@@ -169,7 +169,7 @@ e.g., shear xy-strains, access the following subresult:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object
+    Instantiate the elastic strain result object
 
     >>> elastic_strain = solution.elastic_strain()
 
@@ -199,7 +199,7 @@ The structural (or system) temperature ``Result`` object can be obtained as foll
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the elastic strain result object
+    Instantiate the structural temperature result object
 
     >>> structural_temperature = solution.structural_temperature()
     
@@ -213,11 +213,11 @@ To access the temperature scalar field use the following:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object
+    Instantiate the structural temperature result object
 
     >>> structural_temperature = solution.structural_temperature()
 
-    Get the xy elastic strain result data
+    Get the structural temperature result data
 
     >>> temperature = structural_temperature.scalar
     >>> temperature.get_data_at_field()
