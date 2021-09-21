@@ -317,7 +317,6 @@ def test_tensor_complex(complex_model):
     assert len(ppal3[0].data) == 4802
 
 
-
 def test_raise_displacement_elemental_location(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     with pytest.raises(errors.NodalLocationError):

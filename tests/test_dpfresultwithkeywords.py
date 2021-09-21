@@ -578,7 +578,7 @@ def test_time_scoping_keyword_verbose_api(plate_msup):
     result = post.load_solution(plate_msup)
     disp = result.misc.nodal_displacement()
     assert disp.num_fields == 1
-    disp1 = result.misc.nodal_displacement(time_scoping=[1,2,4])
+    disp1 = result.misc.nodal_displacement(time_scoping=[1, 2, 4])
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}
     assert np.isclose(disp1.get_data_at_field(0)[40][2], -2.0115581116044217e-06)
@@ -603,7 +603,7 @@ def test_time_scoping_keyword(plate_msup):
     d = result.displacement()
     disp = d.vector
     assert disp.num_fields == 1
-    d1 = result.displacement(time_scoping=[1,2,4])
+    d1 = result.displacement(time_scoping=[1, 2, 4])
     disp1 = d1.vector
     assert disp1.num_fields == 3
     assert disp1.result_fields_container.get_label_space(0) == {'time': 1}

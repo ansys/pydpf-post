@@ -165,7 +165,7 @@ def test_min_data_at_field(allkindofcomplexity):
 def test_get_all_labels_verbose_api(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     stress = result.misc.elemental_stress()
-    l = [{'elshape': 1, 'time': 1},{'elshape': 0, 'time': 1}]
+    l = [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
     l_comp = stress.get_all_label_spaces()
     assert l == l_comp
 
@@ -174,7 +174,7 @@ def test_get_all_labels(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
-    l = [{'elshape': 1, 'time': 1},{'elshape': 0, 'time': 1}]
+    l = [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
     l_comp = stress.get_all_label_spaces()
     assert l == l_comp
 

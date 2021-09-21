@@ -106,7 +106,6 @@ def test_steadystate_set(rth_steady_state):
     assert np.isclose(s[0].data[24], 30.387240610202973)
 
 
-
 def test_thermal_transient(rth_transient):
     solution = post.load_solution(rth_transient)
     assert solution._model.metadata.result_info.physics_type == _PhysicsType.thermal

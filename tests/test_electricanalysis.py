@@ -136,7 +136,6 @@ def test_electricfield_set(rth_electric):
     assert np.isclose(s[0].data[23][1], 19.562952041625977)
 
 
-
 def test_electricpotential(rth_electric):
     solution = post.load_solution(rth_electric)
     assert solution._model.metadata.result_info.physics_type == _PhysicsType.thermal
