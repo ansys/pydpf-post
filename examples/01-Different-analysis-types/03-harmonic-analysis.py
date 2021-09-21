@@ -77,8 +77,8 @@ stress_result.has_complex_frequencies()
 # **Get the tensor result**
 stress = stress_result.tensor
 # shell and solid elements are in distinct fields.
-# so we have four fields : the solid-real one, the solid-imaginary one, 
-# the shell-real one and the shell_imaginary one. 
+# so we have four fields : the solid-real one, the solid-imaginary one,
+# the shell-real one and the shell_imaginary one.
 stress.num_fields
 
 ###############################################################################

@@ -41,16 +41,16 @@ class ResultData:
     >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
     """
     
-    def __init__(self, operator_name: str, data_sources, model, 
-                 elem_average: bool, 
-                 location: str = None, element_scoping = None, 
-                 node_scoping = None, named_selection = None, 
-                 time = None, 
-                 grouping = None, phase = None, subresult = None, 
+    def __init__(self, operator_name: str, data_sources, model,
+                 elem_average: bool,
+                 location: str = None, element_scoping = None,
+                 node_scoping = None, named_selection = None,
+                 time = None,
+                 grouping = None, phase = None, subresult = None,
                  mapdl_grouping = None, set = None, time_scoping = None):
         
-        self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average, 
-                 location, element_scoping, node_scoping, named_selection, time, 
+        self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average,
+                 location, element_scoping, node_scoping, named_selection, time,
                  grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
         
@@ -82,13 +82,13 @@ class ResultData:
         self.result_fields_container = self._evaluator.evaluate_result()
 
     def get_all_label_spaces(self):
-        """Returns all the label spaces contained in a result 
+        """Returns all the label spaces contained in a result
         as a string.
         Labels can be used to select fields to plot.
         
         Returns
         -------
-        list 
+        list
             List of dictionary (list of label space)
         """
         self._evaluate_result()
@@ -111,8 +111,8 @@ class ResultData:
         return self.result_fields_container[field_index].data
     
     def __getitem__(self, field_index: int = 0):
-        """Override of the result item getter. Implements the fields_container_result 
-        item getter. Return the field at the field_index position in the result fields 
+        """Override of the result item getter. Implements the fields_container_result
+        item getter. Return the field at the field_index position in the result fields
         container.
         """
         self._evaluate_result()
@@ -132,54 +132,54 @@ class ResultData:
         result = max_operator.get_output(pin, types.field)
         return result
     
-    @property    
+    @property
     def max(self):
-        """Returns the maximum values field. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the maximum values field.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 1).
         """
         return self._min_max(1)
     
     @property
     def max_data(self):
-        """Returns the maximum values field data. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the maximum values field data.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 1).
         """
         return self._min_max(1).data
     
     def get_max_data_at_field(self, field_index: int = 0):
-        """Returns the maximum values field data at field_index. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the maximum values field data at field_index.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 1).
         """
         return self._min_max(1).data[field_index]
     
     @property
     def min(self):
-        """Returns the minimum values field. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the minimum values field.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 0).
         """
         return self._min_max(0)
     
     @property
     def min_data(self):
-        """Returns the minimum values field data. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the minimum values field data.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 0).
         """
         return self._min_max(0).data
     
     def get_min_data_at_field(self, field_index: int = 0):
-        """Returns the minimum values field data at field_index. 
-        Chains the result operator to the "min_max_fc" operator, 
+        """Returns the minimum values field data at field_index.
+        Chains the result operator to the "min_max_fc" operator,
         returns its result (output from pin 0).
         """
         return self._min_max(0).data[field_index]
 
     def _plot_contour_with_vtk_file(self):
-        """Plot the contour result on its mesh support. The obtained figure depends on the 
+        """Plot the contour result on its mesh support. The obtained figure depends on the
         support (can be a meshed_region or a time_freq_support).
         If transient analysis, plot the last result.
         

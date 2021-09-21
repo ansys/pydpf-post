@@ -185,14 +185,14 @@ def test_transient_set(rth_transient):
     assert np.isclose(s[0].data[24], 21.999999999992323)
     
 
-def test_heat_flux(rth_transient):    
+def test_heat_flux(rth_transient):
     solution = post.load_solution(rth_transient)
     hf = solution.heat_flux(location=post.locations.elemental)
     s = hf.vector
     assert len(s[0].data) == 784
     assert s[0].location == post.locations.elemental
-    assert np.allclose(s[0].data[24], [-3.85171006e-10, 
-                                       -9.35413524e-10,  
+    assert np.allclose(s[0].data[24], [-3.85171006e-10,
+                                       -9.35413524e-10,
                                        1.81041315e+03])
     
     # with dpf.core operator

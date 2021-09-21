@@ -364,8 +364,8 @@ def test_displacement_complex(complex_model):
     print(vector)
     assert vector._operator_name == "U"
     value = vector.vector
-    assert np.allclose(value[0].data[3].tolist(), [2.534371453684853e-09, 
-                                                   -5.736467209711275e-10, 
+    assert np.allclose(value[0].data[3].tolist(), [2.534371453684853e-09,
+                                                   -5.736467209711275e-10,
                                                    6.357980303122968e-11])
     x = vector.x
     assert np.isclose(x[0].data[41], 2.685234654323797e-09)
@@ -376,8 +376,8 @@ def test_displacement_complex(complex_model):
     nrm = vector.norm
     assert np.isclose(nrm[0].data[34], 2.967925671058435e-09)
     value = vector.vector_amplitude
-    assert np.allclose(value[0].data[3].tolist(), [2.5343714759693703e-09, 
-                                                  5.736467469384241e-10, 
+    assert np.allclose(value[0].data[3].tolist(), [2.5343714759693703e-09,
+                                                  5.736467469384241e-10,
                                                   6.358000469996922e-11])
     x = vector.x_amplitude
     assert np.isclose(x[0].data[41], 2.6852347082946467e-09)
@@ -388,8 +388,8 @@ def test_displacement_complex(complex_model):
     nrm = vector.norm_amplitude
     assert np.isclose(nrm[0].data[34], 2.967925756112993e-09)
     value = vector.vector_at_phase(61.)
-    assert np.allclose(value[0].data[3].tolist(), [1.2283937136871685e-09, 
-                                                   -2.7795848616806165e-10, 
+    assert np.allclose(value[0].data[3].tolist(), [1.2283937136871685e-09,
+                                                   -2.7795848616806165e-10,
                                                    3.0964159956496574e-11])
     x = vector.x_at_phase(61.)
     assert np.isclose(x[0].data[41], 1.3013567187124258e-09)

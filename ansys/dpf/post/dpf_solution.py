@@ -23,25 +23,25 @@ from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
 from ansys.dpf.post.misc_results import Misc, MecanicMisc, ComplexMecanicMisc, ThermalMisc
 
-from ansys.dpf.post.errors import NodalLocationError        
+from ansys.dpf.post.errors import NodalLocationError
 
 class DpfSolution:
     """Main class of post result API."""
     def __init__(self, data_sources, model):
-        """Initialization of the solution using data_sources 
+        """Initialization of the solution using data_sources
         and dpf.core.Model object."""
         self._data_sources = data_sources
         self._model = model
         
     @property
     def mesh(self):
-        """Mesh representation of the model. 
+        """Mesh representation of the model.
         Based on the dpf.core.MeshedRegion class."""
         return self._model.metadata.meshed_region
     
     @property
     def time_freq_support(self):
-        """Description of the temporal/frequency 
+        """Description of the temporal/frequency
         analysis of the model."""
         return self._model.metadata.time_freq_support
            
@@ -52,7 +52,7 @@ class DpfSolution:
         --------
         >>> from ansys.dpf import post
         >>> result = post.result("file.rst")
-        >>> print(result.get_result_info())                                     
+        >>> print(result.get_result_info())
         """
         return self._model.metadata.result_info
     
@@ -78,7 +78,7 @@ class DpfMecanicSolution(DpfSolution):
         super().__init__(data_sources, model)
         self.misc = MecanicMisc(model, data_sources)
         
-    #result classes            
+    #result classes
     def stress(self, **kwargs):
         """Returns a stress object from which it is possible to get ResultData.
         

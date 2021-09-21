@@ -12,7 +12,7 @@ Examples
 --------
 >>> from ansys.dpf import post
 >>> solution = post.solution("file.rst")
->>> disp = solution.nodal_displacement() 
+>>> disp = solution.nodal_displacement()
 
 """
 

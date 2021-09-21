@@ -18,7 +18,7 @@ class Misc():
     
     #tools
     def _get_result_data_function_of_operator(self, name, instance, data_sources, b_elem_average: bool = False, **kwargs):
-        """This method check which are the used keywords, then retusn a ResultData instance 
+        """This method check which are the used keywords, then retusn a ResultData instance
         computed with all available keywords."""
         location = None
         element_scoping = None
@@ -55,9 +55,9 @@ class Misc():
             subresult = kwargs[_AvailableKeywords._subresult]
         if _AvailableKeywords.time_scoping in kwargs:
             time_scoping = kwargs[_AvailableKeywords.time_scoping]
-        return ResultData(name, data_sources, self._model, b_elem_average, location=location, element_scoping=element_scoping, 
+        return ResultData(name, data_sources, self._model, b_elem_average, location=location, element_scoping=element_scoping,
                  node_scoping = node_scoping, named_selection = named_selection,
-                 time = time, grouping = grouping, phase = phase, subresult=subresult, mapdl_grouping=mapdl_grouping, 
+                 time = time, grouping = grouping, phase = phase, subresult=subresult, mapdl_grouping=mapdl_grouping,
                  set=set, time_scoping=time_scoping)
     
     def _check_elemental_location(self, **kwargs):
@@ -438,9 +438,9 @@ class MecanicMisc(Misc):
 
     #special results
     def von_mises_stress(self, **kwargs):
-        """von_mises_stress output default location is Nodal. 
-        Use the location keyword with 'ElementalNodal' value to 
-        get an ElementalNodal result, and the 'Elemental' value 
+        """von_mises_stress output default location is Nodal.
+        Use the location keyword with 'ElementalNodal' value to
+        get an ElementalNodal result, and the 'Elemental' value
         to get Elemental result.
         """
         return self._get_result_data_function_of_operator("S_eqv", self, self._data_sources, **kwargs)
@@ -454,7 +454,7 @@ class ComplexMecanicMisc(MecanicMisc):
         # resultData = self._get_result_data_function_of_operator(name, self, self._data_sources, **kwargs)
         resultData = result_data
         modulus_op = _Operator("modulus")
-        modulus_op.inputs.fields_container.connect(resultData._evaluator._result_operator.outputs.fields_container) 
+        modulus_op.inputs.fields_container.connect(resultData._evaluator._result_operator.outputs.fields_container)
         resultData._evaluator._chained_operators[modulus_op.name] = """This operator will compute the amplitude of the result (when result has complex values)."""
         # resultData.result_fields_container = modulus_op.get_output(0, types.fields_container)
         resultData._evaluator._result_operator = modulus_op
@@ -472,7 +472,7 @@ class ComplexMecanicMisc(MecanicMisc):
     
     def nodal_stress_amplitude(self, **kwargs):
         result_data = self.nodal_stress(**kwargs)
-        return self._get_amplitude_evaluation(result_data)  
+        return self._get_amplitude_evaluation(result_data)
     
     
 class ThermalMisc(Misc):
