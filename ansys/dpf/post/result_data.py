@@ -53,8 +53,7 @@ class ResultData:
                  location, element_scoping, node_scoping, named_selection, time, 
                  grouping, phase, subresult, mapdl_grouping, set, time_scoping)
         self.result_fields_container = None
-             
-            
+        
     def __str__(self):
         self._evaluate_result()
         name = self.result_fields_container[0].name.split("_")
@@ -178,8 +177,7 @@ class ResultData:
         returns its result (output from pin 0).
         """
         return self._min_max(0).data[field_index]
-    
-    
+
     def _plot_contour_with_vtk_file(self):
         """Plot the contour result on its mesh support. The obtained figure depends on the 
         support (can be a meshed_region or a time_freq_support).
@@ -189,8 +187,7 @@ class ResultData:
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl._plot_contour_using_vtk_file(self.result_fields_container)
-        
-    
+
     def plot_contour(self, display_option: str = "time", option_id=1,
                      off_screen=None, notebook=None, **kwargs):
         """Plot the contour result on its mesh support.

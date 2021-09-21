@@ -79,7 +79,7 @@ class ResultEvaluator:
             if (grouping == Grouping.by_material) or (grouping == Grouping.by_body):
                 scop_op.inputs.label1.connect("mat")
             elif(grouping == Grouping.by_el_shape):
-                 scop_op.inputs.label1.connect("elshape")            
+                scop_op.inputs.label1.connect("elshape")            
             else:
                 raise Exception("Grouping impossible. Use the keyword argument as: grouping = grouping.by_el_shape, grouping = grouping.by_material...")
             self._result_operator.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)

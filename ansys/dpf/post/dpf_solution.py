@@ -64,7 +64,7 @@ class DpfSolution:
     
     def __str__(self):
         txt = '%s solution object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
-        '\n\n\nData Sources\n------------------------------\n'
+              '\n\n\nData Sources\n------------------------------\n'
         ds_str = self._data_sources.__str__()
         txt += ds_str
         txt += "\n\n"
@@ -184,8 +184,7 @@ class DpfMecanicComplexSolution(DpfSolution):
         if (tfq_sup.complex_frequencies == None):
             return False
         return True
-    
-    
+
     def displacement(self, **kwargs):
         """Returns a displacement object from which it is possible to get ResultData.
         
@@ -272,8 +271,7 @@ class DpfThermalSolution(DpfSolution):
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
         #self.misc = ThermalMisc(model, data_sources)
-        
-        
+
     def __str__(self):
         txt = super().__str__()
         txt += "\n"

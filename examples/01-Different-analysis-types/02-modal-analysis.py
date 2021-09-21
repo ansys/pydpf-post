@@ -110,4 +110,3 @@ elastic_strain.num_fields
 ###############################################################################
 # **It is also possible to deal with plastic_strain and temperature this way.**
 # The result file must contain those results.
-

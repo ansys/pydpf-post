@@ -127,7 +127,6 @@ class MecanicMisc(Misc):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ModalBasis", self, self._data_sources, **kwargs)
     
-    
     #element nodal results (get result at nodes or at elements)
     def elemental_stress(self, **kwargs):
         """Returns a elemental_stress result data."""
@@ -339,7 +338,6 @@ class MecanicMisc(Misc):
         self._check_nodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENL_ELENG", self, self._data_sources, location="Nodal", **kwargs)
     
-    
     #element nodal result (here only elemental result given because the nodal one is given in nodal category)
     def elemental_force(self, **kwargs):
         """Returns a elemental_force result data."""
@@ -351,7 +349,6 @@ class MecanicMisc(Misc):
         """Returns a elemental_nodal_force result data."""
         self._check_elemnodal_location(**kwargs)
         return self._get_result_data_function_of_operator("ENF", self, self._data_sources, location="ElementalNodal", **kwargs)
-    
     
     #element results
     def elemental_contact_status(self, **kwargs):
@@ -438,7 +435,6 @@ class MecanicMisc(Misc):
         """Returns a elemental_thermal_dissipation_energy result data."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator("ENG_TH", self, self._data_sources, location="Elemental", **kwargs)
-
 
     #special results
     def von_mises_stress(self, **kwargs):

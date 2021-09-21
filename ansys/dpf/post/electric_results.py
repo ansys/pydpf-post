@@ -16,7 +16,6 @@ class ElectricField(Vector):
         if _AvailableKeywords.element_scoping in kwargs:
             raise Exception("Element scoping is not available with thermal/electric results.")
         self.definition._Definition__element_scoping_locked = True
-            
 
     def __str__(self):
         txt = super().__str__()

@@ -44,14 +44,14 @@ release = __version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-              'sphinx_gallery.gen_gallery',
-              'sphinx.ext.todo',
-              'sphinx.ext.napoleon',
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx_gallery.gen_gallery',
+    'sphinx.ext.todo',
+    'sphinx.ext.napoleon',
 ]
 
 autosummary_generate = True
-
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -106,8 +106,6 @@ sphinx_gallery_conf = {
     #                         "from pyvista import set_plot_theme\n"
     #                         "set_plot_theme('document')"),
 }
-
-
 
 # -- Options for HTML output -------------------------------------------------
 
