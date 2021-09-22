@@ -1,6 +1,6 @@
 [flake8]
-# To be added once code is refactored: E501, W293, F401
-select = W191, W291, W391, E115, E117, E122, E124, E125, E225, E231, E301, E303, F403
+# To be added once code is refactored: E501, F401
+select = W191, W291, W293, W391, E115, E117, E122, E124, E125, E225, E231, E301, E303, F403
 count = True
 max-complexity = 10
 max-line-length = 100
