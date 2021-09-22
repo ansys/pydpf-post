@@ -32,22 +32,22 @@ class DpfSolution:
         and dpf.core.Model object."""
         self._data_sources = data_sources
         self._model = model
-        
+
     @property
     def mesh(self):
         """Mesh representation of the model.
         Based on the dpf.core.MeshedRegion class."""
         return self._model.metadata.meshed_region
-    
+
     @property
     def time_freq_support(self):
         """Description of the temporal/frequency
         analysis of the model."""
         return self._model.metadata.time_freq_support
-           
+
     def get_result_info(self):
         """Returns information about the result file.
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -55,13 +55,13 @@ class DpfSolution:
         >>> print(result.get_result_info())
         """
         return self._model.metadata.result_info
-    
+
     def _check_nodal_location(self, **kwargs):
         if _AvailableKeywords.location in kwargs:
             location = kwargs.pop(_AvailableKeywords.location)
             if location != locations.nodal:
                 raise NodalLocationError()
-    
+
     def __str__(self):
         txt = '%s solution object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
               '\n\n\nData Sources\n------------------------------\n'
@@ -70,23 +70,23 @@ class DpfSolution:
         txt += "\n\n"
         txt += self._model.__str__()
         return txt
-    
-    
+
+
 class DpfMecanicSolution(DpfSolution):
-    
+
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
         self.misc = MecanicMisc(model, data_sources)
-        
+
     #result classes
     def stress(self, **kwargs):
         """Returns a stress object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-            
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -94,15 +94,15 @@ class DpfMecanicSolution(DpfSolution):
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def elastic_strain(self, **kwargs):
         """Returns an elastic strain object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -110,15 +110,15 @@ class DpfMecanicSolution(DpfSolution):
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
         return ElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def plastic_strain(self, **kwargs):
         """Returns a plastic strain object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -126,15 +126,15 @@ class DpfMecanicSolution(DpfSolution):
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
         return PlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def displacement(self, **kwargs):
         """Returns a displacement object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -142,15 +142,15 @@ class DpfMecanicSolution(DpfSolution):
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
         return Displacement(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -158,23 +158,23 @@ class DpfMecanicSolution(DpfSolution):
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return StructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
 
 class DpfMecanicComplexSolution(DpfSolution):
     """Main class of post solution if the analysis gives complex solution (Modal, Harmonic)."""
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
         self.misc = ComplexMecanicMisc(model, data_sources)
-    
+
     def __str__(self):
         txt = super().__str__()
         txt += "\n"
         txt += "This may contain complex results."
         return txt
-    
+
     def has_complex_result(self):
         """Tests if the solution object has complex values (check the complex frequencies).
-        
+
         Returns
         -------
         Boolean (True if has_complex_result)"""
@@ -187,12 +187,12 @@ class DpfMecanicComplexSolution(DpfSolution):
 
     def displacement(self, **kwargs):
         """Returns a displacement object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -200,15 +200,15 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
         return ComplexDisplacement(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -216,15 +216,15 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return ComplexStructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def plastic_strain(self, **kwargs):
         """Returns a plastic strain object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -232,15 +232,15 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
         return ComplexPlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def elastic_strain(self, **kwargs):
         """Returns an elastic strain object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -248,15 +248,15 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
         return ComplexElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def stress(self, **kwargs):
         """Returns a stress object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -264,8 +264,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return ComplexStress(data_sources=self._data_sources, model=self._model, **kwargs)
-    
-  
+
+
 class DpfThermalSolution(DpfSolution):
     """Main class of post solution if thermal analysis."""
     def __init__(self, data_sources, model):
@@ -277,15 +277,15 @@ class DpfThermalSolution(DpfSolution):
         txt += "\n"
         txt += "This may contain complex results."
         return txt
-    
+
     def temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -294,15 +294,15 @@ class DpfThermalSolution(DpfSolution):
         """
         self._check_nodal_location(**kwargs)
         return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def heat_flux(self, **kwargs):
         """Returns a heat flux object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -310,15 +310,15 @@ class DpfThermalSolution(DpfSolution):
         >>> hf = solution.heat_flux(node_scoping = [1, 43])
         """
         return HeatFlux(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def electric_potential(self, **kwargs):
         """Returns an electric potential object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -327,15 +327,15 @@ class DpfThermalSolution(DpfSolution):
         """
         self._check_nodal_location(**kwargs)
         return ElectricPotential(data_sources=self._data_sources, model=self._model, **kwargs)
-    
+
     def electric_field(self, **kwargs):
         """Returns an electric field object from which it is possible to get ResultData.
-        
+
         Parameters
         ----------
         **kwargs
             The list of keyword-arguments can be found using post.print_available_keywords().
-        
+
         Examples
         --------
         >>> from ansys.dpf import post
@@ -343,5 +343,3 @@ class DpfThermalSolution(DpfSolution):
         >>> ef = solution.electric_field(node_scoping = [1, 43])
         """
         return ElectricField(data_sources=self._data_sources, model=self._model, **kwargs)
-    
-    

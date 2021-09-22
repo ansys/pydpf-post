@@ -12,8 +12,8 @@ def test_get_result_info(allkindofcomplexity):
     assert res_info.unit_system
     assert res_info.physics_type
     assert res_info.available_results
-    
-    
+
+
 def test_solution_mesh(allkindofcomplexity):
     sol = post.load_solution(allkindofcomplexity)
     mesh = sol.mesh
@@ -24,14 +24,14 @@ def test_solution_tfq(allkindofcomplexity):
     sol = post.load_solution(allkindofcomplexity)
     tfq = sol.time_freq_support
     assert tfq.time_frequencies.data[0] == 1.
-    
+
 
 def test_get_result_data_function_of_operator_no_keyword(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources)
     assert isinstance(result_data, ResultData)
-    
-    
+
+
 def test_get_result_data_function_of_operator_ns(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, named_selection="SELECTION")
@@ -88,7 +88,7 @@ def test_check_elemental_location(allkindofcomplexity):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-        
+
 
 def test_check_nodal_location(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -111,8 +111,8 @@ def test_nodal_displacement_verbose_api(allkindofcomplexity):
     assert len(data[0]) == 3
     field = disp[0]
     assert field.location == locations.nodal
-    
-    
+
+
 def test_nodal_displacement(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement()
@@ -124,8 +124,8 @@ def test_nodal_displacement(allkindofcomplexity):
     assert len(data[0]) == 3
     field = disp[0]
     assert field.location == locations.nodal
-    
-    
+
+
 def test_nodal_stress_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.nodal_stress()
@@ -139,8 +139,8 @@ def test_nodal_stress_verbose_api(allkindofcomplexity):
     assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.nodal
-    
-    
+
+
 def test_nodal_stress(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(location = post.locations.nodal)
@@ -170,8 +170,8 @@ def test_elemental_stress_verbose_api(allkindofcomplexity):
     assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.elemental
-    
-    
+
+
 def test_elemental_stress(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
@@ -187,7 +187,7 @@ def test_elemental_stress(allkindofcomplexity):
     field = stress[0]
     assert field.location == locations.elemental
 
-    
+
 def test_elemental_nodal_stress_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_nodal_stress()
@@ -198,8 +198,8 @@ def test_elemental_nodal_stress_verbose_api(allkindofcomplexity):
     assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.elemental_nodal
-    
-    
+
+
 def test_elemental_nodal_stress(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(location=post.locations.elemental_nodal)
@@ -211,6 +211,3 @@ def test_elemental_nodal_stress(allkindofcomplexity):
     assert len(data[0]) == 6
     field = stress[0]
     assert field.location == locations.elemental_nodal
-    
-        
-        

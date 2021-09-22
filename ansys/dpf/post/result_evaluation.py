@@ -23,16 +23,16 @@ class ResultEvaluator:
                  node_scoping = None, named_selection = None,
                  time = None, grouping = None, phase = None, subresult = None,
                  mapdl_grouping = None, set = None, time_scoping = None):
-        
+
         self._model = model
         self._chained_operators = OrderedDict() #dictionary containing (key = Operator.name, [Operator, description])
         self.subresult = subresult
-        
+
         if (subresult is not None):
             operator_name += subresult
         self._result_operator = dpf.core.Operator(operator_name)
         self._result_operator.inputs.connect(data_sources)
-        
+
         if (location is not None):
             if hasattr(self._result_operator.inputs, "requested_location"):
                 self._result_operator.inputs.requested_location.connect(location)
@@ -159,16 +159,16 @@ class ResultEvaluator:
                 error_scoping = "Only dpf.core.Scoping list or int are supported as scoping."
                 raise TypeError(error_scoping)
         return out_scoping
-            
+
     def _check_if_scoping(self, node_scoping, element_scoping):
         if (node_scoping is not None) or (element_scoping is not None):
             txt = "Keywords " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + " can not be used with " + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + " ones."
             raise Exception(txt)
-      
+
     def _check_if_several_grouping(self, grouping, mapdl_grouping):
         if (grouping is not None) and (mapdl_grouping is not None):
             raise Exception("Both keywords grouping and mapdl_grouping can not be used simultaneously.")
-    
+
     def _check_if_several_mesh_scoping(self, node_scoping, element_scoping,
                                        grouping, mapdl_grouping, named_selection):
         count = 0
@@ -185,7 +185,7 @@ class ResultEvaluator:
         if (count > 1):
             txt = "Only one of the following keywords can be used at the same time: " + _AvailableKeywords.element_scoping + "/" + _AvailableKeywords.node_scoping + "/" + _AvailableKeywords.grouping + "/"  + _AvailableKeywords.named_selection + "/" + _AvailableKeywords.mapdl_grouping + "."
             raise Exception(txt)
-       
+
     def _get_evaluation_with_sweeping_phase(self, phase):
         """Connects needed operator to compute the result regarding the specified phase."""
         sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
@@ -194,21 +194,21 @@ class ResultEvaluator:
         sweeping_phase_op.inputs.unit_name.connect("deg")
         self._chained_operators[sweeping_phase_op.name] = """This operator will compute the result at a given phase (when result has complex values)."""
         self._result_operator = sweeping_phase_op
-        
+
     def _elemental_nodal_to_elemental_result(self):
         avg = Operator("to_elemental_fc")
         fc_to_connect = self._result_operator.outputs.fields_container
         avg.inputs.fields_container.connect(fc_to_connect)
         self._result_operator = avg
         self._chained_operators[avg.name] = "This operator will compute the elemental averaging of a fields container."
-        
+
     def _average_result(self, op_name):
         avg = Operator(op_name)
         fc_to_connect = self._result_operator.outputs.fields_container
         avg.inputs.fields_container.connect(fc_to_connect)
         self._result_operator = avg
         self._chained_operators[avg.name] = "This operator will compute the averaging of a fields container."
-        
+
     def evaluate_result(self):
         """Re-evaluation of the result."""
         result_fc = self._result_operator.get_output(0, types.fields_container)

@@ -5,8 +5,8 @@ from ansys.dpf.core.common import locations
 import numpy as np
 import unittest
 import pytest
-    
-    
+
+
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     #scoping as array
@@ -29,7 +29,7 @@ def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
     assert len(data3[0]) == 3
     #values comparison
     assert np.allclose(data, data2)
-    
+
 
 def test_displacement_with_scoping(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -53,7 +53,7 @@ def test_displacement_with_scoping(allkindofcomplexity):
     assert len(data3[0]) == 3
     #values comparison
     assert np.allclose(data, data2)
-            
+
 
 def test_node_stress_with_scoping_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -77,7 +77,7 @@ def test_node_stress_with_scoping_verbose_api(allkindofcomplexity):
     assert len(data3[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
-    
+
 
 def test_node_stress_with_scoping(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -101,8 +101,8 @@ def test_node_stress_with_scoping(allkindofcomplexity):
     assert len(data3[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
-    
-    
+
+
 def test_elemnodal_stress_with_scoping_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     #scoping as array
@@ -125,7 +125,7 @@ def test_elemnodal_stress_with_scoping_verbose_api(allkindofcomplexity):
     assert len(data3[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
-    
+
 
 def test_elemnodal_stress_with_scoping(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -149,8 +149,8 @@ def test_elemnodal_stress_with_scoping(allkindofcomplexity):
     assert len(data3[0]) == 6
     #values comparison
     assert np.allclose(data, data2)
-    
-    
+
+
 def test_disp_with_component_subresult_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(subresult="Y")
@@ -160,7 +160,7 @@ def test_disp_with_component_subresult_verbose_api(allkindofcomplexity):
     assert len(data) == 15113
     assert np.isclose(data[0], 5.130250313479703e-06)
 
-    
+
 def test_disp_with_component_subresult(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement()
@@ -180,8 +180,8 @@ def test_stress_with_component_subresult_verbose_api(allkindofcomplexity):
     data = stress.get_data_at_field(0)
     assert len(data) == 40016
     assert np.isclose(data[1], 1.0216815465593042e-10)
-    
-    
+
+
 def test_stress_with_component_subresult(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(location=post.locations.elemental_nodal)
@@ -202,7 +202,7 @@ def test_stress_with_invariant_subresult_verbose_api(allkindofcomplexity):
     assert len(data) == 40016
     assert np.isclose(data[1], -2728919.8998654075)
     assert stress.result_fields_container[0].location == locations.elemental_nodal
-    
+
 
 def test_stress_with_invariant_subresult(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -214,8 +214,8 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
     assert len(data) == 40016
     assert np.isclose(data[1], -2728919.8998654075)
     assert stress.result_fields_container[0].location == locations.elemental_nodal
-    
-    
+
+
 def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping = post.grouping.by_el_shape)
@@ -227,8 +227,8 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
-    
-    
+
+
 def test_groupingelshape_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping = post.grouping.by_el_shape)
@@ -241,7 +241,7 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("U")
@@ -277,8 +277,8 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     assert len(stress.get_data_at_field(3)) == 0
     assert np.isclose(stress.get_data_at_field(1)[0][0], 10531735.798152419)
     assert stress[0].location == locations.elemental
-    
-    
+
+
 def test_groupingelshape_elemlocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(grouping = post.grouping.by_el_shape, location=post.locations.elemental)
@@ -291,7 +291,7 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert len(stress.get_data_at_field(3)) == 0
     assert np.isclose(stress.get_data_at_field(1)[0][0], 10531735.798152419)
     assert stress[0].location == locations.elemental
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("S")
@@ -314,7 +314,7 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(stress.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
+
 
 def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -327,7 +327,7 @@ def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     for field in disp:
         assert len(field) != 0
         assert field.location == locations.nodal
-    
+
 def test_groupingmat_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping = post.grouping.by_material)
@@ -340,7 +340,7 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     for field in disp:
         assert len(field) != 0
         assert field.location == locations.nodal
-        
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("U")
@@ -363,7 +363,7 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(disp.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
+
 
 def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -374,7 +374,7 @@ def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
     assert np.isclose(stress.get_data_at_field(5)[0][2], 2089125611.1128974)
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
-    
+
 
 def test_groupingmat_elemlocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -386,7 +386,7 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     assert np.isclose(stress.get_data_at_field(5)[0][2], 2089125611.1128974)
     assert stress.result_fields_container.get_label_space(3) == {'time': 1, 'mat': 4}
     assert stress[1].location == locations.elemental
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("S")
@@ -409,7 +409,7 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(stress.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
+
 
 def test_mapdlgrouping_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -418,8 +418,8 @@ def test_mapdlgrouping_nodallocation_verbose_api(allkindofcomplexity):
         disp.num_fields
     except:
         assert True
-        
-        
+
+
 def test_mapdlgrouping_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(mapdl_grouping = 186)
@@ -428,7 +428,7 @@ def test_mapdlgrouping_nodallocation(allkindofcomplexity):
         disp.num_fields
     except:
         assert True
-    
+
 
 def test_maplgrouping_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
@@ -438,8 +438,8 @@ def test_maplgrouping_elemlocation_verbose_api(allkindofcomplexity):
     assert len(stress.get_data_at_field(0)) == 343
     assert np.isclose(stress.get_data_at_field(0)[41][2], -323198.184976747)
     assert stress[0].location == locations.elemental
-    
-    
+
+
 def test_maplgrouping_elemlocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     s = result.stress(mapdl_grouping = 186, location=post.locations.elemental)
@@ -449,7 +449,7 @@ def test_maplgrouping_elemlocation(allkindofcomplexity):
     assert len(stress.get_data_at_field(0)) == 343
     assert np.isclose(stress.get_data_at_field(0)[41][2], -323198.184976747)
     assert stress[0].location == locations.elemental
-    
+
 
 def test_set_keyword_verbose_api(plate_msup):
     result = post.load_solution(plate_msup)
@@ -457,8 +457,8 @@ def test_set_keyword_verbose_api(plate_msup):
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
     assert np.isclose(disp.get_data_at_field(0)[2][2], 2.3955190605044603e-05)
-    
-    
+
+
 def test_set_keyword(plate_msup):
     result = post.load_solution(plate_msup)
     d = result.displacement(set = 3)
@@ -466,14 +466,14 @@ def test_set_keyword(plate_msup):
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 3}
     assert np.isclose(disp.get_data_at_field(0)[2][2], 2.3955190605044603e-05)
-    
-    
+
+
 class TestCase(unittest.TestCase):
-    
+
     @pytest.fixture(autouse=True)
     def set_filepath(self, plate_msup):
         self._filepath = plate_msup
-        
+
     def test_both_set_time_verbose_api(self):
         result = post.load_solution(self._filepath)
         self.assertRaises(Exception, result.misc.nodal_displacement, set=3, time=0.01)
@@ -484,7 +484,7 @@ class TestCase(unittest.TestCase):
             e2 = Exception(message)
             assert e.args == e2.args
             assert type(e) == type(e2)
-            
+
 
 def test_time_keyword_in_frequencies_verbose_api(plate_msup):
     result = post.load_solution(plate_msup)
@@ -508,8 +508,8 @@ def test_time_keyword_in_frequencies_verbose_api(plate_msup):
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 20}
     assert np.isclose(disp.get_data_at_field(0)[345][2], 6.931130871751968e-05)
-    
-    
+
+
 def test_time_keyword_in_frequencies(plate_msup):
     result = post.load_solution(plate_msup)
     d = result.displacement(time=0.06)
@@ -553,8 +553,8 @@ def test_time_keyword_not_in_frequencies_verbose_api(plate_msup):
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
     assert np.isclose(disp.get_data_at_field(0)[22][2], -1.7795334817918245e-05)
-    
-    
+
+
 def test_time_keyword_not_in_frequencies(plate_msup):
     result = post.load_solution(plate_msup)
     d = result.displacement(time=0.061)
@@ -572,8 +572,8 @@ def test_time_keyword_not_in_frequencies(plate_msup):
     assert disp.num_fields == 1
     assert disp.result_fields_container.get_label_space(0) == {'time': 0}
     assert np.isclose(disp.get_data_at_field(0)[22][2], -1.7795334817918245e-05)
-    
-    
+
+
 def test_time_scoping_keyword_verbose_api(plate_msup):
     result = post.load_solution(plate_msup)
     disp = result.misc.nodal_displacement()
@@ -596,8 +596,8 @@ def test_time_scoping_keyword_verbose_api(plate_msup):
     assert disp4.num_fields == 1
     assert disp4.result_fields_container.get_label_space(0) == {'time': 2}
     assert np.isclose(disp4.get_data_at_field(0)[40][2], -9.555678764252377e-06)
-    
-    
+
+
 def test_time_scoping_keyword(plate_msup):
     result = post.load_solution(plate_msup)
     d = result.displacement()
@@ -624,8 +624,8 @@ def test_time_scoping_keyword(plate_msup):
     assert disp4.num_fields == 1
     assert disp4.result_fields_container.get_label_space(0) == {'time': 2}
     assert np.isclose(disp4.get_data_at_field(0)[40][2], -9.555678764252377e-06)
-    
-    
+
+
 def test_named_selection_keyword_verbose_api(model_ns):
     result = post.load_solution(model_ns)
     stress = result.misc.elemental_stress(named_selection="SELECTION")
@@ -634,8 +634,8 @@ def test_named_selection_keyword_verbose_api(model_ns):
     assert len(stress[0].data[20]) == 6
     assert np.isclose(stress.get_data_at_field(0)[40][2], -898513431744.8938)
     assert stress[0].location == post.locations.elemental
-    
-    
+
+
 def test_named_selection_keyword(model_ns):
     result = post.load_solution(model_ns)
     s = result.stress(location=post.locations.elemental, named_selection="SELECTION")
@@ -645,4 +645,3 @@ def test_named_selection_keyword(model_ns):
     assert len(stress[0].data[20]) == 6
     assert np.isclose(stress.get_data_at_field(0)[40][2], -898513431744.8938)
     assert stress[0].location == post.locations.elemental
-    

@@ -95,8 +95,8 @@ def test_tensor(allkindofcomplexity):
     assert isinstance(ppal3, ResultData)
     assert ppal3.num_fields == 2
     assert len(ppal3[0].data) == 720
-    
-    
+
+
 def test_scalar_complex(complex_model):
     solution = post.load_solution(complex_model)
     scalar = solution.structural_temperature()
@@ -340,7 +340,7 @@ def test_displacement(allkindofcomplexity):
     assert np.isclose(z[0].data[548], -8.479408678360313e-07)
     nrm = vector.norm
     assert np.isclose(nrm[0].data[34], 1.2717854105570665e-06)
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("U")
@@ -356,8 +356,8 @@ def test_displacement(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
-    
+
+
 def test_displacement_complex(complex_model):
     solution = post.load_solution(complex_model)
     vector = solution.displacement()
@@ -399,7 +399,7 @@ def test_displacement_complex(complex_model):
     assert np.isclose(z[0].data[548], 5.292387083515219e-11)
     nrm = vector.norm_at_phase(61.)
     assert np.isclose(nrm[0].data[34], 1.438258083761136e-09)
-    
+
 
 def test_stress(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
@@ -433,7 +433,7 @@ def test_stress(allkindofcomplexity):
     assert np.isclose(ppal3[0].data[41], -3599488.8478382444)
     vm = tensor.von_mises
     assert np.isclose(vm[0].data[41], 6994761.422404355)
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("S")
@@ -449,8 +449,8 @@ def test_stress(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
-    
+
+
 def test_stress_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.stress()
@@ -529,15 +529,15 @@ def test_stress_complex(complex_model):
     assert np.isclose(ppal2[0].data[41], -8852.130711811371)
     assert np.isclose(ppal3[0].data[41], -110703.39509659067)
     assert np.isclose(vm[0].data[41], 108117.78055484823)
-    
+
 
 def test_plastic_strain(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     tensor = solution.plastic_strain()
     print(tensor)
     assert tensor._operator_name == "EPPL"
-    
-    
+
+
 def test_plastic_strain_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.plastic_strain()
@@ -575,7 +575,7 @@ def test_elastic_strain(allkindofcomplexity):
     assert np.isclose(ppal2[0].data[41], 5.982498289469729e-06)
     ppal3 = tensor.principal_3
     assert np.isclose(ppal3[0].data[41], -7.271460770812878e-05)
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("EPEL")
@@ -591,8 +591,8 @@ def test_elastic_strain(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
-    
+
+
 def test_elastic_strain_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.elastic_strain()
@@ -650,7 +650,7 @@ def test_temperature(allkindofcomplexity):
     assert len(value2[0].data) == 1
     assert value2[0].data[0] == 22.0
     assert value2[0].location == post.locations.elemental
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("BFE")
@@ -666,8 +666,8 @@ def test_temperature(allkindofcomplexity):
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
-    
+
+
 def test_temperature_complex(complex_model):
     solution = post.load_solution(complex_model)
     temp = solution.structural_temperature()

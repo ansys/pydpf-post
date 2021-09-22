@@ -4,14 +4,14 @@ from ansys.dpf.post.scalar import Scalar
 from ansys.dpf.post.vector import Vector
 from ansys.dpf.core.common import locations
 from ansys.dpf.post.common import _AvailableKeywords
-    
-    
+
+
 class ElectricField(Vector):
     """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EF"
-        
+
         #disable element scoping
         if _AvailableKeywords.element_scoping in kwargs:
             raise Exception("Element scoping is not available with thermal/electric results.")
@@ -22,14 +22,14 @@ class ElectricField(Vector):
         txt += "\n"
         txt += "This is an electric field object."
         return txt
-    
-    
+
+
 class ElectricPotential(Scalar):
     """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "VOLT"
-        
+
         #disable element scoping
         if _AvailableKeywords.element_scoping in kwargs:
             raise Exception("Element scoping is not available with thermal/electric results.")

@@ -18,7 +18,7 @@ def test_electricfield(rth_electric):
     assert s[0].location == post.locations.nodal
     assert len(s[0].data[20]) == 3
     assert np.isclose(s[0].data[23][1], 19.562952041625977)
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("EF")
@@ -162,7 +162,7 @@ def test_electricpotential(rth_electric):
     comp.inputs.fields_containerB.connect(s.result_fields_container)
     out = comp.outputs.boolean()
     assert out == True
-    
+
 
 to_return = "node scoping and element scoping returns the same"
 def test_electricpotential_nodscoping(rth_electric):
@@ -194,12 +194,12 @@ def test_electricpotential_nodlocation(rth_electric):
     assert s.num_fields == 1
     assert s[0].location == post.locations.nodal
 
-  
+
 def test_electricpotential_elemlocation(rth_electric):
     solution = post.load_solution(rth_electric)
     with pytest.raises(dpf_errors.NodalLocationError):
         solution.electric_potential(location = post.locations.elemental)
-        
+
 
 def test_electricpotential_elemnodallocation(rth_electric):
     solution = post.load_solution(rth_electric)
@@ -235,4 +235,3 @@ def test_electricpotential_set(rth_electric):
     assert len(s[0].data) == 4125
     assert s[0].location == post.locations.nodal
     assert np.isclose(s[0].data[0], 0.07336107005500624)
-    

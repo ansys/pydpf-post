@@ -6,8 +6,8 @@ from ansys.dpf.post.dpf_solution import DpfMecanicComplexSolution
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.displacement import ComplexDisplacement
-    
-    
+
+
 def test_displacement_amplitude_verbose_api(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
@@ -19,7 +19,7 @@ def test_displacement_amplitude_verbose_api(complex_model):
     assert len(l) == 4802
     assert len(l[2]) == 3
     assert np.isclose(l[2][1], 2.863712949981395e-10)
-    
+
 
 def test_displacement_amplitude(complex_model):
     sol = post.load_solution(complex_model)
@@ -34,8 +34,8 @@ def test_displacement_amplitude(complex_model):
     assert len(l) == 4802
     assert len(l[2]) == 3
     assert np.isclose(l[2][1], 2.863712949981395e-10)
-    
-    
+
+
 def test_displacement_at_phase_verbose_api(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
@@ -47,7 +47,7 @@ def test_displacement_at_phase_verbose_api(complex_model):
     assert len(l) == 4802
     assert len(l[2]) == 3
     assert np.isclose(l[2][1], -2.1606921923925902e-10)
-    
+
 
 def test_displacement_at_phase(complex_model):
     result = post.load_solution(complex_model)
@@ -62,29 +62,28 @@ def test_displacement_at_phase(complex_model):
     assert len(l) == 4802
     assert len(l[2]) == 3
     assert np.isclose(l[2][1], -2.1606921923925902e-10)
-    
-    
+
+
 def test_has_complex_result(complex_model):
     result = post.load_solution(complex_model)
     assert result.has_complex_result()
-    
+
 
 # def test_is_complex_result_verbose_api(complex_model):
 #     result = post.load_solution(complex_model)
 #     disp = result.misc.nodal_displacement()
 #     assert disp.num_fields == 2
-    
-    
+
+
 # def test_is_complex_result_verbose_api_modal(modalallkindofcomplexity):
 #     result = post.load_solution(modalallkindofcomplexity)
 #     disp = result.misc.nodal_displacement()
 #     assert disp.num_fields == 1
-    
-    
+
+
 def test_is_complex_result(complex_model):
     result = post.load_solution(complex_model)
     compl_disp = result.displacement()
     assert compl_disp.has_complex_frequencies()
     disp = compl_disp.vector
     assert disp.num_fields == 2
-    
