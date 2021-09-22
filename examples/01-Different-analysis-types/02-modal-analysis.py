@@ -68,7 +68,7 @@ disp.get_min_data_at_field(0)
 # ============================================
 
 ###############################################################################
-# **Get the result**: it will contain a field for real values and a 
+# **Get the result**: it will contain a field for real values and a
 # field for imaginary values.
 stress_result = solution.stress()
 

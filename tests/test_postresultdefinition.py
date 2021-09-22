@@ -108,7 +108,7 @@ def test_resdef_set(allkindofcomplexity):
 def test_location_locked_electric_field(rth_electric):
     solution = post.load_solution(rth_electric)
     ef = solution.electric_field(location = 'Nodal')
-    with pytest.raises(Exception): 
+    with pytest.raises(Exception):
         ef.definition.location = None
     try:
         ef.definition.location = None
@@ -116,7 +116,7 @@ def test_location_locked_electric_field(rth_electric):
         message = "Location can not be set outside of the instantiation of the result object in this case."
         e2 = Exception(message)
         assert e.args == e2.args
-        assert type(e) == type(e2) 
+        assert type(e) == type(e2)
     
 def test_elemscoping_locked_electric_field(rth_electric):
     solution = post.load_solution(rth_electric)

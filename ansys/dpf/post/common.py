@@ -4,7 +4,7 @@ from enum import Enum
 
 
 # class ElShapes(Enum):
-#     """Class with Enum inheritance. Must be used to 
+#     """Class with Enum inheritance. Must be used to
 #     describe the element shape when API allows it.
     
 #     Example
@@ -22,7 +22,7 @@ from enum import Enum
     
     
 class Grouping():
-    """Class with Enum inheritance. Must be used to 
+    """Class with Enum inheritance. Must be used to
     describe a grouping command when the API allows it.
     
     Examples
@@ -37,8 +37,8 @@ class Grouping():
     
     
 class _AvailableKeywords():
-    """Contains all the keywords that can be used inside of 
-    a method from a post.solution(file_path) object. 
+    """Contains all the keywords that can be used inside of
+    a method from a post.solution(file_path) object.
     
     In order to view the complete list of available keywords, use:
         post.print_available_keywords()

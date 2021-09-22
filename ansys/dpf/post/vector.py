@@ -30,7 +30,7 @@ class Vector(Result):
     @property
     def norm(self):
         """Returns the norm of the vector as a ResultData."""
-        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model)    
+        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model)
         out_op = result_data._evaluator._result_operator
         norm_op = Operator("norm_fc")
         norm_op.inputs.fields_container.connect(out_op.outputs.fields_container)
@@ -88,7 +88,7 @@ class ComplexVector(Vector):
     @property
     def norm_amplitude(self):
         """Returns the amplitude of the norm of the vector as a ResultData."""
-        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model)    
+        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model)
         out_op = result_data._evaluator._result_operator
         norm_op = Operator("norm_fc")
         norm_op.inputs.fields_container.connect(out_op.outputs.fields_container)
@@ -98,7 +98,7 @@ class ComplexVector(Vector):
     
     def norm_at_phase(self, phase: float):
         """Returns the norm of the vector at specific phase as a ResultData."""
-        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model, phase=phase)    
+        result_data = super()._get_result_data(self._operator_name, self._data_sources, self._model, phase=phase)
         out_op = result_data._evaluator._result_operator
         norm_op = Operator("norm_fc")
         norm_op.inputs.fields_container.connect(out_op.outputs.fields_container)

@@ -1,8 +1,8 @@
 """Module containing the ResultEvaluation class that
-will compute the information collected in the ResultData 
+will compute the information collected in the ResultData
 class (which is a fields container wrapper).
 
-This class will only be dedicated to the fields container 
+This class will only be dedicated to the fields container
 computation."""
 
 import numpy as np
@@ -18,10 +18,10 @@ class ResultEvaluator:
     """This object will make the evaluation of the fields container
     wrapped in the ResultData object."""
     def __init__(self, operator_name: str, data_sources, model,
-                 elem_average, 
-                 location: str = None, element_scoping = None, 
-                 node_scoping = None, named_selection = None, 
-                 time = None, grouping = None, phase = None, subresult = None, 
+                 elem_average,
+                 location: str = None, element_scoping = None,
+                 node_scoping = None, named_selection = None,
+                 time = None, grouping = None, phase = None, subresult = None,
                  mapdl_grouping = None, set = None, time_scoping = None):
         
         self._model = model
@@ -41,7 +41,7 @@ class ResultEvaluator:
             #     raise Exception(msg)
         # if (element_scoping is not None and node_scoping is not None):
         #     raise Exception("Impossible to use both element_scoping and node_scoping.")
-        self._check_if_several_mesh_scoping(node_scoping, element_scoping, 
+        self._check_if_several_mesh_scoping(node_scoping, element_scoping,
                                             grouping, mapdl_grouping, named_selection)
         if (set is not None and time is not None) or (set is not None and time_scoping is not None) or (time is not None and time_scoping is not None):
             raise Exception("Set, time and time_scoping keyword arguments must be used independently.")
@@ -53,7 +53,7 @@ class ResultEvaluator:
             self._result_operator.inputs.mesh_scoping.connect(scoping)
         if (time_scoping is not None):
             t_scoping = self._compute_scoping(time_scoping)
-            self._result_operator.inputs.time_scoping.connect(t_scoping)  
+            self._result_operator.inputs.time_scoping.connect(t_scoping)
         #chained before the result_operator
         if (named_selection is not None):
             self._check_if_scoping(node_scoping, element_scoping)
@@ -79,7 +79,7 @@ class ResultEvaluator:
             if (grouping == Grouping.by_material) or (grouping == Grouping.by_body):
                 scop_op.inputs.label1.connect("mat")
             elif(grouping == Grouping.by_el_shape):
-                scop_op.inputs.label1.connect("elshape")            
+                scop_op.inputs.label1.connect("elshape")
             else:
                 raise Exception("Grouping impossible. Use the keyword argument as: grouping = grouping.by_el_shape, grouping = grouping.by_material...")
             self._result_operator.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
@@ -138,7 +138,7 @@ class ResultEvaluator:
                 forward_op = Operator("forward_fc")
                 forward_op.inputs.fields.connect(centroid_op.outputs.field)
                 self._result_operator = forward_op
-        # outside post-processing instruction         
+        # outside post-processing instruction
         if elem_average:
             self._elemental_nodal_to_elemental_result()
 
@@ -169,7 +169,7 @@ class ResultEvaluator:
         if (grouping is not None) and (mapdl_grouping is not None):
             raise Exception("Both keywords grouping and mapdl_grouping can not be used simultaneously.")
     
-    def _check_if_several_mesh_scoping(self, node_scoping, element_scoping, 
+    def _check_if_several_mesh_scoping(self, node_scoping, element_scoping,
                                        grouping, mapdl_grouping, named_selection):
         count = 0
         if (node_scoping is not None):
@@ -193,7 +193,7 @@ class ResultEvaluator:
         sweeping_phase_op.inputs.angle.connect(phase)
         sweeping_phase_op.inputs.unit_name.connect("deg")
         self._chained_operators[sweeping_phase_op.name] = """This operator will compute the result at a given phase (when result has complex values)."""
-        self._result_operator = sweeping_phase_op      
+        self._result_operator = sweeping_phase_op
         
     def _elemental_nodal_to_elemental_result(self):
         avg = Operator("to_elemental_fc")
