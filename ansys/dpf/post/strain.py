@@ -5,6 +5,7 @@ from ansys.dpf.post.tensor import Tensor, ComplexTensor
 
 class ElasticStrain(Tensor):
     """Defines the elastic strain object, that is a tensor object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EPEL"
@@ -18,6 +19,7 @@ class ElasticStrain(Tensor):
 
 class ComplexElasticStrain(ComplexTensor):
     """Defines the complex elastic strain object, that is a tensor object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EPEL"
@@ -31,6 +33,7 @@ class ComplexElasticStrain(ComplexTensor):
 
 class PlasticStrain(Tensor):
     """Defines the plastic strain object, that is a tensor object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EPPL"
@@ -44,6 +47,7 @@ class PlasticStrain(Tensor):
 
 class ComplexPlasticStrain(ComplexTensor):
     """Defines the complex plastic strain object, that is a tensor object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "EPPL"

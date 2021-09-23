@@ -5,12 +5,16 @@ object. Initialization of post objects.
 from ansys.dpf.core.model import Model
 
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
-from ansys.dpf.post.static_analysis import (StaticAnalysisSolution,
-                                            ThermalStaticAnalysisSolution)
+from ansys.dpf.post.static_analysis import (
+    StaticAnalysisSolution,
+    ThermalStaticAnalysisSolution,
+)
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
-from ansys.dpf.post.transient_analysis import (TransientAnalysisSolution,
-                                               ThermalTransientAnalysisSolution)
+from ansys.dpf.post.transient_analysis import (
+    TransientAnalysisSolution,
+    ThermalTransientAnalysisSolution,
+)
 
 
 def load_solution(data_sources):

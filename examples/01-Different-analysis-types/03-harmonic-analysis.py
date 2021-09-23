@@ -109,11 +109,11 @@ elastic_strain.num_fields
 
 ###############################################################################
 # **Deal with phase**: phase unit is degree, phase must be a float.
-es_at_phase = elastic_strain_result.tensor_at_phase(39.)
+es_at_phase = elastic_strain_result.tensor_at_phase(39.0)
 es_at_phase.max_data
 es_at_phase.num_fields
-real_field = elastic_strain_result.tensor_at_phase(0.)
-img_field = elastic_strain_result.tensor_at_phase(90.)
+real_field = elastic_strain_result.tensor_at_phase(0.0)
+img_field = elastic_strain_result.tensor_at_phase(90.0)
 
 ###############################################################################
 # **It is also possible to deal with plastic_strain and temperature this way.**

@@ -16,10 +16,10 @@ pv.OFF_SCREEN = True
 
 
 # currently running dpf on docker.  Used for testing on CI
-running_docker = os.environ.get('DPF_DOCKER', False)
+running_docker = os.environ.get("DPF_DOCKER", False)
 
 
-def resolve_test_file(basename, additional_path=''):
+def resolve_test_file(basename, additional_path=""):
     """Resolves a test file's full path based on the base name and the
     environment.
 
@@ -28,15 +28,15 @@ def resolve_test_file(basename, additional_path=''):
     """
     if running_docker:
         # assumes repository root is mounted at '/dpf'
-        test_files_path = '/dpf/tests/testfiles'
+        test_files_path = "/dpf/tests/testfiles"
         return os.path.join(test_files_path, additional_path, basename)
     else:
         # otherwise, assume file is local
         test_path = os.path.dirname(os.path.abspath(__file__))
-        test_files_path = os.path.join(test_path, 'testfiles')
+        test_files_path = os.path.join(test_path, "testfiles")
         filename = os.path.join(test_files_path, additional_path, basename)
         if not os.path.isfile(filename):
-            raise FileNotFoundError(f'Unable to locate {basename} at {test_files_path}')
+            raise FileNotFoundError(f"Unable to locate {basename} at {test_files_path}")
         return filename
 
 
@@ -97,9 +97,12 @@ def rth_electric():
     """Resolve the path of the "rth/rth_electric.rth" result file."""
     return examples.electric_therm
 
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""
+
     def close_servers():
         core.server.shutdown_all_session_servers()
+
     request.addfinalizer(close_servers)

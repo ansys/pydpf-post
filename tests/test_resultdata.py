@@ -8,7 +8,7 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.core.common import locations
 
 # currently running dpf on docker.  Used for testing on CI
-RUNNING_DOCKER = os.environ.get('DPF_DOCKER', False)
+RUNNING_DOCKER = os.environ.get("DPF_DOCKER", False)
 
 
 def test_num_fields_verbose_api(allkindofcomplexity):
@@ -165,7 +165,7 @@ def test_min_data_at_field(allkindofcomplexity):
 def test_get_all_labels_verbose_api(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     stress = result.misc.elemental_stress()
-    l = [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
+    l = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
     assert l == l_comp
 
@@ -174,7 +174,7 @@ def test_get_all_labels(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
-    l = [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
+    l = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
     assert l == l_comp
 
@@ -231,25 +231,31 @@ def test_plot_contour_two_fields(allkindofcomplexity):
     s.plot_contour("time", 1)
     s.plot_contour()
 
+
 def test_plot_contour_with_keys(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    d = result.displacement(grouping = post.grouping.by_el_shape)
+    d = result.displacement(grouping=post.grouping.by_el_shape)
     disp = d.vector
-    disp.plot_contour('elshape', 1)
+    disp.plot_contour("elshape", 1)
 
-    d = result.displacement(grouping = post.grouping.by_material)
+    d = result.displacement(grouping=post.grouping.by_material)
     disp = d.vector
-    disp.plot_contour('mat', 1)
+    disp.plot_contour("mat", 1)
 
-    s = result.stress(grouping = post.grouping.by_el_shape, location=post.locations.elemental)
+    s = result.stress(
+        grouping=post.grouping.by_el_shape, location=post.locations.elemental
+    )
     stress = s.tensor
-    stress.plot_contour('elshape', 1)
+    stress.plot_contour("elshape", 1)
 
-    s = result.stress(grouping = post.grouping.by_material, location=post.locations.elemental)
+    s = result.stress(
+        grouping=post.grouping.by_material, location=post.locations.elemental
+    )
     stress = s.tensor
-    stress.plot_contour('mat', 1)
+    stress.plot_contour("mat", 1)
 
-@pytest.mark.skipif(RUNNING_DOCKER, reason='Path hidden within docker container')
+
+@pytest.mark.skipif(RUNNING_DOCKER, reason="Path hidden within docker container")
 def test_plot_with_vtk_file(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress(location=post.locations.elemental, time_scoping=[1])

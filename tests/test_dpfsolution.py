@@ -21,46 +21,65 @@ def test_solution_mesh(allkindofcomplexity):
 def test_solution_tfq(allkindofcomplexity):
     sol = post.load_solution(allkindofcomplexity)
     tfq = sol.time_freq_support
-    assert tfq.time_frequencies.data[0] == 1.
+    assert tfq.time_frequencies.data[0] == 1.0
 
 
 def test_get_result_data_function_of_operator_no_keyword(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources)
+    result_data = result.misc._get_result_data_function_of_operator(
+        "U", result, result._data_sources
+    )
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_ns(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, named_selection="SELECTION")
+    result_data = result.misc._get_result_data_function_of_operator(
+        "U", result, result._data_sources, named_selection="SELECTION"
+    )
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_location(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, location="Elemental")
+    result_data = result.misc._get_result_data_function_of_operator(
+        "U", result, result._data_sources, location="Elemental"
+    )
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_node_scop(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3])
+    result_data = result.misc._get_result_data_function_of_operator(
+        "U", result, result._data_sources, node_scoping=[1, 2, 3]
+    )
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_elem_scop(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    result_data = result.misc._get_result_data_function_of_operator("U", result, result._data_sources, element_scoping=[1, 2, 3])
+    result_data = result.misc._get_result_data_function_of_operator(
+        "U", result, result._data_sources, element_scoping=[1, 2, 3]
+    )
     assert isinstance(result_data, ResultData)
 
 
 def test_get_result_data_function_of_operator_bothscop(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     try:
-        result.misc._get_result_data_function_of_operator("U", result, result._data_sources, node_scoping=[1, 2, 3], element_scoping=[1, 2, 3])
+        result.misc._get_result_data_function_of_operator(
+            "U",
+            result,
+            result._data_sources,
+            node_scoping=[1, 2, 3],
+            element_scoping=[1, 2, 3],
+        )
     except Exception as e:
         # message = "Impossible to use both element_scoping and node_scoping."
-        message = "Only one of the following keywords can be used at the same time: element_scoping/node_scoping/grouping/named_selection/mapdl_grouping."
+        message = (
+            "Only one of the following keywords can be used at the same time: "
+            "element_scoping/node_scoping/grouping/named_selection/mapdl_grouping."
+        )
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
@@ -69,9 +88,14 @@ def test_get_result_data_function_of_operator_bothscop(allkindofcomplexity):
 # def test_get_result_data_function_of_operator_nophase():
 #     result = post.load_solution(TEST_FILE_PATH_RST)
 #     try:
-#         result.misc._get_result_data_function_of_operator("U", result, result._data_sources, phase=30.)
+#         result.misc._get_result_data_function_of_operator(
+#             "U", result, result._data_sources, phase=30.
+#         )
 #     except Exception as e:
-#         message = "Phase key-word argument can be used when the analysis types implies complex result (Harmonic analysis, Modal analysis...)."
+#         message = (
+#             "Phase key-word argument can be used when the analysis types "
+#             "implies complex result (Harmonic analysis, Modal analysis...)."
+#         )
 #         e2 = Exception(message)
 #         assert e.args == e2.args
 #         assert type(e) == type(e2)
@@ -141,7 +165,7 @@ def test_nodal_stress_verbose_api(allkindofcomplexity):
 
 def test_nodal_stress(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
-    s = result.stress(location = post.locations.nodal)
+    s = result.stress(location=post.locations.nodal)
     stress = s.tensor
     assert isinstance(stress, ResultData)
     assert stress.num_fields == 2

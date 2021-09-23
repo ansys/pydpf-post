@@ -25,22 +25,25 @@ post.print_available_keywords()
 # **Use a scoping on result**
 
 # default location is nodal
-displacement_result = solution.displacement(location=post.locations.nodal,
-                                            node_scoping=[1, 2, 3])
+displacement_result = solution.displacement(
+    location=post.locations.nodal, node_scoping=[1, 2, 3]
+)
 displacement = displacement_result.vector
 
 displacement.get_data_at_field(0)
 
-stress_with_elem_scop_result = solution.stress(location=post.locations.elemental_nodal,
-                                               element_scoping=[1])
+stress_with_elem_scop_result = solution.stress(
+    location=post.locations.elemental_nodal, element_scoping=[1]
+)
 stress_with_elem_scop = stress_with_elem_scop_result.tensor
 
 stress_with_elem_scop.get_data_at_field(0)
 
 ###############################################################################
 # **Use a named selection on result**
-stress_on_ns_result = solution.stress(location=post.locations.elemental_nodal,
-                                      named_selection="SELECTION")
+stress_on_ns_result = solution.stress(
+    location=post.locations.elemental_nodal, named_selection="SELECTION"
+)
 stress_on_ns = stress_on_ns_result.tensor
 stress_on_ns.num_fields
 
@@ -59,7 +62,7 @@ stress_principal_1
 # **Filter on a time / time_scoping / a set**
 print(solution.time_freq_support)
 
-stress_on_time_1s_result = solution.stress(time=1.)
+stress_on_time_1s_result = solution.stress(time=1.0)
 stress_on_time_1s = stress_on_time_1s_result.tensor
 
 displacement_on_set_1_result = solution.displacement(set=1)
@@ -85,7 +88,7 @@ print(stress_on_ns_result)
 print(stress_on_ns_result.definition.location)
 
 stress_on_ns_result.definition.location = post.locations.elemental
-stress_on_ns_result.definition.time = 1.
+stress_on_ns_result.definition.time = 1.0
 stress_on_ns_elemental = stress_on_ns_result.tensor
 
 print(stress_on_ns_result)
@@ -94,5 +97,5 @@ print(stress_on_ns_result)
 # **Use the misc. results**
 # Same keywords can be used here. For complex result, the keyword
 # "phase" (float) can also be used.
-stress_ratio = solution.misc.elemental_stress_ratio(node_scoping=[1, 32], time=1.)
+stress_ratio = solution.misc.elemental_stress_ratio(node_scoping=[1, 32], time=1.0)
 print(stress_ratio)
