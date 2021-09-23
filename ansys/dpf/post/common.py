@@ -1,7 +1,5 @@
 """Module containing the common tools for a better usage of the DPF-Post module."""
 
-from enum import Enum
-
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. Must be used to

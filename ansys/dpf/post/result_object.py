@@ -1,10 +1,10 @@
 """This module contains the super class of the
 stress/strain/structural_temperature/displacement objects."""
 
-from ansys.dpf.core.common import locations
 from ansys.dpf.core import Operator
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.result_definition import Definition
+
 
 class Result:
     def __init__(self, data_sources, model, **kwargs):

@@ -1,10 +1,10 @@
 """This module contains all the miscallenous results."""
 
-from ansys.dpf.post.result_data import ResultData
-from ansys.dpf.post.common import _AvailableKeywords
-from ansys.dpf.core import locations
-from ansys.dpf.post import dpf_solution
 from ansys.dpf.core import Operator as _Operator
+from ansys.dpf.core import locations
+from ansys.dpf.post.common import _AvailableKeywords
+from ansys.dpf.post.result_data import ResultData
+
 
 class Misc():
     """This class contains miscellaneous results.

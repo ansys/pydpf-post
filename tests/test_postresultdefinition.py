@@ -1,9 +1,6 @@
-from ansys import dpf
-import os
+import pytest
 from ansys.dpf import post
 from ansys.dpf.post.result_definition import Definition
-import unittest
-import pytest
 
 
 def test_resultdefinition_init(allkindofcomplexity):

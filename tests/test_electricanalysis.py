@@ -1,11 +1,9 @@
-from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
-from ansys.dpf.post.common import _PhysicsType
-from ansys.dpf import post
 import numpy as np
-import unittest
 import pytest
+from ansys.dpf import post
 from ansys.dpf.post import errors as dpf_errors
-from ansys.dpf.core import errors as core_errors
+from ansys.dpf.post.common import _PhysicsType
+from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
 
 
 def test_electricfield(rth_electric):

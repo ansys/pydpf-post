@@ -1,11 +1,9 @@
-import os
 import numpy as np
-from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.dpf_solution import DpfMecanicComplexSolution
-from ansys.dpf.post.result_data import ResultData
-from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.displacement import ComplexDisplacement
+from ansys.dpf.post.dpf_solution import DpfMecanicComplexSolution
+from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
+from ansys.dpf.post.result_data import ResultData
 
 
 def test_displacement_amplitude_verbose_api(complex_model):
