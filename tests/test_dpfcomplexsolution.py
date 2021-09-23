@@ -38,7 +38,7 @@ def test_displacement_at_phase_verbose_api(complex_model):
     result = post.load_solution(complex_model)
     assert isinstance(result, HarmonicAnalysisSolution)
     assert isinstance(result, DpfMecanicComplexSolution)
-    disp_at_phase = result.misc.nodal_displacement(phase = 41.)
+    disp_at_phase = result.misc.nodal_displacement(phase=41.0)
     assert isinstance(disp_at_phase, ResultData)
     assert disp_at_phase.num_fields == 1
     l = disp_at_phase.get_data_at_field(0)
@@ -53,7 +53,7 @@ def test_displacement_at_phase(complex_model):
     assert isinstance(result, DpfMecanicComplexSolution)
     complex_disp = result.displacement()
     assert isinstance(complex_disp, ComplexDisplacement)
-    disp_at_phase = complex_disp.vector_at_phase(phase = 41.)
+    disp_at_phase = complex_disp.vector_at_phase(phase=41.0)
     assert isinstance(disp_at_phase, ResultData)
     assert disp_at_phase.num_fields == 1
     l = disp_at_phase.get_data_at_field(0)

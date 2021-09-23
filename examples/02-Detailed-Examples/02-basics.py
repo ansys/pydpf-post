@@ -40,7 +40,9 @@ displacement.min_data
 ###############################################################################
 # **Get a stress result from the result object (nodal or elemental location)**
 el_stress_result = solution.stress(location=post.locations.elemental)
-nod_stress_result = solution.stress(location=post.locations.nodal)  # note: the default location is nodal
+nod_stress_result = solution.stress(
+    location=post.locations.nodal
+)  # note: the default location is nodal
 
 el_stress = el_stress_result.tensor
 nod_stress = nod_stress_result.tensor

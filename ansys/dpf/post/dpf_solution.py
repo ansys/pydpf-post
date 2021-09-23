@@ -31,6 +31,7 @@ from ansys.dpf.post.temperature import (
 
 class DpfSolution:
     """Main class of post result API."""
+
     def __init__(self, data_sources, model):
         """Initialization of the solution using data_sources
         and dpf.core.Model object."""
@@ -67,8 +68,11 @@ class DpfSolution:
                 raise NodalLocationError()
 
     def __str__(self):
-        txt = '%s solution object.' % self._model.metadata.result_info.analysis_type.capitalize() +\
-              '\n\n\nData Sources\n------------------------------\n'
+        txt = (
+            "%s solution object."
+            % self._model.metadata.result_info.analysis_type.capitalize()
+            + "\n\n\nData Sources\n------------------------------\n"
+        )
         ds_str = self._data_sources.__str__()
         txt += ds_str
         txt += "\n\n"
@@ -77,12 +81,11 @@ class DpfSolution:
 
 
 class DpfMecanicSolution(DpfSolution):
-
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
         self.misc = MecanicMisc(model, data_sources)
 
-    #result classes
+    # result classes
     def stress(self, **kwargs):
         """Returns a stress object from which it is possible to get ResultData.
 
@@ -113,7 +116,9 @@ class DpfMecanicSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
-        return ElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ElasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def plastic_strain(self, **kwargs):
         """Returns a plastic strain object from which it is possible to get ResultData.
@@ -129,7 +134,9 @@ class DpfMecanicSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
-        return PlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+        return PlasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def displacement(self, **kwargs):
         """Returns a displacement object from which it is possible to get ResultData.
@@ -145,7 +152,9 @@ class DpfMecanicSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
-        return Displacement(data_sources=self._data_sources, model=self._model, **kwargs)
+        return Displacement(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
@@ -161,11 +170,14 @@ class DpfMecanicSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
-        return StructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
+        return StructuralTemperature(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
 
 class DpfMecanicComplexSolution(DpfSolution):
     """Main class of post solution if the analysis gives complex solution (Modal, Harmonic)."""
+
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
         self.misc = ComplexMecanicMisc(model, data_sources)
@@ -185,7 +197,7 @@ class DpfMecanicComplexSolution(DpfSolution):
         tfq_sup = self._model.metadata.time_freq_support
         if not tfq_sup:
             return False
-        if (tfq_sup.complex_frequencies == None):
+        if tfq_sup.complex_frequencies == None:
             return False
         return True
 
@@ -203,7 +215,9 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
-        return ComplexDisplacement(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexDisplacement(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def structural_temperature(self, **kwargs):
         """Returns a temperature object from which it is possible to get ResultData.
@@ -219,7 +233,9 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
-        return ComplexStructuralTemperature(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexStructuralTemperature(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def plastic_strain(self, **kwargs):
         """Returns a plastic strain object from which it is possible to get ResultData.
@@ -235,7 +251,9 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
-        return ComplexPlasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexPlasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def elastic_strain(self, **kwargs):
         """Returns an elastic strain object from which it is possible to get ResultData.
@@ -251,7 +269,9 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
-        return ComplexElasticStrain(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexElasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def stress(self, **kwargs):
         """Returns a stress object from which it is possible to get ResultData.
@@ -267,14 +287,17 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
-        return ComplexStress(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ComplexStress(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
 
 class DpfThermalSolution(DpfSolution):
     """Main class of post solution if thermal analysis."""
+
     def __init__(self, data_sources, model):
         super().__init__(data_sources, model)
-        #self.misc = ThermalMisc(model, data_sources)
+        # self.misc = ThermalMisc(model, data_sources)
 
     def __str__(self):
         txt = super().__str__()
@@ -330,7 +353,9 @@ class DpfThermalSolution(DpfSolution):
         >>> ep = solution.electric_potential(node_scoping = [1, 43])
         """
         self._check_nodal_location(**kwargs)
-        return ElectricPotential(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ElectricPotential(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
 
     def electric_field(self, **kwargs):
         """Returns an electric field object from which it is possible to get ResultData.
@@ -346,4 +371,6 @@ class DpfThermalSolution(DpfSolution):
         >>> solution = post.load_solution(file.rst)
         >>> ef = solution.electric_field(node_scoping = [1, 43])
         """
-        return ElectricField(data_sources=self._data_sources, model=self._model, **kwargs)
+        return ElectricField(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )

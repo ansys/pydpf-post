@@ -24,6 +24,7 @@ from ansys.dpf import post
 # module, which you can get by importing the examples module from
 # ``ansys.dpf.post``
 from ansys.dpf.post import examples
+
 solution = post.load_solution(examples.multishells_rst)
 
 ###############################################################################
@@ -60,12 +61,12 @@ sx = stress.xx
 sx.num_fields
 sx_field = sx[0]
 sx_data = sx.get_data_at_field(0)
-print('Length of the data:', len(sx_data))
+print("Length of the data:", len(sx_data))
 print()
-print('Maximum Stress Field:\n', sx.max)
+print("Maximum Stress Field:\n", sx.max)
 print()
-print('Maximum data at stress field:', sx.max_data)
-print('Maximum SX at Field 0:', sx.get_max_data_at_field(0))
+print("Maximum data at stress field:", sx.max_data)
+print("Maximum SX at Field 0:", sx.get_max_data_at_field(0))
 
 ###############################################################################
 # **Stress tensor result**
@@ -74,17 +75,17 @@ print('Maximum SX at Field 0:', sx.get_max_data_at_field(0))
 s = stress.tensor
 s_field = s[0]
 s_data = sx.get_data_at_field(0)
-print('Length of the data:', len(s_data))
+print("Length of the data:", len(s_data))
 print()
-print('Maximum Stress Field:\n', s.max)
+print("Maximum Stress Field:\n", s.max)
 print()
-print('Maximum data at stress field:', s.max_data)
-print('Maximum Stress Tensors at Field 0:\n', s.get_max_data_at_field(0))
+print("Maximum data at stress field:", s.max_data)
+print("Maximum Stress Tensors at Field 0:\n", s.get_max_data_at_field(0))
 
-print('Minimum Stress Field:\n', s.min)
+print("Minimum Stress Field:\n", s.min)
 print()
-print('Minimum data at stress field:', s.min_data)
-print('Minimum Stress Tensors at Field 0:\n', s.get_min_data_at_field(0))
+print("Minimum data at stress field:", s.min_data)
+print("Minimum Stress Tensors at Field 0:\n", s.get_min_data_at_field(0))
 
 
 ###############################################################################

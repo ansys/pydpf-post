@@ -36,29 +36,54 @@ class ResultData:
     >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
     """
 
-    def __init__(self, operator_name: str, data_sources, model,
-                 elem_average: bool,
-                 location: str = None, element_scoping = None,
-                 node_scoping = None, named_selection = None,
-                 time = None,
-                 grouping = None, phase = None, subresult = None,
-                 mapdl_grouping = None, set = None, time_scoping = None):
+    def __init__(
+        self,
+        operator_name: str,
+        data_sources,
+        model,
+        elem_average: bool,
+        location: str = None,
+        element_scoping=None,
+        node_scoping=None,
+        named_selection=None,
+        time=None,
+        grouping=None,
+        phase=None,
+        subresult=None,
+        mapdl_grouping=None,
+        set=None,
+        time_scoping=None,
+    ):
 
-        self._evaluator = ResultEvaluator(operator_name, data_sources, model, elem_average,
-                 location, element_scoping, node_scoping, named_selection, time,
-                 grouping, phase, subresult, mapdl_grouping, set, time_scoping)
+        self._evaluator = ResultEvaluator(
+            operator_name,
+            data_sources,
+            model,
+            elem_average,
+            location,
+            element_scoping,
+            node_scoping,
+            named_selection,
+            time,
+            grouping,
+            phase,
+            subresult,
+            mapdl_grouping,
+            set,
+            time_scoping,
+        )
         self.result_fields_container = None
 
     def __str__(self):
         self._evaluate_result()
         name = self.result_fields_container[0].name.split("_")
         txt = "%s result.\n" % name[0].capitalize()
-        if (self._evaluator.subresult is not None):
+        if self._evaluator.subresult is not None:
             txt += "%s component. \n" % self._evaluator.subresult
         txt += "\n"
         desc = "This result has been computed using dpf.core.Operator objects, which "
         desc += "have been chained together according to the following list:"
-        txt += '\n'.join(wrap(desc)) + '\n'
+        txt += "\n".join(wrap(desc)) + "\n"
         for key, val in self._evaluator._chained_operators.items():
             txt += "- %s: " % key
             txt += val
@@ -120,7 +145,7 @@ class ResultData:
         return field.scoping.ids
 
     def _min_max(self, pin):
-        """"Chains the operators to compute the min/max values."""
+        """ "Chains the operators to compute the min/max values."""
         self._evaluate_result()
         max_operator = Operator("min_max_fc")
         max_operator.inputs.connect(self.result_fields_container)
@@ -183,8 +208,14 @@ class ResultData:
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl._plot_contour_using_vtk_file(self.result_fields_container)
 
-    def plot_contour(self, display_option: str = "time", option_id=1,
-                     off_screen=None, notebook=None, **kwargs):
+    def plot_contour(
+        self,
+        display_option: str = "time",
+        option_id=1,
+        off_screen=None,
+        notebook=None,
+        **kwargs
+    ):
         """Plot the contour result on its mesh support.
 
         The obtained figure depends on the support (can be a
@@ -227,8 +258,12 @@ class ResultData:
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         if len(self.result_fields_container) == 1:
-            pl.plot_contour(self.result_fields_container, off_screen=off_screen,
-                            notebook=notebook, **kwargs)
+            pl.plot_contour(
+                self.result_fields_container,
+                off_screen=off_screen,
+                notebook=notebook,
+                **kwargs
+            )
         else:
             # sorts and creates a new fields_container with only the desired labels
             ids = option_id
@@ -247,7 +282,7 @@ class ResultData:
                             if display_option in fc_label:
                                 if fc_label[display_option] == opt_id:
                                     label_space[lab] = fc_label[lab]
-                    if (len(fc_label) == len(label_space)):
+                    if len(fc_label) == len(label_space):
                         label_spaces.append(label_space)
                     i += 1
             lab_names = []
@@ -260,8 +295,9 @@ class ResultData:
             for label in label_spaces:
                 field = self.result_fields_container.get_field(label)
                 new_fields_container.add_field(label, field)
-            pl.plot_contour(new_fields_container, off_screen=off_screen,
-                            notebook=notebook, **kwargs)
+            pl.plot_contour(
+                new_fields_container, off_screen=off_screen, notebook=notebook, **kwargs
+            )
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.

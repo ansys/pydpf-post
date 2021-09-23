@@ -14,11 +14,15 @@ def test_scalar(allkindofcomplexity):
     scalar = solution.structural_temperature()
     assert isinstance(scalar, Scalar)
     txt = scalar.__str__()
-    assert txt == 'Scalar object. \n\nObject properties:\n - location   : Nodal\n\nThis is a temperature object.'
+    assert txt == (
+        "Scalar object. \n\n"
+        "Object properties:\n - location   : Nodal\n\n"
+        "This is a temperature object."
+    )
     value = scalar.scalar
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
-    assert value[0].data[0] == 22.
+    assert value[0].data[0] == 22.0
 
 
 def test_vector(allkindofcomplexity):
@@ -26,7 +30,11 @@ def test_vector(allkindofcomplexity):
     vector = solution.displacement()
     assert isinstance(vector, Vector)
     txt = vector.__str__()
-    assert txt == 'Vector object. \n\nObject properties:\n - location   : Nodal\n\nThis is a displacement object.'
+    assert txt == (
+        "Vector object. \n\n"
+        "Object properties:\n - location   : Nodal\n\n"
+        "This is a displacement object."
+    )
     value = vector.vector
     assert isinstance(value, ResultData)
     assert value.num_fields == 1
@@ -51,7 +59,9 @@ def test_tensor(allkindofcomplexity):
     tensor = solution.stress()
     assert isinstance(tensor, Tensor)
     txt = tensor.__str__()
-    assert txt == 'Stress Tensor object. \n\nObject properties:\n - location   : Nodal\n'
+    assert (
+        txt == "Stress Tensor object. \n\nObject properties:\n - location   : Nodal\n"
+    )
     value = tensor.tensor
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -100,15 +110,20 @@ def test_scalar_complex(complex_model):
     scalar = solution.structural_temperature()
     assert isinstance(scalar, ComplexScalar)
     txt = scalar.__str__()
-    assert txt == 'Complex scalar object. \n\nScalar object. \n\nObject properties:\n - location   : Nodal\n\nThis is a temperature object.'
+    assert txt == (
+        "Complex scalar object. \n\n"
+        "Scalar object. \n\n"
+        "Object properties:\n - location   : Nodal\n\n"
+        "This is a temperature object."
+    )
     value = scalar.scalar
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
-    assert value[0].data[0] == 22.
+    assert value[0].data[0] == 22.0
     ampl = scalar.scalar_amplitude
     assert ampl.num_fields == 1
     assert np.isclose(ampl[0].data[0], 31.11269837220809)
-    ph = scalar.scalar_at_phase(32.)
+    ph = scalar.scalar_at_phase(32.0)
     assert ph.num_fields == 1
     assert np.isclose(ph[0].data[0], 6.9988343023108595)
 
@@ -118,7 +133,11 @@ def test_vector_complex(complex_model):
     vector = solution.displacement()
     assert isinstance(vector, ComplexVector)
     txt = vector.__str__()
-    assert txt == 'Complex vector object. \n\nVector object. \n\nObject properties:\n - location   : Nodal\n'
+    assert txt == (
+        "Complex vector object. \n\n"
+        "Vector object. \n\n"
+        "Object properties:\n - location   : Nodal\n"
+    )
     value = vector.vector
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -161,24 +180,24 @@ def test_vector_complex(complex_model):
     assert isinstance(z, ResultData)
     assert norm.num_fields == 1
     assert len(norm[0].data) == 4802
-    ph = vector.vector_at_phase(59.)
+    ph = vector.vector_at_phase(59.0)
     assert isinstance(ph, ResultData)
     assert ph.num_fields == 1
     assert len(ph[0].data) == 4802
     assert len(ph[0].data[3]) == 3
-    x_ph = vector.x_at_phase(59.)
+    x_ph = vector.x_at_phase(59.0)
     assert isinstance(x_ph, ResultData)
     assert x_ph.num_fields == 1
     assert len(x_ph[0].data) == 4802
-    y_ph = vector.y_at_phase(59.)
+    y_ph = vector.y_at_phase(59.0)
     assert isinstance(y_ph, ResultData)
     assert y_ph.num_fields == 1
     assert len(y_ph[0].data) == 4802
-    z_ph = vector.z_at_phase(59.)
+    z_ph = vector.z_at_phase(59.0)
     assert isinstance(z_ph, ResultData)
     assert z_ph.num_fields == 1
     assert len(z_ph[0].data) == 4802
-    nrm_ph = vector.norm_at_phase(59.)
+    nrm_ph = vector.norm_at_phase(59.0)
     assert isinstance(nrm_ph, ResultData)
     assert nrm_ph.num_fields == 1
     assert len(nrm_ph[0].data) == 4802
@@ -189,7 +208,12 @@ def test_tensor_complex(complex_model):
     tensor = solution.stress()
     assert isinstance(tensor, ComplexTensor)
     txt = tensor.__str__()
-    assert txt == 'Complex stress. \nComplex tensor object. \n\nStress Tensor object. \n\nObject properties:\n - location   : Nodal\n'
+    assert txt == (
+        "Complex stress. \n"
+        "Complex tensor object. \n\n"
+        "Stress Tensor object. \n\n"
+        "Object properties:\n - location   : Nodal\n"
+    )
     value = tensor.tensor
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
@@ -272,44 +296,44 @@ def test_tensor_complex(complex_model):
     assert isinstance(ppal3, ResultData)
     assert ppal3.num_fields == 1
     assert len(ppal3[0].data) == 4802
-    value = tensor.tensor_at_phase(61.)
+    value = tensor.tensor_at_phase(61.0)
     assert isinstance(value, ResultData)
     assert value.num_fields == 1
     assert len(value[0].data) == 4802
     assert len(value[0].data[3]) == 6
-    xx = tensor.xx_at_phase(61.)
+    xx = tensor.xx_at_phase(61.0)
     assert isinstance(xx, ResultData)
     assert xx.num_fields == 1
     assert len(xx[0].data) == 4802
-    yy = tensor.yy_at_phase(61.)
+    yy = tensor.yy_at_phase(61.0)
     assert isinstance(yy, ResultData)
     assert yy.num_fields == 1
     assert len(yy[0].data) == 4802
-    zz = tensor.zz_at_phase(61.)
+    zz = tensor.zz_at_phase(61.0)
     assert isinstance(zz, ResultData)
     assert zz.num_fields == 1
     assert len(zz[0].data) == 4802
-    xy = tensor.xy_at_phase(61.)
+    xy = tensor.xy_at_phase(61.0)
     assert isinstance(xy, ResultData)
     assert xy.num_fields == 1
     assert len(xy[0].data) == 4802
-    yz = tensor.yz_at_phase(61.)
+    yz = tensor.yz_at_phase(61.0)
     assert isinstance(yz, ResultData)
     assert yz.num_fields == 1
     assert len(yz[0].data) == 4802
-    xz = tensor.xz_at_phase(61.)
+    xz = tensor.xz_at_phase(61.0)
     assert isinstance(xz, ResultData)
     assert xz.num_fields == 1
     assert len(xz[0].data) == 4802
-    ppal1 = tensor.principal_1_at_phase(61.)
+    ppal1 = tensor.principal_1_at_phase(61.0)
     assert isinstance(ppal1, ResultData)
     assert ppal1.num_fields == 1
     assert len(ppal1[0].data) == 4802
-    ppal2 = tensor.principal_2_at_phase(61.)
+    ppal2 = tensor.principal_2_at_phase(61.0)
     assert isinstance(ppal2, ResultData)
     assert ppal2.num_fields == 1
     assert len(ppal2[0].data) == 4802
-    ppal3 = tensor.principal_3_at_phase(61.)
+    ppal3 = tensor.principal_3_at_phase(61.0)
     assert isinstance(ppal3, ResultData)
     assert ppal3.num_fields == 1
     assert len(ppal3[0].data) == 4802
@@ -341,6 +365,7 @@ def test_displacement(allkindofcomplexity):
 
     # with dpf.core operator
     from ansys.dpf import core
+
     op = core.Operator("U")
     # op.inputs.requested_location.connect(core.locations.nodal)
     op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
@@ -362,9 +387,10 @@ def test_displacement_complex(complex_model):
     print(vector)
     assert vector._operator_name == "U"
     value = vector.vector
-    assert np.allclose(value[0].data[3].tolist(), [2.534371453684853e-09,
-                                                   -5.736467209711275e-10,
-                                                   6.357980303122968e-11])
+    assert np.allclose(
+        value[0].data[3].tolist(),
+        [2.534371453684853e-09, -5.736467209711275e-10, 6.357980303122968e-11],
+    )
     x = vector.x
     assert np.isclose(x[0].data[41], 2.685234654323797e-09)
     y = vector.y
@@ -374,9 +400,10 @@ def test_displacement_complex(complex_model):
     nrm = vector.norm
     assert np.isclose(nrm[0].data[34], 2.967925671058435e-09)
     value = vector.vector_amplitude
-    assert np.allclose(value[0].data[3].tolist(), [2.5343714759693703e-09,
-                                                  5.736467469384241e-10,
-                                                  6.358000469996922e-11])
+    assert np.allclose(
+        value[0].data[3].tolist(),
+        [2.5343714759693703e-09, 5.736467469384241e-10, 6.358000469996922e-11],
+    )
     x = vector.x_amplitude
     assert np.isclose(x[0].data[41], 2.6852347082946467e-09)
     y = vector.y_amplitude
@@ -385,17 +412,18 @@ def test_displacement_complex(complex_model):
     assert np.isclose(z[0].data[548], 1.0919526860580484e-10)
     nrm = vector.norm_amplitude
     assert np.isclose(nrm[0].data[34], 2.967925756112993e-09)
-    value = vector.vector_at_phase(61.)
-    assert np.allclose(value[0].data[3].tolist(), [1.2283937136871685e-09,
-                                                   -2.7795848616806165e-10,
-                                                   3.0964159956496574e-11])
-    x = vector.x_at_phase(61.)
+    value = vector.vector_at_phase(61.0)
+    assert np.allclose(
+        value[0].data[3].tolist(),
+        [1.2283937136871685e-09, -2.7795848616806165e-10, 3.0964159956496574e-11],
+    )
+    x = vector.x_at_phase(61.0)
     assert np.isclose(x[0].data[41], 1.3013567187124258e-09)
-    y = vector.y_at_phase(61.)
+    y = vector.y_at_phase(61.0)
     assert np.isclose(y[0].data[305], -1.183504518054655e-09)
-    z = vector.z_at_phase(61.)
+    z = vector.z_at_phase(61.0)
     assert np.isclose(z[0].data[548], 5.292387083515219e-11)
-    nrm = vector.norm_at_phase(61.)
+    nrm = vector.norm_at_phase(61.0)
     assert np.isclose(nrm[0].data[34], 1.438258083761136e-09)
 
 
@@ -434,6 +462,7 @@ def test_stress(allkindofcomplexity):
 
     # with dpf.core operator
     from ansys.dpf import core
+
     op = core.Operator("S")
     op.inputs.requested_location.connect(core.locations.nodal)
     op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
@@ -455,12 +484,17 @@ def test_stress_complex(complex_model):
     print(tensor)
     assert tensor._operator_name == "S"
     value = tensor.tensor
-    assert np.allclose(value[0].data[3].tolist(), [-1894.3998413085938,
-                                         -99533.1953125,
-                                         -216.0846405029297,
-                                         -15840.79736328125,
-                                         548.1216735839844,
-                                         -3538.7244873046875])
+    assert np.allclose(
+        value[0].data[3].tolist(),
+        [
+            -1894.3998413085938,
+            -99533.1953125,
+            -216.0846405029297,
+            -15840.79736328125,
+            548.1216735839844,
+            -3538.7244873046875,
+        ],
+    )
     xx = tensor.xx
     yy = tensor.yy
     zz = tensor.zz
@@ -505,16 +539,16 @@ def test_stress_complex(complex_model):
     assert np.isclose(ppal2[0].data[41], 8965.60427429267)
     assert np.isclose(ppal3[0].data[41], 112098.95413919646)
     assert np.isclose(vm[0].data[41], 109488.58588814907)
-    xx = tensor.xx_at_phase(9.)
-    yy = tensor.yy_at_phase(9.)
-    zz = tensor.zz_at_phase(9.)
-    xy = tensor.xy_at_phase(9.)
-    yz = tensor.yz_at_phase(9.)
-    xz = tensor.xz_at_phase(9.)
-    ppal1 = tensor.principal_1_at_phase(9.)
-    ppal2 = tensor.principal_2_at_phase(9.)
-    ppal3 = tensor.principal_3_at_phase(9.)
-    vm = tensor.von_mises_at_phase(9.)
+    xx = tensor.xx_at_phase(9.0)
+    yy = tensor.yy_at_phase(9.0)
+    zz = tensor.zz_at_phase(9.0)
+    xy = tensor.xy_at_phase(9.0)
+    yz = tensor.yz_at_phase(9.0)
+    xz = tensor.xz_at_phase(9.0)
+    ppal1 = tensor.principal_1_at_phase(9.0)
+    ppal2 = tensor.principal_2_at_phase(9.0)
+    ppal3 = tensor.principal_3_at_phase(9.0)
+    vm = tensor.von_mises_at_phase(9.0)
     assert vm.num_fields == 1
     assert len(vm[0].data) == 4802
     assert np.isclose(xx[0].data[41], -41440.999079450754)
@@ -576,6 +610,7 @@ def test_elastic_strain(allkindofcomplexity):
 
     # with dpf.core operator
     from ansys.dpf import core
+
     op = core.Operator("EPEL")
     op.inputs.requested_location.connect(core.locations.nodal)
     op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
@@ -597,12 +632,17 @@ def test_elastic_strain_complex(complex_model):
     print(tensor)
     assert tensor._operator_name == "EPEL"
     value = tensor.tensor
-    assert np.allclose(value[0].data[3].tolist(), [3.031909585615722e-07,
-                                         -7.12252500534305e-07,
-                                         3.211454924212376e-07,
-                                         -1.400326468115054e-07,
-                                         2.5393885882962763e-09,
-                                         -2.6922432283527087e-08])
+    assert np.allclose(
+        value[0].data[3].tolist(),
+        [
+            3.031909585615722e-07,
+            -7.12252500534305e-07,
+            3.211454924212376e-07,
+            -1.400326468115054e-07,
+            2.5393885882962763e-09,
+            -2.6922432283527087e-08,
+        ],
+    )
     assert tensor.xx
     assert tensor.yy
     assert tensor.zz
@@ -621,15 +661,15 @@ def test_elastic_strain_complex(complex_model):
     assert tensor.principal_1_amplitude
     assert tensor.principal_2_amplitude
     assert tensor.principal_3_amplitude
-    assert tensor.xx_at_phase(14.)
-    assert tensor.yy_at_phase(14.)
-    assert tensor.zz_at_phase(14.)
-    assert tensor.xy_at_phase(14.)
-    assert tensor.yz_at_phase(14.)
-    assert tensor.xz_at_phase(14.)
-    assert tensor.principal_1_at_phase(14.)
-    assert tensor.principal_2_at_phase(14.)
-    assert tensor.principal_3_at_phase(14.)
+    assert tensor.xx_at_phase(14.0)
+    assert tensor.yy_at_phase(14.0)
+    assert tensor.zz_at_phase(14.0)
+    assert tensor.xy_at_phase(14.0)
+    assert tensor.yz_at_phase(14.0)
+    assert tensor.xz_at_phase(14.0)
+    assert tensor.principal_1_at_phase(14.0)
+    assert tensor.principal_2_at_phase(14.0)
+    assert tensor.principal_3_at_phase(14.0)
 
 
 def test_temperature(allkindofcomplexity):
@@ -642,7 +682,9 @@ def test_temperature(allkindofcomplexity):
     assert len(value[0]) == 720
     assert value[0].data[0] == 22.0
     assert value[0].location == post.locations.nodal
-    temp2 = solution.structural_temperature(element_scoping = 2, location = post.locations.elemental)
+    temp2 = solution.structural_temperature(
+        element_scoping=2, location=post.locations.elemental
+    )
     value2 = temp2.scalar
     assert value2.num_fields == 1
     assert len(value2[0].data) == 1
@@ -651,6 +693,7 @@ def test_temperature(allkindofcomplexity):
 
     # with dpf.core operator
     from ansys.dpf import core
+
     op = core.Operator("BFE")
     op.inputs.requested_location.connect(core.locations.nodal)
     op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
@@ -681,12 +724,14 @@ def test_temperature_complex(complex_model):
     assert len(value[0]) == 4802
     assert np.isclose(value[0].data[0], 31.11269837220809)
     assert value[0].location == post.locations.nodal
-    value = temp.scalar_at_phase(21.)
+    value = temp.scalar_at_phase(21.0)
     assert value.num_fields == 1
     assert len(value[0]) == 4802
     assert np.isclose(value[0].data[0], 12.654674492941831)
     assert value[0].location == post.locations.nodal
-    temp2 = solution.structural_temperature(element_scoping = 2, location = post.locations.elemental)
+    temp2 = solution.structural_temperature(
+        element_scoping=2, location=post.locations.elemental
+    )
     value2 = temp2.scalar
     assert value2.num_fields == 2
     assert len(value2[0].data) == 1
@@ -697,7 +742,7 @@ def test_temperature_complex(complex_model):
     assert len(value2[0].data) == 1
     assert np.isclose(value2[0].data[0], 31.11269837220809)
     assert value2[0].location == post.locations.elemental
-    value2 = temp2.scalar_at_phase(21.)
+    value2 = temp2.scalar_at_phase(21.0)
     assert value2.num_fields == 1
     assert len(value2[0].data) == 1
     assert np.isclose(value2[0].data[0], 12.654674492941835)

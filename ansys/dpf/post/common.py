@@ -19,7 +19,7 @@
 #     shell_bottom = 6
 
 
-class Grouping():
+class Grouping:
     """Class with Enum inheritance. Must be used to
     describe a grouping command when the API allows it.
 
@@ -29,18 +29,20 @@ class Grouping():
     >>> solution = post.solution("file.rst")
     >>> disp = solution.elemental_stress(element_shape = post.grouping.by_el_shape)
     """
+
     by_el_shape = "elshape"
     by_material = "mat"
     by_body = "body"
 
 
-class _AvailableKeywords():
+class _AvailableKeywords:
     """Contains all the keywords that can be used inside of
     a method from a post.solution(file_path) object.
 
     In order to view the complete list of available keywords, use:
         post.print_available_keywords()
     """
+
     location = "location"
     node_scoping = "node_scoping"
     element_scoping = "element_scoping"
@@ -56,7 +58,11 @@ class _AvailableKeywords():
     def __str__(self):
         txt = ""
         for attr in dir(_AvailableKeywords):
-            if not attr.startswith("__") and not attr.startswith("_") and not callable(getattr(_AvailableKeywords, attr)):
+            if (
+                not attr.startswith("__")
+                and not attr.startswith("_")
+                and not callable(getattr(_AvailableKeywords, attr))
+            ):
                 txt += attr
                 txt += ": "
                 txt += self._description_mapping(attr)
@@ -64,35 +70,37 @@ class _AvailableKeywords():
         return txt
 
     def _description_mapping(self, attr_name):
-        if (attr_name == self.location):
+        if attr_name == self.location:
             return "str. Use post.locations.(...) as helper."
-        if (attr_name == self.node_scoping):
+        if attr_name == self.node_scoping:
             return "list, int or dpf.core.Scoping"
-        if (attr_name == self.element_scoping):
+        if attr_name == self.element_scoping:
             return "list, int or dpf.core.Scoping"
-        if (attr_name == self.time_scoping):
+        if attr_name == self.time_scoping:
             return "list, int or dpf.core.Scoping"
-        if (attr_name == self.named_selection):
+        if attr_name == self.named_selection:
             return "str. Name of named_selection."
-        if (attr_name == self.time):
+        if attr_name == self.time:
             return "float"
-        if (attr_name == self.set):
+        if attr_name == self.set:
             return "int"
-        if (attr_name == self.mapdl_grouping):
+        if attr_name == self.mapdl_grouping:
             return "int. Write 186 to get mapdl_elements solid_186."
-        if (attr_name == self.grouping):
+        if attr_name == self.grouping:
             return "str. Use post.grouping.(...) as helper."
 
 
-class _AnalysisType():
+class _AnalysisType:
     """Contains Python analysis type names. For developers usage."""
+
     static = "static"
     modal = "modal"
     harmonic = "harmonic"
     transient = "transient"
 
 
-class _PhysicsType():
+class _PhysicsType:
     """Contains Python physics type names. For developers usage."""
+
     mecanic = "mecanic"
     thermal = "thermal"

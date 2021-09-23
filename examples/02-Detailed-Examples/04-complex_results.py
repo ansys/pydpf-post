@@ -37,10 +37,10 @@ disp.num_fields
 # **Deals with phase** (phase unit is degree, phase must be a float)
 phase = 39.0
 disp_at_phase = disp_result.vector_at_phase(phase)
-print(f'Maximum displacement at phase {phase}:', disp_at_phase.max_data)
-print(f'There are {disp_at_phase.num_fields} fields')
-real_field = disp_result.vector_at_phase(0.)
-img_field = disp_result.vector_at_phase(90.)
+print(f"Maximum displacement at phase {phase}:", disp_at_phase.max_data)
+print(f"There are {disp_at_phase.num_fields} fields")
+real_field = disp_result.vector_at_phase(0.0)
+img_field = disp_result.vector_at_phase(90.0)
 
 real_field
 

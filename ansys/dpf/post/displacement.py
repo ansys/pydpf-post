@@ -4,8 +4,10 @@ from ansys.dpf.post.vector import Vector, ComplexVector
 from ansys.dpf.core import locations
 from ansys.dpf.post.errors import NodalLocationError
 
+
 class Displacement(Vector):
     """Defines the displacement object, that is a vector object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "U"
@@ -22,6 +24,7 @@ class Displacement(Vector):
 
 class ComplexDisplacement(ComplexVector):
     """Defines the complex displacement object, that is a vector object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "U"

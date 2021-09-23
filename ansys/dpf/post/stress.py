@@ -16,6 +16,7 @@ class Stress(Tensor):
     >>> solution = post.load_solution(examples.multishells_rst)
     >>> stress = solution.stress(location=post.locations.nodal, time_scoping=[1])
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "S"
@@ -33,6 +34,7 @@ class Stress(Tensor):
 
 class ComplexStress(ComplexTensor, Stress):
     """Defines the complex stress object, that is a tensor object."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._operator_name = "S"
@@ -50,4 +52,6 @@ class ComplexStress(ComplexTensor, Stress):
 
     def von_mises_at_phase(self, phase: float):
         """Returns the von mises stress at specific phase as a ResultData."""
-        return super()._get_result_data("S_eqv", self._data_sources, self._model, phase=phase)
+        return super()._get_result_data(
+            "S_eqv", self._data_sources, self._model, phase=phase
+        )
