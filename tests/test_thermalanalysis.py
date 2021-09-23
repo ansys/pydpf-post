@@ -17,7 +17,7 @@ def test_thermal_steadystate(rth_steady_state):
     assert s.num_fields == 1
     assert np.isclose(s[0].data[23], 29.6247641917003)
     assert s[0].location == post.locations.nodal
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("TEMP")
@@ -63,12 +63,12 @@ def test_steadystate_nodlocation(rth_steady_state):
     assert len(s[0].data) == 4125
     assert s[0].location == post.locations.nodal
 
-        
+
 def test_steadystate_elemlocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
     with pytest.raises(dpf_errors.NodalLocationError):
         temp = solution.temperature(location = post.locations.elemental)
-    
+
 
 def test_steadystate_elemnodallocation(rth_steady_state):
     solution = post.load_solution(rth_steady_state)
@@ -183,7 +183,7 @@ def test_transient_set(rth_transient):
     assert len(s[0].data) == 4125
     assert s[0].location == post.locations.nodal
     assert np.isclose(s[0].data[24], 21.999999999992323)
-    
+
 
 def test_heat_flux(rth_transient):
     solution = post.load_solution(rth_transient)
@@ -194,7 +194,7 @@ def test_heat_flux(rth_transient):
     assert np.allclose(s[0].data[24], [-3.85171006e-10,
                                        -9.35413524e-10,
                                        1.81041315e+03])
-    
+
     # with dpf.core operator
     from ansys.dpf import core
     op = core.Operator("TF")

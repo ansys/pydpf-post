@@ -17,5 +17,3 @@ Examples
 """
 
 #dpf.core.start_local_server()
-
-    

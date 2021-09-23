@@ -39,7 +39,7 @@ def test_resdef_location(allkindofcomplexity):
     assert stress.definition.location == post.locations.nodal
     stress.definition.location = post.locations.elemental
     assert stress.definition.location == post.locations.elemental
-    
+
 
 def test_resdef_nodescoping(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
@@ -103,7 +103,7 @@ def test_resdef_set(allkindofcomplexity):
     assert stress.definition.set == None
     stress.definition.set = 3
     assert stress.definition.set == 3
-    
+
 @pytest.mark.skipif(True, reason="The location setting of electric_field result that was locked for versions under 0.2.0, is not locked anymore.")
 def test_location_locked_electric_field(rth_electric):
     solution = post.load_solution(rth_electric)
@@ -117,7 +117,7 @@ def test_location_locked_electric_field(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-    
+
 def test_elemscoping_locked_electric_field(rth_electric):
     solution = post.load_solution(rth_electric)
     with pytest.raises(Exception):
@@ -129,7 +129,7 @@ def test_elemscoping_locked_electric_field(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-        
+
     ef = solution.electric_field()
     with pytest.raises(Exception):
         ef.definition.element_scoping = [2]
@@ -140,7 +140,7 @@ def test_elemscoping_locked_electric_field(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-            
+
 def test_elemscoping_locked_electric_potential(rth_electric):
     solution = post.load_solution(rth_electric)
     with pytest.raises(Exception):
@@ -152,7 +152,7 @@ def test_elemscoping_locked_electric_potential(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-        
+
     ef = solution.electric_potential()
     with pytest.raises(Exception):
         ef.definition.element_scoping = [2]
@@ -163,7 +163,7 @@ def test_elemscoping_locked_electric_potential(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-            
+
 def test_elemscoping_locked_temperature(rth_electric):
     solution = post.load_solution(rth_electric)
     with pytest.raises(Exception):
@@ -175,7 +175,7 @@ def test_elemscoping_locked_temperature(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-        
+
     ef = solution.temperature()
     with pytest.raises(Exception):
         ef.definition.element_scoping = [2]
@@ -186,7 +186,7 @@ def test_elemscoping_locked_temperature(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-            
+
 def test_elemscoping_locked_heat_flux(rth_electric):
     solution = post.load_solution(rth_electric)
     with pytest.raises(Exception):
@@ -198,7 +198,7 @@ def test_elemscoping_locked_heat_flux(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-        
+
     ef = solution.heat_flux()
     with pytest.raises(Exception):
         ef.definition.element_scoping = [2]
@@ -209,6 +209,3 @@ def test_elemscoping_locked_heat_flux(rth_electric):
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
-            
-    
-    

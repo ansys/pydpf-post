@@ -3,7 +3,7 @@ object. Initialization of post objects.
 """
 
 from ansys.dpf.core.model import Model
- 
+
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
 from ansys.dpf.post.static_analysis import (StaticAnalysisSolution,
                                             ThermalStaticAnalysisSolution)
