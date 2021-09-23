@@ -1,4 +1,3 @@
-from ansys import dpf
 from ansys.dpf import post
 
 

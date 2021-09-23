@@ -8,22 +8,26 @@ result introduces an amplitude evaluation.
 """
 
 
-from ansys.dpf.post.common import _AvailableKeywords
-from ansys.dpf.core import Operator as _Operator
 from ansys.dpf.core import locations
-
-from ansys.dpf.post.stress import Stress, ComplexStress
-from ansys.dpf.post.strain import ElasticStrain, ComplexElasticStrain
-from ansys.dpf.post.strain import PlasticStrain, ComplexPlasticStrain
-from ansys.dpf.post.temperature import StructuralTemperature
-from ansys.dpf.post.temperature import ComplexStructuralTemperature
-from ansys.dpf.post.temperature import Temperature, HeatFlux
-from ansys.dpf.post.displacement import Displacement, ComplexDisplacement
+from ansys.dpf.post.common import _AvailableKeywords
+from ansys.dpf.post.displacement import ComplexDisplacement, Displacement
 from ansys.dpf.post.electric_results import ElectricField, ElectricPotential
-
-from ansys.dpf.post.misc_results import Misc, MecanicMisc, ComplexMecanicMisc, ThermalMisc
-
 from ansys.dpf.post.errors import NodalLocationError
+from ansys.dpf.post.misc_results import ComplexMecanicMisc, MecanicMisc
+from ansys.dpf.post.strain import (
+    ComplexElasticStrain,
+    ComplexPlasticStrain,
+    ElasticStrain,
+    PlasticStrain,
+)
+from ansys.dpf.post.stress import ComplexStress, Stress
+from ansys.dpf.post.temperature import (
+    ComplexStructuralTemperature,
+    HeatFlux,
+    StructuralTemperature,
+    Temperature,
+)
+
 
 class DpfSolution:
     """Main class of post result API."""

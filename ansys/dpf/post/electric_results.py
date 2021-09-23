@@ -1,9 +1,8 @@
 """This module contains the electric results class ."""
 
+from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.post.scalar import Scalar
 from ansys.dpf.post.vector import Vector
-from ansys.dpf.core.common import locations
-from ansys.dpf.post.common import _AvailableKeywords
 
 
 class ElectricField(Vector):

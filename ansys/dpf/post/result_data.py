@@ -4,13 +4,8 @@ user will be able to use to compute through the DPF Post API.
 This is a fields container wrapper."""
 
 from textwrap import wrap
-import os
-import sys
 
-import pyvista as pv
-import matplotlib.pyplot as pyplot
-
-from ansys.dpf.core import Operator, FieldsContainer
+from ansys.dpf.core import FieldsContainer, Operator
 from ansys.dpf.core.common import types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator

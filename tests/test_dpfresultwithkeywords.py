@@ -1,10 +1,10 @@
-import os
+import unittest
+
+import numpy as np
+import pytest
 from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.core.common import locations
-import numpy as np
-import unittest
-import pytest
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):

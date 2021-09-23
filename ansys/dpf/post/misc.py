@@ -1,8 +1,3 @@
-import platform
-import glob
-import os
-from pkgutil import iter_modules
-
 from scooby import Report as ScoobyReport
 
 

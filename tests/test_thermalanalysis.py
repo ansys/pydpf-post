@@ -1,11 +1,9 @@
-from ansys.dpf.post.temperature import Temperature
-from ansys.dpf.post.common import _PhysicsType
-from ansys.dpf import post
 import numpy as np
-import unittest
 import pytest
+from ansys.dpf import post
 from ansys.dpf.post import errors as dpf_errors
-from ansys.dpf.core import errors as core_errors
+from ansys.dpf.post.common import _PhysicsType
+from ansys.dpf.post.temperature import Temperature
 
 
 def test_thermal_steadystate(rth_steady_state):

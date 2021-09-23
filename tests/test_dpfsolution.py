@@ -1,8 +1,6 @@
-import os
-from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.core.common import locations
+from ansys.dpf.post.result_data import ResultData
 
 
 def test_get_result_info(allkindofcomplexity):

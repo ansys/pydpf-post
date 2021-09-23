@@ -1,11 +1,8 @@
-import os
-
-from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.common import _AnalysisType
-from ansys.dpf.post.static_analysis import StaticAnalysisSolution
-from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
+from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
+from ansys.dpf.post.static_analysis import StaticAnalysisSolution
 from ansys.dpf.post.transient_analysis import TransientAnalysisSolution
 
 

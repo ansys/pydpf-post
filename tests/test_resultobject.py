@@ -1,14 +1,12 @@
-import pytest
 import numpy as np
-
-from ansys import dpf
-from ansys.dpf.core import locations
+import pytest
 from ansys.dpf import post
-from ansys.dpf.post.result_data import ResultData
-from ansys.dpf.post.scalar import Scalar, ComplexScalar
-from ansys.dpf.post.vector import Vector, ComplexVector
-from ansys.dpf.post.tensor import Tensor, ComplexTensor
+from ansys.dpf.core import locations
 from ansys.dpf.post import errors
+from ansys.dpf.post.result_data import ResultData
+from ansys.dpf.post.scalar import ComplexScalar, Scalar
+from ansys.dpf.post.tensor import ComplexTensor, Tensor
+from ansys.dpf.post.vector import ComplexVector, Vector
 
 
 def test_scalar(allkindofcomplexity):
