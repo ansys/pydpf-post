@@ -23,7 +23,7 @@ setup(
     author='ANSYS',
     author_email='ramdane.lagha@ansys.com',
     maintainer="ANSYS",
-    maintainer_email="alexander.kaszynski@ansys.com",
+    maintainer_email="ramdane.lagha@ansys.com",
     description="DPF-Post Python gRPC client",
     url="https://github.com/pyansys/DPF-Post",
     long_description=open("README.md").read(),
