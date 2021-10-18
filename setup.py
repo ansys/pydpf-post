@@ -20,6 +20,8 @@ setup(
     name="ansys-dpf-post",
     packages=["ansys.dpf.post", "ansys.dpf.post.examples"],
     version=__version__,
+    author='ANSYS',
+    author_email='ramdane.lagha@ansys.com',
     maintainer="ANSYS",
     maintainer_email="alexander.kaszynski@ansys.com",
     description="DPF-Post Python gRPC client",
@@ -38,4 +40,5 @@ setup(
     ],
     python_requires=">=3.6.*",
     install_requires=install_requires,
+    license='MIT',
 )
