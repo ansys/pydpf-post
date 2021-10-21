@@ -25,7 +25,7 @@ setup(
     maintainer="ANSYS",
     maintainer_email="ramdane.lagha@ansys.com",
     description="DPF-Post Python gRPC client",
-    url="https://github.com/pyansys/DPF-Post",
+    url="https://github.com/pyansys/pydpf-post",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
