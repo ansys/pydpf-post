@@ -28,12 +28,14 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
          filepath to the file you want to open, or a dpf.core.DataSources().
 
     physics_type : common._PhysicsType, str, optional
-        ["mecanic", "thermal"] optionally specify the type of physics described in the ''data_sources''.
-        If nothing is specified, the ''data_sources'' are read to evaluate the ''physics_type''.
+        ["mecanic", "thermal"] optionally specify the type of physics described in
+        the ''data_sources''. If nothing is specified, the ''data_sources'' are
+        read to evaluate the ''physics_type''.
 
     analysis_type : common._AnalysisType, str, optional
-        ["static", "modal", "harmonic", "transient"] optionally specify the type of analysis described
-        in the ''data_sources''. If nothing is specified, the ''data_sources'' are read to evaluate
+        ["static", "modal", "harmonic", "transient"] optionally specify the type of
+        analysis described in the ''data_sources''.
+        If nothing is specified, the ''data_sources'' are read to evaluate
         the ''physics_type''.
 
     Examples
