@@ -36,7 +36,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
         ["static", "modal", "harmonic", "transient"] optionally specify the type of
         analysis described in the ''data_sources''.
         If nothing is specified, the ''data_sources'' are read to evaluate
-        the ''physics_type''.
+        the ''analysis_type''.
 
     Examples
     --------
