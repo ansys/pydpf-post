@@ -11,12 +11,12 @@ Once you've installed Ansys 2021R1 or newer, you can install DPF with:
 
 
 This will install the latest version of ``ansys-dpf-post`` and all the
-necessary dependacies.
+necessary dependencies.
 
 If you are unable to install the module on the host machine due to
-network isolation, download the latest release wheel at `DPF-Post
-GitHub <https://https://github.com/pyansys/DPF-Post>`_ or from PyPi at
-`DPF-Post PyPi <https://pypi.org/project/ansys-dpf-post/>`_
+network isolation, download the latest release wheel at `pydpf-post
+GitHub <https://github.com/pyansys/pydpf-post>`_ or from PyPi at
+`pydpf-post PyPi <https://pypi.org/project/ansys-dpf-post/>`_
 
 
 Editable Install (Development Mode)

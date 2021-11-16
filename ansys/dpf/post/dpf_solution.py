@@ -7,7 +7,7 @@ DpfSolution class.  In addition to the classic APIs, the complex
 result introduces an amplitude evaluation.
 """
 
-
+import re
 from ansys.dpf.core import locations
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.post.displacement import ComplexDisplacement, Displacement
@@ -68,9 +68,10 @@ class DpfSolution:
                 raise NodalLocationError()
 
     def __str__(self):
+
         txt = (
-            "%s solution object."
-            % self._model.metadata.result_info.analysis_type.capitalize()
+            "%s object."
+            % re.sub(r"(?<!^)(?=[A-Z])", " ", type(self).__name__)
             + "\n\n\nData Sources\n------------------------------\n"
         )
         ds_str = self._data_sources.__str__()
