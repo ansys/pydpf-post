@@ -1,6 +1,7 @@
 """Module containing the method to instantiate the result
 object. Initialization of post objects.
 """
+from builtins import Exception
 
 from ansys.dpf.core.model import Model
 
@@ -17,7 +18,7 @@ from ansys.dpf.post.transient_analysis import (
 )
 
 
-def load_solution(data_sources):
+def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Return a ``Result`` object which can provide information on a given
     set, on a given scoping.
 
@@ -26,6 +27,15 @@ def load_solution(data_sources):
     data_sources : str or dpf.core.DataSources
          filepath to the file you want to open, or a dpf.core.DataSources().
 
+    physics_type : common._PhysicsType, str, optional
+        ["mecanic", "thermal"] optionally specify the type of physics described in the ''data_sources''.
+        If nothing is specified, the ''data_sources'' are read to evaluate the ''physics_type''.
+
+    analysis_type : common._AnalysisType, str, optional
+        ["static", "modal", "harmonic", "transient"] optionally specify the type of analysis described
+        in the ''data_sources''. If nothing is specified, the ''data_sources'' are read to evaluate
+        the ''physics_type''.
+
     Examples
     --------
     >>> solution = post.solution("file.rst")
@@ -33,8 +43,22 @@ def load_solution(data_sources):
     _model = Model(data_sources)
     data_sources = _model.metadata.data_sources
 
-    analysis_type = _model.metadata.result_info.analysis_type
-    physics_type = _model.metadata.result_info.physics_type
+    if not physics_type:
+        try:
+            physics_type = _model.metadata.result_info.physics_type
+        except Exception as e:
+            print("Physics type is taken as mecanic by default, please specify physics_type",
+                  "keyword if it's wrong")
+            physics_type = _PhysicsType.mecanic
+
+    if not analysis_type:
+        try:
+            analysis_type = _model.metadata.result_info.analysis_type
+        except Exception as e:
+            print("Analysis type is taken as static by default, please specify analysis_type",
+                  "keyword if it's wrong")
+            analysis_type = _AnalysisType.static
+
     if physics_type == _PhysicsType.thermal:
         if analysis_type == _AnalysisType.static:
             return ThermalStaticAnalysisSolution(data_sources, _model)

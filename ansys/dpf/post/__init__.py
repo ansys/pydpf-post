@@ -1,3 +1,5 @@
+import ansys.dpf.core.settings
+
 from ansys.dpf.post.common import Grouping as grouping
 from ansys.dpf.core.common import locations
 from ansys.dpf.post.post_utility import load_solution, print_available_keywords
@@ -15,5 +17,6 @@ Examples
 >>> disp = solution.nodal_displacement()
 
 """
-
+if hasattr(ansys.dpf.core.settings, "set_dynamic_available_results_capability"):
+    ansys.dpf.core.settings.set_dynamic_available_results_capability(False)
 # dpf.core.start_local_server()
