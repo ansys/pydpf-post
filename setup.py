@@ -3,7 +3,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-install_requires = ["pyvista>=0.24.0", "matplotlib", "ansys.dpf.core>=0.3.0"]
+install_requires = ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib", "ansys.dpf.core>=0.3.0"]
 
 
 # Get version from version info
