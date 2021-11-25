@@ -74,6 +74,7 @@ class Result:
             subresult=subresult,
             mapdl_grouping=self.definition.mapdl_grouping,
             set=self.definition.set,
+            coordinates=self.definition.coordinates,
             time_scoping=self.definition.time_scoping,
             phase=phase,
         )

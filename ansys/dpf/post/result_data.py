@@ -52,6 +52,7 @@ class ResultData:
         subresult=None,
         mapdl_grouping=None,
         set=None,
+        coordinates=None,
         time_scoping=None,
     ):
 
@@ -70,6 +71,7 @@ class ResultData:
             subresult,
             mapdl_grouping,
             set,
+            coordinates,
             time_scoping,
         )
         self.result_fields_container = None

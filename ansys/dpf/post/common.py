@@ -54,6 +54,7 @@ class _AvailableKeywords:
     _subresult = "subresult"
     mapdl_grouping = "mapdl_grouping"
     time_scoping = "time_scoping"
+    coordinates = "coordinates"
 
     def __str__(self):
         txt = ""

@@ -8,7 +8,7 @@ computation."""
 import numpy as np
 from collections import OrderedDict
 from ansys import dpf
-from ansys.dpf.core import Operator
+from ansys.dpf.core import Operator, Field, Scoping
 from ansys.dpf.core.common import types, locations
 from ansys.dpf.post.common import Grouping, _AvailableKeywords
 from ansys.dpf.core.scoping import Scoping
@@ -34,6 +34,7 @@ class ResultEvaluator:
         subresult=None,
         mapdl_grouping=None,
         set=None,
+        coordinates=None,
         time_scoping=None,
     ):
 
@@ -194,6 +195,26 @@ class ResultEvaluator:
                 forward_op = Operator("forward_fc")
                 forward_op.inputs.fields.connect(centroid_op.outputs.field)
                 self._result_operator = forward_op
+        if coordinates is not None:
+            mapping_operator = Operator("mapping")
+            mapping_operator.inputs.fields_container.connect(
+                self._result_operator.outputs.fields_container
+                )
+            # coordinates as a field
+            field_coord = Field()
+            field_coord.location = locations.nodal
+            field_coord.data = coordinates
+            scoping = Scoping()
+            scoping.location = locations.nodal
+            scoping.ids = list(range(1, len(coordinates) + 1))
+            field_coord.scoping = scoping
+            mapping_operator.inputs.coordinates.connect(field_coord)
+            mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
+            self._chained_operators[mapping_operator.name] = (
+                    "This operator will map the result on specified "
+                    "coordinates."
+                )
+            self._result_operator = mapping_operator
         # outside post-processing instruction
         if elem_average:
             self._elemental_nodal_to_elemental_result()
