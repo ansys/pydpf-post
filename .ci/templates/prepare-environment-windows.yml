@@ -1,4 +1,8 @@
 steps:  
+    - script: |
+        env
+      displayName: Display env
+      
     - powershell: |
         Set-StrictMode -Version Latest
         $ErrorActionPreference = "Stop"
