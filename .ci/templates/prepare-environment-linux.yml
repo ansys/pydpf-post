@@ -26,8 +26,8 @@ steps:
       echo ${WHEELNAME}
       pip install ${WHEELNAME}
       cd tests
-      xvfb-run python -c "from ansys.dpf import core; print(core.Report())"
-    displayName: Install ansys-dpf-core
+      xvfb-run python -c "from ansys.dpf import post; print(post.Report())"
+    displayName: Install ansys-dpf-post
 
   - task: UniversalPackages@0
     inputs:
