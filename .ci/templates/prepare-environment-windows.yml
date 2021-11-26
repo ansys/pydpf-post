@@ -37,6 +37,7 @@ steps:
         ECHO %WHEELPATH% 
         pip install %WHEELPATH% --no-deps
         cd tests
+        pip install scooby
         python -c "from ansys.dpf import post; print(post.Report(gpu=False))"           
       
       displayName: Install ansys-dpf-post

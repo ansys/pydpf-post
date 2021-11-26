@@ -1,4 +1,15 @@
-from scooby import Report as ScoobyReport
+# ANSYS CPython Workbench environment may not have scooby installed.
+try:
+    from scooby import Report as ScoobyReport
+except ImportError:
+
+    class ScoobyReport:
+        """Placeholder for Scooby report."""
+
+        def __init__(self, *args, **kwargs):
+            raise ImportError(
+                "Install `scooby` with `pip install scooby` to use " "this feature"
+            )
 
 
 class Report(ScoobyReport):
