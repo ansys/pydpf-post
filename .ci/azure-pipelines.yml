@@ -101,6 +101,13 @@ jobs:
 
     - script: |
         pip install -r requirements_build.txt
+        
+        cd ${BUILD_BINARIESDIRECTORY}
+        git clone https://github.com/pyansys/pydpf-core
+        cd pydpf-core
+        pip install .
+        
+        cd ${SYSTEM_DEFAULTWORKINGDIRECTORY}
         python setup.py bdist_wheel
         export WHEELNAME=`ls dist/*.whl`
         echo ${WHEELNAME}

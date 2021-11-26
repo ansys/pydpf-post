@@ -25,6 +25,13 @@ steps:
         
     - script: |
         pip install -r requirements_build.txt
+        
+        cd $(Build.BinariesDirectory)
+        git clone https://github.com/pyansys/pydpf-core
+        cd pydpf-core
+        pip install .
+        
+        cd $(System.DefaultWorkingDirectory)
         python setup.py bdist_wheel
         FOR /F %%a in ('dir /s/b dist\*.whl') do SET WHEELPATH=%%a
         ECHO %WHEELPATH% 
