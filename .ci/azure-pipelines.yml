@@ -111,7 +111,7 @@ jobs:
         python setup.py bdist_wheel
         export WHEELNAME=`ls dist/*.whl`
         echo ${WHEELNAME}
-        pip install ${WHEELNAME}
+        pip install ${WHEELNAME} --no-deps
         cd tests
         python -c "from ansys.dpf import post; print(post.Report())"
       displayName: Install ansys-dpf-post

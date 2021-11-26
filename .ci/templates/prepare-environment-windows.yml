@@ -35,7 +35,7 @@ steps:
         python setup.py bdist_wheel
         FOR /F %%a in ('dir /s/b dist\*.whl') do SET WHEELPATH=%%a
         ECHO %WHEELPATH% 
-        pip install %WHEELPATH%
+        pip install %WHEELPATH% --no-deps
         cd tests
         python -c "from ansys.dpf import post; print(post.Report(gpu=False))"           
       
