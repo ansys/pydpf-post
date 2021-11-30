@@ -265,7 +265,7 @@ class Definition:
         if not isinstance(value, int):
             raise TypeError("Expected type is int.")
         self._set = value
-        
+
     @property
     def coordinates(self) -> list:
         """list: Coordinates property. Can be set.
