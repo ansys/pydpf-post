@@ -207,8 +207,43 @@ class ResultData:
 
         This method is private, publishes a vtk file and print (using pyvista) from this file."""
         self._evaluate_result()
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        pl._plot_contour_using_vtk_file(self.result_fields_container)
+        pl = DpfPlotter()
+        pl._plot_contour_using_vtk_file(
+            self._evaluator._model.metadata.meshed_region,
+            self.result_fields_container
+            )
+
+    def _sort_fields_container_with_labels(self, option_id, display_option): 
+            ids = option_id
+            if isinstance(option_id, int):
+                ids = [option_id]
+            new_fields_container = FieldsContainer()
+            label_spaces = []
+            for opt_id in ids:
+                i = 0
+                while i < len(self.result_fields_container):
+                    label_space = {}
+                    label_space[display_option] = opt_id
+                    fc_label = self.result_fields_container.get_label_space(i)
+                    for lab in self.result_fields_container.labels:
+                        if lab != display_option:
+                            if display_option in fc_label:
+                                if fc_label[display_option] == opt_id:
+                                    label_space[lab] = fc_label[lab]
+                    if len(fc_label) == len(label_space):
+                        label_spaces.append(label_space)
+                    i += 1
+            lab_names = []
+            for lab_sp in label_spaces:
+                for key, val in lab_sp.items():
+                    if key not in lab_names:
+                        lab_names.append(key)
+            for name in lab_names:
+                new_fields_container.add_label(name)
+            for label in label_spaces:
+                field = self.result_fields_container.get_field(label)
+                new_fields_container.add_field(label, field)
+            return new_fields_container
 
     def plot_contour(
         self,
@@ -258,48 +293,43 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        if len(self.result_fields_container) == 1:
-            pl.plot_contour(
-                self.result_fields_container,
-                off_screen=off_screen,
-                notebook=notebook,
-                **kwargs
-            )
-        else:
-            # sorts and creates a new fields_container with only the desired labels
-            ids = option_id
-            if isinstance(option_id, int):
-                ids = [option_id]
-            new_fields_container = FieldsContainer()
-            label_spaces = []
-            for opt_id in ids:
-                i = 0
-                while i < len(self.result_fields_container):
-                    label_space = {}
-                    label_space[display_option] = opt_id
-                    fc_label = self.result_fields_container.get_label_space(i)
-                    for lab in self.result_fields_container.labels:
-                        if lab != display_option:
-                            if display_option in fc_label:
-                                if fc_label[display_option] == opt_id:
-                                    label_space[lab] = fc_label[lab]
-                    if len(fc_label) == len(label_space):
-                        label_spaces.append(label_space)
-                    i += 1
-            lab_names = []
-            for lab_sp in label_spaces:
-                for key, val in lab_sp.items():
-                    if key not in lab_names:
-                        lab_names.append(key)
-            for name in lab_names:
-                new_fields_container.add_label(name)
-            for label in label_spaces:
-                field = self.result_fields_container.get_field(label)
-                new_fields_container.add_field(label, field)
-            pl.plot_contour(
-                new_fields_container, off_screen=off_screen, notebook=notebook, **kwargs
-            )
+        pl = DpfPlotter()
+        if self._evaluator._coordinates is not None:
+            pl.add_mesh(self._evaluator._model.metadata.meshed_region,
+                        style="surface",
+                        show_edges=True,
+                        opacity=0.3,
+                        **kwargs)
+            new_fields_container = self._sort_fields_container_with_labels(
+                option_id,
+                display_option
+                )
+            for field_m in new_fields_container:
+                mesh_m = field_m.meshed_region
+                pl.add_field(field_m, mesh_m)
+            pl.show_figure()
+        else: 
+            if len(self.result_fields_container) == 1:
+                pl.plot_contour(
+                    self._evaluator._model.metadata.meshed_region,
+                    self.result_fields_container,
+                    off_screen=off_screen,
+                    notebook=notebook,
+                    **kwargs
+                )
+            else:
+                # sorts and creates a new fields_container with only the desired labels
+                new_fields_container = self._sort_fields_container_with_labels(
+                    option_id,
+                    display_option
+                    )
+                pl.plot_contour(
+                    self._evaluator._model.metadata.meshed_region,
+                    new_fields_container,
+                    off_screen=off_screen,
+                    notebook=notebook,
+                    **kwargs
+                )
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
@@ -326,5 +356,7 @@ class ResultData:
         # res_op = self._evaluator._result_operator
         # res_op.inputs.time_scoping.connect(timeids)
         # new_fields_container = res_op.get_output(0, types.fields_container)
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        pl.plot_chart(self.result_fields_container)
+        pl = DpfPlotter()
+        pl.plot_chart(
+            self.result_fields_container
+            )

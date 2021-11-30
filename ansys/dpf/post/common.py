@@ -89,6 +89,10 @@ class _AvailableKeywords:
             return "int. Write 186 to get mapdl_elements solid_186."
         if attr_name == self.grouping:
             return "str. Use post.grouping.(...) as helper."
+        if attr_name == self.coordinates:
+            txt = """list of coordinates, e.g. [[0.1, 0.0, 0.0],"
+            "[0.0, 0.1, 0.0]]."""
+            return txt
 
 
 class _AnalysisType:

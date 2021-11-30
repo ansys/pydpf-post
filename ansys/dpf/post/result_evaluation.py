@@ -43,6 +43,7 @@ class ResultEvaluator:
             OrderedDict()
         )  # dictionary containing (key = Operator.name, [Operator, description])
         self.subresult = subresult
+        self._coordinates = coordinates
 
         if subresult is not None:
             operator_name += subresult
@@ -209,6 +210,7 @@ class ResultEvaluator:
             scoping.ids = list(range(1, len(coordinates) + 1))
             field_coord.scoping = scoping
             mapping_operator.inputs.coordinates.connect(field_coord)
+            mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
             self._chained_operators[mapping_operator.name] = (
                     "This operator will map the result on specified "
