@@ -207,10 +207,8 @@ class ResultData:
 
         This method is private, publishes a vtk file and print (using pyvista) from this file."""
         self._evaluate_result()
-        pl = DpfPlotter()
-        pl._plot_contour_using_vtk_file(
-            self._evaluator._model.metadata.meshed_region, self.result_fields_container
-        )
+        pl = DpfPlotter(mesh=self._evaluator._model.metadata.meshed_region)
+        pl._plot_contour_using_vtk_file(self.result_fields_container)
 
     def _sort_fields_container_with_labels(self, option_id, display_option):
         ids = option_id
@@ -292,7 +290,7 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
-        pl = DpfPlotter()
+        pl = DpfPlotter(mesh=self._evaluator._model.metadata.meshed_region)
         if self._evaluator._coordinates is not None:
             new_fields_container = self._sort_fields_container_with_labels(
                 option_id, display_option
@@ -311,8 +309,8 @@ class ResultData:
         else:
             if len(self.result_fields_container) == 1:
                 pl.plot_contour(
-                    self._evaluator._model.metadata.meshed_region,
                     self.result_fields_container,
+                    meshed_region=self._evaluator._model.metadata.meshed_region,
                     off_screen=off_screen,
                     notebook=notebook,
                     **kwargs
@@ -323,8 +321,8 @@ class ResultData:
                     option_id, display_option
                 )
                 pl.plot_contour(
-                    self._evaluator._model.metadata.meshed_region,
                     new_fields_container,
+                    meshed_region=self._evaluator._model.metadata.meshed_region,
                     off_screen=off_screen,
                     notebook=notebook,
                     **kwargs
@@ -355,5 +353,5 @@ class ResultData:
         # res_op = self._evaluator._result_operator
         # res_op.inputs.time_scoping.connect(timeids)
         # new_fields_container = res_op.get_output(0, types.fields_container)
-        pl = DpfPlotter()
+        pl = DpfPlotter(mesh=None)
         pl.plot_chart(self.result_fields_container)
