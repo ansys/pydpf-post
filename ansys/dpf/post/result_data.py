@@ -310,7 +310,6 @@ class ResultData:
             if len(self.result_fields_container) == 1:
                 pl.plot_contour(
                     self.result_fields_container,
-                    meshed_region=self._evaluator._model.metadata.meshed_region,
                     off_screen=off_screen,
                     notebook=notebook,
                     **kwargs
@@ -322,7 +321,6 @@ class ResultData:
                 )
                 pl.plot_contour(
                     new_fields_container,
-                    meshed_region=self._evaluator._model.metadata.meshed_region,
                     off_screen=off_screen,
                     notebook=notebook,
                     **kwargs
