@@ -6,8 +6,8 @@ Troubleshooting
 This section explains how to resolve the most common issues encountered with ``pydpf-post``.
 It also includes suggestions for improving scripts.
 
-Using the Model
----------------
+Using the solution
+------------------
 
 Invalid UTF-8 warning/issue 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
