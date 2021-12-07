@@ -9,6 +9,7 @@ from ansys.dpf.core import FieldsContainer, Operator
 from ansys.dpf.core.common import types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
+from ansys.dpf.post import errors as dpf_errors
 
 
 class ResultData:
@@ -207,7 +208,7 @@ class ResultData:
 
         This method is private, publishes a vtk file and print (using pyvista) from this file."""
         self._evaluate_result()
-        pl = DpfPlotter(mesh=self._evaluator._model.metadata.meshed_region)
+        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl._plot_contour_using_vtk_file(self.result_fields_container)
 
     def _sort_fields_container_with_labels(self, option_id, display_option):
@@ -290,8 +291,12 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
-        pl = DpfPlotter(mesh=self._evaluator._model.metadata.meshed_region)
         if self._evaluator._coordinates is not None:
+            try:
+                from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
+            except:
+                raise dpf_errors.CoreVersionError(version='0.3.4')
+            pl = DpfPlotterObj()
             new_fields_container = self._sort_fields_container_with_labels(
                 option_id, display_option
             )
@@ -307,6 +312,7 @@ class ResultData:
             )
             pl.show_figure()
         else:
+            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
             if len(self.result_fields_container) == 1:
                 pl.plot_contour(
                     self.result_fields_container,
@@ -351,5 +357,5 @@ class ResultData:
         # res_op = self._evaluator._result_operator
         # res_op.inputs.time_scoping.connect(timeids)
         # new_fields_container = res_op.get_output(0, types.fields_container)
-        pl = DpfPlotter(mesh=None)
+        pl = DpfPlotter(None)
         pl.plot_chart(self.result_fields_container)

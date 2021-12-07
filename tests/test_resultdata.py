@@ -265,8 +265,8 @@ def test_plot_with_vtk_file(allkindofcomplexity):
 from ansys.dpf import core
 version_core = core.__version__
 MEETS_CORE_034 = core.check_version.meets_version(version_core, '0.3.4')
-@pytest.mark.skipif(not MEETS_CORE_034, reason="Plot path on coordinates"
-                    "available from dpf-core 0.3.4.")
+# @pytest.mark.skipif(not MEETS_CORE_034, reason="Plot path on coordinates"
+#                     "available from dpf-core 0.3.4.")
 def test_plot_on_coordinates(model_ns):
     i = 0
     coordinates = [[-0.0195, 0.006, -0.0025]]
