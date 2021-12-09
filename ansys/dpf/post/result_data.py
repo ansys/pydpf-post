@@ -295,7 +295,7 @@ class ResultData:
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
             except:
-                raise dpf_errors.CoreVersionError(version='0.3.3')
+                raise dpf_errors.CoreVersionError(version='0.3.4')
             pl = DpfPlotterObj()
             new_fields_container = self._sort_fields_container_with_labels(
                 option_id, display_option
