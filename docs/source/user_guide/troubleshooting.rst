@@ -3,15 +3,15 @@
 ===============
 Troubleshooting
 ===============
-This section explains how to resolve the most common issues encountered with ``pydpf-post``.
+This section explains how to resolve the most common issues encountered with PyDPF-Post.
 It also includes suggestions for improving scripts.
 
 Using the Solution
 ------------------
 
-Invalid UTF-8 warning/issue 
+Invalid UTF-8 Error 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Trying to load a solution with: 
+Assume that you are using this code to load a solution: 
 
 .. code-block:: default
 
@@ -26,12 +26,12 @@ The following error can be raised:
     String field 'ansys.api.dpf.result_info.v0.ResultInfoResponse.user_name' contains invalid UTF-8 
     data when serializing a protocol buffer. Use the 'bytes' type if you intend to send raw bytes.
 
-This will prevent the solution to be accessed. To avoid a such inconvenience, please ensure to work with 
-a version higher than 0.2.1 for the ansys-dpf-post module, and higher than 0.3.2 of the ansys-dpf-core module.
-In this case, a warning will still be raised, but it should not prevent to use the solution anymore. 
+This will prevent the solution from being accessed. To avoid this error, ensure that you are using
+a PyDPF-Post version higher than 0.2.1 and a PyDPF-Core version higher than 0.3.2.
+In this case, a warning will still be raised, but it should not prevent the solution from being accessed.
 
-The solution needs to set a physics_type and an analysis type to allow the result file to be read. This
-can be specified using the "physics_type" and "analysis_type" arguments of the load_solution method: 
+The solution needs to set a ``physics_type`` and an ``analysis type`` to allow the result file to be read. 
+These arguments are specified for the ``load_solution`` method: 
 
 .. code-block:: default
 
