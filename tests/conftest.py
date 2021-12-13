@@ -59,6 +59,12 @@ def simple_bar():
 
 
 @pytest.fixture()
+def static_rst():
+    """Resolve the path of the "static.rst" result file."""
+    return examples.static_rst
+
+
+@pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
     return examples.complex_rst

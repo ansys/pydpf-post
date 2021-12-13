@@ -1,5 +1,5 @@
 import os
-
+import numpy as np
 import pytest
 
 from ansys import dpf
@@ -307,3 +307,26 @@ def test_plot_on_coordinates(model_ns):
     path = post.create_path_on_coordinates(coordinates=coordinates)
     displacement = solution.displacement(path=path)
     displacement.vector.plot_contour(notebook=False)
+
+@pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
+                    "available from dpf-core 0.3.4.")
+def test_path_on_coordinates_with_scoping(static_rst):
+    coordinates = [[0.024, 0.03, 0.003]]
+    for i in range(1, 3):
+        coord_copy = coordinates[0].copy()
+        coord_copy[1] = coord_copy[0] + i * 0.01
+        coordinates.append(coord_copy)
+    solution = post.load_solution(static_rst)
+    scoping_ids_orig = [14, 5, 101]
+    path = post.create_path_on_coordinates(coordinates=coordinates,
+                                           scoping=scoping_ids_orig)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert len(field.scoping) == 3
+    scoping_ids = field.scoping.ids
+    result = np.array_equal(np.array(scoping_ids).sort(),
+                            np.array(scoping_ids_orig).sort())
+    assert result is True
+    
