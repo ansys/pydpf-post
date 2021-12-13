@@ -329,4 +329,3 @@ def test_path_on_coordinates_with_scoping(static_rst):
     result = np.array_equal(np.array(scoping_ids).sort(),
                             np.array(scoping_ids_orig).sort())
     assert result is True
-    

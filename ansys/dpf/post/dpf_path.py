@@ -35,14 +35,14 @@ def create_path_on_coordinates(coordinates, scoping=None):
     ... )
     >>> solution = post.load_solution(examples.static_rst)
     >>> stress = solution.stress(path=dpf_path)
-    
+
     """
     return DpfPath(coordinates=coordinates, scoping=scoping)
 
 class DpfPath:
     """This object describe a set of coordinates.
     It can be associated to a scoping (list of ids)."""
-    
+
     def __init__(self, coordinates, scoping=None):
         """
         DpfPath object constructor.
