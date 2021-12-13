@@ -75,7 +75,7 @@ class ResultData:
             path,
             time_scoping,
         )
-        self.result_fields_container = None
+        self._result_fields_container = None
 
     def __str__(self):
         self._evaluate_result()
@@ -97,8 +97,8 @@ class ResultData:
 
     def _evaluate_result(self):
         """First evaluation of the result."""
-        if self.result_fields_container is None:
-            self.result_fields_container = self._evaluator.evaluate_result()
+        if self._result_fields_container is None:
+            self._result_fields_container = self._evaluator.evaluate_result()
 
     def _evaluate_result_forced(self):
         """Re-evaluation of the result."""
@@ -200,6 +200,11 @@ class ResultData:
         returns its result (output from pin 0).
         """
         return self._min_max(0).data[field_index]
+
+    @property
+    def result_fields_container(self):
+        self._evaluate_result()
+        return self._result_fields_container
 
     def _plot_contour_with_vtk_file(self):
         """Plot the contour result on its mesh support. The obtained figure depends on the
