@@ -53,7 +53,7 @@ class ResultData:
         subresult=None,
         mapdl_grouping=None,
         set=None,
-        coordinates=None,
+        path=None,
         time_scoping=None,
     ):
 
@@ -72,7 +72,7 @@ class ResultData:
             subresult,
             mapdl_grouping,
             set,
-            coordinates,
+            path,
             time_scoping,
         )
         self.result_fields_container = None
@@ -291,7 +291,7 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
-        if self._evaluator._coordinates is not None:
+        if self._evaluator._path is not None:
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
             except:

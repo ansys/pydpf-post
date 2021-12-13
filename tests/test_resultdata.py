@@ -304,5 +304,6 @@ def test_plot_on_coordinates(model_ns):
         coord_copy[0] = coord_copy[0] + i * 0.0003
         coordinates.append(coord_copy)
     solution = post.load_solution(model_ns)
-    displacement = solution.displacement(coordinates = coordinates)
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    displacement = solution.displacement(path=path)
     displacement.vector.plot_contour(notebook=False)

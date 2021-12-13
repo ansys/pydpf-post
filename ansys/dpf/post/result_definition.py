@@ -18,7 +18,7 @@ class Definition:
         self._time_scoping = None
         self._time = None
         self._set = None
-        self._coordinates = None
+        self._path = None
 
         self.__location_locked = False
         self.__element_scoping_locked = False
@@ -41,8 +41,8 @@ class Definition:
             self._time = kwargs.pop(_AvailableKeywords.time)
         if _AvailableKeywords.set in kwargs:
             self._set = kwargs.pop(_AvailableKeywords.set)
-        if _AvailableKeywords.coordinates in kwargs:
-            self._coordinates = kwargs.pop(_AvailableKeywords.coordinates)
+        if _AvailableKeywords.path in kwargs:
+            self._path = kwargs.pop(_AvailableKeywords.path)
 
         if len(kwargs) > 0:
             txt = "Following keyword argument(s) could not be computed: \n"
@@ -267,18 +267,21 @@ class Definition:
         self._set = value
 
     @property
-    def coordinates(self) -> list:
-        """list: Coordinates property. Can be set.
+    def path(self):
+        """DpfPath: Object that contains
+        coordinates list. Can be set.
 
         Examples
         --------
         >>> from ansys.dpf import post
         >>> solution = post.solution("file.rst")
         >>> stress = solution.stress()
-        >>> stress.coordinates = [[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.0, 0.1, 0.0]]
+        >>> coordinates = [[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.0, 0.1, 0.0]]
+        >>> path = post.create_path_on_coordinates(coordinates=coordinates)
+        >>> stress.path = path
         """
-        return self._coordinates
+        return self._path
 
-    @coordinates.setter
-    def coordinates(self, value):
-        self._coordinates = value
+    @path.setter
+    def path(self, value):
+        self._path = value

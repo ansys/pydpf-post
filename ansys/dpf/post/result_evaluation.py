@@ -34,7 +34,7 @@ class ResultEvaluator:
         subresult=None,
         mapdl_grouping=None,
         set=None,
-        coordinates=None,
+        path=None,
         time_scoping=None,
     ):
 
@@ -43,7 +43,7 @@ class ResultEvaluator:
             OrderedDict()
         )  # dictionary containing (key = Operator.name, [Operator, description])
         self.subresult = subresult
-        self._coordinates = coordinates
+        self._path = path
 
         if subresult is not None:
             operator_name += subresult
@@ -196,19 +196,15 @@ class ResultEvaluator:
                 forward_op = Operator("forward_fc")
                 forward_op.inputs.fields.connect(centroid_op.outputs.field)
                 self._result_operator = forward_op
-        if coordinates is not None:
+        if path is not None:
             mapping_operator = Operator("mapping")
             mapping_operator.inputs.fields_container.connect(
                 self._result_operator.outputs.fields_container
                 )
             # coordinates as a field
-            field_coord = Field()
-            field_coord.location = locations.nodal
-            field_coord.data = coordinates
-            scoping = Scoping()
-            scoping.location = locations.nodal
-            scoping.ids = list(range(1, len(coordinates) + 1))
-            field_coord.scoping = scoping
+            field_coord = Field(location=path.scoping.location)
+            field_coord.data = path.coordinates
+            field_coord.scoping = path.scoping
             mapping_operator.inputs.coordinates.connect(field_coord)
             mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
