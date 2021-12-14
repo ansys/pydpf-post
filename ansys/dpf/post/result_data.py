@@ -296,6 +296,10 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
+        if len(self.result_fields_container) == 1:
+            lab_space = self.result_fields_container.get_label_space(0)
+            display_option = [*lab_space][0]
+            option_id = lab_space[display_option]
         if self._evaluator._path is not None:
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
