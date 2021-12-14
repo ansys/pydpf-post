@@ -8,7 +8,7 @@ computation."""
 import numpy as np
 from collections import OrderedDict
 from ansys import dpf
-from ansys.dpf.core import Operator, Field, Scoping
+from ansys.dpf.core import Operator, Scoping
 from ansys.dpf.core.common import types, locations
 from ansys.dpf.post.common import Grouping, _AvailableKeywords
 from ansys.dpf.core.scoping import Scoping
