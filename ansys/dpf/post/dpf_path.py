@@ -3,7 +3,7 @@ define a path of coordinates to set the result on.
 """
 
 from ansys.dpf.core import locations
-from ansys.dpf.core import Scoping
+from ansys.dpf.core import Scoping, Field
 
 def create_path_on_coordinates(coordinates, scoping=None):
     """
@@ -66,8 +66,9 @@ class DpfPath:
         ...     coord_copy[1] = coord_copy[0] + i * 0.001
         ...     coordinates.append(coord_copy)
         >>> dpf_path = post.DpfPath(coordinates=coordinates)
+
         """
-        self._coordinates = coordinates
+        # check inputs
         error_text = """coordinates attribute must
         be a list of list of int."""
         if not isinstance(coordinates, list):
@@ -75,26 +76,32 @@ class DpfPath:
         else:
             if len(coordinates) > 0 and not isinstance(coordinates[0], list):
                 raise ValueError(error_text)
-        self._scoping = scoping
-        if self._scoping is None:
-            self._scoping = Scoping(location=locations.nodal)
-            self._scoping.ids = list(range(1, len(coordinates) + 1))
+        _scoping = None
+        if scoping is None:
+            _scoping = Scoping(location=locations.nodal)
+            _scoping.ids = list(range(1, len(coordinates) + 1))
         else:
             error_text = """scoping must be a list of int.
             Its size must be identical to the coordinates array one."""
             if isinstance(scoping, list) and len(scoping) == len(coordinates):
                 if isinstance(scoping[0], int):
-                    self._scoping = Scoping(location=locations.nodal)
-                    self._scoping.ids = scoping
+                    _scoping = Scoping(location=locations.nodal)
+                    _scoping.ids = scoping
                 else:
                     raise ValueError(error_text)
+            elif isinstance(scoping, Scoping):
+                _scoping = scoping
             else:
                 raise ValueError(error_text)
+        # create field
+        self._field = Field(location=_scoping.location)
+        self._field.data = coordinates
+        self._field.scoping = _scoping
 
     @property
     def coordinates(self):
-        return self._coordinates
+        return self._field.data
 
     @property
     def scoping(self):
-        return self._scoping
+        return self._field.scoping.ids

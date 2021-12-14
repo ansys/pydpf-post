@@ -6,6 +6,7 @@ from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.core.common import locations
+from ansys.dpf.core import Scoping
 
 # currently running dpf on docker.  Used for testing on CI
 RUNNING_DOCKER = os.environ.get("DPF_DOCKER", False)
@@ -311,6 +312,11 @@ def test_plot_on_coordinates(model_ns):
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
 def test_path_on_coordinates_with_scoping(static_rst):
+    # reference
+    ref = [[ 2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
+       [ 7.18877553e-10, -1.78267888e-09, -9.60067634e-10],
+       [ 1.27369182e-09, -6.50860213e-09, -1.73204664e-09]]
+    # set up
     coordinates = [[0.024, 0.03, 0.003]]
     for i in range(1, 3):
         coord_copy = coordinates[0].copy()
@@ -318,14 +324,35 @@ def test_path_on_coordinates_with_scoping(static_rst):
         coordinates.append(coord_copy)
     solution = post.load_solution(static_rst)
     scoping_ids_orig = [14, 5, 101]
+    # case with scoping as list of int
+    # ================================
     path = post.create_path_on_coordinates(coordinates=coordinates,
                                            scoping=scoping_ids_orig)
     displacement = solution.displacement(path=path)
     vector = displacement.vector
     field = vector.result_fields_container[0]
+    # checks
     assert len(field) == 9 # 3 notes * 3 dofs
     assert len(field.scoping) == 3
     scoping_ids = field.scoping.ids
     result = np.array_equal(np.array(scoping_ids).sort(),
                             np.array(scoping_ids_orig).sort())
     assert result is True
+    assert np.allclose(field.data, ref, rtol=1.0e-20)
+    # case with scoping as scoping
+    # ================================
+    scop = Scoping(location=locations.nodal)
+    scop.ids = scoping_ids_orig
+    path = post.create_path_on_coordinates(coordinates=coordinates,
+                                           scoping=scop)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    # checks
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert len(field.scoping) == 3
+    scoping_ids = field.scoping.ids
+    result = np.array_equal(np.array(scoping_ids).sort(),
+                            np.array(scoping_ids_orig).sort())
+    assert result is True
+    assert np.allclose(field.data, ref, rtol=1.0e-20)

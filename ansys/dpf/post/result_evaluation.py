@@ -202,10 +202,7 @@ class ResultEvaluator:
                 self._result_operator.outputs.fields_container
                 )
             # coordinates as a field
-            field_coord = Field(location=path.scoping.location)
-            field_coord.data = path.coordinates
-            field_coord.scoping = path.scoping
-            mapping_operator.inputs.coordinates.connect(field_coord)
+            mapping_operator.inputs.coordinates.connect(path._field)
             mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
             self._chained_operators[mapping_operator.name] = (
