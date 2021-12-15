@@ -5,8 +5,8 @@ import pytest
 from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.result_data import ResultData
-from ansys.dpf.core.common import locations
-from ansys.dpf.core import Scoping
+from ansys.dpf.core.common import locations, natures
+from ansys.dpf.core import Scoping, Field
 
 # currently running dpf on docker.  Used for testing on CI
 RUNNING_DOCKER = os.environ.get("DPF_DOCKER", False)
@@ -361,7 +361,62 @@ def test_plot_on_coordinates_complex_rst(complex_model):
 
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
-def test_path_on_coordinates_with_scoping(static_rst):
+def test_path_on_coordinates_with_different_type_of_arrays(static_rst):
+    # reference
+    ref = [[ 2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
+       [ 7.18877553e-10, -1.78267888e-09, -9.60067634e-10],
+       [ 1.27369182e-09, -6.50860213e-09, -1.73204664e-09]]
+    # set up
+    coordinates = [[0.024, 0.03, 0.003]]
+    for i in range(1, 3):
+        coord_copy = coordinates[0].copy()
+        coord_copy[1] = coord_copy[0] + i * 0.01
+        coordinates.append(coord_copy)
+
+    solution = post.load_solution(static_rst)
+    # case with array as a list[list[int]]
+    # ================================
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    # checks
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert np.allclose(field.data, ref, rtol=1.0e-20)
+    # case with array as a list[int]
+    # ================================
+    flat_coordinates = [item for sublist in coordinates for item in sublist]
+    path = post.create_path_on_coordinates(coordinates=flat_coordinates)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    # checks
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert np.allclose(field.data, ref, rtol=1.0e-20)
+    # case with array as a np.array with (3, 3) shape
+    # ================================
+    array_coord = np.array(coordinates)
+    path = post.create_path_on_coordinates(coordinates=array_coord)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    # checks
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert np.allclose(field.data, ref, rtol=1.0e-20)
+    # case with array as a np.array with (9,) shape
+    # ================================
+    flat_array_coord = np.array(flat_coordinates)
+    path = post.create_path_on_coordinates(coordinates=flat_array_coord)
+    displacement = solution.displacement(path=path)
+    vector = displacement.vector
+    field = vector.result_fields_container[0]
+    # checks
+    assert len(field) == 9 # 3 notes * 3 dofs
+    assert np.allclose(field.data, ref, rtol=1.0e-20)
+
+@pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
+                    "available from dpf-core 0.3.4.")
+def test_path_on_coordinates_with_field(static_rst):
     # reference
     ref = [[ 2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
        [ 7.18877553e-10, -1.78267888e-09, -9.60067634e-10],
@@ -376,25 +431,10 @@ def test_path_on_coordinates_with_scoping(static_rst):
     scoping_ids_orig = [14, 5, 101]
     # case with scoping as list of int
     # ================================
-    path = post.create_path_on_coordinates(coordinates=coordinates,
-                                           scoping=scoping_ids_orig)
-    displacement = solution.displacement(path=path)
-    vector = displacement.vector
-    field = vector.result_fields_container[0]
-    # checks
-    assert len(field) == 9 # 3 notes * 3 dofs
-    assert len(field.scoping) == 3
-    scoping_ids = field.scoping.ids
-    result = np.array_equal(np.array(scoping_ids).sort(),
-                            np.array(scoping_ids_orig).sort())
-    assert result is True
-    assert np.allclose(field.data, ref, rtol=1.0e-20)
-    # case with scoping as scoping
-    # ================================
-    scop = Scoping(location=locations.nodal)
-    scop.ids = scoping_ids_orig
-    path = post.create_path_on_coordinates(coordinates=coordinates,
-                                           scoping=scop)
+    coord_field = Field(location=locations.nodal, nature=natures.vector)
+    coord_field.scoping.ids = scoping_ids_orig
+    coord_field.data = coordinates
+    path = post.create_path_on_coordinates(coordinates=coord_field)
     displacement = solution.displacement(path=path)
     vector = displacement.vector
     field = vector.result_fields_container[0]
