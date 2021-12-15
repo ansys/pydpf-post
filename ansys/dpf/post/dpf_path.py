@@ -35,8 +35,7 @@ def create_path_on_coordinates(coordinates):
     return DpfPath(coordinates=coordinates)
 
 class DpfPath:
-    """This object describe a set of coordinates.
-    It can be associated to a scoping (list of ids)."""
+    """This object describe a set of coordinates."""
 
     def __init__(self, coordinates):
         """
