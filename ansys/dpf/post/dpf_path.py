@@ -56,7 +56,6 @@ class DpfPath:
         >>> dpf_path = post.DpfPath(coordinates=coordinates)
 
         """
-        # check inputs
         if isinstance(coordinates, Field):
             self._field = coordinates
         else:
