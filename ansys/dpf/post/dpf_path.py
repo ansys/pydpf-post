@@ -4,7 +4,7 @@ define a path of coordinates to set the result on.
 import numpy as np
 
 from ansys.dpf.core.common import locations, natures
-from ansys.dpf.core import Scoping, Field
+from ansys.dpf.core import Field
 
 def create_path_on_coordinates(coordinates):
     """

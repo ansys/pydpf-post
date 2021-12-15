@@ -6,7 +6,7 @@ from ansys import dpf
 from ansys.dpf import post
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.core.common import locations, natures
-from ansys.dpf.core import Scoping, Field
+from ansys.dpf.core import Field
 
 # currently running dpf on docker.  Used for testing on CI
 RUNNING_DOCKER = os.environ.get("DPF_DOCKER", False)
