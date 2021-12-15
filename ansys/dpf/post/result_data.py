@@ -305,7 +305,7 @@ class ResultData:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
             except:
                 raise dpf_errors.CoreVersionError(version='0.3.4')
-            pl = DpfPlotterObj()
+            pl = DpfPlotterObj(notebook=notebook, off_screen=off_screen)
             new_fields_container = self._sort_fields_container_with_labels(
                 option_id, display_option
             )

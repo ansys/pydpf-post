@@ -311,6 +311,56 @@ def test_plot_on_coordinates(model_ns):
 
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
+def test_plot_on_coordinates_msup_transient(plate_msup):
+    coordinates = [[0.075, 0.005, 0.975]]
+    for i in range(1, 20):
+        coord_copy = coordinates[0].copy()
+        coord_copy[2] = coord_copy[2] - i * 0.05
+        coordinates.append(coord_copy)
+    solution = post.load_solution(plate_msup)
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    stress = solution.stress(path=path)
+    sxx = stress.xx
+    sxx.plot_contour()
+
+@pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
+                    "available from dpf-core 0.3.4.")
+def test_plot_on_coordinates_complex_rst(complex_model):
+    coordinates = [[-0.00499615, 0.000196299, 0.0001]]
+    for i in range(1, 20):
+        coord_copy = coordinates[0].copy()
+        coord_copy[0] = coord_copy[0] + i * 0.00024981
+        coordinates.append(coord_copy)
+    solution = post.load_solution(complex_model)
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    stress = solution.stress(path=path)
+    sxx = stress.xx
+    sxx.plot_contour()
+
+    coordinates = [[-0.00499615, 0.000196299, 0.0001]]
+    for i in range(1, 40):
+        coord_copy = coordinates[0].copy()
+        coord_copy[0] = coord_copy[0] + i * 0.00024981
+        coordinates.append(coord_copy)
+    solution = post.load_solution(complex_model)
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    stress = solution.stress(path=path)
+    vm = stress.von_mises
+    vm.plot_contour(off_screen=True)
+
+    coordinates = [[-0.00499615, 0.000196299, 0.0001]]
+    for i in range(1, 40):
+        coord_copy = coordinates[0].copy()
+        coord_copy[0] = coord_copy[0] + i * 0.00024981
+        coordinates.append(coord_copy)
+    solution = post.load_solution(complex_model)
+    path = post.create_path_on_coordinates(coordinates=coordinates)
+    d = solution.displacement(path=path)
+    vec = d.vector_amplitude
+    vec.plot_contour(off_screen=True)
+
+@pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
+                    "available from dpf-core 0.3.4.")
 def test_path_on_coordinates_with_scoping(static_rst):
     # reference
     ref = [[ 2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
