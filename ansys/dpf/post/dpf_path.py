@@ -13,8 +13,8 @@ def create_path_on_coordinates(coordinates):
 
     Parameters
     ----------
-        coordinates : list[list[int]], Field, arrays
-            3D coordinates.
+    coordinates : list[list[int]], Field, arrays
+        3D coordinates.
 
     Example
     -------
