@@ -6,10 +6,11 @@ This is a fields container wrapper."""
 from textwrap import wrap
 
 from ansys.dpf.core import FieldsContainer, Operator
-from ansys.dpf.core.common import types
+from ansys.dpf.core.common import types, DefinitionLabels
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.core import errors as core_errors
 
 
 class ResultData:
@@ -296,10 +297,16 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
+        # check if complex label, not supported
+        labels = self.result_fields_container.get_label_space(0)
+        if DefinitionLabels.complex in labels.keys():
+            raise core_errors.ComplexPlottingError
+        # check default values
         if len(self.result_fields_container) == 1:
             lab_space = self.result_fields_container.get_label_space(0)
             display_option = [*lab_space][0]
             option_id = lab_space[display_option]
+
         if self._evaluator._path is not None:
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj

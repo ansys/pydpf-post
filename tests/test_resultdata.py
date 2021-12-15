@@ -334,7 +334,7 @@ def test_plot_on_coordinates_complex_rst(complex_model):
     solution = post.load_solution(complex_model)
     path = post.create_path_on_coordinates(coordinates=coordinates)
     stress = solution.stress(path=path)
-    sxx = stress.xx
+    sxx = stress.xx_amplitude
     sxx.plot_contour()
 
     coordinates = [[-0.00499615, 0.000196299, 0.0001]]
@@ -345,7 +345,7 @@ def test_plot_on_coordinates_complex_rst(complex_model):
     solution = post.load_solution(complex_model)
     path = post.create_path_on_coordinates(coordinates=coordinates)
     stress = solution.stress(path=path)
-    vm = stress.von_mises
+    vm = stress.von_mises_amplitude
     vm.plot_contour(off_screen=True)
 
     coordinates = [[-0.00499615, 0.000196299, 0.0001]]
