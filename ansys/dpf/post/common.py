@@ -54,6 +54,7 @@ class _AvailableKeywords:
     _subresult = "subresult"
     mapdl_grouping = "mapdl_grouping"
     time_scoping = "time_scoping"
+    path = "path"
 
     def __str__(self):
         txt = ""
@@ -88,6 +89,12 @@ class _AvailableKeywords:
             return "int. Write 186 to get mapdl_elements solid_186."
         if attr_name == self.grouping:
             return "str. Use post.grouping.(...) as helper."
+        if attr_name == self.path:
+            txt = """DpfPath object that
+            contains a list of coordinates,
+            e.g. [[0.1, 0.0, 0.0],
+            [0.0, 0.1, 0.0]]."""
+            return txt
 
 
 class _AnalysisType:

@@ -6,9 +6,11 @@ This is a fields container wrapper."""
 from textwrap import wrap
 
 from ansys.dpf.core import FieldsContainer, Operator
-from ansys.dpf.core.common import types
+from ansys.dpf.core.common import types, DefinitionLabels
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 from ansys.dpf.post.result_evaluation import ResultEvaluator
+from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.core import errors as core_errors
 
 
 class ResultData:
@@ -52,6 +54,7 @@ class ResultData:
         subresult=None,
         mapdl_grouping=None,
         set=None,
+        path=None,
         time_scoping=None,
     ):
 
@@ -70,9 +73,10 @@ class ResultData:
             subresult,
             mapdl_grouping,
             set,
+            path,
             time_scoping,
         )
-        self.result_fields_container = None
+        self._result_fields_container = None
 
     def __str__(self):
         self._evaluate_result()
@@ -94,8 +98,8 @@ class ResultData:
 
     def _evaluate_result(self):
         """First evaluation of the result."""
-        if self.result_fields_container is None:
-            self.result_fields_container = self._evaluator.evaluate_result()
+        if self._result_fields_container is None:
+            self._result_fields_container = self._evaluator.evaluate_result()
 
     def _evaluate_result_forced(self):
         """Re-evaluation of the result."""
@@ -198,6 +202,11 @@ class ResultData:
         """
         return self._min_max(0).data[field_index]
 
+    @property
+    def result_fields_container(self):
+        self._evaluate_result()
+        return self._result_fields_container
+
     def _plot_contour_with_vtk_file(self):
         """Plot the contour result on its mesh support. The obtained figure depends on the
         support (can be a meshed_region or a time_freq_support).
@@ -207,6 +216,42 @@ class ResultData:
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl._plot_contour_using_vtk_file(self.result_fields_container)
+
+    def _sort_fields_container_with_labels(self, option_id, display_option):
+        ids = option_id
+        if isinstance(option_id, int):
+            ids = [option_id]
+        new_fields_container = FieldsContainer()
+        label_spaces = []
+        for opt_id in ids:
+            i = 0
+            while i < len(self.result_fields_container):
+                label_space = {}
+                label_space[display_option] = opt_id
+                fc_label = self.result_fields_container.get_label_space(i)
+                for lab in self.result_fields_container.labels:
+                    if lab != display_option:
+                        if display_option in fc_label:
+                            if fc_label[display_option] == opt_id:
+                                label_space[lab] = fc_label[lab]
+                if len(fc_label) == len(label_space):
+                    label_spaces.append(label_space)
+                i += 1
+        lab_names = []
+        for lab_sp in label_spaces:
+            for key, val in lab_sp.items():
+                if key not in lab_names:
+                    lab_names.append(key)
+        for name in lab_names:
+            new_fields_container.add_label(name)
+        for label in label_spaces:
+            field = self.result_fields_container.get_field(label)
+            if not field:
+                txt = """Arguments display_option/option_id are not correct,
+                no corresponding field found to plot."""
+                raise Exception(txt)
+            new_fields_container.add_field(label, field)
+        return new_fields_container
 
     def plot_contour(
         self,
@@ -256,48 +301,56 @@ class ResultData:
         [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
         """
         self._evaluate_result()
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+        # check if complex label, not supported
+        labels = self.result_fields_container.get_label_space(0)
+        if DefinitionLabels.complex in labels.keys():
+            raise core_errors.ComplexPlottingError
+        # check default values
         if len(self.result_fields_container) == 1:
-            pl.plot_contour(
-                self.result_fields_container,
-                off_screen=off_screen,
-                notebook=notebook,
+            lab_space = self.result_fields_container.get_label_space(0)
+            display_option = [*lab_space][0]
+            option_id = lab_space[display_option]
+
+        if self._evaluator._path is not None:
+            try:
+                from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
+            except:
+                raise dpf_errors.CoreVersionError(version='0.3.4')
+            pl = DpfPlotterObj(notebook=notebook, off_screen=off_screen)
+            new_fields_container = self._sort_fields_container_with_labels(
+                option_id, display_option
+            )
+            for field_m in new_fields_container:
+                mesh_m = field_m.meshed_region
+                pl.add_field(field_m, mesh_m)
+            pl.add_mesh(
+                self._evaluator._model.metadata.meshed_region,
+                style="surface",
+                show_edges=True,
+                opacity=0.3,
                 **kwargs
             )
+            pl.show_figure()
         else:
-            # sorts and creates a new fields_container with only the desired labels
-            ids = option_id
-            if isinstance(option_id, int):
-                ids = [option_id]
-            new_fields_container = FieldsContainer()
-            label_spaces = []
-            for opt_id in ids:
-                i = 0
-                while i < len(self.result_fields_container):
-                    label_space = {}
-                    label_space[display_option] = opt_id
-                    fc_label = self.result_fields_container.get_label_space(i)
-                    for lab in self.result_fields_container.labels:
-                        if lab != display_option:
-                            if display_option in fc_label:
-                                if fc_label[display_option] == opt_id:
-                                    label_space[lab] = fc_label[lab]
-                    if len(fc_label) == len(label_space):
-                        label_spaces.append(label_space)
-                    i += 1
-            lab_names = []
-            for lab_sp in label_spaces:
-                for key, val in lab_sp.items():
-                    if key not in lab_names:
-                        lab_names.append(key)
-            for name in lab_names:
-                new_fields_container.add_label(name)
-            for label in label_spaces:
-                field = self.result_fields_container.get_field(label)
-                new_fields_container.add_field(label, field)
-            pl.plot_contour(
-                new_fields_container, off_screen=off_screen, notebook=notebook, **kwargs
-            )
+            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+            if len(self.result_fields_container) == 1:
+                pl.plot_contour(
+                    self.result_fields_container,
+                    off_screen=off_screen,
+                    notebook=notebook,
+                    **kwargs
+                )
+            else:
+                # sorts and creates a new fields_container with only the desired labels
+                new_fields_container = self._sort_fields_container_with_labels(
+                    option_id, display_option
+                )
+                pl.plot_contour(
+                    new_fields_container,
+                    off_screen=off_screen,
+                    notebook=notebook,
+                    **kwargs
+                )
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
@@ -324,5 +377,5 @@ class ResultData:
         # res_op = self._evaluator._result_operator
         # res_op.inputs.time_scoping.connect(timeids)
         # new_fields_container = res_op.get_output(0, types.fields_container)
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+        pl = DpfPlotter(None)
         pl.plot_chart(self.result_fields_container)
