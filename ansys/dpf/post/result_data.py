@@ -246,6 +246,10 @@ class ResultData:
             new_fields_container.add_label(name)
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
+            if not field:
+                txt = """Arguments display_option/option_id are not correct,
+                no corresponding field found to plot."""
+                raise Exception(txt)
             new_fields_container.add_field(label, field)
         return new_fields_container
 
