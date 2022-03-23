@@ -13,9 +13,9 @@ interface to DPF, thus enabling rapid post-processing, without ever
 leaving a Python environment. 
 
 This module leverages the DPF-Core module ``ansys.dpf.core`` module
-and can be found by visiting `DPF-Core GitHub
+and can be found by visiting `PyDPF-Core GitHub
 <https://github.com/pyansys/DPF-Core>`_.  Use ``ansys.dpf.core`` for
-building more advanced and customized workflows using Ansys's DPF.
+building more advanced and customized workflows using Ansys' DPF.
 
 
 Brief Demo
@@ -70,7 +70,7 @@ operators.  This allows for fast post-processing of potentially
 multi-gigabyte models in a short script.  DPF-Post also details the
 usage of the operators used when computing the results so you can also
 build your own custom, low level scripts using the
-`DPF-Core <https://github.com/pyansys/DPF-Core>`_ module.
+`PyDPF-Core <https://github.com/pyansys/DPF-Core>`_ module.
 
 
 .. toctree::

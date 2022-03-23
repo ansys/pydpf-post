@@ -14,9 +14,9 @@ This will install the latest version of ``ansys-dpf-post`` and all the
 necessary dependencies.
 
 If you are unable to install the module on the host machine due to
-network isolation, download the latest release wheel at `pydpf-post
+network isolation, download the latest release wheel at `PyDPF-Post
 GitHub <https://github.com/pyansys/pydpf-post>`_ or from PyPi at
-`pydpf-post PyPi <https://pypi.org/project/ansys-dpf-post/>`_
+`PyDPF-Post PyPi <https://pypi.org/project/ansys-dpf-post/>`_
 
 
 Editable Install (Development Mode)
@@ -25,8 +25,4 @@ If you wish to edit and potentially contribute to the DPF-Post python
 module, clone the repository and install it using pip with the ``-e``
 development flag.
 
-.. code::
-
-    git clone https://github.com/pyansys/DPF-Post
-    cd DPF-Post
-    pip install -e .
+.. include:: ../pydpf-post_clone_install.rst

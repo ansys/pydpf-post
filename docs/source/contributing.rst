@@ -16,22 +16,18 @@ encourage any questions or submissions to this repository.
 Cloning the Source Repository
 -----------------------------
 
-You can clone the source repository from `DPF-Post
-GitHub <https://https://github.com/pyansys/DPF-Post>`_
+You can clone the source repository from `PyDPF-Post
+GitHub <https://https://github.com/pyansys/pydpf-post>`_
 and install the latest version in development mode by running:
 
-.. code::
-
-    git clone https://github.com/pyansys/DPF-Post
-    cd DPF-Post
-    pip install -e .
+.. include:: pydpf-post_clone_install.rst
 
 
 Questions
 ---------
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
-`DPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_ where the
+`PyDPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_ where the
 community or DPF-Post developers can collectively address your
 questions.  The project support team can be reached at
 [alexander.kaszynski@ansys.com](mailto:alexander.kaszynski@ansys.com)
@@ -44,7 +40,7 @@ will remain available on the issues page for other users.
 Reporting Bugs
 --------------
 If you encounter any bugs or crashes while using PyDPF-Post, please
-report it at `DPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_
+report it at `PyDPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
 reproduce it. Whenever possible, please provide tracebacks,
@@ -54,7 +50,7 @@ screenshots, and sample files to help us address the issue.
 Feature Requests
 ----------------
 We encourage users to submit ideas for improvements to DPF-Post!
-Please create an issue on the `DPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_
+Please create an issue on the `PyDPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_
 with a **Feature Request** label to suggest an improvement.
 Please use a descriptive title and provide ample background information to help
 the community implement that functionality. For example, if you would like a
@@ -119,9 +115,9 @@ is not available or commercial use is prohibited.
 Finally, please take a look at our `Code of Conduct <https://github.com/pyansys/DPF-Post/blob/master/CODE_OF_CONDUCT.md>`_
 
 
-Contributing to DPF-Post through GitHub
+Contributing to PyDPF-Post through GitHub
 ---------------------------------------
-To submit new code to DPF-Post, first fork the `DPF-Post GitHub Repo
+To submit new code to DPF-Post, first fork the `PyDPF-Post GitHub Repo
 <https://github.com/pyansys/DPF-Post>`_ and then clone the forked
 repository to your computer.  Next, create a new branch based on the
 `Branch Naming Conventions Section <#branch-naming-conventions>`__ in
@@ -140,7 +136,7 @@ section <#creating-a-new-pull-request>`__.
 Creating a New Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Once you have tested your branch locally, create a pull request on
-`DPF-Post <https://github.com/pyansys/DPF-Post>`_ and target your
+`PyDPF-Post <https://github.com/pyansys/DPF-Post>`_ and target your
 merge to `master`.  This will automatically run continuous
 integration (CI) testing and verify your changes will work across all
 supported platforms.
@@ -183,7 +179,7 @@ creating a pull request. The following tests will be executed after
 any commit or pull request, so we ask that you perform the following
 sequence locally to track down any new issues from your changes.
 
-To test the the DPF-Post API, be sure to have ANSYS 2021R1 or newer
+To test the the PyDPF-Post API, be sure to have ANSYS 2021R1 or newer
 installed.  Next, install the testing requirements with:
 
 .. code::
@@ -196,7 +192,7 @@ Run the primary test suite and generate a coverage report with:
 
     pytest -v --cov ansys-dpf-post
 	
-Note that the DPF-Core module must be installed locally (DPF-Post module 
+Note that the PyDPF-Core module must be installed locally (PyDPF-Post module
 is based on it). 
 
 
@@ -216,9 +212,9 @@ ignored to ``ignore_words.txt``
 
 Documentation
 -------------
-Documentation for DPF-Post is generated from three sources:
+Documentation for PyDPF-Post is generated from three sources:
 
-- Docstrings from the classes, functions, and modules of ``ansys.dpf.post`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
+- Docstrings from the classes, functions, and modules of ``ansys-dpf-post`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
 - Restructured test from `docs/`
 - Examples from `examples/`
 
@@ -239,7 +235,7 @@ integration performed on GitHub Actions.
 
 Building the Documentation Locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Documentation for DPF-Post is hosted at docs.pyansys.com and is
+Documentation for PyDPF-Post is hosted at docs.pyansys.com and is
 automatically built and deployed using the GitHub Actions.  You can
 build and verify the html documentation locally by install ``sphinx``
 and the other documentation build dependencies by running the
@@ -272,7 +268,7 @@ If you are running DPF remotely or through docker, see the `Testing Section <#te
 
 Continuous Integration and Continuous Delivery
 ----------------------------------------------
-The DPF-Post project uses continuous integration and delivery (CI/CD)
+The PyDPF-Post project uses continuous integration and delivery (CI/CD)
 to automate the building, testing, and deployment tasks.  The CI
 Pipeline is deployed on both GitHub Actions and Azure Pipelines and
 performs following tasks:
@@ -303,7 +299,7 @@ The main features of our branching model are:
   release branches will have their `__version__.py` updated and be
   tagged with a patched semantic version (e.g. `0.2.1`).  This
   triggers CI to push to PyPi, and allow us to rapidly push hotfixes
-  for past versions of ``ansys.dpf.post`` without having to worry about
+  for past versions of ``ansys-dpf-post`` without having to worry about
   untested features.
 - When a minor release candidate is ready, a new `release` branch will
   be created from `master` with the next incremented minor version
@@ -319,7 +315,7 @@ The main features of our branching model are:
 Minor Release Steps
 ~~~~~~~~~~~~~~~~~~~
 Minor releases are feature and bug releases that improve the
-functionality and stability of ``DPF-Post``.  Before a minor release is
+functionality and stability of ``PyDPF-Post``.  Before a minor release is
 created the following will occur:
 
 1.  Create a new branch from the ``master`` branch with name
@@ -346,7 +342,7 @@ cached.
    merges it to master.  Development to master should be limited at
    this point while effort is focused on the release.
 
-6. It is now the responsibility of the `DPF-Post` community and
+6. It is now the responsibility of the `PyDPF-Post` community and
    developers to functionally test the new release.  It is best to
    locally install this branch and use it in production.  Any bugs
    identified should have their hotfixes pushed to this release
@@ -359,7 +355,7 @@ cached.
 
     .. code::
 
-	git tag <MAJOR.MINOR.0>
+    git tag <MAJOR.MINOR.0>
         git push origin --tags
 
 
@@ -386,7 +382,7 @@ should not wait until a minor release.  The steps for a patch release
 
 2. Update `__version__.py` with the next patch increment
    (e.g. `0.2.1`), commit it, and open a PR that merge with the
-   release branch.  This gives the `DPF-Post` developers and community
+   release branch.  This gives the `PyDPF-Post` developers and community
    a chance to validate and approve the bugfix release.  Any
    additional hotfixes should be outside of this PR.
 
