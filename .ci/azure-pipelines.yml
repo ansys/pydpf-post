@@ -43,7 +43,7 @@ jobs:
         pip install -r requirements_test.txt
         set THISDIR=$(System.DefaultWorkingDirectory)
         cd tests=$(System.DefaultWorkingDirectory)
-        set AWP_ROOT212=%THISDIR%\server\v212
+        set AWP_ROOT221=%THISDIR%\server\v221
         pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml --reruns 3
         echo %PATH%
         
@@ -127,9 +127,9 @@ jobs:
     - script: |
         pip install -r requirements_test.txt
         pip install pytest-azurepipelines        
-        export AWP_ROOT212=${SYSTEM_DEFAULTWORKINGDIRECTORY}/server/v212
-        chmod 755 ${AWP_ROOT212}/aisol/bin/linx64/Ans.Dpf.Grpc.sh
-        chmod 755 ${AWP_ROOT212}/aisol/bin/linx64/Ans.Dpf.Grpc.exe   
+        export AWP_ROOT221=${SYSTEM_DEFAULTWORKINGDIRECTORY}/server/v221
+        chmod 755 ${AWP_ROOT221}/aisol/bin/linx64/Ans.Dpf.Grpc.sh
+        chmod 755 ${AWP_ROOT221}/aisol/bin/linx64/Ans.Dpf.Grpc.exe   
         cd tests
         pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml  --reruns 3      
         export PATH=`pwd`
@@ -154,7 +154,7 @@ jobs:
     PYANSYS_OFF_SCREEN: True
     DPF_PORT: 50055
     TEMP: $(System.DefaultWorkingDirectory)/temp
-    AWP_ROOT212: $(System.DefaultWorkingDirectory)/server/v212
+    AWP_ROOT221: $(System.DefaultWorkingDirectory)/server/v221
     GH_DOC_BRANCH: 'gh-pages'
     
   pool:
