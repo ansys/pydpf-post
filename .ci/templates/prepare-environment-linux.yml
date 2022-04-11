@@ -36,7 +36,7 @@ steps:
       feedsToUse: "internal"
       vstsFeed: "705e121a-9631-49f5-8aaf-c7142856f923"
       vstsFeedPackage: "dpf-linux" #TODO: update hash of packages
-      vstsPackageVersion: "21.2.5"
+      vstsPackageVersion: "22.1.1"
     displayName: Download DPF linux package
 
   - script: |
@@ -54,7 +54,7 @@ steps:
     displayName: Display env
 
   - script: |
-      cd ${AWP_ROOT212}/aisol/bin/linx64
+      cd ${AWP_ROOT221}/aisol/bin/linx64
       pwd
       chmod 755 Ans.Dpf.Grpc.sh
       chmod 755 Ans.Dpf.Grpc.exe
