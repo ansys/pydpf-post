@@ -7,7 +7,7 @@ steps:
         Set-StrictMode -Version Latest
         $ErrorActionPreference = "Stop"
         $PSDefaultParameterValues['*:ErrorAction']='Stop'
-        git clone --depth 1 git://github.com/pyvista/gl-ci-helpers.git
+        git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
         powershell gl-ci-helpers/appveyor/install_opengl.ps1
       displayName: 'Install OpenGL'
 
@@ -45,4 +45,4 @@ steps:
         feedsToUse: 'internal'
         vstsFeed: '705e121a-9631-49f5-8aaf-c7142856f923'
         vstsFeedPackage: 'dpf-windows'
-        vstsPackageVersion: '21.2.3'
+        vstsPackageVersion: '22.1.1'
