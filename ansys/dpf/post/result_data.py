@@ -32,7 +32,8 @@ class ResultData:
     Examples
     --------
     >>> from ansys.dpf import post
-    >>> solution = post.solution("file.rst")
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.complex_rst)
     >>> disp = solution.nodal_displacement()
     >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23])
     >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")

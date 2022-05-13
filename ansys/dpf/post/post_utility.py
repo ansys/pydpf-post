@@ -40,7 +40,9 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
 
     Examples
     --------
-    >>> solution = post.solution("file.rst")
+    >>> from ansys.dpf import post
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.static_rst)
     """
     _model = Model(data_sources)
     data_sources = _model.metadata.data_sources
@@ -90,7 +92,7 @@ def print_available_keywords():
     --------
     >>> from ansys.dpf import post
     >>> solution = post.load_solution('file.rst')
-    >>> stress = solution.stress(PRINTED_KEYWORDS_CAN_be_USED_HERE)
+    >>> post.print_available_keywords()
     """
     txt = _AvailableKeywords().__str__()
     print(txt)

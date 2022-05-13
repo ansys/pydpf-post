@@ -26,7 +26,8 @@ class Grouping:
     Examples
     --------
     >>> from ansys.dpf import post
-    >>> solution = post.solution("file.rst")
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.static_rst)
     >>> disp = solution.elemental_stress(element_shape = post.grouping.by_el_shape)
     """
 

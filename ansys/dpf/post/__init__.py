@@ -13,7 +13,8 @@ Allow to create a result object, then use it to get wanted results.
 Examples
 --------
 >>> from ansys.dpf import post
->>> solution = post.solution("file.rst")
+>>> from ansys.dpf.post import examples
+>>> solution = post.load_solution(examples.static_rst)
 >>> disp = solution.nodal_displacement()
 
 """
