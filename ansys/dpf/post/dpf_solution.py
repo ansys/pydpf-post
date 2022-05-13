@@ -57,7 +57,7 @@ class DpfSolution:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.static_rst)
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> print(solution.get_result_info())
         """
         return self._model.metadata.result_info
@@ -175,7 +175,7 @@ class DpfMecanicSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.steady_therm)
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return StructuralTemperature(

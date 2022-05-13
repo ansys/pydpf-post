@@ -33,7 +33,7 @@ class ResultData:
     --------
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.complex_rst)
+    >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
     >>> disp = solution.nodal_displacement()
     >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23])
     >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
@@ -290,7 +290,8 @@ class ResultData:
         Plot a result at the time_step number 1
 
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution('file.rst')
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
         >>> sx.plot_contour("time", [1])
@@ -365,7 +366,8 @@ class ResultData:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution('file.rst')
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
         >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
                                      time_scoping=tscope

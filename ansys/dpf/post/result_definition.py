@@ -203,7 +203,7 @@ class Definition:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.transient_therm)
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress()
         >>> stress.time_scoping = [1, 4]
         """
@@ -243,7 +243,7 @@ class Definition:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.transient_therm)
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress()
         >>> stress.time = 0.2
         """

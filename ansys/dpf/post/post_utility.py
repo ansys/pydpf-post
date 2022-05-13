@@ -91,7 +91,8 @@ def print_available_keywords():
     Examples
     --------
     >>> from ansys.dpf import post
-    >>> solution = post.load_solution('file.rst')
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
     >>> post.print_available_keywords()
     """
     txt = _AvailableKeywords().__str__()
