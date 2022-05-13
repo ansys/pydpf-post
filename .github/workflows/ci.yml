@@ -54,7 +54,7 @@ jobs:
           ECHO %WHEELPATH%
           cd tests
           pip install %WHEELPATH%
-          python -c "from ansys.dpf import post; print(core.Report(gpu=False))"
+          python -c "from ansys.dpf import post; print(post.Report(gpu=False))"
 
       - name: WHEEL publish artifacts
         uses: actions/upload-artifact@v2
