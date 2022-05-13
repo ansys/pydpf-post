@@ -5,7 +5,7 @@ from ansys.dpf.post.dpf_path import create_path_on_coordinates
 from ansys import dpf
 from ansys.dpf.post.misc import Report
 import ansys.dpf.core as core
-from _version import __version__
+from ansys.dpf.post._version import __version__
 
 """Post-processing module. Using Data Processing Framework.
 Allow to create a result object, then use it to get wanted results.
