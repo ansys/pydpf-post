@@ -31,12 +31,12 @@ class ResultData:
 
     Examples
     --------
-    # >>> from ansys.dpf import post
-    # >>> from ansys.dpf.post import examples
-    # >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
-    # >>> disp = solution.displacement()
-    # >>> disp_on_nodes = solution.displacement(node_scoping = [1, 23])
-    # >>> disp_on_named_selection = solution.displacement(named_selection="SELECTION")
+    >>> from ansys.dpf import post
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
+    >>> disp = solution.displacement()
+    >>> disp_on_nodes = solution.displacement(node_scoping = [1, 23])
+    >>> disp_on_named_selection = solution.displacement(named_selection="SELECTION")
     """
 
     def __init__(
