@@ -294,8 +294,7 @@ class ResultData:
         >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
-        >>> sx.plot_contour("time", [1]) # doctest: +ELLIPSIS
-        ...
+        >>> pl = sx.plot_contour("time", [1])
 
         The labels can be obtained using:
 
@@ -372,8 +371,7 @@ class ResultData:
         >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
         >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
         >>> s = stress.tensor
-        >>> s._plot_chart() # doctest: +ELLIPSIS
-        ...
+        >>> pl = s._plot_chart()
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
