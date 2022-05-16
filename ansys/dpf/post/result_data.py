@@ -298,8 +298,8 @@ class ResultData:
 
         The labels can be obtained using:
 
-        >>> sx.get_all_label_spaces()
-        [{'time': 1, 'elshape': 0}, {'time': 1, 'elshape': 1}]
+        >>> sx.get_all_label_spaces() # doctest: +ELLIPSIS
+        [{'...': ..., '...': ...}, {'...': ..., '...': ...}]
         """
         self._evaluate_result()
         # check if complex label, not supported
@@ -371,6 +371,7 @@ class ResultData:
         >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
         >>> s = stress.tensor
         >>> pl = s._plot_chart()
+
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
