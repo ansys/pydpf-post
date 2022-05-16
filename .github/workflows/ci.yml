@@ -107,24 +107,24 @@ jobs:
           pip install -r requirements_test.txt
         if: always()
 
-      - name: Test API Docstrings
-        run: |
-           pytest --doctest-modules --junitxml=junit/test-doctests-results.xml ansys/dpf/post
-
-      - name: Kill all servers
-        shell: cmd
-        run: |
-          tasklist /FI "IMAGENAME eq Ans.Dpf.Grpc.exe" 2>NUL | find /I /N "Ans.Dpf.Grpc.exe">NUL
-          ECHO %ERRORLEVEL%
-          if "%ERRORLEVEL%"=="0"(taskkill /f /im Ans.Dpf.Grpc.exe)
-        continue-on-error: true
-
-      - name: Publish Doc Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.PACKAGE_NAME }}_doctest
-          path: junit/test-doctests-results.xml
-        if: always()
+#      - name: Test API Docstrings
+#        run: |
+#           pytest --doctest-modules --junitxml=junit/test-doctests-results.xml ansys/dpf/post
+#
+#      - name: Kill all servers
+#        shell: cmd
+#        run: |
+#          tasklist /FI "IMAGENAME eq Ans.Dpf.Grpc.exe" 2>NUL | find /I /N "Ans.Dpf.Grpc.exe">NUL
+#          ECHO %ERRORLEVEL%
+#          if "%ERRORLEVEL%"=="0"(taskkill /f /im Ans.Dpf.Grpc.exe)
+#        continue-on-error: true
+#
+#      - name: Publish Doc Test Results
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ${{ env.PACKAGE_NAME }}_doctest
+#          path: junit/test-doctests-results.xml
+#        if: always()
 
       - name: Test Post API
         run: |
