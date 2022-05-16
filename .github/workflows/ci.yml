@@ -13,17 +13,13 @@ on:
       - "release*"
       - "ci/*"
 
-env:
-  PACKAGE_NAME: ansys-dpf-post
-  ANSYS_VERSION: 221
-
 jobs:
   Windows:
     uses: ./.github/workflows/test_windows.yml
     secrets: inherit
     with:
-      ansys-version: ${{ env.ANSYS_VERSION }}
-      package-name: ${{ env.PACKAGE_NAME }}
+      ansys-version: 221
+      package-name: ansys-dpf-post
 
   Release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
