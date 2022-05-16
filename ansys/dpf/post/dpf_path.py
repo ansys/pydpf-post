@@ -23,7 +23,7 @@ def create_path_on_coordinates(coordinates):
     >>> from ansys.dpf.post import examples
     >>> coordinates = [[0.024, 0.03, 0.003]]
     >>> for i in range(1, 51):
-    ...     coord_copy = coordinates.copy()
+    ...     coord_copy = coordinates[-1].copy()
     ...     coord_copy[1] = coord_copy[0] + i * 0.001
     ...     coordinates.append(coord_copy)
     >>> path_on_coord = post.create_path_on_coordinates(
@@ -53,7 +53,7 @@ class DpfPath:
         >>> from ansys.dpf import post
         >>> coordinates = [[0.024, 0.03, 0.003]]
         >>> for i in range(1, 51):
-        ...     coord_copy = coordinates.copy()
+        ...     coord_copy = coordinates[-1].copy()
         ...     coord_copy[1] = coord_copy[0] + i * 0.001
         ...     coordinates.append(coord_copy)
         >>> dpf_path = post.create_path_on_coordinates(coordinates=coordinates)
