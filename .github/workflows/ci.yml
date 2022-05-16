@@ -19,8 +19,8 @@ env:
 
 jobs:
   Windows:
-    uses: pyansys/pydpf-post/.github/workflows/test_windows.yml@main
+    uses: ./.github/workflows/test_windows.yml
 
   Release:
     needs: Windows
-    uses: pyansys/pydpf-post/.github/workflows/release.yml@main
+    uses: ./.github/workflows/release.yml
