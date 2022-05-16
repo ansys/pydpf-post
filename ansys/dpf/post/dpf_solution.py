@@ -59,6 +59,27 @@ class DpfSolution:
         >>> from ansys.dpf.post import examples
         >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> print(solution.get_result_info())
+        Static analysis
+        Unit system: MKS: m, kg, N, s, V, A, degC
+        Physics Type: Mecanic
+        Available results:
+             -  displacement: Nodal Displacement
+             -  reaction_force: Nodal Force
+             -  element_nodal_forces: ElementalNodal Element nodal Forces
+             -  stress: ElementalNodal Stress
+             -  elemental_volume: Elemental Volume
+             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+             -  artificial_hourglass_energy: Elemental Hourglass Energy
+             -  thermal_dissipation_energy: Elemental thermal dissipation energy
+             -  kinetic_energy: Elemental Kinetic Energy
+             -  co_energy: Elemental co-energy
+             -  incremental_energy: Elemental incremental energy
+             -  elastic_strain: ElementalNodal Strain
+             -  thermal_strain: ElementalNodal Thermal Strains
+             -  thermal_strains_eqv: ElementalNodal Thermal Strains eqv
+             -  swelling_strains: ElementalNodal Swelling Strains
+             -  structural_temperature: ElementalNodal Temperature
+
         """
         return self._model.metadata.result_info
 
@@ -240,7 +261,7 @@ class DpfMecanicComplexSolution(DpfSolution):
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.steady_therm)
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return ComplexStructuralTemperature(
