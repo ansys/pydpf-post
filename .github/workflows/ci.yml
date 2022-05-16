@@ -22,5 +22,6 @@ jobs:
     uses: ./.github/workflows/test_windows.yml
 
   Release:
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     needs: Windows
     uses: ./.github/workflows/release.yml
