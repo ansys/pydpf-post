@@ -93,7 +93,7 @@ def print_available_keywords():
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
-    >>> post.print_available_keywords()
+    >>> post.print_available_keywords() # doctest: +NORMALIZE_WHITESPACE
     element_scoping: list, int or dpf.core.Scoping
     grouping: str. Use post.grouping.(...) as helper.
     location: str. Use post.locations.(...) as helper.
@@ -107,7 +107,6 @@ def print_available_keywords():
     set: int
     time: float
     time_scoping: list, int or dpf.core.Scoping
-
     """
     txt = _AvailableKeywords().__str__()
     print(txt)
