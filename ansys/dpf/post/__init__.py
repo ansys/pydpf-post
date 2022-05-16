@@ -21,4 +21,7 @@ Examples
 if hasattr(core, "settings") and \
         hasattr(core.settings, "set_dynamic_available_results_capability"):
     core.settings.set_dynamic_available_results_capability(False)
+if hasattr(core, "settings") and \
+        hasattr(core.settings, "set_default_pyvista_config"):
+    core.settings.set_default_pyvista_config()
 # dpf.core.start_local_server()
