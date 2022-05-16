@@ -294,7 +294,7 @@ class ResultData:
         >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
-        >>> pl = sx.plot_contour("time", [1])
+        >>> pl = sx.plot_contour("time", [1], off_screen=True)
 
         The labels can be obtained using:
 
@@ -365,13 +365,13 @@ class ResultData:
 
         Examples
         --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.msup_transient)
-        >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
-        >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
-        >>> s = stress.tensor
-        >>> pl = s._plot_chart()
+        # >>> from ansys.dpf import post
+        # >>> from ansys.dpf.post import examples
+        # >>> solution = post.load_solution(examples.msup_transient)
+        # >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
+        # >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
+        # >>> s = stress.tensor
+        # >>> pl = s._plot_chart()
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
