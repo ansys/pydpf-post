@@ -21,6 +21,9 @@ jobs:
   Windows:
     uses: ./.github/workflows/test_windows.yml
     secrets: inherit
+    with:
+      ansys-version: ${{ env.ANSYS_VERSION }}
+      package-name: ${{ env.PACKAGE_NAME }}
 
   Release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')

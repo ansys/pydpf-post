@@ -1,6 +1,14 @@
 name: Build and Test Windows
 
-on: workflow_call
+on:
+  workflow_call:
+    inputs:
+      ansys-version:
+        required: true
+        type: string
+      package-name:
+        required: true
+        type: string
 
 jobs:
   Windows:
@@ -23,9 +31,9 @@ jobs:
         uses: pyansys/pydpf-actions/install-dpf-server@v1
         with:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          ANSYS_VERSION : ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION : ${{inputs.ansys-version}}
 
-      - name: Install ansys-dpf-post
+      - name: Install package
         shell: cmd
         run: |
           pip install -r requirements_build.txt
@@ -54,7 +62,7 @@ jobs:
       - name: Upload wheel to artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.VERSION }}_wheel
+          name: ${{inputs.package-name}}-v${{ steps.version.outputs.VERSION }}_wheel
           path: ./dist/*
 
       - name: Install OpenGL
