@@ -28,7 +28,7 @@ class Grouping:
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
-    >>> disp = solution.elemental_stress(element_shape = post.grouping.by_el_shape)
+    >>> disp = solution.displacement(grouping=post.grouping.by_el_shape)
     """
 
     by_el_shape = "elshape"
