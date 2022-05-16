@@ -34,9 +34,9 @@ class ResultData:
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
-    >>> disp = solution.nodal_displacement()
-    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23])
-    >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
+    >>> disp = solution.displacement()
+    >>> disp_on_nodes = solution.displacement(node_scoping = [1, 23])
+    >>> disp_on_named_selection = solution.displacement(named_selection="SELECTION")
     """
 
     def __init__(
@@ -367,12 +367,11 @@ class ResultData:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
+        >>> solution = post.load_solution(examples.msup_transient)
         >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
-        >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
-                                     time_scoping=tscope
+        >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
         >>> s = stress.tensor
-        >>> s.plot_chart()
+        >>> s._plot_chart()
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
