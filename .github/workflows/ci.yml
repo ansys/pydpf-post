@@ -86,7 +86,7 @@ jobs:
           $PSDefaultParameterValues['*:ErrorAction']='Stop'
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           $script = $PSScriptRoot+'gl-ci-helpers/appveyor/install_opengl.ps1'
-          Invoke-Expression $script
+          Invoke-Expression -Command $script
 
       - name: Install test offscreen rendering
         shell: bash
