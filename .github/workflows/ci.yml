@@ -101,11 +101,11 @@ jobs:
           chmod +x .ci/setup_headless_display.sh
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
-          xvfb-run python .ci/display_test.py
+          python .ci/display_test.py
 
-      - name: Test offscreen rendering (Windows)
-        shell: bash
-        run:
+#      - name: Test offscreen rendering (Windows)
+#        shell: bash
+#        run:
 
       - name: Install/Test Environment
         run: |
