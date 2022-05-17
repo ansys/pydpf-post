@@ -50,6 +50,12 @@ jobs:
           cd tests
           pip install %WHEELPATH%
 
+      - name: Install extras
+        shell: cmd
+        run: |
+          pip install .[reporting]
+          pip install .[plotting]
+
       - name: Test import
         working-directory: tests
         run: python -c "from ansys.dpf import post; print(post.Report(gpu=False))"
