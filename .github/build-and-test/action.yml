@@ -42,16 +42,19 @@ runs:
         pip install %WHEELPATH%
 
     - name: Test import
+      shell: cmd
       working-directory: tests
       run: python -c "from ansys.dpf import ${{env.MODULE}}; print(${{env.MODULE}}.Report(gpu=False))"
 
     - name: Check licences of packages
+      shell: cmd
       run: |
         pip install pip-licenses
         pip-licenses
         pip uninstall -y pip-licenses
 
-    - name: Retrieve PyDPF-Post version
+    - name: Retrieve package version
+      shell: cmd
       run: |
         echo "::set-output name=VERSION::$(python -c "from ansys.dpf.${{env.MODULE}} import __version__; print(__version__)")"
         echo "PyDPF-Post version is: $(python -c "from ansys.dpf.${{env.MODULE}} import __version__; print(__version__)")"
@@ -80,11 +83,13 @@ runs:
         python .ci/display_test.py
 
     - name: Install Test Environment
+      shell: cmd
       run: |
         pip install -r requirements_test.txt
       if: always()
 
     - name: Test API Docstrings
+      shell: cmd
       run: |
          pytest --doctest-modules --junitxml=junit/test-doctests-results.xml ansys/dpf/${{env.MODULE}}
 
@@ -104,6 +109,7 @@ runs:
       if: always()
 
     - name: Test API
+      shell: cmd
       run: |
         cd tests
         pytest --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
