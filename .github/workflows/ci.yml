@@ -11,7 +11,6 @@ on:
     branches:
       - master
       - "release*"
-      - "ci/*"
 
 env:
   PACKAGE_NAME: ansys-dpf-post
