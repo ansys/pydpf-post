@@ -42,17 +42,17 @@ jobs:
           ANSYS_VERSION : ${{env.ANSYS_VERSION}}
 
       - name: Install package
-        shell: cmd
+        shell: bash
         run: |
           pip install -r requirements_build.txt
           python setup.py bdist_wheel
-          FOR /F %%a in ('dir /s/b dist\*.whl') do SET WHEELPATH=%%a
-          ECHO %WHEELPATH%
+          export WHEELNAME=`ls dist/*.whl`
+          echo ${WHEELNAME}
+          pip install ${WHEELNAME}
           cd tests
-          pip install %WHEELPATH%
 
       - name: Install extras
-        shell: cmd
+        shell: bash
         run: |
           pip install .[plotting]
 
@@ -102,11 +102,14 @@ jobs:
            pytest --doctest-modules --junitxml=junit/test-doctests-results.xml ansys/dpf/post
 
       - name: Kill all servers
-        shell: cmd
+        shell: bash
         run: |
-          tasklist /FI "IMAGENAME eq Ans.Dpf.Grpc.exe" 2>NUL | find /I /N "Ans.Dpf.Grpc.exe">NUL
-          ECHO %ERRORLEVEL%
-          if "%ERRORLEVEL%"=="0"(taskkill /f /im Ans.Dpf.Grpc.exe)
+          echo $0
+          if pgrep -x "Ans.Dpf.Grpc" > /dev/null
+          then
+              pkill -f Ans.Dpf.Grpc.exe
+          fi
+        if: always()
         continue-on-error: true
 
       - name: Publish Doc Test Results
@@ -122,11 +125,14 @@ jobs:
           pytest --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: Kill all servers
-        shell: cmd
+        shell: bash
         run: |
-          tasklist /FI "IMAGENAME eq Ans.Dpf.Grpc.exe" 2>NUL | find /I /N "Ans.Dpf.Grpc.exe">NUL
-          ECHO %ERRORLEVEL%
-          if "%ERRORLEVEL%"=="0"(taskkill /f /im Ans.Dpf.Grpc.exe)
+          echo $0
+          if pgrep -x "Ans.Dpf.Grpc" > /dev/null
+          then
+              pkill -f Ans.Dpf.Grpc.exe
+          fi
+        if: always()
         continue-on-error: true
 
       - name: Publish Test Results
