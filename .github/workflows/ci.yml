@@ -33,7 +33,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.1.4
         with:
-          python-version: ${{ matrix.python_version }}
+          python-version: ${{ matrix.python-version }}
 
       - id: install-dpf
         uses: pyansys/pydpf-actions/install-dpf-server@v1
@@ -56,15 +56,15 @@ jobs:
         run: |
           pip install .[plotting]
 
-      - name: Test import
-        working-directory: tests
-        run: python -c "from ansys.dpf import post; print(post.Report(gpu=False))"
-
       - name: Check licences of packages
         run: |
           pip install pip-licenses
           pip-licenses
           pip uninstall -y pip-licenses
+
+      - name: Test import
+        working-directory: tests
+        run: python -c "from ansys.dpf import post; print(post.Report(gpu=False))"
 
       - name: Retrieve PyDPF-Post version
         run: |
@@ -88,6 +88,12 @@ jobs:
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
         if: runner.os == 'Windows'
 
+      - name: Install OS packages
+        run: |
+          sudo apt update
+          sudo apt install zip pandoc libgl1-mesa-glx xvfb
+        if: runner.os == 'Linux'
+
       - name: Install/Test offscreen rendering
         shell: bash
         run: |
@@ -95,7 +101,7 @@ jobs:
           chmod +x .ci/setup_headless_display.sh
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
-          python .ci/display_test.py
+          xvfb-run python .ci/display_test.py
 
       - name: Install/Test Environment
         run: |
