@@ -28,6 +28,7 @@ jobs:
         os: ["windows-2019", "ubuntu-latest"]
 
     steps:
+      - uses: actions/checkout@v1
       - uses: ./.github/build-and-test
         with:
           python_version: ${{ matrix.python-version }}
