@@ -79,6 +79,7 @@ jobs:
           path: ./dist/*
 
       - name: Install OpenGL
+        shell: pwsh
         run: |
           Set-StrictMode -Version Latest
           $ErrorActionPreference = "Stop"
@@ -87,6 +88,7 @@ jobs:
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
 
       - name: Install test offscreen rendering
+        shell: bash
         run: |
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
