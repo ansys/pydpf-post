@@ -86,8 +86,9 @@ jobs:
           $PSDefaultParameterValues['*:ErrorAction']='Stop'
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
+        if: runner.os == 'Windows'
 
-      - name: Install test offscreen rendering
+      - name: Install/Test offscreen rendering
         shell: bash
         run: |
           ls -lh .ci
@@ -96,7 +97,7 @@ jobs:
           pip install -r .ci/requirements_test_xvfb.txt
           python .ci/display_test.py
 
-      - name: Install Test Environment
+      - name: Install/Test Environment
         run: |
           pip install -r requirements_test.txt
         if: always()
