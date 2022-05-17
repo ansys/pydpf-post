@@ -79,18 +79,19 @@ jobs:
           path: ./dist/*
 
       - name: Install OpenGL
-        shell: cmd
+        shell: pwsh
         run: |
           Set-StrictMode -Version Latest
           $ErrorActionPreference = "Stop"
           $PSDefaultParameterValues['*:ErrorAction']='Stop'
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
-        if: runner.os == 'Windows'
 
       - name: Install test offscreen rendering
         shell: bash
         run: |
+          ls -lh .ci
+          chmod +x .ci/setup_headless_display.sh
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
           python .ci/display_test.py
