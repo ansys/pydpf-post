@@ -18,14 +18,14 @@ env:
   ANSYS_VERSION: 221
 
 jobs:
-  Build_and_Test:
-    name: Build and Test
+  Windows:
+    name: Windows
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9"]
-        os: ["windows-2019", "ubuntu-latest"]
+        os: ["windows-2019"]
 
     steps:
       - uses: actions/checkout@v2
@@ -159,6 +159,6 @@ jobs:
 
   Release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: Build_and_Test
+    needs: Windows
     uses: ./.github/workflows/release.yml
     secrets: inherit
