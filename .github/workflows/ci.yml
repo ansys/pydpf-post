@@ -85,7 +85,7 @@ jobs:
           $ErrorActionPreference = "Stop"
           $PSDefaultParameterValues['*:ErrorAction']='Stop'
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
-          powershell gl-ci-helpers/appveyor/install_opengl.ps1
+          & .\gl-ci-helpers\appveyor\install_opengl.ps1
 
       - name: Install test offscreen rendering
         shell: bash
