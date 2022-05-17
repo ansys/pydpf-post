@@ -155,6 +155,6 @@ jobs:
 
   Release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: Windows
+    needs: Build and Test
     uses: ./.github/workflows/release.yml
     secrets: inherit
