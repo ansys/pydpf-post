@@ -1,1 +1,2 @@
 wheel>=0.35.0
+protobuf>=3.15.0
