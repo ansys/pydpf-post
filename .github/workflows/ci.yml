@@ -137,7 +137,7 @@ jobs:
       - name: Test Post API
         run: |
           cd tests
-          pytest --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest --cov=ansys.dpf.post --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: Kill all servers
         shell: bash
@@ -149,6 +149,13 @@ jobs:
           fi
         if: always()
         continue-on-error: true
+
+      - name: Print Coverage
+        run: coverage xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        if: matrix.python-version == '3.8'
 
       - name: Publish Test Results
         uses: actions/upload-artifact@v2
