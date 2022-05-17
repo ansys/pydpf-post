@@ -94,7 +94,7 @@ jobs:
           sudo apt install zip pandoc libgl1-mesa-glx xvfb
         if: runner.os == 'Linux'
 
-      - name: Install/Test offscreen rendering
+      - name: Install offscreen rendering
         shell: bash
         run: |
           ls -lh .ci
@@ -102,6 +102,10 @@ jobs:
           .ci/setup_headless_display.sh
           pip install -r .ci/requirements_test_xvfb.txt
           xvfb-run python .ci/display_test.py
+
+      - name: Test offscreen rendering (Windows)
+        shell: bash
+        run:
 
       - name: Install/Test Environment
         run: |
