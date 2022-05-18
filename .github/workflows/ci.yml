@@ -27,6 +27,8 @@ jobs:
         os: ["windows-2019"]
 
     steps:
+      - uses: actions/checkout@v2
+
       - id: build-and-test
         uses: ./.github/workflows/build-and-test
         with:
