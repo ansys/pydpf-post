@@ -6,7 +6,7 @@ on:
       os:
         description: "Os for the runner"
         required: true
-        default: "windows-2019"
+        default: "3.8"
         type: string
       python-version:
         description: "Python version"
