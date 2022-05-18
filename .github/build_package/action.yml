@@ -1,0 +1,79 @@
+name: "Build DPF Package"
+description: "Builds the DPF package"
+inputs:
+  python-version:
+    description: "Python version"
+    required: true
+    default: "3.8"
+  ANSYS_VERSION:
+    description: "Ansys release version number in the format 221"
+    required: true
+  PACKAGE_NAME:
+    description: "Package name"
+    required: true
+  MODULE:
+    description: "Module name"
+    required: true
+    default: post
+  dpf-standalone-TOKEN:
+    description: "Token for DPF installation"
+    required: true
+  install_extras:
+    description: "Extras to install for the local package"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup Python"
+      uses: actions/setup-python@v2.1.4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: "Install DPF"
+      uses: pyansys/pydpf-actions/install-dpf-server@v1
+      with:
+        dpf-standalone-TOKEN: ${{inputs.dpf-standalone-TOKEN}}
+        ANSYS_VERSION : ${{inputs.ANSYS_VERSION}}
+
+    - name: "Install local package"
+      shell: bash
+      run: |
+        pip install -r requirements_build.txt
+        python setup.py bdist_wheel
+        export WHEEL_NAME=`ls dist/*.whl`
+        echo ${WHEEL_NAME}
+        pip install ${WHEEL_NAME}
+        cd tests
+
+    - name: "Install extras"
+      shell: bash
+      run: |
+        pip install .[${{inputs.install_extras}}]
+      if: ${{inputs.install_extras}} != null
+
+    - name: "Check licences of packages"
+      shell: bash
+      run: |
+        pip install pip-licenses
+        pip-licenses
+        pip uninstall -y pip-licenses
+
+    - name: "Test import"
+      shell: bash
+      working-directory: tests
+      run: python -c "from ansys.dpf import ${{inputs.MODULE}}; print(${{inputs.MODULE}}.Report(gpu=False))"
+
+    - name: "Retrieve package version"
+      shell: bash
+      run: |
+        echo "::set-output name=VERSION::$(python -c "from ansys.dpf.${{inputs.MODULE}} import __version__; print(__version__)")"
+        echo "${{inputs.PACKAGE_NAME}} version is: $(python -c "from ansys.dpf.${{inputs.MODULE}} import __version__; print(__version__)")"
+      id: version
+
+    - name: "Upload wheel to artifacts"
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ inputs.PACKAGE_NAME }}-v${{ steps.version.outputs.VERSION }}_wheel
+        path: ./dist/*
+      if: ${{ inputs.python-version }} == '3.8' && ${{ runner.os }} == 'Windows'
