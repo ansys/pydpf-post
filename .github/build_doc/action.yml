@@ -18,6 +18,9 @@ inputs:
   dpf-standalone-TOKEN:
     description: "Token for DPF installation"
     required: true
+  install_extras:
+    description: "Extras to install for the local package"
+    required: false
 
 runs:
   using: "composite"
@@ -42,6 +45,12 @@ runs:
         echo ${WHEEL_NAME}
         pip install ${WHEEL_NAME}
         cd tests
+
+    - name: "Install extras"
+      shell: bash
+      run: |
+        pip install .[${{inputs.install_extras}}]
+      if: ${{inputs.install_extras}} != null
 
     - name: "Test import"
       shell: bash

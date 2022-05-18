@@ -65,4 +65,5 @@ jobs:
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: post
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+          install_extras: plotting
         timeout-minutes: 30
