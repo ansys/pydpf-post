@@ -21,6 +21,7 @@ jobs:
   Windows:
     uses: pydpf-post/pydpf-post/.github/workflows/build_and_test.yml
     with:
+      os: "windows-2019"
       python-version: "3.8"
       ANSYS_VERSION: ${{env.ANSYS_VERSION}}
       PACKAGE_NAME: ${{env.PACKAGE_NAME}}
