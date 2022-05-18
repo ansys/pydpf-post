@@ -1,0 +1,89 @@
+name: "Generate documentation"
+description: "Generates the documentation for the DPF local package"
+inputs:
+  python-version:
+    description: "Python version"
+    required: true
+    default: "3.8"
+  ANSYS_VERSION:
+    description: "Ansys release version number in the format 221"
+    required: true
+  PACKAGE_NAME:
+    description: "Package name"
+    required: true
+  MODULE:
+    description: "Module name"
+    required: true
+    default: post
+  dpf-standalone-TOKEN:
+    description: "Token for DPF installation"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup Python"
+      uses: actions/setup-python@v2.1.4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: "Install DPF"
+      uses: pyansys/pydpf-actions/install-dpf-server@v1
+      with:
+        dpf-standalone-TOKEN: ${{inputs.dpf-standalone-TOKEN}}
+        ANSYS_VERSION : ${{inputs.ANSYS_VERSION}}
+
+    - name: "Install local package"
+      shell: bash
+      run: |
+        pip install -r requirements_build.txt
+        python setup.py bdist_wheel
+        export WHEEL_NAME=`ls dist/*.whl`
+        echo ${WHEEL_NAME}
+        pip install ${WHEEL_NAME}
+        cd tests
+
+    - name: "Test import"
+      shell: bash
+      working-directory: tests
+      run: python -c "from ansys.dpf import ${{inputs.MODULE}}; print(${{inputs.MODULE}}.Report(gpu=False))"
+
+    - name: "Setup headless display"
+      uses: pyvista/setup-headless-display-action@v1
+
+    - name: "Install documentation requirements"
+      shell: cmd
+      run: |
+        pip install -r requirements_docs.txt
+
+    - name: "Build Documentation"
+      shell: cmd
+      run: |
+        cd .ci
+        build_doc.bat > ..\docs\log.txt 2>&1
+        -
+    - name: "Zip Documentation"
+      shell: cmd
+      run: |
+        7z a -tzip ./docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip ./docs/build
+
+    - name: "Kill all servers"
+      shell: bash
+      run: |
+        echo $0
+        if pgrep -x "Ans.Dpf.Grpc" > /dev/null
+        then
+            pkill -f Ans.Dpf.Grpc.exe || true
+        fi
+
+    - name: "Upload Documentation"
+      uses: actions/upload-artifact@v2
+      with:
+        name: doc-${{inputs.PACKAGE_NAME}}
+        path: ./docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip
+
+    - name: "Upload Documentation Build log"
+      uses: actions/upload-artifact@v2
+      with:
+        name: doc-${{inputs.PACKAGE_NAME}}-log
+        path: ./docs/*.txt

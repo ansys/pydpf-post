@@ -18,7 +18,7 @@ env:
 
 jobs:
   Build_Test_Upload:
-    name: Build_Test_Upload
+    name: Build Test Upload
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -49,3 +49,20 @@ jobs:
         with:
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
         if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
+
+  Documentation:
+    name: Documentation
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: build_doc
+        uses: ./.github/build_doc
+        with:
+          python-version: "3.8"
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+          MODULE: post
+          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+        timeout-minutes: 30
