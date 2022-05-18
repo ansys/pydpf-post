@@ -69,7 +69,14 @@ runs:
       shell: cmd
       run: |
         cd .ci
-        build_doc.bat > ..\docs\log.txt 2>&1
+        ECHO %AWP_ROOT221%
+        set SPHINX_APIDOC_OPTIONS=inherited-members
+        call sphinx-apidoc -o ../docs/source/api ../ansys -f --implicit-namespaces --separate  --no-headings
+        pushd .
+        cd ../docs/
+        call make clean
+        call make html
+        popd > ..\docs\log.txt 2>&1
         -
     - name: "Zip Documentation"
       shell: cmd
