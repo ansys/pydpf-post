@@ -88,7 +88,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.location = post.locations.elemental
         """
@@ -114,7 +115,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.element_scoping = [1, 4]
         """
@@ -137,7 +139,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.node_scoping = [1, 4]
         """
@@ -157,7 +160,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.node_scoping = 'SELECTION'
         """
@@ -177,7 +181,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.node_scoping = post.grouping.by_el_shape
         """
@@ -197,7 +202,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress()
         >>> stress.time_scoping = [1, 4]
         """
@@ -216,7 +222,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.mapdl_grouping = 186
         """
@@ -235,7 +242,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress()
         >>> stress.time = 0.2
         """
@@ -254,7 +262,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.set = 2
         """
@@ -274,7 +283,8 @@ class Definition:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.solution("file.rst")
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> coordinates = [[0.0, 0.0, 0.0], [0.1, 0.1, 0.1], [0.0, 0.1, 0.0]]
         >>> path = post.create_path_on_coordinates(coordinates=coordinates)

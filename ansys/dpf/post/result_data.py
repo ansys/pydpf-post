@@ -32,10 +32,11 @@ class ResultData:
     Examples
     --------
     >>> from ansys.dpf import post
-    >>> solution = post.solution("file.rst")
-    >>> disp = solution.nodal_displacement()
-    >>> disp_on_nodes = solution.nodal_displacement(node_scoping = [1, 23])
-    >>> disp_on_named_selection = solution.nodal_displacement(named_selection="SELECTION")
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
+    >>> disp = solution.displacement()
+    >>> disp_on_nodes = solution.displacement(node_scoping = [1, 23])
+    >>> disp_on_named_selection = solution.displacement(named_selection="SELECTION")
     """
 
     def __init__(
@@ -289,16 +290,16 @@ class ResultData:
         Plot a result at the time_step number 1
 
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution('file.rst')
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
-        >>> sx.plot_contour("time", [1])
+        >>> pl = sx.plot_contour("time", [1], off_screen=True)
 
         The labels can be obtained using:
 
-        >>> sx.get_all_label_spaces()
-
-        [{'elshape': 1, 'time': 1}, {'elshape': 0, 'time': 1}]
+        >>> sx.get_all_label_spaces() # doctest: +ELLIPSIS
+        [{'...': ..., '...': ...}, {'...': ..., '...': ...}]
         """
         self._evaluate_result()
         # check if complex label, not supported
@@ -364,12 +365,13 @@ class ResultData:
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution('file.rst')
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.msup_transient)
         >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
-        >>> stress = solution.stress(mapdl_grouping=181, location='Nodal',
-                                     time_scoping=tscope
+        >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
         >>> s = stress.tensor
-        >>> s.plot_chart()
+        >>> pl = s._plot_chart()
+
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support

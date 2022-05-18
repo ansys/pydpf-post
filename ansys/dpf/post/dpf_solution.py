@@ -51,17 +51,35 @@ class DpfSolution:
         return self._model.metadata.time_freq_support
 
     def get_result_info(self):
-        """Returns information about the result file.
+        r"""Returns information about the result file.
 
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> result = post.result("file.rst")
-        >>> print(result.get_result_info())
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> print(solution.get_result_info()) # doctest: +NORMALIZE_WHITESPACE
+        Static analysis
+        Unit system: MKS: m, kg, N, s, V, A, degC
+        Physics Type: Mecanic
+        Available results:
+             -  displacement: Nodal Displacement
+             -  reaction_force: Nodal Force
+             -  stress: ElementalNodal Stress
+             -  elemental_volume: Elemental Volume
+             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+             -  artificial_hourglass_energy: Elemental Hourglass Energy
+             -  thermal_dissipation_energy: Elemental thermal dissipation energy
+             -  kinetic_energy: Elemental Kinetic Energy
+             -  co_energy: Elemental co-energy
+             -  incremental_energy: Elemental incremental energy
+             -  elastic_strain: ElementalNodal Strain
+             -  structural_temperature: ElementalNodal Temperature
         """
         return self._model.metadata.result_info
 
-    def _check_nodal_location(self, **kwargs):
+    @staticmethod
+    def _check_nodal_location(**kwargs):
         if _AvailableKeywords.location in kwargs:
             location = kwargs.pop(_AvailableKeywords.location)
             if location != locations.nodal:
@@ -98,7 +116,8 @@ class DpfMecanicSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
@@ -114,7 +133,8 @@ class DpfMecanicSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
         return ElasticStrain(
@@ -132,7 +152,8 @@ class DpfMecanicSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
         return PlasticStrain(
@@ -150,7 +171,8 @@ class DpfMecanicSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
         return Displacement(
@@ -168,7 +190,8 @@ class DpfMecanicSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return StructuralTemperature(
@@ -213,7 +236,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> displacement = solution.displacement(node_scoping = [1, 43])
         """
         return ComplexDisplacement(
@@ -231,7 +255,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
         """
         return ComplexStructuralTemperature(
@@ -249,7 +274,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
         """
         return ComplexPlasticStrain(
@@ -267,7 +293,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
         """
         return ComplexElasticStrain(
@@ -285,7 +312,8 @@ class DpfMecanicComplexSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return ComplexStress(
@@ -317,7 +345,8 @@ class DpfThermalSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.steady_therm)
         >>> temp = solution.temperature(node_scoping = [1, 43])
         """
         self._check_nodal_location(**kwargs)
@@ -334,7 +363,8 @@ class DpfThermalSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.steady_therm)
         >>> hf = solution.heat_flux(node_scoping = [1, 43])
         """
         return HeatFlux(data_sources=self._data_sources, model=self._model, **kwargs)
@@ -350,7 +380,8 @@ class DpfThermalSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.electric_therm)
         >>> ep = solution.electric_potential(node_scoping = [1, 43])
         """
         self._check_nodal_location(**kwargs)
@@ -369,7 +400,8 @@ class DpfThermalSolution(DpfSolution):
         Examples
         --------
         >>> from ansys.dpf import post
-        >>> solution = post.load_solution(file.rst)
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.electric_therm)
         >>> ef = solution.electric_field(node_scoping = [1, 43])
         """
         return ElectricField(

@@ -40,7 +40,9 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
 
     Examples
     --------
-    >>> solution = post.solution("file.rst")
+    >>> from ansys.dpf import post
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.static_rst)
     """
     _model = Model(data_sources)
     data_sources = _model.metadata.data_sources
@@ -89,8 +91,22 @@ def print_available_keywords():
     Examples
     --------
     >>> from ansys.dpf import post
-    >>> solution = post.load_solution('file.rst')
-    >>> stress = solution.stress(PRINTED_KEYWORDS_CAN_be_USED_HERE)
+    >>> from ansys.dpf.post import examples
+    >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
+    >>> post.print_available_keywords() # doctest: +NORMALIZE_WHITESPACE
+    element_scoping: list, int or dpf.core.Scoping
+    grouping: str. Use post.grouping.(...) as helper.
+    location: str. Use post.locations.(...) as helper.
+    mapdl_grouping: int. Write 186 to get mapdl_elements solid_186.
+    named_selection: str. Name of named_selection.
+    node_scoping: list, int or dpf.core.Scoping
+    path: DpfPath object that
+                contains a list of coordinates,
+                e.g. [[0.1, 0.0, 0.0],
+                [0.0, 0.1, 0.0]].
+    set: int
+    time: float
+    time_scoping: list, int or dpf.core.Scoping
     """
     txt = _AvailableKeywords().__str__()
     print(txt)

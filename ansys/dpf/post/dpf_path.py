@@ -6,6 +6,7 @@ import numpy as np
 from ansys.dpf.core.common import locations, natures
 from ansys.dpf.core import Field
 
+
 def create_path_on_coordinates(coordinates):
     """
     Create a dpf path object that can be used to request
@@ -22,17 +23,18 @@ def create_path_on_coordinates(coordinates):
     >>> from ansys.dpf.post import examples
     >>> coordinates = [[0.024, 0.03, 0.003]]
     >>> for i in range(1, 51):
-    ...     coord_copy = ref.copy()
+    ...     coord_copy = coordinates[-1].copy()
     ...     coord_copy[1] = coord_copy[0] + i * 0.001
     ...     coordinates.append(coord_copy)
     >>> path_on_coord = post.create_path_on_coordinates(
     ... coordinates=coordinates
     ... )
     >>> solution = post.load_solution(examples.static_rst)
-    >>> stress = solution.stress(path=dpf_path)
+    >>> stress = solution.stress(path=path_on_coord)
 
     """
     return DpfPath(coordinates=coordinates)
+
 
 class DpfPath:
     """This object describe a set of coordinates."""
@@ -48,12 +50,13 @@ class DpfPath:
 
         Example
         -------
+        >>> from ansys.dpf import post
         >>> coordinates = [[0.024, 0.03, 0.003]]
         >>> for i in range(1, 51):
-        ...     coord_copy = ref.copy()
+        ...     coord_copy = coordinates[-1].copy()
         ...     coord_copy[1] = coord_copy[0] + i * 0.001
         ...     coordinates.append(coord_copy)
-        >>> dpf_path = post.DpfPath(coordinates=coordinates)
+        >>> dpf_path = post.create_path_on_coordinates(coordinates=coordinates)
 
         """
         if isinstance(coordinates, Field):

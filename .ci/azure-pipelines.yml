@@ -21,54 +21,54 @@ pr:
     - '*'
 
 jobs:
-- job: Windows
-  variables:
-    python.version: '3.8'
-    DISPLAY: ':99.0'
-    PYANSYS_OFF_SCREEN: True
-  pool:
-    vmImage: 'windows-2019'
-
-  steps:
-    - template: templates\prepare-environment-windows.yml   
-    
-    - task: PublishBuildArtifacts@1
-      displayName: 'WHEEL: publish artifacts'
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)\dist'
-        ArtifactName: 'ansys_dpf_post_wheel'
-      enabled: true
-
-    - script: |
-        pip install -r requirements_test.txt
-        set THISDIR=$(System.DefaultWorkingDirectory)
-        cd tests=$(System.DefaultWorkingDirectory)
-        set AWP_ROOT221=%THISDIR%\server\v221
-        pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml --reruns 3
-        echo %PATH%
-        
-      displayName: Test Post API
-      
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'junit/test-results.xml' 
-        testRunTitle: 'windowsTests'
-        publishRunAttachments: true      
-      condition: always()
-      
-    - script: |
-        pip install twine
-        python setup.py sdist
-        twine upload --skip-existing dist/*
-      displayName: 'Upload to PyPi'
-      condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: $(PYPI_TOKEN)
-        TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"   
-         
-    - template: templates\kill-servers-windows.yml 
+#- job: Windows
+#  variables:
+#    python.version: '3.8'
+#    DISPLAY: ':99.0'
+#    PYANSYS_OFF_SCREEN: True
+#  pool:
+#    vmImage: 'windows-2019'
+#
+#  steps:
+#    - template: templates\prepare-environment-windows.yml
+#
+#    - task: PublishBuildArtifacts@1
+#      displayName: 'WHEEL: publish artifacts'
+#      inputs:
+#        PathtoPublish: '$(System.DefaultWorkingDirectory)\dist'
+#        ArtifactName: 'ansys_dpf_post_wheel'
+#      enabled: true
+#
+#    - script: |
+#        pip install -r requirements_test.txt
+#        set THISDIR=$(System.DefaultWorkingDirectory)
+#        cd tests=$(System.DefaultWorkingDirectory)
+#        set AWP_ROOT221=%THISDIR%\server\v221
+#        pytest -v --junitxml=junit/test-results.xml --cov ansys.dpf.post --cov-report=xml --reruns 3
+#        echo %PATH%
+#
+#      displayName: Test Post API
+#
+#    - task: PublishTestResults@2
+#      inputs:
+#        testResultsFormat: 'JUnit'
+#        testResultsFiles: 'junit/test-results.xml'
+#        testRunTitle: 'windowsTests'
+#        publishRunAttachments: true
+#      condition: always()
+#
+#    - script: |
+#        pip install twine
+#        python setup.py sdist
+#        twine upload --skip-existing dist/*
+#      displayName: 'Upload to PyPi'
+#      condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+#      env:
+#        TWINE_USERNAME: __token__
+#        TWINE_PASSWORD: $(PYPI_TOKEN)
+#        TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+#
+#    - template: templates\kill-servers-windows.yml
     
 
 - job: Linux
