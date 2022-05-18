@@ -17,20 +17,20 @@ env:
   ANSYS_VERSION: 221
 
 jobs:
-  Windows:
-    name: Windows
+  Build_Test_Upload:
+    name: Build_Test_Upload
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.8"]
         os: ["windows-2019", "ubuntu-latest"]
 
     steps:
       - uses: actions/checkout@v2
 
-      - id: build-and-test
-        uses: ./.github/build-and-test
+      - id: build_package
+        uses: ./.github/build_package
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -39,8 +39,13 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
 
-#  Release:
-#    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-#    needs: Windows
-#    uses: ./.github/workflows/release.yml
-#    secrets: inherit
+      - id: test_package
+        uses: ./.github/test_package
+        with:
+          MODULE: post
+
+      - id: upload_package
+        uses: ./.github/test_package
+        with:
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+        if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
