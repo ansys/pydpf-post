@@ -3,44 +3,55 @@ name: GitHub Actions
 on:
   pull_request:
     branches-ignore:
-      - "*no-ci"
+      - "*no-ci*"
 
-  push:
-    tags:
-      - "*"
-    branches:
-      - master
-      - "release*"
+#  push:
+#    tags:
+#      - "*"
+#    branches:
+#      - master
+#      - "release*"
 
 env:
   PACKAGE_NAME: ansys-dpf-post
+  MODULE: post
   ANSYS_VERSION: 221
 
 jobs:
   Windows:
-    name: Windows
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9"]
-        os: ["windows-2019", "ubuntu-latest"]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - id: build-and-test
-        uses: ./.github/build-and-test
-        with:
-          python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: post
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
-
-  Release:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: Windows
-    uses: ./.github/workflows/release.yml
+    uses: pydpf-post/pydpf-post/.github/workflows/build_and_test.yml
+    with:
+      python-version: "3.8"
+      ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+      PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+      MODULE: ${{env.MODULE}}
+      install_extras: plotting
     secrets: inherit
+
+  #  Windows:
+#    name: Windows
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        python-version: ["3.8", "3.9"]
+#        os: ["windows-2019", "ubuntu-latest"]
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - id: build-and-test
+#        uses: ./.github/build-and-test
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+#          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+#          MODULE: post
+#          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+#          install_extras: plotting
+
+#  Release:
+#    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+#    needs: Windows
+#    uses: ./.github/workflows/release.yml
+#    secrets: inherit
