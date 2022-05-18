@@ -86,9 +86,8 @@ runs:
         $PSDefaultParameterValues['*:ErrorAction']='Stop'
         git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
         powershell gl-ci-helpers/appveyor/install_opengl.ps1
-      if: runner.os == 'Windows'
 
-    - name: Install OS packages
+    - name: Install Linux off-screen packages
       shell: bash
       run: |
         sudo apt update
