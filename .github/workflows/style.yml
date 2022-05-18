@@ -1,10 +1,10 @@
 # check spelling, codestyle
 name: Style Check
 
-on: [push, pull_request, workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
-  build:
+  style:
     runs-on: ubuntu-20.04
 
     steps:
