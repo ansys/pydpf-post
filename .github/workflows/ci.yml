@@ -19,7 +19,7 @@ env:
 
 jobs:
   Windows:
-    uses: pydpf-post/pydpf-post/.github/workflows/build_and_test.yml@ci/create_linux_and_doc_github_actions
+    uses: pydpf-post/pydpf-post/.github/workflows/build_and_test.yml@68dadcd5
     with:
       os: "windows-2019"
       python-version: "3.8"
