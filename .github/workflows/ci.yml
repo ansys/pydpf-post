@@ -136,7 +136,7 @@ jobs:
       - name: Test Post API
         run: |
           cd tests
-          pytest --cov=ansys.dpf.post --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest -v --cov=ansys.dpf.post --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: Kill all servers
         shell: bash
