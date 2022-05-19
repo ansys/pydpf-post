@@ -27,5 +27,5 @@ clean:
 # with our docs like GIFs being written as PNG.
 pdf:
 	@$(SPHINXBUILD) -M latex "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	cd build/latex && latexmk -r latexmkrc -pdf *.tex -interaction=nonstopmode || true
+	cd build/latex && make latexpdf || true
 	(test -f build/latex/*.pdf && echo pdf exists) || exit 1
