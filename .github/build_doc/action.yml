@@ -75,8 +75,10 @@ runs:
         echo "Making html doc..."
         make html &>log_html.txt
         echo "Making pdf doc..."
-        make latexpdf &>log_pdf.txt
+        make latexpdf 
         cd ../
+
+#&>log_pdf.txt
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
