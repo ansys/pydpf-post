@@ -77,8 +77,8 @@ runs:
         export SPHINX_APIDOC_OPTIONS=inherited-members
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
         cd docs/
-        xvfb-run make clean
-        xvfb-run make html 
+        make clean
+        make html 
 
 #        SPHINXOPTS="-w build_errors.txt -N"
 
