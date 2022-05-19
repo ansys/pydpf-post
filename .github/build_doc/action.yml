@@ -78,11 +78,12 @@ runs:
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
         cd docs/
         make clean
-        make html 
+        make html &>docs/log.txt
+        cd ../
 
 #        SPHINXOPTS="-w build_errors.txt -N"
 
-#        &>docs/log.txt
+#
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
