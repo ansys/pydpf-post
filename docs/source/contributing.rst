@@ -116,7 +116,7 @@ Finally, please take a look at our `Code of Conduct <https://github.com/pyansys/
 
 
 Contributing to PyDPF-Post through GitHub
----------------------------------------
+-----------------------------------------
 To submit new code to DPF-Post, first fork the `PyDPF-Post GitHub Repo
 <https://github.com/pyansys/DPF-Post>`_ and then clone the forked
 repository to your computer.  Next, create a new branch based on the

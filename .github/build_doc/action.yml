@@ -60,22 +60,22 @@ runs:
     - name: "Setup headless display"
       uses: pyvista/setup-headless-display-action@v1
 
-    - name: "Install documentation requirements"
-      shell: bash
-      run: |
-        pip install -r requirements_docs.txt
-
     - name: "Install OS packages"
       shell: bash
       run: |
         sudo apt update
         sudo apt install xvfb pandoc zip libgl1-mesa-glx
 
+    - name: "Install documentation requirements"
+      shell: bash
+      run: |
+        pip install -r requirements_docs.txt
+
     - name: "Build Documentation"
       shell: bash
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        make -C docs html SPHINXOPTS="-w build_errors.txt -N" &>docs/log.txt
+        xvfb-run make -C docs html SPHINXOPTS="-w build_errors.txt -N" &>docs/log.txt
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
