@@ -17,38 +17,38 @@ env:
   ANSYS_VERSION: 221
 
 jobs:
-#  Build_Test_Upload:
-#    name: Build Test Upload
-#    runs-on: ${{ matrix.os }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        python-version: ["3.8"]
-#        os: ["windows-2019", "ubuntu-latest"]
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - id: build_package
-#        uses: ./.github/build_package
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
-#          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-#          MODULE: post
-#          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-#          install_extras: plotting
-#
-#      - id: test_package
-#        uses: ./.github/test_package
-#        with:
-#          MODULE: post
-#
-#      - id: upload_package
-#        uses: ./.github/test_package
-#        with:
-#          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-#        if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
+  Build_Test_Upload:
+    name: Build Test Upload
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+        os: ["windows-2019", "ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: build_package
+        uses: ./.github/build_package
+        with:
+          python-version: ${{ matrix.python-version }}
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+          MODULE: post
+          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+          install_extras: plotting
+
+      - id: test_package
+        uses: ./.github/test_package
+        with:
+          MODULE: post
+
+      - id: upload_package
+        uses: ./.github/test_package
+        with:
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+        if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
 
   Documentation:
     name: Documentation
