@@ -65,16 +65,24 @@ runs:
       run: |
         pip install -r requirements_docs.txt
 
+#    - name: "Install OS packages"
+#      shell: bash
+#      run: |
+#        sudo apt update
+#        sudo apt install xvfb
+
+#zip pandoc libgl1-mesa-glx
+
     - name: "Build Documentation"
       shell: bash
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        make -C docs html SPHINXOPTS="-w build_errors.txt -N"
+        make -C docs html SPHINXOPTS="-w build_errors.txt -N" | docs\log.txt
 
     - name: "Zip Documentation"
       shell: bash
       run: |
-        7z a -tzip ./docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip ./docs/build
+        7z a -tzip docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip docs/build
 
     - name: "Kill all servers"
       shell: bash
@@ -89,10 +97,10 @@ runs:
       uses: actions/upload-artifact@v2
       with:
         name: doc-${{inputs.PACKAGE_NAME}}
-        path: ./docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip
+        path: docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
       with:
         name: doc-${{inputs.PACKAGE_NAME}}-log
-        path: ./docs/*.txt
+        path: docs/*.txt
