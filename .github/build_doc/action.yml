@@ -61,25 +61,18 @@ runs:
       uses: pyvista/setup-headless-display-action@v1
 
     - name: "Install documentation requirements"
-      shell: cmd
+      shell: bash
       run: |
         pip install -r requirements_docs.txt
 
     - name: "Build Documentation"
-      shell: cmd
+      shell: bash
       run: |
-        cd .ci
-        ECHO %AWP_ROOT221%
-        set SPHINX_APIDOC_OPTIONS=inherited-members
-        call sphinx-apidoc -o ../docs/source/api ../ansys -f --implicit-namespaces --separate  --no-headings
-        pushd .
-        cd ../docs/
-        call make clean
-        call make html
-        popd > ..\docs\log.txt 2>&1
-        -
+        sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
+        xvfb-run make -C docs html SPHINXOPTS="-w build_errors.txt -N"
+
     - name: "Zip Documentation"
-      shell: cmd
+      shell: bash
       run: |
         7z a -tzip ./docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip ./docs/build
 
