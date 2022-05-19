@@ -78,7 +78,12 @@ runs:
 #        make latexpdf
 #        cd ../
 
-    - name: Build doc
+    - name: Build HTML doc
+      uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: "docs/"
+
+    - name: Build PDF doc
       uses: ammaraskar/sphinx-action@master
       with:
         pre-build-command: "apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended"
