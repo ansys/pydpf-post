@@ -69,22 +69,31 @@ runs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install xvfb pandoc
-
-#zip  libgl1-mesa-glx
+        sudo apt install xvfb pandoc zip libgl1-mesa-glx
 
     - name: "Build Documentation"
       shell: bash
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        make -C docs html SPHINXOPTS="-w build_errors.txt -N" > docs/log.txt
-        ls
+        make -C docs html SPHINXOPTS="-w build_errors.txt -N" &>docs/log.txt
+
+    - name: "Upload Documentation Build log"
+      uses: actions/upload-artifact@v2
+      with:
+        name: doc-${{inputs.PACKAGE_NAME}}-log
+        path: docs/*.txt
 
     - name: "Zip Documentation"
       shell: bash
       run: |
         ls docs/
         7z a -tzip docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip docs/build
+
+    - name: "Upload Documentation"
+      uses: actions/upload-artifact@v2
+      with:
+        name: doc-${{inputs.PACKAGE_NAME}}
+        path: docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip
 
     - name: "Kill all servers"
       shell: bash
@@ -94,15 +103,3 @@ runs:
         then
             pkill -f Ans.Dpf.Grpc.exe || true
         fi
-
-    - name: "Upload Documentation"
-      uses: actions/upload-artifact@v2
-      with:
-        name: doc-${{inputs.PACKAGE_NAME}}
-        path: docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip
-
-    - name: "Upload Documentation Build log"
-      uses: actions/upload-artifact@v2
-      with:
-        name: doc-${{inputs.PACKAGE_NAME}}-log
-        path: docs/*.txt
