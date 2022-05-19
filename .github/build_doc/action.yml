@@ -65,19 +65,19 @@ runs:
       run: |
         pip install -r requirements_docs.txt
 
-#    - name: "Install OS packages"
-#      shell: bash
-#      run: |
-#        sudo apt update
-#        sudo apt install xvfb
+    - name: "Install OS packages"
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install xvfb pandoc
 
-#zip pandoc libgl1-mesa-glx
+#zip  libgl1-mesa-glx
 
     - name: "Build Documentation"
       shell: bash
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        make -C docs html SPHINXOPTS="-w build_errors.txt -N" > docs/log.txt
+        xvfb-run make -C docs html SPHINXOPTS="-w build_errors.txt -N" > docs/log.txt
 
     - name: "Zip Documentation"
       shell: bash
