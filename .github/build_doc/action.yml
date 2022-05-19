@@ -78,7 +78,7 @@ runs:
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
         cd docs/
         make clean
-        make html &>docs/log.txt
+        make html &>log.txt
         cd ../
 
 #        SPHINXOPTS="-w build_errors.txt -N"
