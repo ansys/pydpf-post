@@ -69,7 +69,7 @@ runs:
       shell: bash
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        xvfb-run make -C docs html SPHINXOPTS="-w build_errors.txt -N"
+        make -C docs html SPHINXOPTS="-w build_errors.txt -N"
 
     - name: "Zip Documentation"
       shell: bash
