@@ -75,7 +75,7 @@ runs:
         echo "Making html doc..."
         make html &>log_html.txt
         echo "Making pdf doc..."
-        make latexpdf
+        make pdf
         cd ../
 
 
