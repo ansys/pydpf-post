@@ -81,6 +81,7 @@ runs:
     - name: Build HTML doc
       uses: ammaraskar/sphinx-action@master
       with:
+        pre-build-command: "pip install -r requirements_docs.txt"
         docs-folder: "docs/"
 
     - name: Build PDF doc
