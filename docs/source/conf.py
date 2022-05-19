@@ -174,7 +174,7 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "pyansys.tex",
+        "PyDPF-Post.tex",
         "PyAnsys DPF-Post Documentation",
         author,
         "manual",
@@ -186,7 +186,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "pyansys", "PyAnsys DPF-Post Documentation", [author], 1)]
+man_pages = [(master_doc, "PyDPF-Post", "PyAnsys DPF-Post Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -197,7 +197,7 @@ man_pages = [(master_doc, "pyansys", "PyAnsys DPF-Post Documentation", [author],
 texinfo_documents = [
     (
         master_doc,
-        "pyansys",
+        "PyDPF-Post",
         "PyAnsys DPF-Post Documentation",
         author,
         "pyansys",
