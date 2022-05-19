@@ -83,10 +83,7 @@ runs:
         sudo apt update
         sudo apt install texlive-latex-extra latexmk
         echo "Making pdf doc..."
-        make pdf
-
-
-#&>log_pdf.txt
+        make pdf &>log_pdf.txt
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
