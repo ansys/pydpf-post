@@ -78,10 +78,12 @@ runs:
       run: |
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
         make -C docs html SPHINXOPTS="-w build_errors.txt -N" > docs/log.txt
+        ls
 
     - name: "Zip Documentation"
       shell: bash
       run: |
+        ls docs/
         7z a -tzip docs/archive/doc-${{inputs.PACKAGE_NAME}}.zip docs/build
 
     - name: "Kill all servers"
