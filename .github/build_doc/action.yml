@@ -74,8 +74,15 @@ runs:
     - name: "Build Documentation"
       shell: bash
       run: |
+        export SPHINX_APIDOC_OPTIONS=inherited-members
         sphinx-apidoc -o docs/source/api ansys -f --implicit-namespaces --separate --no-headings
-        xvfb-run make -C docs html SPHINXOPTS="-w build_errors.txt -N" &>docs/log.txt
+        cd docs/
+        xvfb-run make clean
+        xvfb-run make html 
+
+#        SPHINXOPTS="-w build_errors.txt -N"
+
+#        &>docs/log.txt
 
     - name: "Upload Documentation Build log"
       uses: actions/upload-artifact@v2
