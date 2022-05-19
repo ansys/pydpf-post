@@ -6,7 +6,7 @@ import pyvista
 import numpy as np
 from pyansys_sphinx_theme import pyansys_logo_black
 
-from ansys.dpf.core import __version__
+from ansys.dpf.post import __version__
 
 
 # Manage errors
