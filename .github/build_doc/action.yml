@@ -75,7 +75,7 @@ runs:
         echo "Making html doc..."
         make html &>log_html.txt
         echo "Making pdf doc..."
-        make pdf &>log_pdf.txt
+        make latexpdf &>log_pdf.txt
         cd ../
 
     - name: "Upload Documentation Build log"
