@@ -1,8 +1,10 @@
+"""Sphinx documentation configuration file."""
 from datetime import datetime
 import os
 
 import pyvista
 import numpy as np
+from pyansys_sphinx_theme import pyansys_logo_black
 
 from ansys.dpf.core import __version__
 
@@ -25,14 +27,11 @@ pyvista.BUILDING_GALLERY = True
 # -- Project information -----------------------------------------------------
 
 project = "PyANSYS DPF"
-copyright = f"{datetime.now().year}, ANSYS"
-author = "ANSYS Developers"
+copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
+author = "ANSYS Inc."
 
 # The short X.Y version
-version = __version__
-
-# The full version, including alpha/beta/rc tags
-release = __version__
+release = version = __version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -117,11 +116,16 @@ sphinx_gallery_conf = {
 # html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # zerovm-sphinx-theme
 
+html_short_title = html_title = "PyDPF-Post"
 html_theme = "pyansys_sphinx_theme"
-html_logo = "_static/pyansys-logo-black-cropped.png"
+html_logo = pyansys_logo_black
 html_theme_options = {
     "github_url": "https://github.com/pyansys/DPF-Post",
     "show_prev_next": False,
+    "show_breadcrumbs": True,
+    "additional_breadcrumbs": [
+        ("PyAnsys", "https://docs.pyansys.com/"),
+    ],
     "logo_link": "https://postdocs.pyansys.com/"  # navigate to the main page
 }
 
@@ -144,7 +148,7 @@ html_sidebars = {}
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "pyansysdoc"
+htmlhelp_basename = "pydpfpostdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -172,7 +176,7 @@ latex_documents = [
         master_doc,
         "pyansys.tex",
         "PyAnsys DPF-Post Documentation",
-        f"{author}",
+        author,
         "manual",
     ),
 ]
