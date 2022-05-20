@@ -15,7 +15,6 @@ on:
 env:
   PACKAGE_NAME: ansys-dpf-post
   ANSYS_VERSION: 221
-  DPF_ACTIONS_VERSION: fix/versions
 
 jobs:
   Build_Test_Upload:
@@ -31,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@${{env.DPF_ACTIONS_VERSION}}
+        uses: pyansys/pydpf-actions/build_package@fix/versions
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -41,7 +40,7 @@ jobs:
           install_extras: plotting
 
       - name: "Test Package"
-        uses: pyansys/pydpf-actions/test_package@${{env.DPF_ACTIONS_VERSION}}
+        uses: pyansys/pydpf-actions/test_package@fix/versions
         with:
           MODULE: post
 
@@ -53,7 +52,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Build Documentation"
-        uses: pyansys/pydpf-actions/build_doc@${{env.DPF_ACTIONS_VERSION}}
+        uses: pyansys/pydpf-actions/build_doc@fix/versions
         with:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
