@@ -10,21 +10,20 @@ on:
       - "*"
     branches:
       - master
-#      - "release*"
 
 env:
   PACKAGE_NAME: ansys-dpf-post
   ANSYS_VERSION: 221
 
 jobs:
-  Build_Test_Upload:
-    name: Build Test Upload
+  Build_and_Test:
+    name: Build and Test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8"]
-        os: ["windows-2019", "ubuntu-latest"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        os: ["windows-latest", "ubuntu-latest"]
 
     steps:
       - uses: actions/checkout@v2
@@ -44,8 +43,8 @@ jobs:
         with:
           MODULE: post
 
-  Documentation:
-    name: Documentation
+  Build_Doc:
+    name: Build Doc
     runs-on: ubuntu-latest
 
     steps:

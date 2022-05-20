@@ -18,13 +18,13 @@ env:
   ANSYS_VERSION: 221
 
 jobs:
-  Build_Test_Upload:
-    name: Build_Test_Upload
+  Build_and_Test:
+    name: Build and Test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
         os: ["windows-2019", "ubuntu-latest"]
 
     steps:
@@ -45,9 +45,9 @@ jobs:
         with:
           MODULE: post
 
-  Documentation:
-    name: Documentation
-    runs-on: windows-2019
+  Build_Doc:
+    name: Build Doc
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -63,6 +63,13 @@ jobs:
           install_extras: plotting
         timeout-minutes: 30
 
+  Push_Doc:
+    name: Push Doc
+    runs-on: ubuntu-latest
+    needs: [Build_Doc]
+    steps:
+      - uses: actions/checkout@v2
+
       - name: "Push Documentation"
         uses: pyansys/pydpf-actions/push_doc@v2.0
         with:
@@ -71,7 +78,7 @@ jobs:
 
   Release:
     runs-on: ubuntu-latest
-    needs: [Build_Test_Upload, Documentation]
+    needs: [Build_and_Test, Push_Doc]
     steps:
       - name: "Release Package"
         uses: pyansys/pydpf-actions/release_package@v2.0
