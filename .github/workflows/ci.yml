@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package
+        uses: pyansys/pydpf-actions/build_package@v2
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -40,15 +40,9 @@ jobs:
           install_extras: plotting
 
       - name: "Test Package"
-        uses: pyansys/pydpf-actions/test_package
+        uses: pyansys/pydpf-actions/test_package@v2
         with:
           MODULE: post
-
-      - id: upload_package
-        uses: pyansys/pydpf-actions/test_package
-        with:
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-        if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
 
   Documentation:
     name: Documentation
@@ -58,7 +52,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Build Documentation"
-        uses: pyansys/pydpf-actions/build_doc
+        uses: pyansys/pydpf-actions/build_doc@v2
         with:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
