@@ -29,8 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - id: build_package
-        uses: ./.github/build_package
+      - name: "Build Package"
+        uses: pyansys/pydpf-actions/build_package
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -39,13 +39,13 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
 
-      - id: test_package
-        uses: ./.github/test_package
+      - name: "Test Package"
+        uses: pyansys/pydpf-actions/test_package
         with:
           MODULE: post
 
       - id: upload_package
-        uses: ./.github/test_package
+        uses: pyansys/pydpf-actions/test_package
         with:
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
         if: ${{ runner.os }} == 'Windows' && ${{ matrix.python-version }} == "3.8"
@@ -57,8 +57,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - id: build_doc
-        uses: ./.github/build_doc
+      - name: "Build Documentation"
+        uses: pyansys/pydpf-actions/build_doc
         with:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
