@@ -3,7 +3,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-install_requires = ["ansys.dpf.core>=0.3.0", "scooby"]
+install_requires = ["ansys.dpf.core>=0.3.0", "scooby", "wslink==1.6.4"]
 
 
 # Get version from version info
