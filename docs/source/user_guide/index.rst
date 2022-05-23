@@ -16,5 +16,4 @@ with typical usage.
    accessing_results
    plotting
    extending_to_core
-   xmlfiles
    troubleshooting
