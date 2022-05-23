@@ -3,7 +3,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-install_requires = ["ansys.dpf.core>=0.3.0", "scooby", "wslink==1.6.4"]
+install_requires = ["ansys.dpf.core>=0.3.0", "scooby"]
 
 
 # Get version from version info
@@ -41,7 +41,7 @@ setup(
     ],
     python_requires=">=3.6.*",
     extras_require={
-        "plotting": ["vtk", "pyvista>=0.24.0", "matplotlib"],
+        "plotting": ["vtk==9.1.0", "pyvista>=0.24.0", "matplotlib"],
     },
     install_requires=install_requires,
     license='MIT',
