@@ -10,161 +10,53 @@ on:
       - "*"
     branches:
       - master
-      - "release*"
 
 env:
   PACKAGE_NAME: ansys-dpf-post
   ANSYS_VERSION: 221
 
 jobs:
-  Windows:
-    name: Windows
+  Build_and_Test:
+    name: Build and Test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
-        os: ["windows-2019"]
+        python-version: ["3.7"]
+        os: ["windows-latest", "ubuntu-latest"]
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Python
-        uses: actions/setup-python@v2.1.4
+      - name: "Build Package"
+        uses: pyansys/pydpf-actions/build_package@v2.0
         with:
           python-version: ${{ matrix.python-version }}
-
-      - id: install-dpf
-        uses: pyansys/pydpf-actions/install-dpf-server@v1
-        with:
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+          MODULE: post
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          ANSYS_VERSION : ${{env.ANSYS_VERSION}}
+          install_extras: plotting
 
-      - name: Install package
-        shell: bash
-        run: |
-          pip install -r requirements_build.txt
-          python setup.py bdist_wheel
-          export WHEELNAME=`ls dist/*.whl`
-          echo ${WHEELNAME}
-          pip install ${WHEELNAME}
-          cd tests
-
-      - name: Install extras
-        shell: bash
-        run: |
-          pip install .[plotting]
-
-      - name: Check licences of packages
-        run: |
-          pip install pip-licenses
-          pip-licenses
-          pip uninstall -y pip-licenses
-
-      - name: Test import
-        working-directory: tests
-        run: python -c "from ansys.dpf import post; print(post.Report(gpu=False))"
-
-      - name: Retrieve PyDPF-Post version
-        run: |
-          echo "::set-output name=VERSION::$(python -c "from ansys.dpf.post import __version__; print(__version__)")"
-          echo "PyDPF-Post version is: $(python -c "from ansys.dpf.post import __version__; print(__version__)")"
-        id: version
-
-      - name: Upload wheel to artifacts
-        uses: actions/upload-artifact@v2
+      - name: "Test Package"
+        uses: pyansys/pydpf-actions/test_package@v2.0
         with:
-          name: ${{ env.PACKAGE_NAME }}-v${{ steps.version.outputs.VERSION }}_wheel
-          path: ./dist/*
+          MODULE: post
 
-      - name: Install OpenGL
-        shell: pwsh
-        run: |
-          Set-StrictMode -Version Latest
-          $ErrorActionPreference = "Stop"
-          $PSDefaultParameterValues['*:ErrorAction']='Stop'
-          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
-          powershell gl-ci-helpers/appveyor/install_opengl.ps1
-        if: runner.os == 'Windows'
+  Build_Doc:
+    name: Build Doc
+    runs-on: ubuntu-latest
 
-      - name: Install OS packages
-        run: |
-          sudo apt update
-          sudo apt install zip pandoc libgl1-mesa-glx xvfb
-        if: runner.os == 'Linux'
+    steps:
+      - uses: actions/checkout@v2
 
-      - name: Install offscreen rendering
-        shell: bash
-        run: |
-          ls -lh .ci
-          chmod +x .ci/setup_headless_display.sh
-          .ci/setup_headless_display.sh
-          pip install -r .ci/requirements_test_xvfb.txt
-          python .ci/display_test.py
-
-#      - name: Test offscreen rendering (Windows)
-#        shell: bash
-#        run:
-
-      - name: Install/Test Environment
-        run: |
-          pip install -r requirements_test.txt
-        if: always()
-
-      - name: Test API Docstrings
-        run: |
-           pytest --doctest-modules --junitxml=junit/test-doctests-results.xml ansys/dpf/post
-
-      - name: Kill all servers
-        shell: bash
-        run: |
-          echo $0
-          if pgrep -x "Ans.Dpf.Grpc" > /dev/null
-          then
-              pkill -f Ans.Dpf.Grpc.exe
-          fi
-        if: always()
-        continue-on-error: true
-
-      - name: Publish Doc Test Results
-        uses: actions/upload-artifact@v2
+      - name: "Build Documentation"
+        uses: pyansys/pydpf-actions/build_doc@v2.0
         with:
-          name: ${{ env.PACKAGE_NAME }}_doctest
-          path: junit/test-doctests-results.xml
-        if: always()
-
-      - name: Test Post API
-        run: |
-          cd tests
-          pytest -v --cov=ansys.dpf.post --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
-
-      - name: Kill all servers
-        shell: bash
-        run: |
-          echo $0
-          if pgrep -x "Ans.Dpf.Grpc" > /dev/null
-          then
-              pkill -f Ans.Dpf.Grpc.exe
-          fi
-        if: always()
-        continue-on-error: true
-
-#      - name: Print Coverage
-#        run: coverage xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        if: matrix.python-version == '3.8'
-
-      - name: Publish Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: ansys_dpf_post_pytest
-          path: tests/junit/test-results.xml
-        if: always()
-
-  Release:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: Windows
-    uses: ./.github/workflows/release.yml
-    secrets: inherit
+          python-version: "3.8"
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+          MODULE: post
+          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+          install_extras: plotting
+        timeout-minutes: 30
