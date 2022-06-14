@@ -263,9 +263,12 @@ def test_plot_with_vtk_file(allkindofcomplexity):
     s = stress.tensor
     s._plot_contour_with_vtk_file()
 
+
 from ansys.dpf import core
 version_core = core.__version__
 MEETS_CORE_034 = core.check_version.meets_version(version_core, '0.3.4')
+
+
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Plot path on coordinates"
                     "available from dpf-core 0.3.4.")
 def test_plot_on_coordinates(model_ns):
@@ -309,6 +312,7 @@ def test_plot_on_coordinates(model_ns):
     displacement = solution.displacement(path=path)
     displacement.vector.plot_contour(notebook=False)
 
+
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
 def test_plot_on_coordinates_msup_transient(plate_msup):
@@ -322,6 +326,7 @@ def test_plot_on_coordinates_msup_transient(plate_msup):
     stress = solution.stress(path=path)
     sxx = stress.xx
     sxx.plot_contour()
+
 
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
@@ -358,6 +363,7 @@ def test_plot_on_coordinates_complex_rst(complex_model):
     d = solution.displacement(path=path)
     vec = d.vector_amplitude
     vec.plot_contour(off_screen=True)
+
 
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
@@ -414,13 +420,14 @@ def test_path_on_coordinates_with_different_type_of_arrays(static_rst):
     assert len(field) == 9 # 3 notes * 3 dofs
     assert np.allclose(field.data, ref, rtol=1.0e-20)
 
+
 @pytest.mark.skipif(not MEETS_CORE_034, reason="Path on coordinates"
                     "available from dpf-core 0.3.4.")
 def test_path_on_coordinates_with_field(static_rst):
     # reference
-    ref = [[ 2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
-       [ 7.18877553e-10, -1.78267888e-09, -9.60067634e-10],
-       [ 1.27369182e-09, -6.50860213e-09, -1.73204664e-09]]
+    ref = [[2.75998120e-15, -5.61672634e-15, -3.67461471e-15],
+           [7.18877553e-10, -1.78267888e-09, -9.60067634e-10],
+           [1.27369182e-09, -6.50860213e-09, -1.73204664e-09]]
     # set up
     coordinates = [[0.024, 0.03, 0.003]]
     for i in range(1, 3):
