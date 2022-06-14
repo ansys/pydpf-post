@@ -258,8 +258,6 @@ class ResultData:
         self,
         display_option: str = "time",
         option_id=1,
-        off_screen=None,
-        notebook=None,
         **kwargs
     ):
         """Plot the contour result on its mesh support.
@@ -276,11 +274,6 @@ class ResultData:
             The name of the label you want to display. Default is ``"time"``.
         option_id: int, optional
              The list of label ids you want to display. Default is ``[1]``.
-        off_screen : bool, optional
-            Renders off screen when ``True``.  Useful for automated screenshots.
-        notebook : bool, optional
-            Option to force plotting within a jupyter notebook or
-            external to the notebook as an interactive figure.
         **kwargs : optional
             Additional keyword arguments for the plotter.  See
             ``help(pyvista.plot)`` for additional keyword arguments.
@@ -302,56 +295,52 @@ class ResultData:
         [{'...': ..., '...': ...}, {'...': ..., '...': ...}]
         """
         self._evaluate_result()
+
         # check if complex label, not supported
         labels = self.result_fields_container.get_label_space(0)
         if DefinitionLabels.complex in labels.keys():
             raise core_errors.ComplexPlottingError
-        # check default values
+
+        # Get default values if only one field in the fields container
         if len(self.result_fields_container) == 1:
             lab_space = self.result_fields_container.get_label_space(0)
             display_option = [*lab_space][0]
             option_id = lab_space[display_option]
 
+        # If plotting on a path
         if self._evaluator._path is not None:
+            # Try and use the new DpfPlotter from PyDPF-Core
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
             except:
                 raise dpf_errors.CoreVersionError(version='0.3.4')
-            pl = DpfPlotterObj(notebook=notebook, off_screen=off_screen)
+            # Initialize the plotter
+            pl = DpfPlotterObj(**kwargs)
+            # Sort the fields according to options
             new_fields_container = self._sort_fields_container_with_labels(
-                option_id, display_option
-            )
+                option_id, display_option)
+            # Add each field with its associated mesh to the plotting
             for field_m in new_fields_container:
                 mesh_m = field_m.meshed_region
                 pl.add_field(field_m, mesh_m)
-            pl.add_mesh(
-                self._evaluator._model.metadata.meshed_region,
-                style="surface",
-                show_edges=True,
-                opacity=0.3,
-                **kwargs
-            )
-            pl.show_figure()
+            # Add the mesh associated to the path
+            pl.add_mesh(self._evaluator._model.metadata.meshed_region,
+                        style="surface", show_edges=True, opacity=0.3, **kwargs)
+            # Show the plot
+            pl.show_figure(**kwargs)
+
+        # If not plotting on a path
         else:
-            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
+            # Initialize a Plotter
+            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region, **kwargs)
+            # Create an equivalent field container
             if len(self.result_fields_container) == 1:
-                pl.plot_contour(
-                    self.result_fields_container,
-                    off_screen=off_screen,
-                    notebook=notebook,
-                    **kwargs
-                )
+                fc = self.result_fields_container
             else:
                 # sorts and creates a new fields_container with only the desired labels
-                new_fields_container = self._sort_fields_container_with_labels(
-                    option_id, display_option
-                )
-                pl.plot_contour(
-                    new_fields_container,
-                    off_screen=off_screen,
-                    notebook=notebook,
-                    **kwargs
-                )
+                fc = self._sort_fields_container_with_labels(option_id, display_option)
+            # Call Plotter.plot_contour (to change for use of DpfPlotter
+            pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
