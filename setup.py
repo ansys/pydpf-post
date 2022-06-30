@@ -3,7 +3,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-install_requires = ["ansys.dpf.core>=0.3.0", "scooby"]
+install_requires = ["ansys.dpf.core>=0.3.0", "scooby", "protobuf<=3.20.1"]
 
 
 # Get version from version info
