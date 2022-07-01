@@ -4,7 +4,7 @@ import os
 
 import pyvista
 import numpy as np
-from pyansys_sphinx_theme import pyansys_logo_black
+from ansys_sphinx_theme import pyansys_logo_black
 
 from ansys.dpf.post import __version__
 
@@ -117,7 +117,7 @@ sphinx_gallery_conf = {
 # zerovm-sphinx-theme
 
 html_short_title = html_title = "PyDPF-Post"
-html_theme = "pyansys_sphinx_theme"
+html_theme = "ansys_sphinx_theme"
 html_logo = pyansys_logo_black
 html_theme_options = {
     "github_url": "https://github.com/pyansys/DPF-Post",
