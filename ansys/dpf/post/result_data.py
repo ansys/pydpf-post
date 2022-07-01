@@ -351,16 +351,6 @@ class ResultData:
         A time_scoping keyword must be used to select all the
         time_steps of the result.
 
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.msup_transient)
-        >>> tscope = list(range(1, len(solution.time_freq_support.time_frequencies) + 1))
-        >>> stress = solution.stress(location='Nodal', time_scoping=tscope)
-        >>> s = stress.tensor
-        >>> pl = s._plot_chart()
-
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
