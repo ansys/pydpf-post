@@ -7,13 +7,14 @@ import os
 
 import pytest
 import pyvista as pv
+import matplotlib as mpl
 
 from ansys.dpf import core
 from ansys.dpf.post import examples
 
 # enable off_screen plotting to avoid test interruption
 pv.OFF_SCREEN = True
-
+mpl.use("Agg")
 
 # currently running dpf on docker.  Used for testing on CI
 running_docker = os.environ.get("DPF_DOCKER", False)
