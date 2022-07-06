@@ -1,7 +1,22 @@
 # check spelling, codestyle
 name: Style Check
 
-on: [push, workflow_dispatch]
+on:
+  pull_request:
+     branches-ignore:
+       - '*no-ci*'
+       - 'dependabot/*'
+  push:
+    tags:
+      - "*"
+    branches:
+      - master
+      - "release*"
+      - 'dependabot/*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   style:
