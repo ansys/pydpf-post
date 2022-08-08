@@ -1,4 +1,5 @@
 import unittest
+import weakref
 
 import numpy as np
 import pytest
@@ -53,6 +54,36 @@ def test_displacement_with_scoping(allkindofcomplexity):
     assert len(data3[0]) == 3
     # values comparison
     assert np.allclose(data, data2)
+
+
+def test_displacement_x_with_scoping(allkindofcomplexity):
+
+    result = post.load_solution(allkindofcomplexity)
+    # scoping as array
+    disp = result.displacement(node_scoping=[1, 2])
+    data = disp.x.get_data_at_field(0)
+    assert len(data) == 2
+    # scoping as dpf.Scoping
+    scop = dpf.core.Scoping()
+    scop.ids = [1, 2]
+    scop.location = locations.nodal
+    disp2 = result.displacement(node_scoping=scop)
+    data2 = disp2.x.get_data_at_field(0)
+    assert len(data2) == 2
+    # scoping as int
+    disp3 = result.displacement(node_scoping=1)
+    data3 = disp3.x.get_data_at_field(0)
+    assert len(data3) == 1
+    # values comparison
+    assert np.allclose(data, data2)
+
+    result = post.load_solution(allkindofcomplexity)
+    # scoping as array
+    disp = result.displacement(node_scoping=[1, 2])
+    data = disp.x.get_data_at_field(0)
+    weak_ref = weakref.ref(data._owning_field)
+    data = None
+    assert weak_ref() is None
 
 
 def test_node_stress_with_scoping_verbose_api(allkindofcomplexity):

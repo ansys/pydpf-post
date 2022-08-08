@@ -133,7 +133,10 @@ class ResultData:
     def get_data_at_field(self, field_index: int = 0):
         """Returns the data at the field with the specified index."""
         self._evaluate_result()
-        return self.result_fields_container[field_index].data
+        owning_field = self.result_fields_container[field_index]
+        data = owning_field.data
+        data._owning_field = owning_field
+        return data
 
     def __getitem__(self, field_index: int = 0):
         """Override of the result item getter. Implements the fields_container_result
