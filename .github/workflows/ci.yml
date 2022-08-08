@@ -13,7 +13,7 @@ on:
 
 env:
   PACKAGE_NAME: ansys-dpf-post
-  ANSYS_VERSION: 221
+  ANSYS_VERSION: 222
 
 jobs:
   Build_and_Test:
