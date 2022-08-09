@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@v2.1
+        uses: pyansys/pydpf-actions/build_package@v2.2.dev1
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -41,7 +41,7 @@ jobs:
           install_extras: plotting
 
       - id: "Test Package"
-        uses: pyansys/pydpf-actions/test_package@v2.0
+        uses: pyansys/pydpf-actions/test_package@v2.2.dev1
         with:
           MODULE: post
 
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Build Documentation"
-        uses: pyansys/pydpf-actions/build_doc@v2.0
+        uses: pyansys/pydpf-actions/build_doc@v2.2.dev1
         with:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Push Documentation"
-        uses: pyansys/pydpf-actions/push_doc@v2.0
+        uses: pyansys/pydpf-actions/push_doc@v2.2.dev1
         with:
           PYANSYS_CI_BOT_TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           DOC_REPO: DPF-Post-docs
@@ -81,6 +81,6 @@ jobs:
     needs: [Build_and_Test, Push_Doc]
     steps:
       - name: "Release Package"
-        uses: pyansys/pydpf-actions/release_package@v2.0
+        uses: pyansys/pydpf-actions/release_package@v2.2.dev1
         with:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
