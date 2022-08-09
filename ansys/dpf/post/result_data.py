@@ -135,10 +135,13 @@ class ResultData:
         self._evaluate_result()
         # Needed to hold onto the field as a quick fix for a memory leak
         # which causes InProcess mode of PyDPF-Core 0.5.2 to crash
-        # Required a redesign
+        # Requires a redesign
         owning_field = self.result_fields_container[field_index]
         data = owning_field.data
-        data._owning_field = owning_field
+        try:
+            data._owning_field = owning_field
+        except AttributeError:
+            pass
         return data
 
     def __getitem__(self, field_index: int = 0):
