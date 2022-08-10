@@ -34,12 +34,11 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.6.*",
+    python_requires=">=3.7.*",
     extras_require={
         "plotting": ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib"],
     },
