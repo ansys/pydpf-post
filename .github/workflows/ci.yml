@@ -113,8 +113,6 @@ jobs:
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
-          wheelhouse: false
-          wheel: false
         timeout-minutes: 30
 
   Build_and_Test_other_Python:
