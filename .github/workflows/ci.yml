@@ -195,7 +195,8 @@ jobs:
           files: |
             ./**/*.whl
             ./**/*.tar.gz
-            ./**/*Documentation*.pdf
+            ./**/HTML-doc-${{ env.PACKAGE_NAME }}
+            ./**/PDF-doc-${{ env.PACKAGE_NAME }}
             ./**/*.zip
           draft: true
           generate_release_notes: true
