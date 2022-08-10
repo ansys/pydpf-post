@@ -3,7 +3,7 @@ import os
 from io import open as io_open
 from setuptools import setup
 
-install_requires = ["ansys.dpf.core>=0.3.0", "scooby", "protobuf<=3.20.1"]
+install_requires = ["ansys.dpf.core>=0.3.0", "scooby"]
 
 
 # Get version from version info
@@ -24,7 +24,7 @@ setup(
     author_email='ramdane.lagha@ansys.com',
     maintainer="ANSYS",
     maintainer_email="ramdane.lagha@ansys.com",
-    description="DPF-Post Python gRPC client",
+    description="DPF-Post Python client",
     url="https://github.com/pyansys/pydpf-post",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -32,15 +32,17 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Information Analysis",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     python_requires=">=3.7.*",
     extras_require={
-        "plotting": ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib"],
+        "plotting": ["vtk<9.1.0; python_version<'3.10'", "pyvista>=0.24.0", "matplotlib"],
     },
     install_requires=install_requires,
     license='MIT',
