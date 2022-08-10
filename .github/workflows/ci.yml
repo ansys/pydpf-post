@@ -21,6 +21,29 @@ env:
   ANSYS_VERSION: 222
 
 jobs:
+  Style_Check:
+    name: Style Check
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v4.2.0
+        with:
+          python-version: 3.8
+
+      - name: "Install style requirements"
+        run: |
+          pip install -r requirements/requirements_style.txt --disable-pip-version-check
+
+      - name: "Codespell"
+        run: |
+          make codespell
+
+      - name: "flake8"
+        run: |
+          make flake8
+
   Build_and_Test:
     name: Build and Test
     runs-on: ${{ matrix.os }}
