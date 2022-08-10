@@ -1,12 +1,6 @@
 name: Release
 
 on:
-#  pull_request:
-#    tags:
-#      - "*"
-#    branches:
-#      - "release*"
-
   push:
     tags:
       - "*"
