@@ -24,7 +24,7 @@ setup(
     author_email='ramdane.lagha@ansys.com',
     maintainer="ANSYS",
     maintainer_email="ramdane.lagha@ansys.com",
-    description="DPF-Post Python gRPC client",
+    description="DPF-Post Python client",
     url="https://github.com/pyansys/pydpf-post",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -38,7 +38,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.7.*",
+    python_requires=">=3.7.*,!=3.10.*",
     extras_require={
         "plotting": ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib"],
     },
