@@ -4,12 +4,13 @@ on:
   pull_request:
     branches-ignore:
       - "*no-ci"
-
   push:
-    tags:
-      - "*"
     branches:
       - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 env:
   PACKAGE_NAME: ansys-dpf-post
@@ -54,7 +55,7 @@ jobs:
         shell: bash
         working-directory: tests
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
         uses: pyansys/pydpf-actions/kill-dpf-servers@v2.2.dev1
@@ -62,7 +63,7 @@ jobs:
       - name: "Upload Test Results"
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PACKAGE_NAME }}_pytest
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
@@ -84,4 +85,6 @@ jobs:
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
+          wheelhouse: false
+          wheel: false
         timeout-minutes: 30
