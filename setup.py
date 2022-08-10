@@ -40,7 +40,7 @@ setup(
     ],
     python_requires=">=3.7.*",
     extras_require={
-        "plotting": ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib"],
+        "plotting": ["pyvista>=0.24.0", "matplotlib"],
     },
     install_requires=install_requires,
     license='MIT',
