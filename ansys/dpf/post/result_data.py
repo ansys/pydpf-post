@@ -133,7 +133,16 @@ class ResultData:
     def get_data_at_field(self, field_index: int = 0):
         """Returns the data at the field with the specified index."""
         self._evaluate_result()
-        return self.result_fields_container[field_index].data
+        # Needed to hold onto the field as a quick fix for a memory leak
+        # which causes InProcess mode of PyDPF-Core 0.5.2 to crash
+        # Requires a redesign
+        owning_field = self.result_fields_container[field_index]
+        data = owning_field.data
+        try:
+            data._owning_field = owning_field
+        except AttributeError:
+            pass
+        return data
 
     def __getitem__(self, field_index: int = 0):
         """Override of the result item getter. Implements the fields_container_result

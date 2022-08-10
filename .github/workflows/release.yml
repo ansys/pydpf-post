@@ -1,12 +1,6 @@
 name: Release
 
 on:
-#  pull_request:
-#    tags:
-#      - "*"
-#    branches:
-#      - "release*"
-
   push:
     tags:
       - "*"
@@ -15,7 +9,7 @@ on:
 
 env:
   PACKAGE_NAME: ansys-dpf-post
-  ANSYS_VERSION: 221
+  ANSYS_VERSION: 222
 
 jobs:
   Build_and_Test:
@@ -40,10 +34,34 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
 
-      - id: "Test Package"
-        uses: pyansys/pydpf-actions/test_package@v2.2.dev1
+      - name: "Prepare Testing Environment"
+        uses: pyansys/pydpf-actions/prepare_tests@v2.2.dev1
         with:
-          MODULE: post
+          DEBUG: true
+
+      - name: "Test Docstrings"
+        uses: pyansys/pydpf-actions/test_docstrings@v2.2.dev1
+        with:
+          MODULE: ${{env.MODULE}}
+          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+
+      - name: "Test API"
+        shell: bash
+        working-directory: tests
+        run: |
+          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+
+      - name: "Kill all servers"
+        uses: pyansys/pydpf-actions/kill-dpf-servers@v2.2.dev1
+
+      - name: "Upload Test Results"
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PACKAGE_NAME }}_pytest
+          path: tests/junit/test-results.xml
+
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v2
 
   Build_Doc:
     name: Build Doc
@@ -58,15 +76,16 @@ jobs:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: post
+          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
+          wheelhouse: false
         timeout-minutes: 30
 
   Push_Doc:
     name: Push Doc
     runs-on: ubuntu-latest
-    needs: [Build_Doc]
+    needs: [Build_and_Test, Build_Doc]
     steps:
       - uses: actions/checkout@v3
 
