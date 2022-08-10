@@ -1,115 +1,61 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
-    branches:
-      - "release*"
-
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
-env:
-  PACKAGE_NAME: ansys-dpf-post
-  MODULE: post
-  ANSYS_VERSION: 222
+  release:
+    types: [published]
 
 jobs:
-  Build_and_Test:
-    name: Build and Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
-        os: ["windows-2019", "ubuntu-latest"]
-
+  Deploy_Documentation:
+    name: "Deploy live documentation"
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v3
-
-      - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@v2.2.dev1
+      - name: "Deploy to gh-pages"
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
-          wheelhouse: true
+          folder: docs/build/html
+          token: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
+          branch: gh-pages
+          git-config-name: pyansys-ci-bot
+          git-config-email: pyansys.github.bot@ansys.com
+          repository-name: pyansys/DPF-Post-docs
+          commit-message: Documentation generated for ${{ env.RELEASE }}
+          clean-exclude: "CNAME"
+          tag: ${{ env.RELEASE }}
 
-      - name: "Prepare Testing Environment"
-        uses: pyansys/pydpf-actions/prepare_tests@v2.2.dev1
+  Publish_to_PyPi:
+    name: Publish to PyPi
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download Release Asset - whl
+        uses: dsaltares/fetch-gh-release-asset@master
         with:
-          DEBUG: true
+          version: tags/${{ env.RELEASE }}
+          file: '*.whl'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Test Docstrings"
-        uses: pyansys/pydpf-actions/test_docstrings@v2.2.dev1
+      - name: Download Release Asset - tar.gz
+        uses: dsaltares/fetch-gh-release-asset@master
         with:
-          MODULE: ${{env.MODULE}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
+          version: tags/${{ env.RELEASE }}
+          file: '*.tar.gz'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Test API"
-        shell: bash
-        working-directory: tests
+#      - name: "Upload to Public PyPi"
+#        run: |
+#          pip install twine
+#          twine upload --skip-existing ./**/*.whl
+#          twine upload --skip-existing ./**/*.tar.gz
+#        env:
+#          TWINE_USERNAME: __token__
+#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+      - name: "Upload to Test PyPi"
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
-
-      - name: "Kill all servers"
-        uses: pyansys/pydpf-actions/kill-dpf-servers@v2.2.dev1
-
-      - name: "Upload Test Results"
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest
-          path: tests/junit/test-results.xml
-
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v2
-
-  Build_Doc:
-    name: Build Doc
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: "Build Documentation"
-        uses: pyansys/pydpf-actions/build_doc@v2.2.dev1
-        with:
-          python-version: "3.8"
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
-          wheelhouse: false
-          wheel: false
-        timeout-minutes: 30
-
-  Push_Doc:
-    name: Push Doc
-    runs-on: ubuntu-latest
-    needs: [Build_and_Test, Build_Doc]
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: "Push Documentation"
-        uses: pyansys/pydpf-actions/push_doc@v2.2.dev1
-        with:
-          PYANSYS_CI_BOT_TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          DOC_REPO: DPF-Post-docs
-
-  Release:
-    runs-on: ubuntu-latest
-    needs: [Build_and_Test, Push_Doc]
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - name: "Release Package"
-        uses: pyansys/pydpf-actions/release_package@v2.2.dev1
-        with:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-          TEST: false
+          pip install twine
+          twine upload --repository testpypi --skip-existing ./**/*.whl
+          twine upload --repository testpypi --skip-existing ./**/*.tar.gz
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
