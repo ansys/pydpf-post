@@ -9,6 +9,8 @@ jobs:
     name: "Deploy live documentation"
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
 
@@ -38,7 +40,7 @@ jobs:
           repository-name: pyansys/DPF-Post-docs
           commit-message: Documentation generated for ${{ steps.get_version.outputs.VERSION }}
           clean-exclude: "CNAME"
-          tag: ${{ steps.get_version.outputs.VERSION }}
+          tag: doc-${{ steps.get_version.outputs.VERSION }}
 
   Publish_to_PyPi:
     name: Publish to PyPi
@@ -62,8 +64,8 @@ jobs:
       - name: "Upload to Public PyPi"
         run: |
           pip install twine
-          twine upload --skip-existing ./**/*.whl
-          twine upload --skip-existing ./**/*.tar.gz
+          twine upload --skip-existing *.whl
+          twine upload --skip-existing *.tar.gz
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
