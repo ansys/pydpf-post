@@ -49,23 +49,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: "Get the version"
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-      - name: "Download Release Asset - whl and tar.gz"
-        uses: robinraju/release-downloader@v1.4
-        with:
-          tag: ${{ steps.get_version.outputs.VERSION }}
-          fileName: "*.whl"
-          tarBall: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: "Upload to Public PyPi"
         run: |
           pip install twine
-          twine upload --skip-existing *.whl
-          twine upload --skip-existing *.tar.gz
+          python setup.py sdist
+          twine upload --skip-existing dist/*
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
