@@ -2,7 +2,7 @@
 user will be able to use to compute through the DPF Post API.
 
 This is a fields container wrapper."""
-
+import warnings
 from textwrap import wrap
 
 from ansys.dpf.core import FieldsContainer, Operator
@@ -348,6 +348,8 @@ class ResultData:
                 # sorts and creates a new fields_container with only the desired labels
                 fc = self._sort_fields_container_with_labels(option_id, display_option)
             # Call Plotter.plot_contour (to change for use of DpfPlotter
+            warnings.warn(UserWarning(f"Plotter:{pl._internal_plotter._plotter}"))
+            print(f"Plotter:{pl._internal_plotter._plotter.ren_win}")
             pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):
