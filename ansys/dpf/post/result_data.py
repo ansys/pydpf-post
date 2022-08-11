@@ -348,9 +348,10 @@ class ResultData:
                 # sorts and creates a new fields_container with only the desired labels
                 fc = self._sort_fields_container_with_labels(option_id, display_option)
             # Call Plotter.plot_contour (to change for use of DpfPlotter
-            warnings.warn(UserWarning(f"Plotter:{pl._internal_plotter._plotter}"))
-            print(f"Plotter:{pl._internal_plotter._plotter.ren_win}")
-            pl.plot_contour(fc, **kwargs)
+            raise NotImplementedError(f"Plotter:{pl._internal_plotter._plotter.ren_win}")
+            # warnings.warn(UserWarning(f"Plotter:{pl._internal_plotter._plotter}"))
+            # print(f"Plotter:{pl._internal_plotter._plotter.ren_win}")
+            # pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
