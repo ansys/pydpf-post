@@ -26,7 +26,7 @@ Due to potential crashes when using PyDPF-Post <=0.2.2 with PyDPF-Core >=0.5.2,
 it is advised to follow the table below for compatibility between PyDPF modules.
 
 .. list-table:: PyDPF Compatibility
-   :widths: 20 20 20 20 20
+   :widths: 20 20 20
    :header-rows: 1
 
    * - Ansys installation
