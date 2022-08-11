@@ -340,13 +340,8 @@ class ResultData:
 
         # If not plotting on a path
         else:
-            # Try and use the new DpfPlotter from PyDPF-Core
-            try:
-                from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
-            except:
-                raise dpf_errors.CoreVersionError(version='0.3.4')
             # Initialize a Plotter
-            pl = DpfPlotterObj(**kwargs)
+            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region, **kwargs)
             # Create an equivalent field container
             if len(self.result_fields_container) == 1:
                 fc = self.result_fields_container
@@ -354,11 +349,7 @@ class ResultData:
                 # sorts and creates a new fields_container with only the desired labels
                 fc = self._sort_fields_container_with_labels(option_id, display_option)
             # Call Plotter.plot_contour (to change for use of DpfPlotter
-            # pl.plot_contour(fc, **kwargs)
-            pl.add_mesh(self._evaluator._model.metadata.meshed_region)
-            for field in fc:
-                pl.add_field(field)
-            pl.show_figure(**kwargs)
+            pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):
         """Plot the minimum/maximum result values over time.
