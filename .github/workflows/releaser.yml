@@ -9,53 +9,60 @@ jobs:
     name: "Deploy live documentation"
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v3
+
+      - name: "Get the version"
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: "Download Release Asset - HTML"
+        uses: dsaltares/fetch-gh-release-asset@1.0.0
+        with:
+          file: HTML-doc-ansys-dpf-post.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Unzip the HMTL documentation"
+        uses: montudor/action-zip@v1
+        with:
+          args: unzip -qq HTML-doc-ansys-dpf-post.zip -d HTML-doc-ansys-dpf-post
+
       - name: "Deploy to gh-pages"
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs/build/html
+          folder: HTML-doc-ansys-dpf-post/
           token: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           branch: gh-pages
           git-config-name: pyansys-ci-bot
           git-config-email: pyansys.github.bot@ansys.com
           repository-name: pyansys/DPF-Post-docs
-          commit-message: Documentation generated for ${{ env.RELEASE }}
+          commit-message: Documentation generated for ${{ steps.get_version.outputs.VERSION }}
           clean-exclude: "CNAME"
-          tag: ${{ env.RELEASE }}
+          tag: doc-${{ steps.get_version.outputs.VERSION }}
 
   Publish_to_PyPi:
     name: Publish to PyPi
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - name: Download Release Asset - whl
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          version: tags/${{ env.RELEASE }}
-          file: '*.whl'
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
 
-      - name: Download Release Asset - tar.gz
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          version: tags/${{ env.RELEASE }}
-          file: '*.tar.gz'
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: "Upload to Public PyPi"
-#        run: |
-#          pip install twine
-#          twine upload --skip-existing ./**/*.whl
-#          twine upload --skip-existing ./**/*.tar.gz
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-
-      - name: "Upload to Test PyPi"
+      - name: "Upload to Public PyPi"
         run: |
           pip install twine
-          twine upload --repository testpypi --skip-existing ./**/*.whl
-          twine upload --repository testpypi --skip-existing ./**/*.tar.gz
+          python setup.py sdist
+          twine upload --skip-existing dist/*
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+#      - name: "Upload to Test PyPi"
+#        run: |
+#          pip install twine
+#          twine upload --repository testpypi --skip-existing ./**/*.whl
+#          twine upload --repository testpypi --skip-existing ./**/*.tar.gz
+#        env:
+#          TWINE_USERNAME: __token__
+#          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
