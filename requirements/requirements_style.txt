@@ -1,2 +1,2 @@
 flake8==5.0.4
-codespell==2.1.0
+codespell==2.2.1
