@@ -38,7 +38,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.7.*,!=3.10.*",
+    python_requires=">=3.7.*,<4.0",
     extras_require={
         "plotting": ["pyvista>=0.24.0", "matplotlib"],
     },
