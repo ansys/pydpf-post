@@ -104,7 +104,7 @@ Consider the following general coding paradigms when contributing:
    guidelines, and always provide a for simple use cases for the new
    features.
 
-3. **Test it**. Since Python is an interperted language, if it's not
+3. **Test it**. Since Python is an interpreted language, if it's not
    tested, it's probably broken.  At the minimum, include unit tests
    for each new feature within the ``tests`` directory.  Ensure that
    each new method, class, or function has reasonable (>90%) coverage.
