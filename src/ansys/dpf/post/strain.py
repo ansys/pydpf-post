@@ -1,59 +1,55 @@
-"""This module contains the strain result class ."""
+"""This module contains the strain result class."""
 
-from ansys.dpf.post.tensor import Tensor, ComplexTensor
+from ansys.dpf.post.tensor import ComplexTensor, Tensor
 
 
 class ElasticStrain(Tensor):
-    """Defines the elastic strain object, that is a tensor object."""
+    """Defines the tensor elastic strain object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "EPEL"
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is an elastic strain object."
-        return txt
+        """Return the string representation of this class."""
+        return f"{super().__str__()}\nElastic strain object."
 
 
 class ComplexElasticStrain(ComplexTensor):
     """Defines the complex elastic strain object, that is a tensor object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "EPEL"
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is an elastic strain object."
-        return txt
+        """Return the string representation of this class."""
+        return f"{super().__str__()}\nComplex elastic strain object."
 
 
 class PlasticStrain(Tensor):
     """Defines the plastic strain object, that is a tensor object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "EPPL"
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is a plastic strain object."
-        return txt
+        """Return the string representation of this class."""
+        return f"{super().__str__()}\nPlastic strain object."
 
 
 class ComplexPlasticStrain(ComplexTensor):
     """Defines the complex plastic strain object, that is a tensor object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "EPPL"
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is a plastic strain object."
-        return txt
+        """Return the string representation of this class."""
+        return f"{super().__str__()}\nComplex plastic strain object."

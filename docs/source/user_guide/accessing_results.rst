@@ -4,11 +4,12 @@
 Accessing Results
 *****************
 
-The :py:class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
+The :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
 object is the entry point for browsing the contents of a result file
 (see :ref:`user_guide_post_processing`). It also provides access to
-the results themselves. These are contained in ``Result`` objects that
-can be returned from dedicated methods:
+the results themselves. These are contained in :class:`Result
+<ansys.dpf.post.result_object.Result>` objects that can be returned from
+dedicated methods:
 
 .. code:: python
 
@@ -18,25 +19,27 @@ can be returned from dedicated methods:
 	>>> from ansys.dpf.post import examples
 	>>> solution = post.load_solution(examples.multishells_rst)
 
-	Instantiate a displacement result object 
+	Instantiate a displacement result object
 
 	>>> displacement = solution.displacement()
-	>>> # stress, elastic_strain (...) can also be called. 
+	>>> # stress, elastic_strain (...) can also be called.
 
 	Refer to the list below to know which result object can be
 	instantiated.
-	
+
 A number of options, formulated as **keyword arguments**, can be used
 to further specify the result type, scope, and time, among others. For
 detailed examples see :ref:`ref_result_keywords`.
 
-At present, DPF-Post supports two types of result files: 
+At present, DPF-Post supports two types of result files:
 
-* Structural (\*.rst) 
-* Thermal/Electric (\*.rth)
-	
-Once loaded into the ``Solution`` instance, a result file will offer
-its own variety of ``Result`` objects in accordance with its type.
+* Structural ``(\*.rst)``
+* Thermal/Electric ``(\*.rth)``
+
+Once loaded into a :py:class:`Solution
+<ansys.dpf.post.dpf_solution.DpfSolution>`, a result file will offer its own
+variety of :class:`Result <ansys.dpf.post.result_object.Result>` objects in
+accordance with its type.
 
 **Only request results types that are available in the file.** To
 verify their presence see :ref:`user_guide_accessing_file_metadata`.
@@ -55,8 +58,9 @@ file (\*.rst), the following ``Result`` objects may be queried:
 
 Displacement
 ------------
-Displacement is the DOF solution for structural analyses.
-Its ``Result`` object can be obtained as follows:
+Displacement is the DOF solution for structural analyses.  Its
+:class:`Displacement <ansys.dpf.post.displacement.Displacement>` object can be
+with the following:
 
 .. code:: python
 
@@ -66,41 +70,39 @@ Its ``Result`` object can be obtained as follows:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object 
+    Instantiate the displacement result object
 
     >>> displacement = solution.displacement()
 
-Being a DOF solution, its location argument **must be nodal** (inferred above). 
+Being a DOF solution, its location argument **must be nodal** (inferred above).
 
-The displacement ``Result`` corresponds to a vector field. To obtain the scalar components of this field, 
-e.g., y-components, access the following subresult:
+The displacement ``Result`` corresponds to a vector field. To obtain the scalar
+components of this field, e.g., y-components, access the following subresult:
 
 .. code:: python
 
-    Instantiate the solution object 
+    Instantiate the solution object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object 
+    Instantiate the displacement result object
 
     >>> displacement = solution.displacement()
 
-    Get the y displacement result data 
+    Get the y displacement result data
 
     >>> u_y = displacement.y
     >>> u_y.get_data_at_field()
 
 For more details, see :ref:`ref_api_result_data`.
 
-.. autoclass:: ansys.dpf.post.displacement.Displacement
-    :inherited-members:
-    
 
 Stress
 ------
-The stress ``Result`` object can be obtained as follows:
+The :class:`Stress <ansys.dpf.post.stress.Stress>` result object can be
+with the following:
 
 .. code:: python
 
@@ -110,12 +112,13 @@ The stress ``Result`` object can be obtained as follows:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the stress result object 
+    Instantiate the stress result object
 
     >>> stress = solution.stress()
-    
-The stress ``Result`` corresponds to a tensor field. To obtain the scalar components of this field, 
-e.g., the normal y-stresses, access the following subresult: 
+
+The stress result corresponds to a tensor field. To obtain the scalar
+components of this field, e.g., the normal y-stresses, access the following
+subresult:
 
 .. code:: python
 
@@ -125,11 +128,11 @@ e.g., the normal y-stresses, access the following subresult:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the stress result object 
+    Instantiate the stress result object
 
     >>> stress = solution.stress()
 
-    Get the yy stress result data 
+    Get the yy stress result data
 
     >>> s_yy = stress.yy
     >>> s_yy.get_data_at_field()
@@ -137,13 +140,12 @@ e.g., the normal y-stresses, access the following subresult:
 Other components, as well as whole tensor data, can be queried accordingly.
 For more details, see :ref:`ref_api_result_data`.
 
-.. autoclass:: ansys.dpf.post.stress.Stress
-    :inherited-members:
-    
 
 Strain (elastic, plastic)
 -------------------------
-The elastic and plastic strain ``Result`` objects can be obtained as follows:
+The :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
+:class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects can
+be obtained with the following:
 
 .. code:: python
 
@@ -157,9 +159,9 @@ The elastic and plastic strain ``Result`` objects can be obtained as follows:
 
     >>> elastic_strain = solution.elastic_strain()
     >>> plastic_strain = solution.plastic_strain()
-    
-A strain ``Result`` corresponds to a tensor field. To obtain the scalar components of this field, 
-e.g., shear xy-strains, access the following subresult:
+
+A strain result corresponds to a tensor field. To obtain the scalar components
+of this field, e.g., shear xy-strains, access the following subresult:
 
 .. code:: python
 
@@ -181,15 +183,12 @@ e.g., shear xy-strains, access the following subresult:
 Other components, as well as whole tensor data, can be queried accordingly.
 For more details, see :ref:`ref_api_result_data`.
 
-.. autoclass:: ansys.dpf.post.strain.ElasticStrain
-    :inherited-members:
-    
-.. autoclass:: ansys.dpf.post.strain.PlasticStrain
-    :inherited-members:
 
 Structural temperature
 ----------------------
-The structural (or system) temperature ``Result`` object can be obtained as follows:
+The :class:`StructuralTemperature
+<ansys.dpf.post.temperature.StructuralTemperature>` result object can be
+obtained with the following:
 
 .. code:: python
 
@@ -202,7 +201,7 @@ The structural (or system) temperature ``Result`` object can be obtained as foll
     Instantiate the structural temperature result object
 
     >>> structural_temperature = solution.structural_temperature()
-    
+
 To access the temperature scalar field use the following:
 
 .. code:: python
@@ -222,14 +221,11 @@ To access the temperature scalar field use the following:
     >>> temperature = structural_temperature.scalar
     >>> temperature.get_data_at_field()
 
-.. autoclass:: ansys.dpf.post.temperature.StructuralTemperature
-    :inherited-members:
-    
-    
+
 Miscellaneous results
 ---------------------
-
-Other ``Result`` objects may be available in the ``Solution``: 
+Other miscellaneous :class:`ansys.dpf.post.misc_results.MecanicMisc` result
+objects may be available in the ``Solution``. For example:
 
 .. code:: python
 
@@ -258,16 +254,14 @@ components of acceleration:
 
     Get the result data
 
-    >>> acceleration = solution.misc.nodal_acceleration(subresult="Y")  
-    
-Verify the result file contents to determine available queries (see :ref:`user_guide_accessing_file_metadata`).
+    >>> acceleration = solution.misc.nodal_acceleration(subresult="Y")
 
-.. autoclass:: ansys.dpf.post.misc_results.MecanicMisc
-    :members:
+Verify the result file contents to determine available queries (see
+:ref:`user_guide_accessing_file_metadata`).
+
 
 Thermal/Electric (\*.rth) result files
 ======================================
-
 Upon loading a ``Solution`` object from a thermal/electric analysis
 results file (\*.rth), the following ``Result`` objects may be
 queried:
@@ -279,7 +273,9 @@ queried:
 
 Temperature
 -----------
-Temperature is the DOF solution for thermal analyses.  Its ``Result`` object can be obtained as follows:
+Temperature is the DOF solution for thermal analyses.  The :class:`Temperature
+<ansys.dpf.post.temperature.Temperature>` result object can be obtained as
+follows:
 
 .. code:: python
 
@@ -313,13 +309,11 @@ Being a DOF solution, its location argument **must be nodal**
     >>> temp = temperature.scalar
     >>> temp.get_data_at_field()
 
-.. autoclass:: ansys.dpf.post.temperature.Temperature
-    :inherited-members:
-
 
 Heat flux
 ---------
-The heat flux ``Result`` object can be obtained as follows:
+The :class:`HeatFlux <ansys.dpf.post.temperature.HeatFlux>` result object can
+be obtained with the following:
 
 .. code:: python
 
@@ -333,8 +327,8 @@ The heat flux ``Result`` object can be obtained as follows:
 
     >>> heat_flux = solution.heat_flux()
 
-The heat flux ``Result`` corresponds to a vector field. To obtain the scalar components of this field, 
-e.g., x-components, access the following subresult:
+The heat flux result corresponds to a vector field. To obtain the scalar
+components of this field, e.g., x-components, access the following subresult:
 
 .. code:: python
 
@@ -352,17 +346,15 @@ e.g., x-components, access the following subresult:
 
     >>> heat_flux_x = heat_flux.x
     >>> heat_flux_x.get_data_at_field()
-    
+
 Other components can be queried accordingly.
 For more details, see :ref:`ref_api_result_data`.
 
-.. autoclass:: ansys.dpf.post.temperature.HeatFlux
-    :inherited-members:
-    
 
 Electric field
 --------------
-The electric field ``Result`` object can be obtained as follows:
+The :class:`ElectricField <ansys.dpf.post.electric_results.ElectricField>`
+result object can be obtained with the following:
 
 .. code:: python
 
@@ -376,7 +368,7 @@ The electric field ``Result`` object can be obtained as follows:
 
     >>> electric_field = solution.electric_field()
 
-The electric field ``Result`` corresponds to a vector field.  To
+The electric field result corresponds to a vector field.  To
 obtain the scalar components of this field, e.g., x-components, access
 the following subresult:
 
@@ -396,16 +388,15 @@ the following subresult:
 
     >>> electric_field_x = electric_field.x
     >>> electric_field_x.get_data_at_field()
-    
+
 For more details, see :ref:`ref_api_result_data`.
 
-.. autoclass:: ansys.dpf.post.electric_results.ElectricField
-    :inherited-members:
-    
-    
+
 Electric potential
 ------------------
-The electric potential ``Result`` object can be obtained as follows:
+The :class:`ElectricPotential
+<ansys.dpf.post.electric_results.ElectricPotential>` result object can be
+with the following:
 
 .. code:: python
 
@@ -419,7 +410,7 @@ The electric potential ``Result`` object can be obtained as follows:
 
     >>> electric_potential = solution.electric_potential()
 
-It represents a scalar field whose values can be obtained as follows:
+It represents a scalar field whose values can be with the following:
 
 .. code:: python
 
@@ -437,6 +428,3 @@ It represents a scalar field whose values can be obtained as follows:
 
     >>> ep = electric_potential.scalar
     >>> ep.get_data_at_field()
-
-.. autoclass:: ansys.dpf.post.electric_results.ElectricPotential
-    :inherited-members:

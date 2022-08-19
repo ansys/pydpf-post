@@ -35,3 +35,7 @@ dist/
 # emacs temp files
 *~
 .#*
+
+
+# Documentation
+_autosummary

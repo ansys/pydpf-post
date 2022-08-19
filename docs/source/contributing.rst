@@ -355,8 +355,8 @@ cached.
 
     .. code::
 
-    git tag <MAJOR.MINOR.0>
-        git push origin --tags
+       git tag <MAJOR.MINOR.0>
+           git push origin --tags
 
 
 8. Create a list of all changes for the release. It is often helpful

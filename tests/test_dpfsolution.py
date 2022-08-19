@@ -1,5 +1,6 @@
-from ansys.dpf import post
 from ansys.dpf.core.common import locations
+
+from ansys.dpf import post
 from ansys.dpf.post.result_data import ResultData
 
 

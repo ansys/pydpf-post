@@ -1,8 +1,9 @@
+"""Miscelanious and report module."""
 from scooby import Report as ScoobyReport
 
 
 class Report(ScoobyReport):
-    """Generate a report of the installed packages for ansys-dpf-post"""
+    """Generate a report of the installed packages for ansys-dpf-post."""
 
     def __init__(self, additional=None, ncol=3, text_width=80, sort=False, gpu=True):
         """Generate a :class:`scooby.Report` instance.
@@ -28,7 +29,6 @@ class Report(ScoobyReport):
             a report.
 
         """
-
         # Mandatory packages.
         core = ["pyvista", "matplotlib", "PIL", "pexpect", "ansys.dpf.core"]
 

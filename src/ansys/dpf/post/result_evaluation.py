@@ -1,22 +1,24 @@
-"""Module containing the ResultEvaluation class that
-will compute the information collected in the ResultData
-class (which is a fields container wrapper).
+"""Module containing the ResultEvaluation class.
 
-This class will only be dedicated to the fields container
-computation."""
+This class will compute the information collected in the ResultData class
+(which is a fields container wrapper).
 
-import numpy as np
+This class will only be dedicated to the fields container computation.
+"""
+
 from collections import OrderedDict
-from ansys import dpf
+
 from ansys.dpf.core import Operator, Scoping
-from ansys.dpf.core.common import types, locations
-from ansys.dpf.post.common import Grouping, _AvailableKeywords
+from ansys.dpf.core.common import locations, types
 from ansys.dpf.core.scoping import Scoping
+import numpy as np
+
+from ansys import dpf
+from ansys.dpf.post.common import Grouping, _AvailableKeywords
 
 
 class ResultEvaluator:
-    """This object will make the evaluation of the fields container
-    wrapped in the ResultData object."""
+    """Class to wrap the evaluation of the fields container as a ResultData object."""
 
     def __init__(
         self,
@@ -37,7 +39,7 @@ class ResultEvaluator:
         path=None,
         time_scoping=None,
     ):
-
+        """Initialize this class."""
         self._model = model
         self._chained_operators = (
             OrderedDict()
@@ -200,15 +202,14 @@ class ResultEvaluator:
             mapping_operator = Operator("mapping")
             mapping_operator.inputs.fields_container.connect(
                 self._result_operator.outputs.fields_container
-                )
+            )
             # coordinates as a field
             mapping_operator.inputs.coordinates.connect(path._field)
             mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
             self._chained_operators[mapping_operator.name] = (
-                    "This operator will map the result on specified "
-                    "coordinates."
-                )
+                "This operator will map the result on specified " "coordinates."
+            )
             self._result_operator = mapping_operator
         # outside post-processing instruction
         if elem_average:
@@ -288,7 +289,7 @@ class ResultEvaluator:
             raise Exception(txt)
 
     def _get_evaluation_with_sweeping_phase(self, phase):
-        """Connects needed operator to compute the result regarding the specified phase."""
+        """Connect needed operator to compute the result regarding the specified phase."""
         sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
         sweeping_phase_op.inputs.fields_container.connect(
             self._result_operator.outputs.fields_container

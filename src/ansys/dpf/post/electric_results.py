@@ -6,9 +6,10 @@ from ansys.dpf.post.vector import Vector
 
 
 class ElectricField(Vector):
-    """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
+    """Defines the temperature object for thermal/electric analysis."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "EF"
 
@@ -20,16 +21,15 @@ class ElectricField(Vector):
         self.definition._Definition__element_scoping_locked = True
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is an electric field object."
-        return txt
+        """Return the string representation."""
+        return f"{super().__str__()}\nElectric field object."
 
 
 class ElectricPotential(Scalar):
-    """Defines the temperature object for thermal/electric analysis, that is a scalar object."""
+    """Defines the temperature object for thermal/electric analysis."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "VOLT"
 
@@ -41,7 +41,5 @@ class ElectricPotential(Scalar):
         self.definition._Definition__element_scoping_locked = True
 
     def __str__(self):
-        txt = super().__str__()
-        txt += "\n"
-        txt += "This is an electric potential object."
-        return txt
+        """Return the string representation."""
+        return f"{super().__str__()}\nElectric potential object."

@@ -32,3 +32,9 @@ pdf:
 	@$(SPHINXBUILD) -M latex "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	cd build/latex && latexmk -r latexmkrc -pdf *.tex -interaction=nonstopmode || true
 	(test -f build/latex/*.pdf && echo pdf exists) || exit 1
+
+# customized clean due to examples gallery
+clean-except-examples:
+	rm -rf $(BUILDDIR)/*
+	rm -rf images/auto-generated
+	find . -type d -name "_autosummary" -exec rm -rf {} +

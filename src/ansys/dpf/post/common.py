@@ -20,8 +20,9 @@
 
 
 class Grouping:
-    """Class with Enum inheritance. Must be used to
-    describe a grouping command when the API allows it.
+    """Class with Enum inheritance.
+
+    Must be used to describe a grouping command when the API allows it.
 
     Examples
     --------
@@ -37,11 +38,10 @@ class Grouping:
 
 
 class _AvailableKeywords:
-    """Contains all the keywords that can be used inside of
-    a method from a post.solution(file_path) object.
+    """Contains all the keywords that can be used from a post.solution(file_path) method.
 
-    In order to view the complete list of available keywords, use:
-        post.print_available_keywords()
+    In order to view the complete list of available keywords, use
+    ``post.print_available_keywords()``
     """
 
     location = "location"
@@ -58,6 +58,7 @@ class _AvailableKeywords:
     path = "path"
 
     def __str__(self):
+        """Return the string representation of this class."""
         txt = ""
         for attr in dir(_AvailableKeywords):
             if (
@@ -99,7 +100,10 @@ class _AvailableKeywords:
 
 
 class _AnalysisType:
-    """Contains Python analysis type names. For developers usage."""
+    """Contains Python analysis type names.
+
+    For developer usage.
+    """
 
     static = "static"
     modal = "modal"
@@ -108,7 +112,10 @@ class _AnalysisType:
 
 
 class _PhysicsType:
-    """Contains Python physics type names. For developers usage."""
+    """Contains Python physics type names.
+
+    For developer usage.
+    """
 
     mecanic = "mecanic"
     thermal = "thermal"

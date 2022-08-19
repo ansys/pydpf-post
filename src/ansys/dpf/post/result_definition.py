@@ -1,14 +1,16 @@
 """This module contains a class describing the result objects."""
 
 from ansys.dpf.core.common import locations
+
 from ansys.dpf.post.common import _AvailableKeywords
+from ansys.dpf.post.dpf_path import DpfPath
 
 
 class Definition:
-    """Class containing the attributes as property (with setter and getter)
-    of the result object."""
+    """Class containing the attributes as properties of the result object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         self._location = locations.nodal
         self._element_scoping = None
         self._node_scoping = None
@@ -53,6 +55,7 @@ class Definition:
             raise Exception(txt)
 
     def __str__(self):
+        """Return the string representation."""
         txt = "Object properties:\n"
         for attr, value in vars(self).items():
             if not (
@@ -82,8 +85,9 @@ class Definition:
 
     @property
     def location(self) -> str:
-        """str: Location property. Can be set.
-        post.locations enum can be used.
+        """Return or set the location.
+
+        Accepts :class:`ansys.dpf.core.common.locations`.
 
         Examples
         --------
@@ -92,6 +96,9 @@ class Definition:
         >>> solution = post.load_solution(examples.static_rst)
         >>> stress = solution.stress()
         >>> stress.location = post.locations.elemental
+        >>> stress.location
+        'Elemental'
+
         """
         return self._location
 
@@ -109,8 +116,9 @@ class Definition:
 
     @property
     def element_scoping(self):
-        """Elemental scoping property. Can be set.
-        Available types: list, or dpf.core.Scoping.
+        """Return or set elemental scoping.
+
+        Accepts sequence or :class:`ansys.dpf.core.Scoping`.
 
         Examples
         --------
@@ -133,8 +141,9 @@ class Definition:
 
     @property
     def node_scoping(self):
-        """Nodal scoping property. Can be set.
-        Available types: list, or dpf.core.Scoping.
+        """Return or set nodal scoping property.
+
+        Accepts sequencye or :class:`ansys.dpf.core.Scoping`.
 
         Examples
         --------
@@ -152,10 +161,10 @@ class Definition:
 
     @property
     def named_selection(self) -> str:
-        """str: Named selection property. Can be set.
+        """Return or set the named selection.
 
-        MAPDL named selections are in upper-case.  Lower case name
-        selections will automatically be set to uppercase.
+        MAPDL named selections are in upper-case.  Lower case name selections
+        will automatically be set to uppercase.
 
         Examples
         --------
@@ -175,8 +184,9 @@ class Definition:
 
     @property
     def grouping(self) -> str:
-        """str: Grouping property. Can be set.
-        post.grouping enum can be used.
+        """Return or set the grouping.
+
+        Accepts :class:`ansys.dpf.post.grouping` or str.
 
         Examples
         --------
@@ -196,8 +206,9 @@ class Definition:
 
     @property
     def time_scoping(self):
-        """Time scoping property. Can be set.
-        Available types: list, or dpf.core.Scoping.
+        """Return or set the time scoping.
+
+        Accepts sequence or :class:`ansys.dpf.core.Scoping`.
 
         Examples
         --------
@@ -215,12 +226,12 @@ class Definition:
 
     @property
     def mapdl_grouping(self) -> int:
-        """int: Mapdl grouping property. Can be set.
-        Following is an example to get only solid 186
-        mapdl element type.
+        """Return or set the MAPDL grouping.
 
         Examples
         --------
+        Set the grouping to the ``SOLID186`` MAPDL element type.
+
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> solution = post.load_solution(examples.static_rst)
@@ -237,7 +248,7 @@ class Definition:
 
     @property
     def time(self) -> float:
-        """float: time step property. Can be set.
+        """Return or set the time step.
 
         Examples
         --------
@@ -257,7 +268,7 @@ class Definition:
 
     @property
     def set(self) -> int:
-        """int: Set property. Can be set.
+        """Return or set the result set.
 
         Examples
         --------
@@ -276,9 +287,8 @@ class Definition:
         self._set = value
 
     @property
-    def path(self):
-        """DpfPath: Object that contains
-        coordinates list. Can be set.
+    def path(self) -> DpfPath:
+        """Return or set the coordinates path.
 
         Examples
         --------

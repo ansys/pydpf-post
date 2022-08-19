@@ -7,10 +7,11 @@ This tutorial shows the first step to load the post module and to
 access some basic help.
 """
 
+from ansys.dpf import post
+
 ###############################################################################
 # **Get started**
 from ansys.dpf.post import examples
-from ansys.dpf import post
 
 ###############################################################################
 # **Load a solution**: this must be instantiated with the result filepath.

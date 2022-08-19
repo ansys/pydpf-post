@@ -54,7 +54,7 @@ MAPDL is as easy as:
 
     Basic Stress Contour Plot
 
-Or extract the raw data as a ``numpy`` array with
+Or extract the raw data as a :class:`numpy.ndarray` array with
 
 .. code:: python
 
@@ -87,7 +87,7 @@ operators.  This allows for fast post-processing of potentially
 multi-gigabyte models in a short script.  DPF-Post also details the
 usage of the operators used when computing the results so you can also
 build your own custom, low level scripts using the
-`PyDPF-Core <https://github.com/pyansys/DPF-Core>`_ module.
+`PyDPF-Core <https://github.com/pyansys/pydpf-core>`_ module.
 
 
 .. toctree::

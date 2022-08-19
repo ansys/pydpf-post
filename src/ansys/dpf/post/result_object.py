@@ -1,28 +1,38 @@
-"""This module contains the super class of the
-stress/strain/structural_temperature/displacement objects."""
+"""Contains the common result class.
+
+This module contains the super class of the
+stress/strain/structural_temperature/displacement objects.
+"""
 
 from ansys.dpf.core import Operator
+
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.result_definition import Definition
 
 
 class Result:
+    """Result class.
+
+    This is an abstract class that is not instantiated directly but instead is
+    subclassed by specific result classes like
+    the :class:`Displacement <ansys.dpf.post.displacement.Displacement>` class.
+
+    """
+
     def __init__(self, data_sources, model, **kwargs):
+        """Initialize this class."""
         self._data_sources = data_sources
         self._model = model
         self.definition = Definition(**kwargs)
 
     def __str__(self):
-        txt = self.definition.__str__()
-        return txt
+        """Return the string representation of this class."""
+        return self.definition.__str__()
 
     def has_complex_frequencies(self):
-        """Returns True if the result support contains complex frequencies."""
+        """Return ``True`` if the result support contains complex frequencies."""
         tfq = self._model.metadata.time_freq_support
-        if tfq.complex_frequencies != None:
-            return True
-        else:
-            return False
+        return tfq.complex_frequencies != None
 
     def _get_amplitude_evaluation(self, result_data):
         # resultData = self._get_result_data_function_of_operator(
@@ -44,8 +54,7 @@ class Result:
     def _get_result_data(
         self, operator_name, data_sources, model, subresult=None, phase=None
     ):
-        """This method checks the keyword arguments that are
-        specified while calling a subresult method.
+        """Check the keyword arguments that are specified while calling a subresult method.
 
         The arguments that can be set at this point are:
             - time

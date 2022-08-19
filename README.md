@@ -11,13 +11,14 @@ files as well as several neutral formats (csv, hdf5, vtk,
 etc.). Various operators are available allowing the manipulation and
 the transformation of this data.
 
-The Python `ansys.dpf.post` package provides an simplified Python
+The Python `ansys-dpf-post` package provides an simplified Python
 interface to DPF, thus enabling rapid post-processing, without ever
 leaving a Python environment. 
 
-This module leverages the DPF-Core project's ``ansys.dpf.core``
-package and can be found by visiting [DPF-Core GitHub](https://github.com/pyansys/DPF-Core).  Use ``ansys.dpf.core``
-for building more advanced and customized workflows using Ansys's DPF.
+This module leverages the DPF-Core project's ``ansys-dpf-core`` package and can
+be found by visiting [PyDPF-Core
+GitHub](https://github.com/pyansys/pydpf-core).  Use ``ansys-dpf-core`` for
+building more advanced and customized workflows using Ansys's DPF.
 
 Visit the [DPF-Post Documentation](https://postdocs.pyansys.com) for a
 detailed description of the package, or see the [Examples
@@ -36,8 +37,8 @@ pip install ansys-dpf-post
 You can also clone and install this repository with:
 
 ```
-git clone https://github.com/pyansys/DPF-Post
-cd DPF-Post
+git clone https://github.com/pyansys/pydpf-post
+cd pydpf-post
 pip install . --user
 ```
 
@@ -89,9 +90,11 @@ operators.  This allows for fast post-processing of potentially
 multi-gigabyte models in a short script.  DPF-Post also details the
 usage of the operators used when computing the results so you can also
 build your own custom, low level scripts using the
-[DPF-Core](https://github.com/pyansys/DPF-Core) module.
+[DPF-Core](https://github.com/pyansys/pydpf-core) module.
 
 
 ### License
 
-``DPF-Post`` is licensed under the MIT license.  Please see the [LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE) for more details.
+``PyDPF-Post`` is licensed under the MIT license.  Please see the
+[LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE) for more
+details.

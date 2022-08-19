@@ -1,4 +1,5 @@
 import numpy as np
+
 from ansys.dpf import post
 from ansys.dpf.post.displacement import ComplexDisplacement
 from ansys.dpf.post.dpf_solution import DpfMecanicComplexSolution
