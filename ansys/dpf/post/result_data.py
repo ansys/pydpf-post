@@ -2,7 +2,6 @@
 user will be able to use to compute through the DPF Post API.
 
 This is a fields container wrapper."""
-
 from textwrap import wrap
 
 from ansys.dpf.core import FieldsContainer, Operator
@@ -296,7 +295,7 @@ class ResultData:
         >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
-        >>> pl = sx.plot_contour("time", [1], off_screen=True)
+        >>> pl = sx.plot_contour("time", [1], off_screen=True)  # doctest: +SKIP
 
         The labels can be obtained using:
 
@@ -348,7 +347,7 @@ class ResultData:
             else:
                 # sorts and creates a new fields_container with only the desired labels
                 fc = self._sort_fields_container_with_labels(option_id, display_option)
-            # Call Plotter.plot_contour (to change for use of DpfPlotter
+
             pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):

@@ -37,10 +37,11 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
-    python_requires=">=3.7.*,!=3.10.*",
+    python_requires=">=3.7.*,<4.0",
     extras_require={
-        "plotting": ["vtk<9.1.0", "pyvista>=0.24.0", "matplotlib"],
+        "plotting": ["pyvista>=0.24.0"],
     },
     install_requires=install_requires,
     license='MIT',
