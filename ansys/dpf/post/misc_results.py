@@ -1,4 +1,4 @@
-"""This module contains all the miscallenous results."""
+"""This module contains all the miscellaneous results."""
 
 from ansys.dpf.core import Operator as _Operator
 from ansys.dpf.core import locations
