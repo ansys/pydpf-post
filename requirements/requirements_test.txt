@@ -2,4 +2,3 @@ coverage==6.4.4
 pytest-cov==3.0.0
 pytest-rerunfailures==10.2
 pytest==7.1.2
-vtk<9.1.0; os_name == 'nt'  # needed for OSMesa wheels for VTK on Windows
