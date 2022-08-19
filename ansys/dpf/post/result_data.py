@@ -295,7 +295,7 @@ class ResultData:
         >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
         >>> stress = solution.stress(location=post.locations.nodal)
         >>> sx = stress.xx
-        >>> pl = sx.plot_contour("time", [1], off_screen=True)
+        >>> pl = sx.plot_contour("time", [1], off_screen=True)  # doctest: +SKIP
 
         The labels can be obtained using:
 
