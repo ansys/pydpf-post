@@ -36,7 +36,7 @@ def get_lighting():
     return not(os.name == 'nt' and 'Mesa' in version)
 
 
-pv.global_theme.lighting = use_lighting()
+pv.global_theme.lighting = get_lighting()
 
 
 # currently running dpf on docker.  Used for testing on CI
