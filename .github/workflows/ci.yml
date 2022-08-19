@@ -21,7 +21,7 @@ env:
   ANSYS_VERSION: 222
 
 jobs:
-  stylecheck:
+  Style_Check:
     name: Style Check
     runs-on: ubuntu-latest
     steps:
