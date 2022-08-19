@@ -41,7 +41,7 @@ setup(
     ],
     python_requires=">=3.7.*,<4.0",
     extras_require={
-        "plotting": ["pyvista>=0.24.0", "matplotlib"],
+        "plotting": ["pyvista>=0.24.0"],
     },
     install_requires=install_requires,
     license='MIT',
