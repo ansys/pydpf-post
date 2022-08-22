@@ -81,17 +81,17 @@ components of this field, e.g., y-components, access the following subresult:
 
 .. code:: python
 
-    Instantiate the solution object
+    # Instantiate the solution object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the displacement result object
+    # Instantiate the displacement result object
 
     >>> displacement = solution.displacement()
 
-    Get the y displacement result data
+    # Get the y displacement result data
 
     >>> u_y = displacement.y
     >>> u_y.get_data_at_field()
@@ -112,7 +112,7 @@ with the following:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the stress result object
+    # Instantiate the stress result object
 
     >>> stress = solution.stress()
 
@@ -128,11 +128,11 @@ subresult:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate the stress result object
+    # Instantiate the stress result object
 
     >>> stress = solution.stress()
 
-    Get the yy stress result data
+    # Get the yy stress result data
 
     >>> s_yy = stress.yy
     >>> s_yy.get_data_at_field()
@@ -260,8 +260,8 @@ Verify the result file contents to determine available queries (see
 :ref:`user_guide_accessing_file_metadata`).
 
 
-Thermal/Electric (\*.rth) result files
-======================================
+Thermal/Electric (``*.rth``) result files
+=========================================
 Upon loading a ``Solution`` object from a thermal/electric analysis
 results file (\*.rth), the following ``Result`` objects may be
 queried:
@@ -273,7 +273,7 @@ queried:
 
 Temperature
 -----------
-Temperature is the DOF solution for thermal analyses.  The :class:`Temperature
+Temperature is the DOF solution for thermal analyses. The :class:`Temperature
 <ansys.dpf.post.temperature.Temperature>` result object can be obtained as
 follows:
 
@@ -368,7 +368,7 @@ result object can be obtained with the following:
 
     >>> electric_field = solution.electric_field()
 
-The electric field result corresponds to a vector field.  To
+The electric field result corresponds to a vector field. To
 obtain the scalar components of this field, e.g., x-components, access
 the following subresult:
 

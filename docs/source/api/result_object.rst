@@ -1,11 +1,11 @@
 .. _ref_api_result_object:
 
-*******
-Results
-*******
+**********
+``Result``
+**********
 
 The :class:`Result <ansys.dpf.post.result_object.Result>` class provides access
-to different types of result data.  See the example below for access to
+to different types of result data. See the example below for access to
 displacements, stresses and elastic strains.
 
 .. code:: python
