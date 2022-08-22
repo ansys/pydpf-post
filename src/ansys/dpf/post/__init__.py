@@ -27,7 +27,7 @@ except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata
 
 # this must be after some ansys.dpf.post import
-__version__ = importlib_metadata.version(__name__.replace(".", "-"))
+__version__ = importlib_metadata.version("ansys-dpf-post")
 
 
 if hasattr(core, "settings") and hasattr(
