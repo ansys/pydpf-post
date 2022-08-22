@@ -37,3 +37,7 @@ dist/
 # emacs temp files
 *~
 .#*
+
+# coverage
+.cov/
+.coverage
