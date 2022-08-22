@@ -31,17 +31,17 @@ The following code shows how to **export a fields container in VTK format**:
 
 .. code:: python
 
-    Instantiate the solution object.
+    # Instantiate the solution object.
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate a result object. This is a displacement result.
+    # Instantiate a result object. This is a displacement result.
 
     >>> displacement = solution.displacement()
 
-    This is the result data (data container).
+    # This is the result data (data container).
 
     >>> norm = displacement.norm
 

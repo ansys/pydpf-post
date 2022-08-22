@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-dpf-post"
-version = "0.2.dev0"
+version = "0.3.dev0"
 description = "DPF-Post Python library."
 readme = "README.md"
 requires-python = ">=3.7.*,<4.0"
@@ -46,6 +46,11 @@ plotting = [
 ]
 
 [tool.pytest.ini_options]
+minversion = "7.1"
+addopts = "-ra --cov=ansys.dpf.post --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
+testpaths = [
+    "tests",
+]
 filterwarnings = [
     "ignore::FutureWarning",
     "ignore::PendingDeprecationWarning",

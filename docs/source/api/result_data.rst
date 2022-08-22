@@ -1,8 +1,8 @@
 .. _ref_api_result_data:
 
-**********
-ResultData
-**********
+**************
+``ResultData``
+**************
 
 The :class:`ResultData <ansys.dpf.post.result_data.ResultData>` object is
 obtained from a :class:`Result <ansys.dpf.core.results.Result>`.  It provides

@@ -54,7 +54,7 @@ class DpfSolution:
         return self._model.metadata.time_freq_support
 
     def get_result_info(self):
-        r"""Return information about the result file.
+        """Return information about the result file.
 
         Examples
         --------

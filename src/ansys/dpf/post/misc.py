@@ -1,4 +1,4 @@
-"""Miscelanious and report module."""
+"""Miscellaneous and report module."""
 from scooby import Report as ScoobyReport
 
 
