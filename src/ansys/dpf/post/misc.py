@@ -30,7 +30,14 @@ class Report(ScoobyReport):
 
         """
         # Mandatory packages.
-        core = ["pyvista", "matplotlib", "PIL", "pexpect", "ansys.dpf.core"]
+        core = [
+            "pyvista",
+            "matplotlib",
+            "PIL",
+            "pexpect",
+            "ansys.dpf.core",
+            "ansys.dpf.post",
+        ]
 
         # Optional packages.
         optional = []

@@ -63,6 +63,10 @@ jobs:
         with:
           DEBUG: true
 
+      - name: "Debug"
+        run: |
+          python -c "import ansys.dpf.post as pydpf_post; print(pydpf_post.Report(gpu=False))"
+
       - name: "Test Docstrings"
         uses: pyansys/pydpf-actions/test_docstrings@feat/use_build
         with:
