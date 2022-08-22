@@ -45,25 +45,25 @@ The following code shows how to **export a fields container in VTK format**:
 
     >>> norm = displacement.norm
 
-    The result fields_container is extracted from the result data.
+    # The result fields_container is extracted from the result data.
 
     >>> fields_container = norm.result_fields_container
     
-    Now the Core API need to be imported.
+    # Now the Core API need to be imported.
 
     >>> from ansys.dpf import core
 
-    A dedicated operator needs to be instantiated.
+    # A dedicated operator needs to be instantiated.
 
     >>> vtk_operator = core.Operator("vtk_export")
 
-    Connections must be set.
+    # Connections must be set.
 
     >>> vtk_operator.inputs.mesh.connect(solution.mesh)
     >>> vtk_operator.inputs.file_path.connect("vtk_example.vtk")
     >>> vtk_operator.inputs.fields1.connect(fields_container)
 
-    Run the operator.
+    # Run the operator.
 
     >>> vtk_operator.run()
 
@@ -76,39 +76,39 @@ in HDF5 format**:
 
 .. code:: python
 
-    Instantiate the solution object 
+    # Instantiate the solution object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Instantiate a result object. This is a displacement result.
+    # Instantiate a result object. This is a displacement result.
 
     >>> displacement = solution.displacement()
 
-    This is the result data (data container)
+    # This is the result data (data container)
 
     >>> norm = displacement.norm
 
-    Extract the result fields_container from the result data.
+    # Extract the result fields_container from the result data.
 
     >>> fields_container = norm.result_fields_container
     
-    Now the Core API needs to be imported.
+    # Now the Core API needs to be imported.
 
     >>> from ansys.dpf import core
 
-    Initialize a dedicated operator.
+    # Initialize a dedicated operator.
 
     >>> h5_operator = core.Operator("serialize_to_hdf5")
 
-    Set the connection.
+    # Set the connection.
 
     >>> h5_operator.inputs.mesh.connect(solution.mesh)
     >>> h5_operator.inputs.file_path.connect("hdf5_example.h5")
     >>> h5_operator.inputs.data.connect(fields_container)
 
-    Evaluate the the operator.
+    # Evaluate the the operator.
 
     >>> h5_operator.eval()
 

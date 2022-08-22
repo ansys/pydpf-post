@@ -13,19 +13,19 @@ dedicated methods:
 
 .. code:: python
 
-	Instantiate the solution object
+	# Instantiate the solution object
 
 	>>> from ansys.dpf import post
 	>>> from ansys.dpf.post import examples
 	>>> solution = post.load_solution(examples.multishells_rst)
 
-	Instantiate a displacement result object
+	#  Instantiate a displacement result object
 
 	>>> displacement = solution.displacement()
 	>>> # stress, elastic_strain (...) can also be called.
 
-	Refer to the list below to know which result object can be
-	instantiated.
+	# Refer to the list below to know which result object can be
+	# instantiated.
 
 A number of options, formulated as **keyword arguments**, can be used
 to further specify the result type, scope, and time, among others. For
@@ -64,7 +64,7 @@ with the following:
 
 .. code:: python
 
-    Instantiate the solution object
+    # Instantiate the solution object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples

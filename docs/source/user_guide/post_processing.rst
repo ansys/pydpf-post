@@ -17,7 +17,7 @@ browsing the contents of a result file.  It can be obtained as follows:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution('C:/Users/user/file.rst')
 
-    Or on linux
+    # Or on linux
 
     >>> solution = post.load_solution('/home/user/file.rst')
 
