@@ -23,7 +23,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata
 
-__version__ = importlib_metadata.version(__name__)
+__version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
 
 from ansys.dpf.post.common import Grouping as grouping
