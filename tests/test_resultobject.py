@@ -1,7 +1,8 @@
+from ansys.dpf.core import locations
 import numpy as np
 import pytest
+
 from ansys.dpf import post
-from ansys.dpf.core import locations
 from ansys.dpf.post import errors
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.scalar import ComplexScalar, Scalar
@@ -13,11 +14,10 @@ def test_scalar(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     scalar = solution.structural_temperature()
     assert isinstance(scalar, Scalar)
-    txt = scalar.__str__()
-    assert txt == (
-        "Scalar object. \n\n"
+    assert str(scalar) == (
+        "Scalar object.\n\n"
         "Object properties:\n - location   : Nodal\n\n"
-        "This is a temperature object."
+        "Structural temperature object."
     )
     value = scalar.scalar
     assert isinstance(value, ResultData)
@@ -29,11 +29,10 @@ def test_vector(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     vector = solution.displacement()
     assert isinstance(vector, Vector)
-    txt = vector.__str__()
-    assert txt == (
-        "Vector object. \n\n"
+    assert str(vector) == (
+        "Vector object.\n\n"
         "Object properties:\n - location   : Nodal\n\n"
-        "This is a displacement object."
+        "Displacement object."
     )
     value = vector.vector
     assert isinstance(value, ResultData)
@@ -58,9 +57,9 @@ def test_tensor(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     tensor = solution.stress()
     assert isinstance(tensor, Tensor)
-    txt = tensor.__str__()
     assert (
-        txt == "Stress Tensor object. \n\nObject properties:\n - location   : Nodal\n"
+        str(tensor)
+        == "Stress Tensor object.\n\nObject properties:\n - location   : Nodal\n"
     )
     value = tensor.tensor
     assert isinstance(value, ResultData)
@@ -109,12 +108,11 @@ def test_scalar_complex(complex_model):
     solution = post.load_solution(complex_model)
     scalar = solution.structural_temperature()
     assert isinstance(scalar, ComplexScalar)
-    txt = scalar.__str__()
-    assert txt == (
-        "Complex scalar object. \n\n"
-        "Scalar object. \n\n"
+    assert str(scalar) == (
+        "Complex scalar object.\n\n"
+        "Scalar object.\n\n"
         "Object properties:\n - location   : Nodal\n\n"
-        "This is a temperature object."
+        "Complex temperature object."
     )
     value = scalar.scalar
     assert isinstance(value, ResultData)
@@ -132,10 +130,9 @@ def test_vector_complex(complex_model):
     solution = post.load_solution(complex_model)
     vector = solution.displacement()
     assert isinstance(vector, ComplexVector)
-    txt = vector.__str__()
-    assert txt == (
-        "Complex vector object. \n\n"
-        "Vector object. \n\n"
+    assert str(vector) == (
+        "Complex vector object.\n\n"
+        "Vector object.\n\n"
         "Object properties:\n - location   : Nodal\n"
     )
     value = vector.vector
@@ -207,11 +204,10 @@ def test_tensor_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.stress()
     assert isinstance(tensor, ComplexTensor)
-    txt = tensor.__str__()
-    assert txt == (
-        "Complex stress. \n"
-        "Complex tensor object. \n\n"
-        "Stress Tensor object. \n\n"
+    assert str(tensor) == (
+        "Complex stress.\n"
+        "Complex tensor object.\n\n"
+        "Stress Tensor object.\n\n"
         "Object properties:\n - location   : Nodal\n"
     )
     value = tensor.tensor

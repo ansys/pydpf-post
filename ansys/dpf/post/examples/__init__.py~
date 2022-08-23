@@ -1,3 +1,0 @@
-"""DPF-Post example files"""
-
-from ansys.dpf.core.example import *

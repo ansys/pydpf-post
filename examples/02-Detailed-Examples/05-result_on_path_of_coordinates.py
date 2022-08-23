@@ -12,6 +12,7 @@ specific path of coordinates.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
+
 solution = post.load_solution(examples.static_rst)
 
 ###############################################################################

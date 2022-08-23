@@ -1,0 +1,58 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+# Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
+name = "ansys-dpf-post"
+version = "0.3.dev0"
+description = "DPF-Post Python library."
+readme = "README.md"
+requires-python = ">=3.7.*,<4.0"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Ansys, Inc.", email = "pyansys.support@ansys.com"},
+]
+maintainers = [
+    {name = "PyAnsys developers", email = "pyansys.support@ansys.com"},
+]
+dependencies = [
+    "ansys.dpf.core>=0.3.0",
+    "scooby",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[tool.flit.module]
+name = "ansys.dpf.post"
+
+[project.urls]
+Source = "https://github.com/pyansys/pydpf-post"
+
+[project.optional-dependencies]
+plotting = [
+    "pyvista>=0.24.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "7.1"
+addopts = "-ra --cov=ansys.dpf.post --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    "ignore::FutureWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore::DeprecationWarning",
+]

@@ -1,7 +1,7 @@
-"""This module contains the stress result classes."""
+"""This module contains classes for stress results."""
 
-from ansys.dpf.post.tensor import Tensor, ComplexTensor
 from ansys.dpf.post.result_object import Result
+from ansys.dpf.post.tensor import ComplexTensor, Tensor
 
 
 class Stress(Tensor):
@@ -18,40 +18,40 @@ class Stress(Tensor):
     """
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "S"
 
     def __str__(self):
-        txt = "Stress "
-        txt += super().__str__()
-        return txt
+        """Return the string representation of this class."""
+        return f"Stress {super().__str__()}"
 
     @property
     def von_mises(self):
-        """Returns the von mises stress as a ResultData."""
+        """Get the von Mises stress."""
         return super()._get_result_data("S_eqv", self._data_sources, self._model)
 
 
 class ComplexStress(ComplexTensor, Stress):
-    """Defines the complex stress object, that is a tensor object."""
+    """Defines the complex tensor stress object."""
 
     def __init__(self, **kwargs):
+        """Initialize this class."""
         super().__init__(**kwargs)
         self._operator_name = "S"
 
     def __str__(self):
-        txt = "Complex stress. \n"
-        txt += super().__str__()
-        return txt
+        """Return the string representation of this class."""
+        return f"Complex stress.\n{super().__str__()}"
 
     @property
     def von_mises_amplitude(self):
-        """Returns the von mises stress amplitude as a ResultData."""
+        """Get the von Mises stress amplitude."""
         res_data = super()._get_result_data("S_eqv", self._data_sources, self._model)
         return Result._get_amplitude_evaluation(self, res_data)
 
     def von_mises_at_phase(self, phase: float):
-        """Returns the von mises stress at specific phase as a ResultData."""
+        """Return the von Mises stress at a specific phase."""
         return super()._get_result_data(
             "S_eqv", self._data_sources, self._model, phase=phase
         )

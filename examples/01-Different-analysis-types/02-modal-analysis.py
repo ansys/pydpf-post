@@ -13,7 +13,6 @@ using API of the POST module.
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
-
 ###############################################################################
 # Get the solution object
 # ~~~~~~~~~~~~~~~~~~~~~~~

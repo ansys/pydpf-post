@@ -1,20 +1,22 @@
-"""Module containing the _ResultData class ("result object") that
-user will be able to use to compute through the DPF Post API.
+"""Module containing the ``ResultData`` class.
 
-This is a fields container wrapper."""
+This module, which is used heavily within the DPF-Post API, is a fields container wrapper.
+"""
 from textwrap import wrap
 
 from ansys.dpf.core import FieldsContainer, Operator
-from ansys.dpf.core.common import types, DefinitionLabels
-from ansys.dpf.core.plotter import Plotter as DpfPlotter
-from ansys.dpf.post.result_evaluation import ResultEvaluator
-from ansys.dpf.post import errors as dpf_errors
 from ansys.dpf.core import errors as core_errors
+from ansys.dpf.core.common import DefinitionLabels, types
+from ansys.dpf.core.plotter import Plotter as DpfPlotter
+
+from ansys.dpf.post import errors as dpf_errors
+from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
 class ResultData:
-    """Instance of the result of a dpf result object.
-    Created thanks to the dpf result object.
+    """Provides the result data for a DPF result object.
+
+    This class was created using the :class:`ansys.dpf.core.Result` class.
 
     Parameters
     ----------
@@ -57,7 +59,7 @@ class ResultData:
         path=None,
         time_scoping=None,
     ):
-
+        """Initialize this class."""
         self._evaluator = ResultEvaluator(
             operator_name,
             data_sources,
@@ -79,6 +81,7 @@ class ResultData:
         self._result_fields_container = None
 
     def __str__(self):
+        """Return the string representation of this class."""
         self._evaluate_result()
         name = self.result_fields_container[0].name.split("_")
         txt = "%s result.\n" % name[0].capitalize()
@@ -102,13 +105,13 @@ class ResultData:
             self._result_fields_container = self._evaluator.evaluate_result()
 
     def _evaluate_result_forced(self):
-        """Re-evaluation of the result."""
+        """Reevaluate the result."""
         self.result_fields_container = self._evaluator.evaluate_result()
 
     def get_all_label_spaces(self):
-        """Returns all the label spaces contained in a result
-        as a string.
-        Labels can be used to select fields to plot.
+        """Get all label spaces contained in a result as a string.
+
+        You can use labels to select the fields to plot.
 
         Returns
         -------
@@ -125,12 +128,12 @@ class ResultData:
 
     @property
     def num_fields(self):
-        """Returns the number of fields contained in the result."""
+        """Get the number of fields contained in the result."""
         self._evaluate_result()
         return len(self.result_fields_container)
 
     def get_data_at_field(self, field_index: int = 0):
-        """Returns the data at the field with the specified index."""
+        """Get the data for the field with the specified index."""
         self._evaluate_result()
         # Needed to hold onto the field as a quick fix for a memory leak
         # which causes InProcess mode of PyDPF-Core 0.5.2 to crash
@@ -144,21 +147,22 @@ class ResultData:
         return data
 
     def __getitem__(self, field_index: int = 0):
-        """Override of the result item getter. Implements the fields_container_result
-        item getter. Return the field at the field_index position in the result fields
-        container.
+        """Override of the result item getter.
+
+        This method implements the ``fields_container_result`` item getter. It returns the
+        field at the ``field_index`` position in the ``result_fields_container`` object.
         """
         self._evaluate_result()
         return self.result_fields_container[field_index]
 
     def get_scoping_at_field(self, field_index: int = 0):
-        """Returns the scoping of the result."""
+        """Get the scoping of the result."""
         self._evaluate_result()
         field = self.result_fields_container[field_index]
         return field.scoping.ids
 
     def _min_max(self, pin):
-        """ "Chains the operators to compute the min/max values."""
+        """Chain the operators to compute the minimum and maximum values."""
         self._evaluate_result()
         max_operator = Operator("min_max_fc")
         max_operator.inputs.connect(self.result_fields_container)
@@ -167,61 +171,70 @@ class ResultData:
 
     @property
     def max(self):
-        """Returns the maximum values field.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 1).
+        """Maximum values field.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns
+        its result (output from pin 1).
         """
         return self._min_max(1)
 
     @property
     def max_data(self):
-        """Returns the maximum values field data.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 1).
+        """Maximum values field data.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns its
+        result (output from pin 1).
         """
         return self._min_max(1).data
 
     def get_max_data_at_field(self, field_index: int = 0):
-        """Returns the maximum values field data at field_index.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 1).
+        """Get the maximum values field data at the ``field_index`` index.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns
+        its result (output from pin 1).
         """
         return self._min_max(1).data[field_index]
 
     @property
     def min(self):
-        """Returns the minimum values field.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 0).
+        """Minimum values field.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns
+        its result (output from pin 0).
         """
         return self._min_max(0)
 
     @property
     def min_data(self):
-        """Returns the minimum values field data.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 0).
+        """Minimum values field data.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns
+        its result (output from pin 0).
         """
         return self._min_max(0).data
 
     def get_min_data_at_field(self, field_index: int = 0):
-        """Returns the minimum values field data at field_index.
-        Chains the result operator to the "min_max_fc" operator,
-        returns its result (output from pin 0).
+        """Get the minimum values field data at the ``field_index`` index.
+
+        Chains the result operator to the ``min_max_fc`` operator and returns
+        its result (output from pin 0).
         """
         return self._min_max(0).data[field_index]
 
     @property
     def result_fields_container(self):
+        """Get the result fields container."""
         self._evaluate_result()
         return self._result_fields_container
 
     def _plot_contour_with_vtk_file(self):
-        """Plot the contour result on its mesh support. The obtained figure depends on the
-        support (can be a meshed_region or a time_freq_support).
-        If transient analysis, plot the last result.
+        """Plot the contour result on its mesh support.
 
-        This method is private, publishes a vtk file and print (using pyvista) from this file."""
+        The obtained figure depends on the support. It can be a meshed region or a
+        time frequency support.  For a transient analysis, plot the last result.
+
+        This method is private. It publishes a VTK file and uses PyVista to print from this file.
+        """
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
         pl._plot_contour_using_vtk_file(self.result_fields_container)
@@ -262,12 +275,7 @@ class ResultData:
             new_fields_container.add_field(label, field)
         return new_fields_container
 
-    def plot_contour(
-        self,
-        display_option: str = "time",
-        option_id=1,
-        **kwargs
-    ):
+    def plot_contour(self, display_option: str = "time", option_id=1, **kwargs):
         """Plot the contour result on its mesh support.
 
         The obtained figure depends on the support (can be a
@@ -321,19 +329,25 @@ class ResultData:
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
             except:
-                raise dpf_errors.CoreVersionError(version='0.3.4')
+                raise dpf_errors.CoreVersionError(version="0.3.4")
             # Initialize the plotter
             pl = DpfPlotterObj(**kwargs)
             # Sort the fields according to options
             new_fields_container = self._sort_fields_container_with_labels(
-                option_id, display_option)
+                option_id, display_option
+            )
             # Add each field with its associated mesh to the plotting
             for field_m in new_fields_container:
                 mesh_m = field_m.meshed_region
                 pl.add_field(field_m, mesh_m)
             # Add the mesh associated to the path
-            pl.add_mesh(self._evaluator._model.metadata.meshed_region,
-                        style="surface", show_edges=True, opacity=0.3, **kwargs)
+            pl.add_mesh(
+                self._evaluator._model.metadata.meshed_region,
+                style="surface",
+                show_edges=True,
+                opacity=0.3,
+                **kwargs
+            )
             # Show the plot
             pl.show_figure(**kwargs)
 

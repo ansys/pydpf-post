@@ -4,43 +4,37 @@ from ansys.dpf.post.result_object import Result
 
 
 class Scalar(Result):
-    """Child class of the Result one.
-    Implements a scalar result (temperature).
-    """
+    """Provides a child ``Result`` class that implements scalar results (temperatures)."""
 
     @property
     def scalar(self):
-        """Returns the scalar values as a ResultData."""
+        """Get result data for the scalar values."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
 
     def __str__(self):
-        txt = "Scalar object. \n\n"
-        txt += super().__str__()
-        return txt
+        """Return the string representation."""
+        return f"Scalar object.\n\n{super().__str__()}"
 
 
 class ComplexScalar(Scalar):
-    """Child class of the Result one.
-    Implements a complex scalar result (temperature).
-    """
+    """Provides a child ``Result`` class that implements complex scalar results (temperatures)."""
 
     @property
     def scalar_amplitude(self):
-        """Returns the scalar amplitude values as a ResultData."""
+        """Get result data for the scalar amplitude values."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def scalar_at_phase(self, phase: float):
-        """Returns the scalar values at specified phase as a ResultData."""
+        """Get result data for the scalar values at a specified phase."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )
 
     def __str__(self):
-        txt = "Complex scalar object. \n\n"
-        txt += super().__str__()
-        return txt
+        """Return the string representation."""
+        return f"Complex scalar object.\n\n{super().__str__()}"

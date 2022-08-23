@@ -3,12 +3,12 @@
 Launch or connect to a persistent local DPF service to be shared in
 pytest as a sesson fixture
 """
-import re
 import os
+import re
 
+import matplotlib as mpl
 import pytest
 import pyvista as pv
-import matplotlib as mpl
 
 from ansys.dpf import core
 from ansys.dpf.post import examples
@@ -28,12 +28,12 @@ def get_lighting():
     pl = pv.Plotter(notebook=False, off_screen=True)
     pl.add_mesh(pv.Sphere())
     pl.show(auto_close=False)
-    gpu_info = pl.ren_win.ReportCapabilities();
+    gpu_info = pl.ren_win.ReportCapabilities()
     pl.close()
 
     regex = re.compile("OpenGL version string:(.+)\n")
     version = regex.findall(gpu_info)[0]
-    return not(os.name == 'nt' and 'Mesa' in version)
+    return not (os.name == "nt" and "Mesa" in version)
 
 
 pv.global_theme.lighting = get_lighting()

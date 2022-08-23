@@ -16,7 +16,7 @@ DPF-Post leverages three main categories of objects:
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents
   
    solution

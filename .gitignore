@@ -24,8 +24,10 @@ __pycache__
 *checkpoint.ipynb
 
 # compiled documentation
-docs/_build
-docs/source/examples
+docs/_build/
+docs/**/_autosummary
+docs/source/examples/*
+docs/build_errors.txt
 
 # pip files
 *.egg-info
@@ -35,3 +37,7 @@ dist/
 # emacs temp files
 *~
 .#*
+
+# coverage
+.cov/
+.coverage

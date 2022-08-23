@@ -1,4 +1,5 @@
 import pytest
+
 from ansys.dpf import post
 from ansys.dpf.post.result_definition import Definition
 
