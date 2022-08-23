@@ -22,7 +22,7 @@ class Misc:
     def _get_result_data_function_of_operator(
         self, name, instance, data_sources, b_elem_average: bool = False, **kwargs
     ):
-        """Check the used keywords and return a ``ResultData`` object with all available keywords."""
+        """Return a ``ResultData`` object with all available keywords."""
         location = None
         element_scoping = None
         node_scoping = None
@@ -100,7 +100,11 @@ class Misc:
                 )
 
     def _check_nodal_location(self, **kwargs):
-        """Check if the location keyword with an Elemental value is set. If not, raise Exception."""
+        """Check if the location keyword with an Elemental value is set.
+
+        If unset, raise an ``Exception``.
+
+        """
         if _AvailableKeywords.location in kwargs:
             if kwargs[_AvailableKeywords.location] != locations.nodal:
                 raise Exception(
