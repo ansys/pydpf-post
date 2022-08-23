@@ -215,7 +215,7 @@ class DpfMecanicSolution(DpfSolution):
 
 
 class DpfMecanicComplexSolution(DpfSolution):
-    """Provides the main class of the post solution if the analysis gives a complex solution (Modal, Harmonic)."""
+    """Provides the main class of the post solution if the analysis gives a complex solution."""
 
     def __init__(self, data_sources, model):
         """Initialize this class."""

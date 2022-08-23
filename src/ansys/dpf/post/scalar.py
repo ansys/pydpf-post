@@ -4,8 +4,7 @@ from ansys.dpf.post.result_object import Result
 
 
 class Scalar(Result):
-    """Provides a child ``Result`` class that implements scalar results (temperatures).
-    """
+    """Provides a child ``Result`` class that implements scalar results (temperatures)."""
 
     @property
     def scalar(self):
@@ -20,8 +19,7 @@ class Scalar(Result):
 
 
 class ComplexScalar(Scalar):
-    """Provides a child ``Result`` class that implements complex scalar results (temperatures).
-    """
+    """Provides a child ``Result`` class that implements complex scalar results (temperatures)."""
 
     @property
     def scalar_amplitude(self):

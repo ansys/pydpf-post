@@ -31,11 +31,12 @@ class Result:
 
     def has_complex_frequencies(self):
         """Check if the result contains complex frequencies.
-        
+
         Returns
-        ---------
+        -------
         bool
-            ``True`` if the result contains complex frequencies, ``False`` otherwise."""
+            ``True`` if the result contains complex frequencies, ``False`` otherwise.
+        """
         tfq = self._model.metadata.time_freq_support
         return tfq.complex_frequencies != None
 

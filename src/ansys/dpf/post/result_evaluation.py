@@ -207,9 +207,9 @@ class ResultEvaluator:
             mapping_operator.inputs.coordinates.connect(path._field)
             mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
-            self._chained_operators[mapping_operator.name] = (
-                "This operator maps the result on specified coordinates."
-            )
+            self._chained_operators[
+                mapping_operator.name
+            ] = "This operator maps the result on specified coordinates."
             self._result_operator = mapping_operator
         # outside post-processing instruction
         if elem_average:

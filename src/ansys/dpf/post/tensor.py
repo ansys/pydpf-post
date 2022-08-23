@@ -4,8 +4,7 @@ from ansys.dpf.post.result_object import Result
 
 
 class Tensor(Result):
-    """Provides a child ``Result`` class that implements a tensor result (stress, strain).
-    """
+    """Provides a child ``Result`` class that implements a tensor result (stress, strain)."""
 
     @property
     def xx(self):
@@ -83,8 +82,7 @@ class Tensor(Result):
 
 
 class ComplexTensor(Tensor):
-    """Child ``Result`` class that implements a complex tensor result (stress, strain).
-    """
+    """Child ``Result`` class that implements a complex tensor result (stress, strain)."""
 
     @property
     def xx_amplitude(self):
@@ -203,7 +201,7 @@ class ComplexTensor(Tensor):
         return Result._get_amplitude_evaluation(self, res_data)
 
     def principal_1_at_phase(self, phase: float):
-        """Get the result data for the first principal component of the tensor at a specific phase."""
+        """Get the result data for the first principal component of the tensor at a phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -216,12 +214,15 @@ class ComplexTensor(Tensor):
     def principal_2_amplitude(self):
         """Get the result data for the second principal component of the tensor."""
         res_data = super()._get_result_data(
-            self._operator_name, self._data_sources, self._model, subresult="2"
+            self._operator_name,
+            self._data_sources,
+            self._model,
+            subresult="2",
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def principal_2_at_phase(self, phase: float):
-        """Get the result data for the second principal component of the tensor at a specific phase."""
+        """Get the result data for the second principal component of the tensor at a phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -232,7 +233,7 @@ class ComplexTensor(Tensor):
 
     @property
     def principal_3_amplitude(self):
-        """Get the result data for the third principal component of the tensor.""" 
+        """Get the result data for the third principal component of the tensor."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="3"
         )
