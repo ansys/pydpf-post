@@ -9,7 +9,7 @@ Processing Framework) that is streamlined for post-processing.
 
 A central concept in DPF-Post is the :class:`DpfSolution
 <ansys.dpf.post.dpf_solution.DpfSolution>` class. It is the entry point for
-browsing the contents of a result file.  It can be obtained as follows:
+browsing the contents of a result file.  You can obtain the contents with:
 
 .. code:: python
 

@@ -1,12 +1,12 @@
 .. _ref_api_result_data:
 
-**************
-``ResultData``
-**************
+********************
+``ResultData`` class
+********************
 
 The :class:`ResultData <ansys.dpf.post.result_data.ResultData>` object is
-obtained from a :class:`Result <ansys.dpf.core.results.Result>`.  It provides
-access to the result values contained within, as shown in the following
+obtained from a :class:`Result <ansys.dpf.core.results.Result>` object.  The ``Result``
+class provides access to the result values contained within, as shown in the following
 example:
     
 .. code:: python

@@ -1,11 +1,11 @@
-"""Module containing the DpfPath class."""
+"""Module containing the ``DpfPath`` class."""
 from ansys.dpf.core import Field
 from ansys.dpf.core.common import locations, natures
 import numpy as np
 
 
 def create_path_on_coordinates(coordinates):
-    """Create a dpf path object.
+    """Create a DPF path object.
 
     This path object can be used to request results on a specific path of
     coordinates.
@@ -35,16 +35,16 @@ def create_path_on_coordinates(coordinates):
 
 
 class DpfPath:
-    """Object describing a set of coordinates.
+    """Describes a set of coordinates.
 
     Parameters
     ----------
-    coordinates : list[list[int]], Field, arrays
+    coordinates : list[list[int]], field, arrays
         3D coordinates.
 
     Example
     -------
-    Create coordinates from a list
+    Create coordinates from a list.
 
     >>> from ansys.dpf import post
     >>> coordinates = [[0.024, 0.03, 0.003]]
@@ -82,5 +82,5 @@ class DpfPath:
 
     @property
     def coordinates(self):
-        """Return the coordinates of this path."""
+        """Coordinates of the path."""
         return self._field.data

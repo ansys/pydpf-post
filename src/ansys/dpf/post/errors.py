@@ -1,8 +1,8 @@
-"""DPF-Post specific errors."""
+"""Errors specific to DPF-Post."""
 
 
 class NodalLocationError(ValueError):
-    """Error raised when attempting to set a location to nodal that should not be."""
+    """Provides the error to raise when a location that is set to nodal is invalid."""
 
     def __init__(self, msg="The location must be nodal."):
         """Initialize this class."""
@@ -10,7 +10,7 @@ class NodalLocationError(ValueError):
 
 
 class CoreVersionError(ValueError):
-    """Error raised when attempting to consume a feature that is not available."""
+    """Provides the error to raise when trying to consume a feature that is not available."""
 
     def __init__(self, version=None, msg=None):
         """Initialize this class."""

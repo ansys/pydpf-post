@@ -3,11 +3,11 @@
 ********
 Plotting
 ********
-DPF-Post provides functionality to conveniently plot your result.  First, load
+DPF-Post provides functionality to conveniently plot your result. First, load
 the :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object with
 the results file, request a :class:`Result
 <ansys.dpf.post.result_object.Result>` object, and obtain the scalar field of
-interest.  Use :func:`plot_contour
+interest.  Then, use :func:`plot_contour
 <ansys.dpf.post.result_data.ResultData.plot_contour>` to render it.
 
 

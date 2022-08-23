@@ -5,8 +5,8 @@
 ***************
 
 The :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` class is
-the entry point for browsing the contents of the results file. Use the
-following code to load the file and obtain the instance.
+the entry point for browsing the contents of the results file. This code shows how
+to load the file and obtain the instance.
 
 .. code:: python
 

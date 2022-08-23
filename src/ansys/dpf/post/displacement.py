@@ -7,7 +7,7 @@ from ansys.dpf.post.vector import ComplexVector, Vector
 
 
 class Displacement(Vector):
-    """Defines the displacement object, that is a vector object."""
+    """Defines the displacement object, which is a vector object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -23,7 +23,7 @@ class Displacement(Vector):
 
 
 class ComplexDisplacement(ComplexVector):
-    """Defines the complex displacement object, that is a vector object."""
+    """Defines the complex displacement object, which is a vector object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

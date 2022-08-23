@@ -5,8 +5,8 @@
 **********
 
 The :class:`Result <ansys.dpf.post.result_object.Result>` class provides access
-to different types of result data. See the example below for access to
-displacements, stresses and elastic strains.
+to different types of result data. This code shows how to access result
+data for displacements, stresses and elastic strains:
 
 .. code:: python
 
@@ -26,9 +26,8 @@ displacements, stresses and elastic strains.
 
     >>> elastic_strain = solution.elastic_strain()
 
-DPF-Post features separate result classes for each supported result type. See
-the :ref:`user_guide_accessing_results` section for information on the
-available types and their interfaces.
+DPF-Post features separate result classes for each supported result type. For information on
+the available types and their interfaces, see :ref:`user_guide_accessing_results`.
 
 .. currentmodule:: ansys.dpf.post
 

@@ -13,19 +13,19 @@ dedicated methods:
 
 .. code:: python
 
-	# Instantiate the solution object
+	Instantiate the solution object
 
 	>>> from ansys.dpf import post
 	>>> from ansys.dpf.post import examples
 	>>> solution = post.load_solution(examples.multishells_rst)
 
-	#  Instantiate a displacement result object
+	Instantiate a displacement result object
 
 	>>> displacement = solution.displacement()
 	>>> # stress, elastic_strain (...) can also be called.
 
-	# Refer to the list below to know which result object can be
-	# instantiated.
+	Refer to the list below to know which result object can be
+	instantiated.
 
 A number of options, formulated as **keyword arguments**, can be used
 to further specify the result type, scope, and time, among others. For
@@ -81,17 +81,17 @@ components of this field, e.g., y-components, access the following subresult:
 
 .. code:: python
 
-    # Instantiate the solution object
+    Instantiate the solution object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    # Instantiate the displacement result object
+    Instantiate the displacement result object
 
     >>> displacement = solution.displacement()
 
-    # Get the y displacement result data
+    Get the y displacement result data
 
     >>> u_y = displacement.y
     >>> u_y.get_data_at_field()
@@ -117,7 +117,7 @@ with the following:
     >>> stress = solution.stress()
 
 The stress result corresponds to a tensor field. To obtain the scalar
-components of this field, e.g., the normal y-stresses, access the following
+components of this field, such as the normal y-stresses, access the following
 subresult:
 
 .. code:: python
@@ -128,11 +128,11 @@ subresult:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    # Instantiate the stress result object
+    Instantiate the stress result object
 
     >>> stress = solution.stress()
 
-    # Get the yy stress result data
+    Get the yy stress result data
 
     >>> s_yy = stress.yy
     >>> s_yy.get_data_at_field()
@@ -145,7 +145,7 @@ Strain (elastic, plastic)
 -------------------------
 The :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
 :class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects can
-be obtained with the following:
+be obtained with:
 
 .. code:: python
 
@@ -161,7 +161,7 @@ be obtained with the following:
     >>> plastic_strain = solution.plastic_strain()
 
 A strain result corresponds to a tensor field. To obtain the scalar components
-of this field, e.g., shear xy-strains, access the following subresult:
+of this field, such as the shear xy-strains, access the following subresult:
 
 .. code:: python
 
@@ -369,7 +369,7 @@ result object can be obtained with the following:
     >>> electric_field = solution.electric_field()
 
 The electric field result corresponds to a vector field. To
-obtain the scalar components of this field, e.g., x-components, access
+obtain the scalar components of this field, such as the x-components, access
 the following subresult:
 
 .. code:: python
@@ -396,7 +396,7 @@ Electric potential
 ------------------
 The :class:`ElectricPotential
 <ansys.dpf.post.electric_results.ElectricPotential>` result object can be
-with the following:
+with:
 
 .. code:: python
 
@@ -410,7 +410,7 @@ with the following:
 
     >>> electric_potential = solution.electric_potential()
 
-It represents a scalar field whose values can be with the following:
+It represents a scalar field whose values can be obtained with:
 
 .. code:: python
 

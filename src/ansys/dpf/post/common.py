@@ -40,7 +40,7 @@ class Grouping:
 class _AvailableKeywords:
     """Contains all the keywords that can be used from a post.solution(file_path) method.
 
-    In order to view the complete list of available keywords, use
+    To view the complete list of available keywords with, use
     ``post.print_available_keywords()``
     """
 

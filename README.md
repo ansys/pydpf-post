@@ -11,8 +11,8 @@ files as well as several neutral formats (csv, hdf5, vtk,
 etc.). Various operators are available allowing the manipulation and
 the transformation of this data.
 
-The Python `ansys-dpf-post` package provides an simplified Python
-interface to DPF, thus enabling rapid post-processing, without ever
+The Python `ansys-dpf-post` package provides a simplified Python
+interface to DPF, thus enabling rapid postprocessing without ever
 leaving a Python environment. 
 
 This module leverages the DPF-Core project's ``ansys-dpf-core`` package and can
@@ -95,6 +95,5 @@ build your own custom, low level scripts using the
 
 ### License
 
-``PyDPF-Post`` is licensed under the MIT license.  Please see the
-[LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE) for more
-details.
+``PyDPF-Post`` is licensed under the MIT license.  For more information, see the
+[LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE).

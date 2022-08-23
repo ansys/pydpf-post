@@ -86,8 +86,8 @@ post-processing steps easier by automating the use of DPF's chained
 operators.  This allows for fast post-processing of potentially
 multi-gigabyte models in a short script.  DPF-Post also details the
 usage of the operators used when computing the results so you can also
-build your own custom, low level scripts using the
-`PyDPF-Core <https://github.com/pyansys/pydpf-core>`_ module.
+build your own custom, low-level scripts using the
+`PyDPF-Core <https://github.com/pyansys/pydpf-core>`_.
 
 
 .. toctree::
