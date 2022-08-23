@@ -18,7 +18,7 @@ from ansys.dpf.post.common import Grouping, _AvailableKeywords
 
 
 class ResultEvaluator:
-    ""Wraps the evaluation of the fields container as a ``ResultData`` object."""
+    """Wraps the evaluation of the fields container as a ``ResultData`` object."""
 
     def __init__(
         self,
