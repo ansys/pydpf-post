@@ -1,4 +1,4 @@
-"""Module containing the Result subclass : Vector."""
+"""Module containing ``Result` subclasses for vectors."""
 
 from ansys.dpf.core import Operator
 
@@ -6,25 +6,25 @@ from ansys.dpf.post.result_object import Result
 
 
 class Vector(Result):
-    """Vector (displacement) result."""
+    """Implements the vector (displacement) result."""
 
     @property
     def x(self):
-        """Return X component of the vector as a ResultData."""
+        """Get the result data for the X component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="X"
         )
 
     @property
     def y(self):
-        """Return Y component of the vector as a ResultData."""
+        """Get the result data for the Y component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Y"
         )
 
     @property
     def z(self):
-        """Return Z component of the vector as a ResultData."""
+        """Get the result data for the Z component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Z"
         )
@@ -38,7 +38,7 @@ class Vector(Result):
 
     @property
     def norm(self):
-        """Return the norm of the vector as a ResultData."""
+        """Get the result data for the the norm of the vector."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
@@ -57,18 +57,18 @@ class Vector(Result):
 
 
 class ComplexVector(Vector):
-    """Complex Vector."""
+    """Implements the complex vector."""
 
     @property
     def x_amplitude(self):
-        """Return X component amplitude of the vector as a ResultData."""
+        """Get the result data for the X component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="X"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def x_at_phase(self, phase: float):
-        """Return the X component at specific phase as a ResultData."""
+        """Get the result data for the the X component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -79,14 +79,14 @@ class ComplexVector(Vector):
 
     @property
     def y_amplitude(self):
-        """Return Y component amplitude of the vector as a ResultData."""
+        """Get the result data for the Y component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Y"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def y_at_phase(self, phase: float):
-        """Return the Y component at specific phase as a ResultData."""
+        """Get the result data for the Y component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -97,14 +97,14 @@ class ComplexVector(Vector):
 
     @property
     def z_amplitude(self):
-        """Return Z component amplitude of the vector as a ResultData."""
+        """Get the result data for the Z component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Z"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def z_at_phase(self, phase: float):
-        """Return the Z component at specific phase as a ResultData."""
+        """Get the result data for the Z component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -115,21 +115,21 @@ class ComplexVector(Vector):
 
     @property
     def vector_amplitude(self):
-        """Return the vector amplitude values as a ResultData."""
+        """Get the result data for the vector amplitude values."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def vector_at_phase(self, phase: float):
-        """Return the vector values at specific phase as a ResultData."""
+        """Get the result data for the vector values at a specific phase."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )
 
     @property
     def norm_amplitude(self):
-        """Return the amplitude of the norm of the vector as a ResultData."""
+        """Get the result data for the amplitude of the norm of the vector."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
@@ -143,7 +143,7 @@ class ComplexVector(Vector):
         return Result._get_amplitude_evaluation(self, result_data)
 
     def norm_at_phase(self, phase: float):
-        """Return the norm of the vector at specific phase as a ResultData."""
+        """Get the result data for the norm of the vector at a specific phase."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )

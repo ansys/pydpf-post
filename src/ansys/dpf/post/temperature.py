@@ -1,4 +1,4 @@
-"""This module contains the temperature result class ."""
+"""This module contains classes for temperature results ."""
 
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.post.scalar import ComplexScalar, Scalar
@@ -6,7 +6,7 @@ from ansys.dpf.post.vector import Vector
 
 
 class StructuralTemperature(Scalar):
-    """Defines the structural temperature object, that is a scalar object."""
+    """Defines the structural temperature object, which is a scalar object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -19,7 +19,7 @@ class StructuralTemperature(Scalar):
 
 
 class ComplexStructuralTemperature(ComplexScalar):
-    """Defines the complex structural temperature object, that is a scalar object."""
+    """Defines the complex structural temperature object, which is a scalar object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -32,7 +32,7 @@ class ComplexStructuralTemperature(ComplexScalar):
 
 
 class Temperature(Scalar):
-    """Defines the temperature object for thermal analysis, that is a scalar object."""
+    """Defines the temperature object, which is a scalar object, for thermal analysis."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -52,7 +52,7 @@ class Temperature(Scalar):
 
 
 class HeatFlux(Vector):
-    """Defines the heat flux object for thermal analysis, that is a scalar object."""
+    """Defines the heat flux object for thermal analysis, which is a scalar object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

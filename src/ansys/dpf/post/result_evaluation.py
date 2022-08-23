@@ -1,9 +1,9 @@
-"""Module containing the ResultEvaluation class.
+"""Module containing the ``ResultEvaluation`` class.
 
-This class will compute the information collected in the ResultData class
-(which is a fields container wrapper).
+This class computes the information collected in the ``ResultData`` class,
+which is a fields container wrapper.
 
-This class will only be dedicated to the fields container computation.
+This class is only dedicated to fields container computation.
 """
 
 from collections import OrderedDict
@@ -18,7 +18,7 @@ from ansys.dpf.post.common import Grouping, _AvailableKeywords
 
 
 class ResultEvaluator:
-    """Class to wrap the evaluation of the fields container as a ResultData object."""
+    ""Wraps the evaluation of the fields container as a ``ResultData`` object."""
 
     def __init__(
         self,
@@ -208,7 +208,7 @@ class ResultEvaluator:
             mapping_operator.inputs.create_support.connect(True)
             mapping_operator.inputs.mesh.connect(self._model.metadata.meshed_region)
             self._chained_operators[mapping_operator.name] = (
-                "This operator will map the result on specified " "coordinates."
+                "This operator maps the result on specified coordinates."
             )
             self._result_operator = mapping_operator
         # outside post-processing instruction
@@ -289,7 +289,7 @@ class ResultEvaluator:
             raise Exception(txt)
 
     def _get_evaluation_with_sweeping_phase(self, phase):
-        """Connect needed operator to compute the result regarding the specified phase."""
+        """Connect the operator needed to compute the result for a specified phase."""
         sweeping_phase_op = dpf.core.Operator("sweeping_phase_fc")
         sweeping_phase_op.inputs.fields_container.connect(
             self._result_operator.outputs.fields_container

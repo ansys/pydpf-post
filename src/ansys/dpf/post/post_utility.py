@@ -1,6 +1,6 @@
 """Module containing the method to instantiate the result object.
 
-This is used for the Initialization of post objects.
+This module is used for the initialization of post objects.
 """
 from ansys.dpf.core.model import Model
 
@@ -20,12 +20,12 @@ from ansys.dpf.post.transient_analysis import (
 def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Load a solution and return a :class:`ansys.dpf.post.Result` object.
 
-    This can provide information on a given set on a given scoping.
+    This method can provide information on a given set on a given scoping.
 
     Parameters
     ----------
     data_sources : str or ansys.dpf.core.DataSources
-         filepath to the file you want to open, or a :class:`ansys.dpf.core.DataSources`.
+         Path to the file that you want to open or the :class:`ansys.dpf.core.DataSources` class.
 
     physics_type : common._PhysicsType, str, optional
         Accepts one of ``["mecanic", "thermal"]`` to optionally specify the type
@@ -54,7 +54,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
             warnings.warn(
-                "Physics type defaulting to 'mecanic'. Specify physics_type",
+                "Physics type is defaulting to 'mechanic'. Specify physics_type.",
                 "keyword if it is invalid.",
             )
             physics_type = _PhysicsType.mecanic
@@ -64,7 +64,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
             warnings.warn(
-                "Analysis type defaulting to static. Specify analysis_type",
+                "Analysis type defaults to static. Specify analysis_type if invalid.",
                 "keyword if it is invalid.",
             )
             analysis_type = _AnalysisType.static

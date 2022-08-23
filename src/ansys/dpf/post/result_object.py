@@ -1,7 +1,7 @@
-"""Contains the common result class.
+"""Contains the common ``Result`` class.
 
-This module contains the super class of the
-stress/strain/structural_temperature/displacement objects.
+This module contains the super class of the stress, strain, structural temperature,
+and displacement objects.
 """
 
 from ansys.dpf.core import Operator
@@ -11,9 +11,9 @@ from ansys.dpf.post.result_definition import Definition
 
 
 class Result:
-    """Result class.
+    """Provides the ``Result`` class.
 
-    This is an abstract class that is not instantiated directly but instead is
+    This is an abstract class. It is not instantiated directly but instead is
     subclassed by specific result classes like
     the :class:`Displacement <ansys.dpf.post.displacement.Displacement>` class.
 
@@ -30,7 +30,12 @@ class Result:
         return self.definition.__str__()
 
     def has_complex_frequencies(self):
-        """Return ``True`` if the result support contains complex frequencies."""
+        """Check if the result contains complex frequencies.
+        
+        Returns
+        ---------
+        bool
+            ``True`` if the result contains complex frequencies, ``False`` otherwise."""
         tfq = self._model.metadata.time_freq_support
         return tfq.complex_frequencies != None
 

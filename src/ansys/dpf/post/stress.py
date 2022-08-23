@@ -1,4 +1,4 @@
-"""This module contains the stress result classes."""
+"""This module contains classes for stress results."""
 
 from ansys.dpf.post.result_object import Result
 from ansys.dpf.post.tensor import ComplexTensor, Tensor
@@ -28,7 +28,7 @@ class Stress(Tensor):
 
     @property
     def von_mises(self):
-        """Return the von mises stress as a ResultData."""
+        """Get the von Mises stress."""
         return super()._get_result_data("S_eqv", self._data_sources, self._model)
 
 
@@ -46,12 +46,12 @@ class ComplexStress(ComplexTensor, Stress):
 
     @property
     def von_mises_amplitude(self):
-        """Return the von mises stress amplitude as a ResultData."""
+        """Get the von Mises stress amplitude."""
         res_data = super()._get_result_data("S_eqv", self._data_sources, self._model)
         return Result._get_amplitude_evaluation(self, res_data)
 
     def von_mises_at_phase(self, phase: float):
-        """Return the von mises stress at specific phase as a ResultData."""
+        """Return the von Mises stress at a specific phase."""
         return super()._get_result_data(
             "S_eqv", self._data_sources, self._model, phase=phase
         )

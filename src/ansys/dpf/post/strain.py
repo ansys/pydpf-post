@@ -1,4 +1,4 @@
-"""This module contains the strain result class."""
+"""This module contains classes for strain results."""
 
 from ansys.dpf.post.tensor import ComplexTensor, Tensor
 
@@ -17,7 +17,7 @@ class ElasticStrain(Tensor):
 
 
 class ComplexElasticStrain(ComplexTensor):
-    """Defines the complex elastic strain object, that is a tensor object."""
+    """Defines the complex elastic strain object, which is a tensor object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -30,7 +30,7 @@ class ComplexElasticStrain(ComplexTensor):
 
 
 class PlasticStrain(Tensor):
-    """Defines the plastic strain object, that is a tensor object."""
+    """Defines the plastic strain object, which is a tensor object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -43,7 +43,7 @@ class PlasticStrain(Tensor):
 
 
 class ComplexPlasticStrain(ComplexTensor):
-    """Defines the complex plastic strain object, that is a tensor object."""
+    """Defines the complex plastic strain object, which is a tensor object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

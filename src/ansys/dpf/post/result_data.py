@@ -1,8 +1,6 @@
-"""Module containing the ResultData class.
+"""Module containing the ``ResultData`` class.
 
-Used heavily within the DPF Post API.
-
-This is a fields container wrapper.
+This module, which is used heavily within the DPF-Post API, is a fields container wrapper.
 """
 from textwrap import wrap
 
@@ -16,9 +14,9 @@ from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
 class ResultData:
-    """Result data class.
+    """Provides the result data for a DPF result object.
 
-    Created using :class:`ansys.dpf.core.Result`.
+    This class was created using the :class:`ansys.dpf.core.Result` class.
 
     Parameters
     ----------
@@ -111,9 +109,9 @@ class ResultData:
         self.result_fields_container = self._evaluator.evaluate_result()
 
     def get_all_label_spaces(self):
-        """Return all the label spaces contained in a result as a string.
+        """Get all label spaces contained in a result as a string.
 
-        Labels can be used to select fields to plot.
+        You can use labels to select the fields to plot.
 
         Returns
         -------
@@ -130,12 +128,12 @@ class ResultData:
 
     @property
     def num_fields(self):
-        """Return the number of fields contained in the result."""
+        """Get the number of fields contained in the result."""
         self._evaluate_result()
         return len(self.result_fields_container)
 
     def get_data_at_field(self, field_index: int = 0):
-        """Return the data at the field with the specified index."""
+        """Get the data for the field with the specified index."""
         self._evaluate_result()
         # Needed to hold onto the field as a quick fix for a memory leak
         # which causes InProcess mode of PyDPF-Core 0.5.2 to crash
@@ -151,20 +149,20 @@ class ResultData:
     def __getitem__(self, field_index: int = 0):
         """Override of the result item getter.
 
-        Implements the fields_container_result item getter. Return the field at
-        the field_index position in the result fields container.
+        This method implements the ``fields_container_result`` item getter. It returns the
+        field at the ``field_index`` position in the ``result_fields_container`` object.
         """
         self._evaluate_result()
         return self.result_fields_container[field_index]
 
     def get_scoping_at_field(self, field_index: int = 0):
-        """Return the scoping of the result."""
+        """Get the scoping of the result."""
         self._evaluate_result()
         field = self.result_fields_container[field_index]
         return field.scoping.ids
 
     def _min_max(self, pin):
-        """Chain the operators to compute the min/max values."""
+        """Chain the operators to compute the minimum and maximum values."""
         self._evaluate_result()
         max_operator = Operator("min_max_fc")
         max_operator.inputs.connect(self.result_fields_container)
@@ -173,7 +171,7 @@ class ResultData:
 
     @property
     def max(self):
-        """Return the maximum values field.
+        """Maximum values field.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         its result (output from pin 1).
@@ -182,15 +180,15 @@ class ResultData:
 
     @property
     def max_data(self):
-        """Return the maximum values field data.
+        """Maximum values field data.
 
-        Chains the result operator to the ``min_max_fc`` operator, returns its
+        Chains the result operator to the ``min_max_fc`` operator and returns its
         result (output from pin 1).
         """
         return self._min_max(1).data
 
     def get_max_data_at_field(self, field_index: int = 0):
-        """Return the maximum values field data at ``field_index``.
+        """Get the maximum values field data at the ``field_index`` index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         its result (output from pin 1).
@@ -199,7 +197,7 @@ class ResultData:
 
     @property
     def min(self):
-        """Return the minimum values field.
+        """Minimum values field.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         its result (output from pin 0).
@@ -208,7 +206,7 @@ class ResultData:
 
     @property
     def min_data(self):
-        """Return the minimum values field data.
+        """Minimum values field data.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         its result (output from pin 0).
@@ -216,7 +214,7 @@ class ResultData:
         return self._min_max(0).data
 
     def get_min_data_at_field(self, field_index: int = 0):
-        """Return the minimum values field data at field_index.
+        """Get the minimum values field data at the ``field_index`` index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         its result (output from pin 0).
@@ -225,17 +223,17 @@ class ResultData:
 
     @property
     def result_fields_container(self):
-        """Return the result fields container."""
+        """Get the result fields container."""
         self._evaluate_result()
         return self._result_fields_container
 
     def _plot_contour_with_vtk_file(self):
         """Plot the contour result on its mesh support.
 
-        The obtained figure depends on the support (can be a meshed_region or a
-        time_freq_support).  If transient analysis, plot the last result.
+        The obtained figure depends on the support. It can be a meshed region or a
+        time frequency support.  For a transient analysis, plot the last result.
 
-        This method is private, publishes a vtk file and print (using pyvista) from this file.
+        This method is private. It publishes a VTK file and uses PyVista to print from this file.
         """
         self._evaluate_result()
         pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)

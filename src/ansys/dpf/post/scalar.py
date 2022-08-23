@@ -4,14 +4,12 @@ from ansys.dpf.post.result_object import Result
 
 
 class Scalar(Result):
-    """Child class of the Result.
-
-    Implements a scalar result (temperature).
+    """Provides a child ``Result`` class that implements scalar results (temperatures).
     """
 
     @property
     def scalar(self):
-        """Return the scalar values as a ResultData."""
+        """Get result data for the scalar values."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
@@ -22,21 +20,19 @@ class Scalar(Result):
 
 
 class ComplexScalar(Scalar):
-    """Child class of the Result.
-
-    Implements a complex scalar result (temperature).
+    """Provides a child ``Result`` class that implements complex scalar results (temperatures).
     """
 
     @property
     def scalar_amplitude(self):
-        """Return the scalar amplitude values as a ResultData."""
+        """Get result data for the scalar amplitude values."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def scalar_at_phase(self, phase: float):
-        """Return the scalar values at specified phase as a ResultData."""
+        """Get result data for the scalar values at a specified phase."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )

@@ -7,7 +7,7 @@ from ansys.dpf.post.dpf_path import DpfPath
 
 
 class Definition:
-    """Class containing the attributes as properties of the result object."""
+    """Contains the attributes as properties of the result object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -163,8 +163,8 @@ class Definition:
     def named_selection(self) -> str:
         """Return or set the named selection.
 
-        MAPDL named selections are in upper-case.  Lower case name selections
-        will automatically be set to uppercase.
+        For MAPDL, named selections are uppercase.  Any name selections in lowercase
+        are automatically set to uppercase.
 
         Examples
         --------
