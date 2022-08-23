@@ -81,7 +81,7 @@ class Misc:
         )
 
     def _check_elemental_location(self, **kwargs):
-        """Check if the location keyword with an Elemental value is set.
+        """Check if the location keyword with an ``Elemental`` value is set.
 
         If the location keyword is not set, an exception is raised.
         """
