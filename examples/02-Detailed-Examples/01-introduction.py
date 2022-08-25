@@ -1,8 +1,8 @@
 """
 .. _ref_introduction:
 
-DPF-Post introduction
-=====================
+Introduction
+============
 This example shows how to load a solution and access some basic help.
 """
 ###############################################################################

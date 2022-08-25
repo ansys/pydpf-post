@@ -1,12 +1,9 @@
 """
 .. _ref_overview_example:
 
-
-~~~~~~~~
-Overview
-========
-
-This example provides a basic overview of how you use DPF-Post.
+DPF-Post overview
+=================
+This example provides an overview of how you use DPF-Post.
 """
 
 ###############################################################################
