@@ -1,22 +1,32 @@
 """
 .. _ref_result_on_path:
 
-ANSYS DPF-Post request results on specific path
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This tutorial shows how to request the result over a
+Request result on a specific path
+=================================
+This example shows how you can request a result on a
 specific path of coordinates.
 """
 
 ###############################################################################
-# Get started
+# Perform required imports
+# ------------------------
+# Perform required imports.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
+###############################################################################
+# Get ``Solution`` object
+# -----------------------
+# Get the ``Solution`` object.
+
 solution = post.load_solution(examples.static_rst)
 
 ###############################################################################
-# Create a coordinates array on which request the result
+# Create coordinates array
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# Create the coordinates array to request the result on.
+
 coordinates = [[0.024, 0.03, 0.003]]
 for i in range(1, 51):
     coord_copy = coordinates[0].copy()
@@ -24,14 +34,23 @@ for i in range(1, 51):
     coordinates.append(coord_copy)
 
 ###############################################################################
-# Create a DpfPath object
+# Create ``DpfPath`` object
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# Create a ``DpfPath`` object.
+
 path = post.create_path_on_coordinates(coordinates=coordinates)
 
 ###############################################################################
-# Request the result on it
+# Request result on path
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Request the result on this path.
+
 stress = solution.stress(path=path)
 
 ###############################################################################
-# Plot the result
+# Plot result
+# -----------
+# Plot the result.
+
 stress_eqv = stress.von_mises
 stress_eqv.plot_contour()

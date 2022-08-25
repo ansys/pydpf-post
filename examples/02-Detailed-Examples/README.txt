@@ -1,5 +1,5 @@
 .. _ref_detailed_examples:
 
-DPF-Post Detailed Examples
+DPF-Post feature examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Here are a series of detailed examples with the ``ansys-dpf-post`` module.
+These examples show how you use DPF-Post features.
