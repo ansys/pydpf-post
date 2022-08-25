@@ -259,8 +259,8 @@ To determine available queries, you can browse the metadata in the result file. 
 information, see :ref:`user_guide_accessing_file_metadata`.
 
 
-Thermal/Electric (RTH) result files
-===================================
+Thermal/electric result files
+=============================
 
 After loading a ``Solution`` object from a thermal/electric analysis
 result file (RTH), you can query these ``Result`` objects:

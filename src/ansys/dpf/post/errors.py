@@ -10,13 +10,13 @@ class NodalLocationError(ValueError):
 
 
 class CoreVersionError(ValueError):
-    """Provides the error to raise when trying to consume a feature that is not available."""
+    """Provides the error to raise when trying to consume a feature that is unavailable."""
 
     def __init__(self, version=None, msg=None):
         """Initialize this class."""
         if msg is None:
             msg = """To consume this feature, the ansys-dpf-core
-            package version must be higher than """
+            package version must be later than """
         if version is None:
             version = "0.1.0"
         txt = msg + version

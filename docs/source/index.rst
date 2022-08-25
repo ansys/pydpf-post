@@ -2,7 +2,7 @@
 PyDPF-Post
 ==========
 
-The Data Processing Framework (**DPF**) provides numerical simulation 
+The Data Processing Framework (DPF) provides numerical simulation 
 users and engineers with a toolbox for accessing and transforming simulation 
 data. With DPF, you can perform complex preprocessing or postprocessing of
 large amounts of simulation data within a simulation workflow.

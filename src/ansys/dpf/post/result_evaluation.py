@@ -3,7 +3,7 @@
 This class computes the information collected in the ``ResultData`` class,
 which is a fields container wrapper.
 
-This class is only dedicated to fields container computation.
+This class is dedicated only to fields container computation.
 """
 
 from collections import OrderedDict
@@ -58,7 +58,7 @@ class ResultEvaluator:
             # else:
             #     msg = (
             #         location
-            #         + " location can not be set on "
+            #         + " location cannot be set on "
             #         + self._result_operator.name
             #         + " operator."
             #     )
@@ -74,7 +74,7 @@ class ResultEvaluator:
             or (time is not None and time_scoping is not None)
         ):
             raise Exception(
-                "Set, time and time_scoping keyword arguments must be used independently."
+                "Set, time, and time_scoping keyword arguments must be used independently."
             )
         if element_scoping is not None:
             scoping = self._compute_scoping(element_scoping, locations.elemental)
@@ -95,8 +95,8 @@ class ResultEvaluator:
                 ns_op.outputs.mesh_scoping
             )
             self._chained_operators[ns_op.name] = (
-                """This operator will compute a scoping from a named """
-                """selection name. Its output (mesh_scoping) will be connected """
+                """This operator computes a scoping from a named """
+                """selection name. Its output (mesh_scoping) is connected """
                 """with the mesh_scoping input of the result operator."""
             )
         if grouping is not None:
@@ -128,8 +128,8 @@ class ResultEvaluator:
                 scop_op.outputs.mesh_scoping
             )
             self._chained_operators[scop_op.name] = (
-                """This operator will compute a scoping from a grouping """
-                """option. Its output (mesh_scoping) will be connected """
+                """This operator computes a scoping from a grouping """
+                """option. Its output (mesh_scoping) is connected """
                 """with the mesh_scoping input of the result operator."""
             )
         if mapdl_grouping is not None:
@@ -145,8 +145,8 @@ class ResultEvaluator:
                 scop_by_prop_op.outputs.mesh_scoping
             )
             self._chained_operators[scop_by_prop_op.name] = (
-                """This operator will compute a scoping from a mapdl """
-                """element type id. Its output (mesh_scoping) will be """
+                """This operator computes a scoping from a mapdl """
+                """element type id. Its output (mesh_scoping) is """
                 """connected with the mesh_scoping input of the result operator."""
             )
         if set is not None:
@@ -191,7 +191,7 @@ class ResultEvaluator:
                 centroid_op.inputs.fieldA.connect(fieldA)
                 centroid_op.inputs.fieldB.connect(fieldB)
                 self._chained_operators[centroid_op.name] = (
-                    "This operator will compute the centroid of two "
+                    "This operator computes the centroid of two "
                     "fields obtained with a time scoping containing "
                     "two times."
                 )
@@ -242,7 +242,7 @@ class ResultEvaluator:
                 + _AvailableKeywords.element_scoping
                 + "/"
                 + _AvailableKeywords.node_scoping
-                + " can not be used with "
+                + " cannot be used with "
                 + _AvailableKeywords.grouping
                 + "/"
                 + _AvailableKeywords.named_selection
@@ -255,7 +255,7 @@ class ResultEvaluator:
     def _check_if_several_grouping(self, grouping, mapdl_grouping):
         if (grouping is not None) and (mapdl_grouping is not None):
             raise Exception(
-                "Both keywords grouping and mapdl_grouping can not be used simultaneously."
+                "Both keywords grouping and mapdl_grouping cannot be used simultaneously."
             )
 
     def _check_if_several_mesh_scoping(
@@ -297,7 +297,7 @@ class ResultEvaluator:
         sweeping_phase_op.inputs.angle.connect(phase)
         sweeping_phase_op.inputs.unit_name.connect("deg")
         self._chained_operators[sweeping_phase_op.name] = (
-            """This operator will compute the result at a given """
+            """This operator computes the result at a given """
             """phase (when result has complex values)."""
         )
         self._result_operator = sweeping_phase_op
@@ -309,7 +309,7 @@ class ResultEvaluator:
         self._result_operator = avg
         self._chained_operators[
             avg.name
-        ] = "This operator will compute the elemental averaging of a fields container."
+        ] = "This operator computes the elemental averaging of a fields container."
 
     def _average_result(self, op_name):
         avg = Operator(op_name)
@@ -318,7 +318,7 @@ class ResultEvaluator:
         self._result_operator = avg
         self._chained_operators[
             avg.name
-        ] = "This operator will compute the averaging of a fields container."
+        ] = "This operator computes the averaging of a fields container."
 
     def evaluate_result(self):
         """Re-evaluation of the result."""

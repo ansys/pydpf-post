@@ -11,8 +11,7 @@ or later. For more information on getting a licensed copy of Ansys, visit the
 
 
 .. toctree::
-   :hidden:
-   :maxdepth: 2
+   :maxdepth: 3
 
    compatibility
    install

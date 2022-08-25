@@ -7,7 +7,7 @@ from ansys.dpf.post.dpf_path import DpfPath
 
 
 class Definition:
-    """Contains the attributes as properties of the result object."""
+    """Contains the attributes of the ``Result`` object as properties."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -85,7 +85,7 @@ class Definition:
 
     @property
     def location(self) -> str:
-        """Return or set the location.
+        """Location.
 
         Accepts :class:`ansys.dpf.core.common.locations`.
 
@@ -106,7 +106,7 @@ class Definition:
     def location(self, value):
         if self.__location_locked:
             raise Exception(
-                "Location can not be set outside of the instantiation "
+                "Location cannot be set outside of the instantiation "
                 "of the result object in this case."
             )
         if value is not None:
@@ -116,7 +116,7 @@ class Definition:
 
     @property
     def element_scoping(self):
-        """Return or set elemental scoping.
+        """Elemental scoping.
 
         Accepts sequence or :class:`ansys.dpf.core.Scoping`.
 
@@ -134,16 +134,16 @@ class Definition:
     def element_scoping(self, value):
         if self.__element_scoping_locked:
             raise Exception(
-                "Element scoping can not be set outside of the "
+                "Element scoping cannot be set outside of the "
                 "instantiation of the result object in this case."
             )
         self._element_scoping = value
 
     @property
     def node_scoping(self):
-        """Return or set nodal scoping property.
+        """Nodal scoping property.
 
-        Accepts sequencye or :class:`ansys.dpf.core.Scoping`.
+        Accepts sequence or :class:`ansys.dpf.core.Scoping`.
 
         Examples
         --------
@@ -161,9 +161,9 @@ class Definition:
 
     @property
     def named_selection(self) -> str:
-        """Return or set the named selection.
+        """Named selection.
 
-        For MAPDL, named selections are uppercase.  Any name selections in lowercase
+        For MAPDL, named selections are uppercase. Any name selections in lowercase
         are automatically set to uppercase.
 
         Examples
@@ -184,7 +184,7 @@ class Definition:
 
     @property
     def grouping(self) -> str:
-        """Return or set the grouping.
+        """Grouping.
 
         Accepts :class:`ansys.dpf.post.grouping` or str.
 
@@ -206,7 +206,7 @@ class Definition:
 
     @property
     def time_scoping(self):
-        """Return or set the time scoping.
+        """Time scoping.
 
         Accepts sequence or :class:`ansys.dpf.core.Scoping`.
 
@@ -226,7 +226,7 @@ class Definition:
 
     @property
     def mapdl_grouping(self) -> int:
-        """Return or set the MAPDL grouping.
+        """MAPDL grouping.
 
         Examples
         --------
@@ -248,7 +248,7 @@ class Definition:
 
     @property
     def time(self) -> float:
-        """Return or set the time step.
+        """Time step.
 
         Examples
         --------
@@ -268,7 +268,7 @@ class Definition:
 
     @property
     def set(self) -> int:
-        """Return or set the result set.
+        """Result set.
 
         Examples
         --------
@@ -288,7 +288,7 @@ class Definition:
 
     @property
     def path(self) -> DpfPath:
-        """Return or set the coordinates path.
+        """Coordinates path.
 
         Examples
         --------

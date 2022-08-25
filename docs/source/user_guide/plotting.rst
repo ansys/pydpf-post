@@ -1,8 +1,9 @@
 .. _user_guide_plotting:
 
-********
-Plotting
-********
+************
+Plot results
+************
+
 DPF-Post provides functionality for plotting results. Here is a summary of
 the steps:
 

@@ -33,4 +33,4 @@ For the result file to be read, you must set the ``physics_type`` and ``analysis
 .. code-block:: default
 
     from ansys.dpf import post
-    solution = post.load_solution('file.rst', physics_type='mechanic', analysis_type='transient')
+    solution = post.load_solution('file.rst', physics_type='mecanic', analysis_type='transient')

@@ -1,31 +1,28 @@
 .. _user_guide_extending_to_core:
 
-***************************************
-Use DPF-Core for more general operators
-***************************************
+**********************
+Use DPF-Core operators
+**********************
 
-DPF-Post, streamlined for postprocessing, works hand-in-hand
-with DPF-Core. This broader package provides powerful, scalable
-operators for more general data transformations.
+DPF-Post is based on DPF-Core, but it is streamlined for postprocessing.
+Because DPF-Post works hand-in-hand with DPF-Core, you can use the powerful,
+scalable  `operators <https://dpfdocs.pyansys.com/operator_reference.html>`_
+in DPF-Core to facilitate data manipulation and more general data transformations.
 
-DPF-Core can access data from Ansys solver result files as well as
-from third-party file formats. It provides various `operators
-<https://dpfdocs.pyansys.com/operator_reference.html>`_ that
-facilitate data manipulation and transformation. With DPF-Core, you
-can assemble complex workflows from simpler building blocks by chaining
-them together with operators. The data in DPF is represented by physics-agnostic
-mathematical quantities described in a self-sufficient entity called a
-:class:`Field <ansys.dpf.core.field.Field>`.
+DPF-Core can access data from Ansys solver result files as well as from
+third-party file formats. With DPF-Core, you can assemble complex workflows
+from simpler building blocks by chaining them together with operators.
+The data in DPF is represented by physics-agnostic mathematical quantities
+described in a self-sufficient entity called a :class:`Field <ansys.dpf.core.field.Field>`.
 
-DPF-Post is based on DPF-Core. Thus, to appreciate the range of their
-capabilities, the following examples show how the effect they have on each
-other.
+To show the range of DPF-Core and DPF-Post capabilities, the following
+examples show they work together.
 
 
-Export VTK
-----------
+Export to VTK file
+------------------
 
-This code shows how to export a fields container in VTK format:
+This code shows how to export a fields container to a VTK file:
 
 .. code:: python
 
@@ -66,11 +63,11 @@ This code shows how to export a fields container in VTK format:
     >>> vtk_operator.run()
 
 
-Export HDF5
------------
+Export to HDF5 file
+-------------------
 
-This code shows how to subsequently export the fields container
-in HDF5 format:
+This code shows how to export the same fields container
+to an HDF5 file:
 
 .. code:: python
 

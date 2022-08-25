@@ -10,35 +10,35 @@ class Vector(Result):
 
     @property
     def x(self):
-        """Get the result data for the X component of the vector."""
+        """Result data for the X component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="X"
         )
 
     @property
     def y(self):
-        """Get the result data for the Y component of the vector."""
+        """Result data for the Y component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Y"
         )
 
     @property
     def z(self):
-        """Get the result data for the Z component of the vector."""
+        """Result data for the Z component of the vector."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Z"
         )
 
     @property
     def vector(self):
-        """Return the vector values as a ResultData."""
+        """Result data for the vector values."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
 
     @property
     def norm(self):
-        """Get the result data for the the norm of the vector."""
+        """Result data for the norm of the vector."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
@@ -48,7 +48,7 @@ class Vector(Result):
         result_data._evaluator._result_operator = norm_op
         result_data._evaluator._chained_operators[
             norm_op.name
-        ] = """This operator will compute the norm of the result."""
+        ] = """This operator computes the norm of the result."""
         return result_data
 
     def __str__(self):
@@ -61,14 +61,14 @@ class ComplexVector(Vector):
 
     @property
     def x_amplitude(self):
-        """Get the result data for the X component amplitude of the vector."""
+        """Result data for the X component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="X"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def x_at_phase(self, phase: float):
-        """Get the result data for the the X component at a specific phase."""
+        """Result data for the X component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -79,14 +79,14 @@ class ComplexVector(Vector):
 
     @property
     def y_amplitude(self):
-        """Get the result data for the Y component amplitude of the vector."""
+        """Result data for the Y component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Y"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def y_at_phase(self, phase: float):
-        """Get the result data for the Y component at a specific phase."""
+        """Result data for the Y component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -97,14 +97,14 @@ class ComplexVector(Vector):
 
     @property
     def z_amplitude(self):
-        """Get the result data for the Z component amplitude of the vector."""
+        """Result data for the Z component amplitude of the vector."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, subresult="Z"
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def z_at_phase(self, phase: float):
-        """Get the result data for the Z component at a specific phase."""
+        """Result data for the Z component at a specific phase."""
         return super()._get_result_data(
             self._operator_name,
             self._data_sources,
@@ -115,21 +115,21 @@ class ComplexVector(Vector):
 
     @property
     def vector_amplitude(self):
-        """Get the result data for the vector amplitude values."""
+        """Result data for the vector amplitude values."""
         res_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
         return Result._get_amplitude_evaluation(self, res_data)
 
     def vector_at_phase(self, phase: float):
-        """Get the result data for the vector values at a specific phase."""
+        """Result data for the vector values at a specific phase."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )
 
     @property
     def norm_amplitude(self):
-        """Get the result data for the amplitude of the norm of the vector."""
+        """Result data for the amplitude of the norm of the vector."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )
@@ -139,11 +139,11 @@ class ComplexVector(Vector):
         result_data._evaluator._result_operator = norm_op
         result_data._evaluator._chained_operators[
             norm_op.name
-        ] = """This operator will compute the norm of the result."""
+        ] = """This operator computes the norm of the result."""
         return Result._get_amplitude_evaluation(self, result_data)
 
     def norm_at_phase(self, phase: float):
-        """Get the result data for the norm of the vector at a specific phase."""
+        """Result data for the norm of the vector at a specific phase."""
         result_data = super()._get_result_data(
             self._operator_name, self._data_sources, self._model, phase=phase
         )
@@ -153,7 +153,7 @@ class ComplexVector(Vector):
         result_data._evaluator._result_operator = norm_op
         result_data._evaluator._chained_operators[
             norm_op.name
-        ] = """This operator will compute the norm of the result."""
+        ] = """This operator computes the norm of the result."""
         return result_data
 
     def __str__(self):

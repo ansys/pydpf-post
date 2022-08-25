@@ -4,8 +4,8 @@
 Installation
 ************
 
-``pip`` installation
---------------------
+Install using ``pip``
+---------------------
 
 `pip <https://pypi.org/project/pip/>` is the package installer for Python.
 
@@ -17,19 +17,19 @@ with:
    pip install ansys-dpf-post
 
 
-Wheel file installation
------------------------
+Install using a wheel file
+--------------------------
 
 If you are unable to install PyDPF-Post on the host machine due to
 network isolation, download the latest wheel file from `PyDPF-Post
 GitHub <https://github.com/pyansys/pydpf-post>`_ or
-`PyDPF-Post PyPi <https://pypi.org/project/ansys-dpf-post/>`_
+`PyDPF-Post PyPi <https://pypi.org/project/ansys-dpf-post/>`_.
 
 
-Development mode installation
------------------------------
+Install in development mode
+---------------------------
 
-If you wish to edit and potentially contribute to DPF-Post,
+If you want to edit and potentially contribute to DPF-Post,
 clone the repository and install it using ``pip`` with the ``-e``
 development flag:
 

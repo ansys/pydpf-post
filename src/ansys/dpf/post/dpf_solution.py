@@ -33,7 +33,7 @@ from ansys.dpf.post.temperature import (
 
 
 class DpfSolution:
-    """Main class of post result API."""
+    """Provides the main class of the DPF-Post solution."""
 
     def __init__(self, data_sources, model):
         """Initialize the solution using ``data_sources`` and ``dpf.core.Model`` objects."""
@@ -44,7 +44,7 @@ class DpfSolution:
     def mesh(self):
         """Mesh representation of the model.
 
-        Returns the :class:`ansys.dpf.core.MeshedRegion`.
+        Returns the :class:`ansys.dpf.core.MeshedRegion` class.
         """
         return self._model.metadata.meshed_region
 
@@ -54,7 +54,7 @@ class DpfSolution:
         return self._model.metadata.time_freq_support
 
     def get_result_info(self):
-        """Get information about the result file.
+        """Get result file information.
 
         Examples
         --------
@@ -102,7 +102,7 @@ class DpfSolution:
 
 
 class DpfMecanicSolution(DpfSolution):
-    """Provides the Mechanical solution."""
+    """Provides the mecanic solution."""
 
     def __init__(self, data_sources, model):
         """Initialize this class."""
@@ -111,14 +111,13 @@ class DpfMecanicSolution(DpfSolution):
 
     # result classes
     def stress(self, **kwargs):
-        """Get a stress object from which you can possibly get result data.
+        """Get a stress object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -135,9 +134,8 @@ class DpfMecanicSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find byusing
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -151,14 +149,13 @@ class DpfMecanicSolution(DpfSolution):
         )
 
     def plastic_strain(self, **kwargs):
-        """Return a plastic strain object from which it is possible to get ResultData.
+        """Return a plastic strain object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -172,14 +169,13 @@ class DpfMecanicSolution(DpfSolution):
         )
 
     def displacement(self, **kwargs):
-        """Get a displacement object from which you can possibly get result data.
+        """Get a displacement object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -193,14 +189,13 @@ class DpfMecanicSolution(DpfSolution):
         )
 
     def structural_temperature(self, **kwargs):
-        """Get a temperature object from which you can possibly get result data.
+        """Get a temperature object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -215,7 +210,7 @@ class DpfMecanicSolution(DpfSolution):
 
 
 class DpfMecanicComplexSolution(DpfSolution):
-    """Provides the main class of the post solution if the analysis gives a complex solution."""
+    """Provides the main class of the DPF-Post solution if the analysis gives a complex solution."""
 
     def __init__(self, data_sources, model):
         """Initialize this class."""
@@ -242,14 +237,13 @@ class DpfMecanicComplexSolution(DpfSolution):
         return True
 
     def displacement(self, **kwargs):
-        """Get a displacement object from which you can possibly get result data.
+        """Get a displacement object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -263,14 +257,13 @@ class DpfMecanicComplexSolution(DpfSolution):
         )
 
     def structural_temperature(self, **kwargs):
-        """Get a temperature object from which you can possibly get result data.
+        """Get a temperature object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -284,14 +277,13 @@ class DpfMecanicComplexSolution(DpfSolution):
         )
 
     def plastic_strain(self, **kwargs):
-        """Get a plastic strain object from which you can possibly get result data.
+        """Get a plastic strain object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -305,14 +297,13 @@ class DpfMecanicComplexSolution(DpfSolution):
         )
 
     def elastic_strain(self, **kwargs):
-        """Get an elastic strain object from which you can possibly get result data.
+        """Get an elastic strain object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -326,14 +317,13 @@ class DpfMecanicComplexSolution(DpfSolution):
         )
 
     def stress(self, **kwargs):
-        """Get a stress object from which you can possibly get result data.
+        """Get a stress object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -348,7 +338,7 @@ class DpfMecanicComplexSolution(DpfSolution):
 
 
 class DpfThermalSolution(DpfSolution):
-    """Main class of post solution if thermal analysis."""
+    """Provides the main class of the DPF-Post solution for a thermal analysis type."""
 
     def __init__(self, data_sources, model):
         """Initialize this class."""
@@ -360,14 +350,13 @@ class DpfThermalSolution(DpfSolution):
         return f"{super().__str__()}\nThis may contain complex results."
 
     def temperature(self, **kwargs):
-        """Get a temperature object from which you can possibly get result data.
+        """Get a temperature object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
 
         Examples
         --------
@@ -380,14 +369,13 @@ class DpfThermalSolution(DpfSolution):
         return Temperature(data_sources=self._data_sources, model=self._model, **kwargs)
 
     def heat_flux(self, **kwargs):
-        """Get a heat flux object from which you can possibly get result data.
+        """Get a heat flux object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
 
         Examples
         --------
@@ -399,12 +387,12 @@ class DpfThermalSolution(DpfSolution):
         return HeatFlux(data_sources=self._data_sources, model=self._model, **kwargs)
 
     def electric_potential(self, **kwargs):
-        """Get an electric potential object from which you can possibly get result data.
+        """Get an electric potential object, from which you can possibly get result data.
 
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
+            List of keyword arguments, which you can find by using
             :class:`print_available_keywords
             <ansys.dpf.post.print_available_keywords>`.
 
@@ -426,10 +414,9 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword-arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
-
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
+    
         Examples
         --------
         >>> from ansys.dpf import post

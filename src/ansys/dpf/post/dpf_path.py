@@ -7,12 +7,12 @@ import numpy as np
 def create_path_on_coordinates(coordinates):
     """Create a DPF path object.
 
-    This path object can be used to request results on a specific path of
+    You can use this path object to request results on a specific path of
     coordinates.
 
     Parameters
     ----------
-    coordinates : list[list[int]], Field, numpy.ndarray
+    coordinates : list[list[int]], field, numpy.ndarray
         3D coordinates.
 
     Examples

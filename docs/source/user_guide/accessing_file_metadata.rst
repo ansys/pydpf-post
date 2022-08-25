@@ -24,7 +24,7 @@ Here is how you browse result metadata:
     >>> print(result_info)
     Static analysis
     Unit system: Metric (m, kg, N, s, V, A)
-    Physics Type: Mechanic
+    Physics Type: Mecanic
     Available results:
          -  displacement
          -  force
