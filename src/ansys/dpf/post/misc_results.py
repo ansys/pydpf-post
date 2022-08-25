@@ -404,7 +404,7 @@ class MecanicMisc(Misc):
         )
 
     def elemental_nodal_accu_eqv_plastic_strain(self, **kwargs):
-        """Get stress data for the elemental nodal accurate eqvivalent plastic strain."""
+        """Get result data for the elemental nodal accurate eqvivalent plastic strain."""
         self._check_elemnodal_location(**kwargs)
         return self._get_result_data_function_of_operator(
             "ENL_EPEQ", self, self._data_sources, location="ElementalNodal", **kwargs
@@ -444,7 +444,7 @@ class MecanicMisc(Misc):
         )
 
     def elemental_accu_eqv_creep_strain(self, **kwargs):
-        """Get resuld date for the elemental accurate equivalent creep strain."""
+        """Get result data for the elemental accurate equivalent creep strain."""
         self._check_elemental_location(**kwargs)
         return self._get_result_data_function_of_operator(
             "ENL_CREQ",
@@ -689,7 +689,7 @@ class MecanicMisc(Misc):
         """Get result data for the nodal von Mises stress.
 
         The default location of this result is nodal.  Use the location keyword
-        ``"ElementalNodal"`` to get an elemental nodal result or ``"Elemental"`
+        ``"ElementalNodal"`` to get an elemental nodal result or ``"Elemental"``
         to get an elemental result.
         """
         return self._get_result_data_function_of_operator(

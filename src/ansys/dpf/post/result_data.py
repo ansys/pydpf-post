@@ -16,7 +16,7 @@ from ansys.dpf.post.result_evaluation import ResultEvaluator
 class ResultData:
     """Provides the result data for a DPF ``Result`` object.
 
-    This class was created using the :class:`ansys.dpf.core.Result` class.
+    This class is created using the :class:`ansys.dpf.core.Result` class.
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ class ResultData:
         The default is ``None``.
     time_scoping : optional
         The default is ``None``.
-    
+
     To see all parameters, use the ``post.print_available_keywords()`` method.
 
     Examples
@@ -188,7 +188,7 @@ class ResultData:
         return self.result_fields_container[field_index]
 
     def get_scoping_at_field(self, field_index: int = 0):
-        """Get the scoping of the result.
+        """Get the scoping of the result for the field with the specified index.
         
         Parameters
         ----------
@@ -226,7 +226,7 @@ class ResultData:
         return self._min_max(1).data
 
     def get_max_data_at_field(self, field_index: int = 0):
-        """Get the maximum values field data at the ``field_index`` index.
+        """Get the maximum values field data for the field with the specified index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         the result (output from pin 1).
@@ -257,7 +257,7 @@ class ResultData:
         return self._min_max(0).data
 
     def get_min_data_at_field(self, field_index: int = 0):
-        """Get the minimum values field data at the ``field_index`` index.
+        """Get the minimum values field data for the field with the specified index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
         the result (output from pin 0).

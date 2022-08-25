@@ -28,7 +28,7 @@ class Stress(Tensor):
 
     @property
     def von_mises(self):
-        """von Mises stress."""
+        """Result data for the von Mises stress."""
         return super()._get_result_data("S_eqv", self._data_sources, self._model)
 
 
