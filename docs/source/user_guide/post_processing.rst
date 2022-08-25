@@ -1,15 +1,16 @@
 .. _user_guide_post_processing:
 
-************************
-Loading the Results File
-************************
+********************
+Load the result file
+********************
 
-The DPF-Post package provides a Python interface to DPF (Data
-Processing Framework) that is streamlined for post-processing.
+The :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object is
+a central element of DPF-Post. This object is the entry point for browsing
+the contents of a result file.
 
-A central concept in DPF-Post is the :class:`DpfSolution
-<ansys.dpf.post.dpf_solution.DpfSolution>` class. It is the entry point for
-browsing the contents of a result file.  You can obtain the contents with:
+**On Windows**
+
+You can laod the result file with:
 
 .. code:: python
 
@@ -17,9 +18,15 @@ browsing the contents of a result file.  You can obtain the contents with:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution('C:/Users/user/file.rst')
 
-    # Or on linux
+
+**On Linux**
+You can load the result file with:
+    
+.. code:: python
 
     >>> solution = post.load_solution('/home/user/file.rst')
 
-For a a more detailed example on interacting with the :class:`DpfSolution
-<ansys.dpf.post.dpf_solution.DpfSolution>` class, see :ref:`ref_basics`.
+
+For a more detailed example on interacting with the
+:class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object,
+see :ref:`ref_basics`.

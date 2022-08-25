@@ -1,15 +1,16 @@
 .. _user_guide_accessing_results:
 
-*****************
-Accessing Results
-*****************
+**************
+Access results
+**************
 
-The :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
-object is the entry point for browsing the contents of a result file
-(see :ref:`user_guide_post_processing`). It also provides access to
-the results themselves. These are contained in :class:`Result
-<ansys.dpf.post.result_object.Result>` objects that can be returned from
-dedicated methods:
+In addition to being the entry point for browsing the contents of a
+result file, the :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
+object provides access to the results themselves. The results are contained
+in :class:`Result <ansys.dpf.post.result_object.Result>` objects, which can
+be returned from dedicated methods.
+
+Here is how you get the ``displacement`` result:
 
 .. code:: python
 
@@ -19,36 +20,35 @@ dedicated methods:
 	>>> from ansys.dpf.post import examples
 	>>> solution = post.load_solution(examples.multishells_rst)
 
-	Instantiate a displacement result object
+	Instantiate the displacement result object
 
 	>>> displacement = solution.displacement()
 	>>> # stress, elastic_strain (...) can also be called.
 
-	Refer to the list below to know which result object can be
+	See the following list for the result objects that can be
 	instantiated.
 
-A number of options, formulated as **keyword arguments**, can be used
-to further specify the result type, scope, and time, among others. For
-detailed examples see :ref:`ref_result_keywords`.
+You can use *keyword arguments* to further specify other options,
+including the result type, scope, and time. For detailed examples,
+see :ref:`ref_result_keywords`.
 
-At present, DPF-Post supports two types of result files:
+DPF-Post supports two types of result files:
 
-* Structural ``(\*.rst)``
-* Thermal/Electric ``(\*.rth)``
+* Structural (RST)
+* Thermal/Electric (RTH)
 
-Once loaded into a :py:class:`Solution
-<ansys.dpf.post.dpf_solution.DpfSolution>`, a result file will offer its own
-variety of :class:`Result <ansys.dpf.post.result_object.Result>` objects in
-accordance with its type.
+Once loaded into a :py:class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
+object, a result file offers a variety of :class:`Result <ansys.dpf.post.result_object.Result>`
+objects, depending on its type.
 
-**Only request results types that are available in the file.** To
-verify their presence see :ref:`user_guide_accessing_file_metadata`.
+You should request only ``Result`` objects that are available in a result file.
+To determine which ``Result`` objects are available, see :ref:`user_guide_accessing_file_metadata`.
 
-Structural (\*.rst) result files
-================================
+Structural result files
+=======================
 
-Upon loading a ``Solution`` object from a structural analysis results
-file (\*.rst), the following ``Result`` objects may be queried:
+After loading a ``Solution`` object from a structural analysis result (RST)
+file, you can query these ``Result`` objects:
 
 * ``displacement``
 * ``stress``
@@ -58,9 +58,11 @@ file (\*.rst), the following ``Result`` objects may be queried:
 
 Displacement
 ------------
-Displacement is the DOF solution for structural analyses.  Its
-:class:`Displacement <ansys.dpf.post.displacement.Displacement>` object can be
-with the following:
+Displacement is the DOF solution for a structural analyis. The location argument
+for a DOF solution must be modal.
+
+You can access the :class:`Displacement <ansys.dpf.post.displacement.Displacement>`
+result object with:
 
 .. code:: python
 
@@ -74,10 +76,8 @@ with the following:
 
     >>> displacement = solution.displacement()
 
-Being a DOF solution, its location argument **must be nodal** (inferred above).
-
-The displacement ``Result`` corresponds to a vector field. To obtain the scalar
-components of this field, e.g., y-components, access the following subresult:
+The displacement ``Result``objectcorresponds to a vector field. To obtain the scalar
+components (y-components) of this field, access the subresult with:
 
 .. code:: python
 
@@ -96,13 +96,13 @@ components of this field, e.g., y-components, access the following subresult:
     >>> u_y = displacement.y
     >>> u_y.get_data_at_field()
 
-For more details, see :ref:`ref_api_result_data`.
+For more information, see :ref:`ref_api_result_data`.
 
 
 Stress
 ------
-The :class:`Stress <ansys.dpf.post.stress.Stress>` result object can be
-with the following:
+You can access the :class:`Stress <ansys.dpf.post.stress.Stress>` result
+object with:
 
 .. code:: python
 
@@ -116,9 +116,8 @@ with the following:
 
     >>> stress = solution.stress()
 
-The stress result corresponds to a tensor field. To obtain the scalar
-components of this field, such as the normal y-stresses, access the following
-subresult:
+A ``Stress`` result object corresponds to a tensor field. To obtain the scalar
+components of this field, such as the normal y-stresses, access the subresult:
 
 .. code:: python
 
@@ -137,15 +136,14 @@ subresult:
     >>> s_yy = stress.yy
     >>> s_yy.get_data_at_field()
 
-Other components, as well as whole tensor data, can be queried accordingly.
-For more details, see :ref:`ref_api_result_data`.
+You can query other components, as well as whole tensor data, accordingly.
+For more information, see :ref:`ref_api_result_data`.
 
 
 Strain (elastic, plastic)
 -------------------------
-The :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
-:class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects can
-be obtained with:
+You can access the :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
+:class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects with:
 
 .. code:: python
 
@@ -160,8 +158,8 @@ be obtained with:
     >>> elastic_strain = solution.elastic_strain()
     >>> plastic_strain = solution.plastic_strain()
 
-A strain result corresponds to a tensor field. To obtain the scalar components
-of this field, such as the shear xy-strains, access the following subresult:
+A ``Strain`` result object corresponds to a tensor field. To obtain the scalar
+components of this field, such as the shear xy-strains, access the subresult:
 
 .. code:: python
 
@@ -180,15 +178,14 @@ of this field, such as the shear xy-strains, access the following subresult:
     >>> e_yy = elastic_strain.xy
     >>> e_yy.get_data_at_field()
 
-Other components, as well as whole tensor data, can be queried accordingly.
-For more details, see :ref:`ref_api_result_data`.
+You can query other components, as well as whole tensor data, accordingly.
+For more information, see :ref:`ref_api_result_data`.
 
 
 Structural temperature
 ----------------------
-The :class:`StructuralTemperature
-<ansys.dpf.post.temperature.StructuralTemperature>` result object can be
-obtained with the following:
+You can access the :class:`StructuralTemperature <ansys.dpf.post.temperature.StructuralTemperature>`
+result object with:
 
 .. code:: python
 
@@ -202,7 +199,7 @@ obtained with the following:
 
     >>> structural_temperature = solution.structural_temperature()
 
-To access the temperature scalar field use the following:
+To access the temperature scalar field, use the following:
 
 .. code:: python
 
@@ -224,8 +221,9 @@ To access the temperature scalar field use the following:
 
 Miscellaneous results
 ---------------------
-Other miscellaneous :class:`ansys.dpf.post.misc_results.MecanicMisc` result
-objects may be available in the ``Solution``. For example:
+The ``Solution`` object might contain other miscellaneous :class:`ansys.dpf.post.misc_results.MecanicMisc`
+result objects that you can access. For example, you can access the ``nodal_acceleration``
+result object:
 
 .. code:: python
 
@@ -235,14 +233,15 @@ objects may be available in the ``Solution``. For example:
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Get the result data
+    Get the nodal acceleration result data
 
     >>> acceleration = solution.misc.nodal_acceleration()
 
-All **keyword arguments** are available for miscellaneous results (see
-:ref:`ref_result_keywords`), except location. Notably, some subresults
-may be available as keyword arguments, for example, the scalar
-components of acceleration:
+All keyword arguments are available for miscellaneous results, except location.
+For more information, see :ref:`ref_result_keywords`.
+
+Some subresults might may be available as keyword arguments, such as the scalar
+components of nodal acceleration:
 
 .. code:: python
 
@@ -256,15 +255,15 @@ components of acceleration:
 
     >>> acceleration = solution.misc.nodal_acceleration(subresult="Y")
 
-Verify the result file contents to determine available queries (see
-:ref:`user_guide_accessing_file_metadata`).
+To determine available queries, you can browse the metadata in the result file. For more
+information, see :ref:`user_guide_accessing_file_metadata`.
 
 
-Thermal/Electric (``*.rth``) result files
-=========================================
-Upon loading a ``Solution`` object from a thermal/electric analysis
-results file (\*.rth), the following ``Result`` objects may be
-queried:
+Thermal/Electric (RTH) result files
+===================================
+
+After loading a ``Solution`` object from a thermal/electric analysis
+result file (RTH), you can query these ``Result`` objects:
 
 * ``temperature``
 * ``heat_flux``
@@ -273,9 +272,10 @@ queried:
 
 Temperature
 -----------
-Temperature is the DOF solution for thermal analyses. The :class:`Temperature
-<ansys.dpf.post.temperature.Temperature>` result object can be obtained as
-follows:
+Temperature is the DOF solution for a thermal analysis.
+
+You can access the :class:`Temperature <ansys.dpf.post.temperature.Temperature>`
+result object with:
 
 .. code:: python
 
@@ -289,8 +289,8 @@ follows:
 
     >>> temperature = solution.temperature()
 
-Being a DOF solution, its location argument **must be nodal**
-(inferred above).  The scalar field can be obtained directly:
+As inferred above, the location argument for a DOF solution must be nodal.
+You can access the scalar field directly:
 
 .. code:: python
 
@@ -312,8 +312,8 @@ Being a DOF solution, its location argument **must be nodal**
 
 Heat flux
 ---------
-The :class:`HeatFlux <ansys.dpf.post.temperature.HeatFlux>` result object can
-be obtained with the following:
+You can access the :class:`HeatFlux <ansys.dpf.post.temperature.HeatFlux>` result
+object with:
 
 .. code:: python
 
@@ -327,8 +327,9 @@ be obtained with the following:
 
     >>> heat_flux = solution.heat_flux()
 
-The heat flux result corresponds to a vector field. To obtain the scalar
-components of this field, e.g., x-components, access the following subresult:
+
+The ``HeatFlux`` result object corresponds to a vector field. To obtain the scalar
+components (x-components) of this field, access the subresult:
 
 .. code:: python
 
@@ -347,14 +348,14 @@ components of this field, e.g., x-components, access the following subresult:
     >>> heat_flux_x = heat_flux.x
     >>> heat_flux_x.get_data_at_field()
 
-Other components can be queried accordingly.
-For more details, see :ref:`ref_api_result_data`.
+You can query other components accordingly. For more informations, see
+:ref:`ref_api_result_data`.
 
 
 Electric field
 --------------
-The :class:`ElectricField <ansys.dpf.post.electric_results.ElectricField>`
-result object can be obtained with the following:
+You can access the :class:`ElectricField <ansys.dpf.post.electric_results.ElectricField>`
+result object with:
 
 .. code:: python
 
@@ -368,9 +369,9 @@ result object can be obtained with the following:
 
     >>> electric_field = solution.electric_field()
 
-The electric field result corresponds to a vector field. To
+The ```electric_field`` result object corresponds to a vector field. To
 obtain the scalar components of this field, such as the x-components, access
-the following subresult:
+the subresult:
 
 .. code:: python
 
@@ -389,14 +390,13 @@ the following subresult:
     >>> electric_field_x = electric_field.x
     >>> electric_field_x.get_data_at_field()
 
-For more details, see :ref:`ref_api_result_data`.
+For more information, see :ref:`ref_api_result_data`.
 
 
 Electric potential
 ------------------
-The :class:`ElectricPotential
-<ansys.dpf.post.electric_results.ElectricPotential>` result object can be
-with:
+You can access the :class:`ElectricPotential <ansys.dpf.post.electric_results.ElectricPotential>`
+result object with:
 
 .. code:: python
 
@@ -410,7 +410,8 @@ with:
 
     >>> electric_potential = solution.electric_potential()
 
-It represents a scalar field whose values can be obtained with:
+The ``electric_potential`` result object corresponds to a scalar field. You can access
+its values with:
 
 .. code:: python
 
