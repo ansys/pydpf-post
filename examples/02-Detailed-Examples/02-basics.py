@@ -53,7 +53,7 @@ displacement.min_data
 
 ###############################################################################
 # Get stress result
-# -----------------
+# ~~~~~~~~~~~~~~~~~
 # Get the stress ``Result`` object for a tensor. You can get the nodal or
 # elemental location. The default is the nodal location.
 
