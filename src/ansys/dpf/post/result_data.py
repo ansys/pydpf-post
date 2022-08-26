@@ -210,7 +210,7 @@ class ResultData:
     @property
     def max(self):
         """Maximum value field.
-
+        
         Chains the result operator to the ``min_max_fc`` operator and returns
         the result (output from pin 1).
         """
