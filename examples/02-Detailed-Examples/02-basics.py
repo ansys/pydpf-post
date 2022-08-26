@@ -61,6 +61,7 @@ el_stress_result = solution.stress(location=post.locations.elemental)
 nod_stress_result = solution.stress(
     location=post.locations.nodal
 )
+
 ###############################################################################
 # Get information on result
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
