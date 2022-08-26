@@ -10,7 +10,7 @@ from ansys.dpf.post.result_data import ResultData
 class Misc:
     """Contains miscellaneous results.
 
-    Here the phase keyword is available while calling results.
+    In this class, the phase keyword argument is available while calling results.
     """
 
     def __init__(self, model, data_sources):
@@ -93,8 +93,8 @@ class Misc:
 
     def _check_elemnodal_location(self, **kwargs):
         """Check if the location keyword with an elemental value is set.
-        
-        If the location keyword is not, an exception is raised.
+
+        If the location keyword is not set, an exception is raised.
         """
         if _AvailableKeywords.location in kwargs:
             if kwargs[_AvailableKeywords.location] != locations.elemntal_nodal:
@@ -739,7 +739,7 @@ class ComplexMecanicMisc(MecanicMisc):
 class ThermalMisc(Misc):
     """Contains miscellaneous results for thermal analysis.
 
-    Here the phase keyword is also available while calling results.
+    In this class the phase keyword argument is also available while calling results.
     """
 
     def nodal_electric_field(self, **kwargs):

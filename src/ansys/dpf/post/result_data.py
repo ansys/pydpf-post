@@ -156,7 +156,7 @@ class ResultData:
 
     def get_data_at_field(self, field_index: int = 0):
         """Get the data for the field with the specified index.
-   
+
         Parameters
         ----------
         field_index : int, optional
@@ -318,8 +318,8 @@ class ResultData:
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
             if not field:
-                txt = """Arguments display_option/option_id are not correct,
-                no corresponding field found to plot."""
+                txt = """Arguments display_option and option_id are not correct.
+                No corresponding field found to plot."""
                 raise Exception(txt)
             new_fields_container.add_field(label, field)
         return new_fields_container
@@ -340,7 +340,7 @@ class ResultData:
         option_id: int, optional
             Lable ID to display. The default is ``1``.
         **kwargs : optional
-            Additional keyword arguments for the plotter. For kyeword
+            Additional keyword arguments for the plotter. For keyword
             arguments, see ``help(pyvista.plot)``.
 
         Examples
