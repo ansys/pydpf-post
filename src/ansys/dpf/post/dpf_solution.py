@@ -355,8 +355,9 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
+            List of keyword arguments. You can use the
+            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
+            method to get keyword arguments.
 
         Examples
         --------
@@ -374,8 +375,9 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
+            List of keyword arguments. You can use the 
+            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
+            method to get keyword arguments.
 
         Examples
         --------
@@ -392,9 +394,9 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments, which you can find by using
-            :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>`.
+            List of keyword arguments. You can use the
+            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
+            method to get keyword arguments.
 
         Examples
         --------
@@ -414,9 +416,10 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the :class:`print_available_keywords
-            <ansys.dpf.post.print_available_keywords>` method to get keyword arguments.
-    
+            List of keyword arguments. You can use the
+            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
+            method to get keyword arguments.
+
         Examples
         --------
         >>> from ansys.dpf import post
