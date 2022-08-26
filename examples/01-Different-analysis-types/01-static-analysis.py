@@ -134,7 +134,7 @@ elastic_strain.num_fields
 
 ###############################################################################
 # If the result file contains results, you can use this method
-# to get the elastic strain result. 
+# to get the elastic strain result.
 
 print(solution.plastic_strain())
 
