@@ -58,9 +58,7 @@ displacement.min_data
 # elemental location. The default is the nodal location.
 
 el_stress_result = solution.stress(location=post.locations.elemental)
-nod_stress_result = solution.stress(
-    location=post.locations.nodal
-)
+nod_stress_result = solution.stress(location=post.locations.nodal)
 
 ###############################################################################
 # Get information on result
