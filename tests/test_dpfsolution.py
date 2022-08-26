@@ -94,8 +94,8 @@ def test_get_result_data_function_of_operator_bothscop(allkindofcomplexity):
 #         )
 #     except Exception as e:
 #         message = (
-#             "Phase key-word argument can be used when the analysis types "
-#             "implies complex result (Harmonic analysis, Modal analysis...)."
+#             "Phase keyword argument can be used when the analysis type "
+#             "implies a complex result (harmonic analysis, modal analysis...)."
 #         )
 #         e2 = Exception(message)
 #         assert e.args == e2.args
@@ -107,7 +107,7 @@ def test_check_elemental_location(allkindofcomplexity):
     try:
         result.misc.nodal_displacement(location="Elemental")
     except Exception as e:
-        message = "Only a Nodal location can be used with a nodal result."
+        message = "Only a nodal location can be used with a nodal result."
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)
@@ -118,7 +118,7 @@ def test_check_nodal_location(allkindofcomplexity):
     try:
         result.misc.elemental_stress(location="nodal")
     except Exception as e:
-        message = "Only an Elemental location can be used with an elemental result."
+        message = "Only an elemental location can be used with an elemental result."
         e2 = Exception(message)
         assert e.args == e2.args
         assert type(e) == type(e2)

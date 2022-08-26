@@ -39,7 +39,7 @@ class Misc:
             #     raise Exception(
             #         "Phase keyword argument can be used when the "
             #         "analysis type implies a complex result "
-            #         "(Harmonic analysis, Modal analysis...).")
+            #         "(harmonic analysis, modal analysis...).")
             #     )
             phase = kwargs[_AvailableKeywords._phase]
         if _AvailableKeywords.location in kwargs:

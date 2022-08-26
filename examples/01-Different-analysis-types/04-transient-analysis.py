@@ -32,7 +32,7 @@ print(solution)
 # Get displacement result
 # ~~~~~~~~~~~~~~~~~~~~~~~
 # Get the displacement ``Result`` object.
- 
+
 disp_result = solution.displacement()
 disp = disp_result.vector
 
