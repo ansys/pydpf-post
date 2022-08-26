@@ -46,7 +46,7 @@ class ComplexStress(ComplexTensor, Stress):
 
     @property
     def von_mises_amplitude(self):
-        """von Mises stress amplitude."""
+        """Amplitude for the von Mises stress."""
         res_data = super()._get_result_data("S_eqv", self._data_sources, self._model)
         return Result._get_amplitude_evaluation(self, res_data)
 

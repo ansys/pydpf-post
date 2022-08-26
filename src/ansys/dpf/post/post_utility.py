@@ -62,7 +62,8 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
             warnings.warn(
-                "Analysis type is defaulting to 'static'. Specify the analysis if 'static' is invalid.",
+                "Analysis type is defaulting to 'static'. Specify the analysis 
+                " type if 'static' is invalid.",
                 "keyword if it is invalid.",
             )
             analysis_type = _AnalysisType.static

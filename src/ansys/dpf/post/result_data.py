@@ -338,7 +338,7 @@ class ResultData:
         display_option : str, optional
             Name of the label to display. The default is ``"time"``.
         option_id: int, optional
-            Lable ID to display. The default is ``1``.
+            Label ID to display. The default is ``1``.
         **kwargs : optional
             Additional keyword arguments for the plotter. For keyword
             arguments, see ``help(pyvista.plot)``.

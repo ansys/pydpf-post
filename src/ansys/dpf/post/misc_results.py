@@ -456,7 +456,7 @@ class MecanicMisc(Misc):
         )
 
     def elemental_nodal_accu_eqv_creep_strain(self, **kwargs):
-        """Get result daa for the elemental nodal accurate equivalent creep strain."""
+        """Get result data for the elemental nodal accurate equivalent creep strain."""
         self._check_elemnodal_location(**kwargs)
         return self._get_result_data_function_of_operator(
             "ENL_CREQ", self, self._data_sources, location="ElementalNodal", **kwargs

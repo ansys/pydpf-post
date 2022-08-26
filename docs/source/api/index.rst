@@ -1,6 +1,6 @@
-==============
-API referenece
-==============
+=============
+API reference
+=============
 
 This section describes the DPF-Post API, which provides
 three main classes:
