@@ -355,9 +355,8 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the
-            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
-            method to get keyword arguments.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -375,9 +374,8 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the 
-            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
-            method to get keyword arguments.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -394,9 +392,8 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the
-            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
-            method to get keyword arguments.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
@@ -416,9 +413,8 @@ class DpfThermalSolution(DpfSolution):
         Parameters
         ----------
         **kwargs
-            List of keyword arguments. You can use the
-            :class:`print_available_keywords <ansys.dpf.post.print_available_keywords>`
-            method to get keyword arguments.
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
 
         Examples
         --------
