@@ -159,6 +159,6 @@ img_field = elastic_strain_result.tensor_at_phase(90.0)
 
 ###############################################################################
 # If the result file contains results, you can use this method
-# to get the elastic strain result. 
+# to get the elastic strain result.
 
 print(solution.elastic_strain())
