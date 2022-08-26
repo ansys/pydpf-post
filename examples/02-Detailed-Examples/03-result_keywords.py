@@ -86,7 +86,7 @@ stress_principal_1
 ###############################################################################
 # Filter result
 # ~~~~~~~~~~~~~
-# Filter the result on a time, time_scoping, and a set.
+# Filter the result on a time, time scoping, and a set.
 
 print(solution.time_freq_support)
 
@@ -103,7 +103,7 @@ elastic_strain_with_time_scoping
 ###############################################################################
 # Make grouping
 # ~~~~~~~~~~~~~
-# Make a gouping.
+# Make a grouping.
 
 displacement_result = solution.displacement(grouping=post.grouping.by_el_shape)
 displacement_by_el_shape = displacement_result.vector
@@ -132,8 +132,8 @@ stress_on_ns_elemental = stress_on_ns_result.tensor
 print(stress_on_ns_result)
 
 ###############################################################################
-# Use miscellanous results
-# ~~~~~~~~~~~~~~~~~~~~~~~~
+# Use miscellaneous results
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
 # Use miscellaneous results. You can use the same keywords here. For a complex
 # result, you can also use the keyword ``phase``, which has a float value.
 

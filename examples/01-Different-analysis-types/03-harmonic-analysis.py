@@ -121,9 +121,9 @@ shell_field = stress[0]
 shell_field.shell_layers
 
 ###############################################################################
-# Get solid field field
-# ~~~~~~~~~~~~~~~~~~~~~
-# Get the solid field field.
+# Get solid field
+# ~~~~~~~~~~~~~~~~
+# Get the solid field.
 
 solid_field = stress[1]
 

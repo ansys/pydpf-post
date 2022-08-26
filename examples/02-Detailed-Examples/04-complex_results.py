@@ -1,10 +1,10 @@
 """
 .. _ref_complex_results:
 
-Complex results from a modal or harmonic analyis
-------------------------------------------------
+Complex results from a modal or harmonic analysis
+-------------------------------------------------
 This example shows how you can access complex results from a modal or
-harmonic anaysis.
+harmonic analysis.
 """
 
 ###############################################################################

@@ -35,7 +35,7 @@ see :ref:`ref_result_keywords`.
 DPF-Post supports two types of result files:
 
 * Structural (RST)
-* Thermal/Electric (RTH)
+* Thermal/electric (RTH)
 
 Once loaded into a :py:class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
 object, a result file offers a variety of :class:`Result <ansys.dpf.post.result_object.Result>`
@@ -58,7 +58,7 @@ file, you can query these ``Result`` objects:
 
 Displacement
 ------------
-Displacement is the DOF solution for a structural analyis. The location argument
+Displacement is the DOF solution for a structural analysis. The location argument
 for a DOF solution must be modal.
 
 You can access the :class:`Displacement <ansys.dpf.post.displacement.Displacement>`
@@ -348,7 +348,7 @@ components (x-components) of this field, access the subresult:
     >>> heat_flux_x = heat_flux.x
     >>> heat_flux_x.get_data_at_field()
 
-You can query other components accordingly. For more informations, see
+You can query other components accordingly. For more information, see
 :ref:`ref_api_result_data`.
 
 

@@ -1,8 +1,8 @@
 .. _compatibility:
 
-===============
-Compatibilty
-===============
+=============
+Compatibility
+=============
 
 PyDPF-Post supports Windows 10 and CentOS 7 and later. For
 more information, see `Ansys Platform Support <https://www.ansys.com/solutions/solutions-by-role/it-professionals/platform-support>`_.

@@ -6,7 +6,7 @@ Troubleshooting
 This section explains how to resolve the most common issues encountered with PyDPF-Post.
 It also includes suggestions for improving scripts.
 
-Invalid UTF-8 Error
+Invalid UTF-8 error
 ~~~~~~~~~~~~~~~~~~~
 Assume that you are using this code to load a solution: 
 

@@ -10,7 +10,7 @@ the contents of a result file.
 
 **On Windows**
 
-You can laod the result file with:
+You can load the result file with:
 
 .. code:: python
 

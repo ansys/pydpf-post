@@ -17,7 +17,7 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object and instantiate with the filepath for the ressult
+# Get the ``Solution`` object and instantiate with the path for the result
 # file.
 
 example_path = examples.download_all_kinds_of_complexity()

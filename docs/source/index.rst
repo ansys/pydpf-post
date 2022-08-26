@@ -61,7 +61,7 @@ Here's how you extract the raw data as a :class:`numpy.ndarray` array:
 For comprehensive demos, see :ref:`gallery`.
 
 
-Key Features
+Key features
 ~~~~~~~~~~~~
 
 **Computational efficiency**

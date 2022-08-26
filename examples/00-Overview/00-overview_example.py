@@ -16,10 +16,10 @@ from ansys.dpf import post
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object that allows access to the
-# result. The ``Solution`` object must be instantiated with the result filepath.
-# For example, ``"C:/Users/user/my_result.rst"`` on Windows or
-# ``"/home/user/my_result.rst"`` on Linux.
+# Get the ``Solution`` object that allows access to the result. The ``Solution``
+# object must be instantiated with the path for the result file. For example,
+# ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
+# on Linux.
 #
 # This example uses a supplied file that you can get by importing the DPF
 # ``examples`` package.
