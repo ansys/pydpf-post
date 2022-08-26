@@ -52,7 +52,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
             warnings.warn(
-                "Physics type is defaulting to 'mecanic'. Specify the physics type.",
+                "Physics type is defaulting to 'mecanic'. Specify the physics type",
                 "keyword if it is invalid.",
             )
             physics_type = _PhysicsType.mecanic
@@ -62,9 +62,8 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
             warnings.warn(
-                "Analysis type is defaulting to 'static'. Specify the analysis 
-                " type if 'static' is invalid.",
-                "keyword if it is invalid.",
+                "Analysis type is defaulting to 'static'. Specify the analysis"
+                "type keyword if it is invalid.",
             )
             analysis_type = _AnalysisType.static
 

@@ -9,9 +9,11 @@ This example provides an overview of how you use DPF-Post.
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
+# Perform required imports. # This example uses a supplied file that you can
+# get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
+from ansys.dpf.post import examples
 
 ###############################################################################
 # Get ``Solution`` object
@@ -20,11 +22,6 @@ from ansys.dpf import post
 # object must be instantiated with the path for the result file. For example,
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
-#
-# This example uses a supplied file that you can get by importing the DPF
-# ``examples`` package.
-
-from ansys.dpf.post import examples
 
 solution = post.load_solution(examples.multishells_rst)
 
@@ -46,8 +43,9 @@ time_freq_support = solution.time_freq_support
 post.print_available_keywords()
 stress = solution.stress(location=post.locations.nodal, time_scoping=[1])
 
-# both the location and time_scoping are available in the definition of
-# the stress result
+# Both location and ``time_scoping`` are available in the definition of
+# the stress result.
+
 stress.definition.location
 stress.definition.time_scoping
 
