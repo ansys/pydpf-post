@@ -49,7 +49,8 @@ class ResultData:
     time_scoping : optional
         The default is ``None``.
 
-    To see all parameters, use the ``post.print_available_keywords()`` method.
+    To see all parameters, you can use the ``post.print_available_keywords()``
+    method.
 
     Examples
     --------
@@ -155,7 +156,7 @@ class ResultData:
 
     def get_data_at_field(self, field_index: int = 0):
         """Get the data for the field with the specified index.
-        
+   
         Parameters
         ----------
         field_index : int, optional
@@ -178,7 +179,7 @@ class ResultData:
 
         This method implements the ``fields_container_result`` item getter. It returns the
         field at the ``field_index`` position in the ``result_fields_container`` object.
-        
+
         Parameters
         ----------
         field_index : int, optional
@@ -189,7 +190,7 @@ class ResultData:
 
     def get_scoping_at_field(self, field_index: int = 0):
         """Get the scoping of the result for the field with the specified index.
-        
+
         Parameters
         ----------
         field_index : int, optional
@@ -210,7 +211,7 @@ class ResultData:
     @property
     def max(self):
         """Maximum value field.
-        
+
         Chains the result operator to the ``min_max_fc`` operator and returns
         the result (output from pin 1).
         """
@@ -340,7 +341,7 @@ class ResultData:
             Lable ID to display. The default is ``1``.
         **kwargs : optional
             Additional keyword arguments for the plotter. For kyeword
-            arguements, see ``help(pyvista.plot)``.
+            arguments, see ``help(pyvista.plot)``.
 
         Examples
         --------
@@ -420,7 +421,6 @@ class ResultData:
 
         You must use a ``time_scoping`` keyword to select all time steps
         of the result.
-
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support
