@@ -14,7 +14,7 @@ class Report(ScoobyReport):
             List of packages or package names to add to the output information.
             The default is ``None``.
         ncol : int, optional
-            Number of package-columns in the HTML table. This parameter only 
+            Number of package-columns in the HTML table. This parameter is only 
             used only if ``mode='HTML'`` or ``mode='html'``. The default is ``3``.
         text_width : int, optional
             Text width for non-HTML display modes. The default is ``80``.

@@ -21,7 +21,7 @@ class ResultData:
     Parameters
     ----------
     operator_name : str
-    data_sources : 
+    data_sources :
     model :
     elem_average : bool
     location : str, optional
