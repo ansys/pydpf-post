@@ -10,7 +10,6 @@ from ansys.dpf.core.common import DefinitionLabels, types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 
 from ansys.dpf.post import errors as dpf_errors
-import ansys.dpf.post.errors
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
@@ -317,7 +316,7 @@ class ResultData:
         for name in lab_names:
             new_fields_container.add_label(name)
         if len(label_spaces) == 0:
-            raise ansys.dpf.post.errors.LabelSpaceError
+            raise dpf_errors.LabelSpaceError
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
             new_fields_container.add_field(label, field)
@@ -376,7 +375,7 @@ class ResultData:
             # Try and use the new DpfPlotter from PyDPF-Core
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
-            except:
+            except ImportError:
                 raise dpf_errors.CoreVersionError(version="0.3.4")
             # Initialize the plotter
             pl = DpfPlotterObj(**kwargs)
