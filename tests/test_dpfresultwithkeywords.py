@@ -533,7 +533,7 @@ class TestCase(unittest.TestCase):
         try:
             result.misc.nodal_displacement(set=3, time=0.01)
         except Exception as e:
-            message = "Set, time and time_scoping keyword arguments must be used independently."
+            message = "Set, time, and time_scoping keyword arguments must be used independently."
             e2 = Exception(message)
             assert e.args == e2.args
             assert type(e) == type(e2)

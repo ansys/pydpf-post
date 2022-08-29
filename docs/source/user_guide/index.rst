@@ -1,12 +1,14 @@
+.. _ref_user_guide:
+
 ==========
-User Guide
+User guide
 ==========
 
-The DPF-Post package provides a Python interface to DPF (Data
-Processing Framework) that is streamlined for post-processing.
+DPF-Post provides a Python interface to DPF that is streamlined for
+postprocessing.
 
-The following materials explain the conceptual model of DPF-Post along
-with typical usage.
+The following content explains the conceptual model of DPF-Post and
+typical usage.
 
 .. toctree::
    :maxdepth: 3

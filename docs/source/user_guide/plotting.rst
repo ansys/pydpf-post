@@ -1,21 +1,25 @@
 .. _user_guide_plotting:
 
-********
-Plotting
-********
-DPF-Post provides functionality to conveniently plot your result. First, load
-the :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object with
-the results file, request a :class:`Result
-<ansys.dpf.post.result_object.Result>` object, and obtain the scalar field of
-interest.  Then, use :func:`plot_contour
-<ansys.dpf.post.result_data.ResultData.plot_contour>` to render it.
+************
+Plot results
+************
 
+DPF-Post provides functionality for plotting results. Here is a summary of
+the steps:
+
+#. Load the :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object
+   with the result file.
+#. Request a :class:`Result <ansys.dpf.post.result_object.Result>` object and
+   obtain the scalar field of interest.
+#. Use the :func:`plot_contour <ansys.dpf.post.result_data.ResultData.plot_contour>`
+   method to render it.
+
+Subsequent sections provide some plotting examples.
 
 Total deformation 
 -----------------
 
-Use the following code to **plot the total deformation** 
-(norm of the displacement vector field):
+You can plot the total deformation (norm of the displacement vector field) with:
 
 .. code:: python
 
@@ -35,10 +39,10 @@ Use the following code to **plot the total deformation**
     >>> norm.plot_contour()
 
 
-Normal Stresses
+Normal stresses
 ---------------
 
-Use the following code to **plot the normal x-component of stress**:
+You can plot the normal x-component of stress with:
 
 .. code:: python
 

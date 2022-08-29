@@ -14,8 +14,8 @@ class Result:
     """Provides the ``Result`` class.
 
     This is an abstract class. It is not instantiated directly but instead is
-    subclassed by specific result classes like
-    the :class:`Displacement <ansys.dpf.post.displacement.Displacement>` class.
+    subclassed by specific result classes like the
+    :class:`Displacement <ansys.dpf.post.displacement.Displacement>` class.
 
     """
 
@@ -50,8 +50,8 @@ class Result:
             resultData._evaluator._result_operator.outputs.fields_container
         )
         resultData._evaluator._chained_operators[modulus_op.name] = (
-            """This operator will compute the amplitude """
-            """of the result (when result has complex values)."""
+            """This operator computes the amplitude """
+            """of the result (when the result has complex values)."""
         )
         # resultData.result_fields_container = modulus_op.get_output(0, types.fields_container)
         resultData._evaluator._result_operator = modulus_op

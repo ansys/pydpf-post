@@ -1,6 +1,6 @@
 """Module containing the method to instantiate the result object.
 
-This module is used for the initialization of post objects.
+This module is used for the initialization of DPF-Post objects.
 """
 from ansys.dpf.core.model import Model
 
@@ -18,25 +18,23 @@ from ansys.dpf.post.transient_analysis import (
 
 
 def load_solution(data_sources, physics_type=None, analysis_type=None):
-    """Load a solution and return a :class:`ansys.dpf.post.Result` object.
+    """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
-    This method can provide information on a given set on a given scoping.
+    This class provides information on a given set on a given scoping.
 
     Parameters
     ----------
     data_sources : str or ansys.dpf.core.DataSources
-         Path to the file that you want to open or the :class:`ansys.dpf.core.DataSources` class.
-
+         Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
     physics_type : common._PhysicsType, str, optional
-        Accepts one of ``["mecanic", "thermal"]`` to optionally specify the type
-        of physics described in the ``data_sources``. If nothing is specified,
-        the ``data_sources`` are read to evaluate the ``physics_type``.
-
+        Type of phsyics described in the specified data sources. Options are
+        ``"mecanic"`` or ``"thermal"``. The default is ``None``, in which case
+        the data sources are read to determine the physics type.
     analysis_type : common._AnalysisType, str, optional
-        Accepts one of ``["static", "modal", "harmonic", "transient"]`` to
-        optionally specify the type of analysis described in the
-        ``data_sources``.  If nothing is specified, the ``data_sources`` are
-        read to evaluate the ``analysis_type``.
+        Type of analysis described in the specified data sources. Options are
+        ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
+        default is ``None``, in which case the data sources are read to determine
+        the analysis type.
 
     Examples
     --------
@@ -54,7 +52,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
             warnings.warn(
-                "Physics type is defaulting to 'mechanic'. Specify physics_type.",
+                "Physics type is defaulting to 'mecanic'. Specify the physics type",
                 "keyword if it is invalid.",
             )
             physics_type = _PhysicsType.mecanic
@@ -64,8 +62,8 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
             warnings.warn(
-                "Analysis type defaults to static. Specify analysis_type if invalid.",
-                "keyword if it is invalid.",
+                "Analysis type is defaulting to 'static'. Specify the analysis"
+                "type keyword if it is invalid.",
             )
             analysis_type = _AnalysisType.static
 

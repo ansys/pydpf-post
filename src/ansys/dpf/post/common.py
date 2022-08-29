@@ -2,8 +2,8 @@
 
 
 # class ElShapes(Enum):
-#     """Class with Enum inheritance. Must be used to
-#     describe the element shape when API allows it.
+#     """Class with Enum inheritance. This class must be used to
+#     describe the element shape when the API allows it.
 
 #     Example
 #     -----
@@ -20,9 +20,9 @@
 
 
 class Grouping:
-    """Class with Enum inheritance.
+    """Provides Enum inheritance.
 
-    Must be used to describe a grouping command when the API allows it.
+    This class must be used to describe a grouping command when the API allows it.
 
     Examples
     --------
@@ -38,10 +38,9 @@ class Grouping:
 
 
 class _AvailableKeywords:
-    """Contains all the keywords that can be used from a post.solution(file_path) method.
+    """Contains all keywords that can be used with the ``post.solution(file_path)`` method.
 
-    To view the complete list of available keywords with, use
-    ``post.print_available_keywords()``
+    To see available keywords, use the ``post.print_available_keywords()`` method.
     """
 
     location = "location"
@@ -100,7 +99,7 @@ class _AvailableKeywords:
 
 
 class _AnalysisType:
-    """Contains Python analysis type names.
+    """Contains names of Python analysis types.
 
     For developer usage.
     """
@@ -112,7 +111,7 @@ class _AnalysisType:
 
 
 class _PhysicsType:
-    """Contains Python physics type names.
+    """Contains names of Python physics types.
 
     For developer usage.
     """

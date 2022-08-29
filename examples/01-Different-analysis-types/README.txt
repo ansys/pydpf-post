@@ -1,6 +1,5 @@
 .. _ref_different_analysis:
 
-DPF-Post Analysis Types
+DPF-Post analysis types
 ~~~~~~~~~~~~~~~~~~~~~~~
-Here are a series of analysis type focused examples with
-``ansys-dpf-post`` module.
+These examples show how you use DFP-Post analysis types.

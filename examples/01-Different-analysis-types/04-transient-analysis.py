@@ -1,100 +1,132 @@
 """
 .. _ref_trasient_analysis:
 
-ANSYS DPF-Post: Transient Anaysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This tutorial shows how post-process a transient analysis result file
-using API of the POST module.
+Transient analysis
+==================
+This example shows how you can postprocess a result file for a transient analysis
+using DPF-Post.
 """
 
 ###############################################################################
-# Get started
-# ~~~~~~~~~~~
+# Perform required imports
+# ------------------------
+# Perform required imports.
+
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
 ###############################################################################
-# Get the solution object
-# ~~~~~~~~~~~~~~~~~~~~~~~
-# The following file is the result of a transient analysis computed
-# using Ansys Mechanical.
-#
-# here we load the solution
+# Get ``Solution`` object
+# -----------------------
+# Get the ``Solution`` object. This example loads a result file for a transient
+# analysis computed in Ansys Mechanical.
+
 solution = post.load_solution(examples.msup_transient)
 print(solution)
 
 ###############################################################################
-# Get result objects
-# ~~~~~~~~~~~~~~~~~~
+# Get ``Result`` objects
+# ----------------------
 
 ###############################################################################
-# Get a displacement result and compute data
-# ==========================================
+# Get displacement result
+# ~~~~~~~~~~~~~~~~~~~~~~~
+# Get the displacement ``Result`` object.
 
-###############################################################################
-# **Get the result**
 disp_result = solution.displacement()
 disp = disp_result.vector
 
 ###############################################################################
-# **Check the number of fields**
+# Check number of fields
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Check the number of fields.
+
 disp.num_fields
 
 ###############################################################################
-# **Get data from a field**
+# Get data from field
+# ~~~~~~~~~~~~~~~~~~~
+# Get data from a field.
+
 disp.get_data_at_field(0)
 
 ###############################################################################
-# **Get maximum data value over all fields**
+# Get maximum data value over all fields
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get the maximum data value over all fields.
+
 disp.max_data
 
 ###############################################################################
-# **Get minimum data value over all fields**
+# Get minimum data value over all fields
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get the minimum data value over all fields.
+
 disp.min_data
 
 ###############################################################################
-# **Get maximum data value over a targeted field**
+# Get maximum data value over targeted field
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get the maximum data value over a targeted field.
+
 disp.get_max_data_at_field(0)
 
 ###############################################################################
-# **Get minimum data value over all fields**
+# Get minimum data value over all fields
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get the minimum data value over all fields.
+
 disp.get_min_data_at_field(0)
 
 ###############################################################################
-# Get a stress result and plot a contour
-# ======================================
+# Get stress result
+# -----------------
+# Get the stress ``Result`` object for a tensor.
 
-###############################################################################
-# **Get the result**
 stress_result = solution.stress()
 stress = stress_result.tensor
-# shell and solid elements are in distinct fields.
+
+###############################################################################
+# Check number of fields
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Check the number of shell and solid elements in distinct fields.
+
 stress.num_fields
 
 ###############################################################################
-# **Get the shell field**
+# Get shell field
+# ~~~~~~~~~~~~~~~
+# Get the shell field.
+
 shell_field = stress[0]
 shell_field.shell_layers
 
 ###############################################################################
-# **Get the solid field field**
+# Get solid field
+# ~~~~~~~~~~~~~~~
+# Get the solid field.
+
 solid_field = stress[0]
 
 ###############################################################################
-# **Plot the contour**
+# Plot contour
+# ~~~~~~~~~~~~
+# Plot the contour.
+
 stress.plot_contour()
 
 ###############################################################################
-# Get an elastic_strain result and plot a chart
-# =============================================
+# Get elastic strain result
+# -------------------------
+# Get an elastic strain result.
 
-###############################################################################
-# **Get the result**
 elastic_strain_result = solution.elastic_strain()
 elastic_strain = elastic_strain_result.tensor
 # shell and solid elements are in distinct fields.
 elastic_strain.num_fields
 
 ###############################################################################
-# **It is also possible to deal with plastic_strain and temperature this way.**
-# The result file must contain those results.
+# If the result file contains results, you can use this method
+# to get the elastic strain result.
+
+print(solution.elastic_strain())

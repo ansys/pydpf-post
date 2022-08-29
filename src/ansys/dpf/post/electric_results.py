@@ -6,7 +6,7 @@ from ansys.dpf.post.vector import Vector
 
 
 class ElectricField(Vector):
-    """Defines the temperature object for thermal/electric analysis."""
+    """Defines the temperature object for a thermal/electric analysis."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""
@@ -26,7 +26,7 @@ class ElectricField(Vector):
 
 
 class ElectricPotential(Scalar):
-    """Defines the temperature object for thermal/electric analysis."""
+    """Defines the temperature object for a thermal/electric analysis."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

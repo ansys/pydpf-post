@@ -1,6 +1,6 @@
 """Module containing the ``ResultData`` class.
 
-This module, which is used heavily within the DPF-Post API, is a fields container wrapper.
+This module, which is used heavily in DPF-Post, is a fields container wrapper.
 """
 from textwrap import wrap
 
@@ -14,21 +14,43 @@ from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 
 class ResultData:
-    """Provides the result data for a DPF result object.
+    """Provides the result data for a DPF ``Result`` object.
 
-    This class was created using the :class:`ansys.dpf.core.Result` class.
+    This class is created using the :class:`ansys.dpf.core.Result` class.
 
     Parameters
     ----------
-    Following list of keywords:
-        - location
-        - node_scoping
-        - element_scoping
-        - time
-        - grouping
+    operator_name : str
+    data_sources :
+    model :
+    elem_average : bool
+    location : str, optional
+        The default is ``None``.
+    element_scoping : optional
+        The default is ``None``.
+    node_scoping : optional
+        The default is ``None``.
+    named_selection : optional
+        The default is ``None``.
+    time : optional
+        The default is ``None``.
+    grouping : optional
+        The default is ``None``.
+    phase : optional
+        The default is ``None``.
+    subresult : optional
+        The default is ``None``.
+    mapdl_grouping : optional
+        The default is ``None``.
+    set : optional
+        The default is ``None``.
+    path : optional
+        The default is ``None``.
+    time_scoping : optional
+        The default is ``None``.
 
-    The entire list of parameters can be found using
-     ``post.print_available_keywords()``.
+    To see all parameters, you can use the ``post.print_available_keywords()``
+    method.
 
     Examples
     --------
@@ -100,7 +122,7 @@ class ResultData:
         return txt
 
     def _evaluate_result(self):
-        """First evaluation of the result."""
+        """Evaluate the result for the first time."""
         if self._result_fields_container is None:
             self._result_fields_container = self._evaluator.evaluate_result()
 
@@ -109,14 +131,14 @@ class ResultData:
         self.result_fields_container = self._evaluator.evaluate_result()
 
     def get_all_label_spaces(self):
-        """Get all label spaces contained in a result as a string.
+        """Get all label spaces contained in a result.
 
         You can use labels to select the fields to plot.
 
         Returns
         -------
         list
-            List of dictionary (list of label space)
+            List of dictionary (list of label spaces).
         """
         self._evaluate_result()
         i = 0
@@ -128,12 +150,18 @@ class ResultData:
 
     @property
     def num_fields(self):
-        """Get the number of fields contained in the result."""
+        """Number of fields contained in the result."""
         self._evaluate_result()
         return len(self.result_fields_container)
 
     def get_data_at_field(self, field_index: int = 0):
-        """Get the data for the field with the specified index."""
+        """Get the data for the field with the specified index.
+
+        Parameters
+        ----------
+        field_index : int, optional
+            Field index. The default is ``0``.
+        """
         self._evaluate_result()
         # Needed to hold onto the field as a quick fix for a memory leak
         # which causes InProcess mode of PyDPF-Core 0.5.2 to crash
@@ -151,12 +179,23 @@ class ResultData:
 
         This method implements the ``fields_container_result`` item getter. It returns the
         field at the ``field_index`` position in the ``result_fields_container`` object.
+
+        Parameters
+        ----------
+        field_index : int, optional
+            Field index. The default is ``0``.
         """
         self._evaluate_result()
         return self.result_fields_container[field_index]
 
     def get_scoping_at_field(self, field_index: int = 0):
-        """Get the scoping of the result."""
+        """Get the scoping of the result for the field with the specified index.
+
+        Parameters
+        ----------
+        field_index : int, optional
+            Field index. The default is ``0``.
+        """
         self._evaluate_result()
         field = self.result_fields_container[field_index]
         return field.scoping.ids
@@ -171,27 +210,32 @@ class ResultData:
 
     @property
     def max(self):
-        """Maximum values field.
+        """Maximum value field.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
-        its result (output from pin 1).
+        the result (output from pin 1).
         """
         return self._min_max(1)
 
     @property
     def max_data(self):
-        """Maximum values field data.
+        """Maximum value field data.
 
-        Chains the result operator to the ``min_max_fc`` operator and returns its
+        Chains the result operator to the ``min_max_fc`` operator and returns the
         result (output from pin 1).
         """
         return self._min_max(1).data
 
     def get_max_data_at_field(self, field_index: int = 0):
-        """Get the maximum values field data at the ``field_index`` index.
+        """Get the maximum values field data for the field with the specified index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
-        its result (output from pin 1).
+        the result (output from pin 1).
+
+        Parameters
+        ----------
+        field_index : int, optional
+            Field index. The default is ``0``.
         """
         return self._min_max(1).data[field_index]
 
@@ -200,7 +244,7 @@ class ResultData:
         """Minimum values field.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
-        its result (output from pin 0).
+        the result (output from pin 0).
         """
         return self._min_max(0)
 
@@ -209,21 +253,26 @@ class ResultData:
         """Minimum values field data.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
-        its result (output from pin 0).
+        the result (output from pin 0).
         """
         return self._min_max(0).data
 
     def get_min_data_at_field(self, field_index: int = 0):
-        """Get the minimum values field data at the ``field_index`` index.
+        """Get the minimum values field data for the field with the specified index.
 
         Chains the result operator to the ``min_max_fc`` operator and returns
-        its result (output from pin 0).
+        the result (output from pin 0).
+
+        Parameters
+        ----------
+        field_index : int, optional
+            Field index. The default is ``0``.
         """
         return self._min_max(0).data[field_index]
 
     @property
     def result_fields_container(self):
-        """Get the result fields container."""
+        """Result fields container."""
         self._evaluate_result()
         return self._result_fields_container
 
@@ -266,37 +315,35 @@ class ResultData:
                     lab_names.append(key)
         for name in lab_names:
             new_fields_container.add_label(name)
+        if len(label_spaces) == 0:
+            raise dpf_errors.LabelSpaceError
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
-            if not field:
-                txt = """Arguments display_option/option_id are not correct,
-                no corresponding field found to plot."""
-                raise Exception(txt)
             new_fields_container.add_field(label, field)
         return new_fields_container
 
     def plot_contour(self, display_option: str = "time", option_id=1, **kwargs):
         """Plot the contour result on its mesh support.
 
-        The obtained figure depends on the support (can be a
-        meshed_region or a time_freq_support).  If transient analysis,
-        plot the last result if no time_scoping has been specified.
-        The self.get_all_label_spaces() will return a string
-        containing all the label spaces.
+        The obtained figure depends on the support, which can be a
+        meshed region or a time frequency support. For a transient analysis,
+        this method plots the last result if no time scoping is specified.
+        To return a string containing all label spaces, use the
+        ``self.get_all_label_spaces()`` method.
 
         Parameters
         ----------
         display_option : str, optional
-            The name of the label you want to display. Default is ``"time"``.
+            Name of the label to display. The default is ``"time"``.
         option_id: int, optional
-             The list of label ids you want to display. Default is ``[1]``.
+            Label ID to display. The default is ``1``.
         **kwargs : optional
-            Additional keyword arguments for the plotter.  See
-            ``help(pyvista.plot)`` for additional keyword arguments.
+            Additional keyword arguments for the plotter. For keyword
+            arguments, see ``help(pyvista.plot)``.
 
         Examples
         --------
-        Plot a result at the time_step number 1
+        Plot a result at time step number 1.
 
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
@@ -305,7 +352,7 @@ class ResultData:
         >>> sx = stress.xx
         >>> pl = sx.plot_contour("time", [1], off_screen=True)  # doctest: +SKIP
 
-        The labels can be obtained using:
+        Obtain labels.
 
         >>> sx.get_all_label_spaces() # doctest: +ELLIPSIS
         [{'...': ..., '...': ...}, {'...': ..., '...': ...}]
@@ -328,7 +375,7 @@ class ResultData:
             # Try and use the new DpfPlotter from PyDPF-Core
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
-            except:
+            except ImportError:
                 raise dpf_errors.CoreVersionError(version="0.3.4")
             # Initialize the plotter
             pl = DpfPlotterObj(**kwargs)
@@ -365,14 +412,13 @@ class ResultData:
             pl.plot_contour(fc, **kwargs)
 
     def _plot_chart(self):
-        """Plot the minimum/maximum result values over time.
+        """Plot the minimum and maximum result values over time.
 
-        This method works if the time_freq_support contains
-        several time_steps (for example, a transient analysis).
+        This method works if ``time_freq_support`` contains
+        several time steps, which is the case for a transient analysis.
 
-        A time_scoping keyword must be used to select all the
-        time_steps of the result.
-
+        You must use a ``time_scoping`` keyword to select all time steps
+        of the result.
         """
         self._evaluate_result()
         # tfq = self._evaluator._model.metadata.time_freq_support

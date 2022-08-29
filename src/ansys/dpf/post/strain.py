@@ -4,7 +4,7 @@ from ansys.dpf.post.tensor import ComplexTensor, Tensor
 
 
 class ElasticStrain(Tensor):
-    """Defines the tensor elastic strain object."""
+    """Defines the elastic strain object, which is a tensor object."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

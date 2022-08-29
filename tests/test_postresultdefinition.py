@@ -111,7 +111,7 @@ def test_resdef_set(allkindofcomplexity):
     True,
     reason=(
         "The location setting of electric_field result that was "
-        "locked for versions under 0.2.0, is not locked anymore."
+        "locked for versions lower than 0.2.0 is not locked anymore."
     ),
 )
 def test_location_locked_electric_field(rth_electric):
@@ -123,7 +123,7 @@ def test_location_locked_electric_field(rth_electric):
         ef.definition.location = None
     except Exception as e:
         message = (
-            "Location can not be set outside of the instantiation "
+            "Location cannot be set outside of the instantiation "
             "of the result object in this case."
         )
         e2 = Exception(message)
@@ -150,7 +150,7 @@ def test_elemscoping_locked_electric_field(rth_electric):
         ef.definition.element_scoping = [2]
     except Exception as e:
         message = (
-            "Element scoping can not be set outside of the "
+            "Element scoping cannot be set outside of the "
             "instantiation of the result object in this case."
         )
         e2 = Exception(message)
@@ -177,7 +177,7 @@ def test_elemscoping_locked_electric_potential(rth_electric):
         ef.definition.element_scoping = [2]
     except Exception as e:
         message = (
-            "Element scoping can not be set outside of the "
+            "Element scoping cannot be set outside of the "
             "instantiation of the result object in this case."
         )
         e2 = Exception(message)
@@ -204,7 +204,7 @@ def test_elemscoping_locked_temperature(rth_electric):
         ef.definition.element_scoping = [2]
     except Exception as e:
         message = (
-            "Element scoping can not be set outside of the "
+            "Element scoping cannot be set outside of the "
             "instantiation of the result object in this case."
         )
         e2 = Exception(message)
@@ -231,7 +231,7 @@ def test_elemscoping_locked_heat_flux(rth_electric):
         ef.definition.element_scoping = [2]
     except Exception as e:
         message = (
-            "Element scoping can not be set outside of the "
+            "Element scoping cannot be set outside of the "
             "instantiation of the result object in this case."
         )
         e2 = Exception(message)

@@ -1,15 +1,14 @@
 .. _user_guide_accessing_file_metadata:
 
-************************
-Browsing Result Metadata
-************************
+**********************
+Browse result metadata
+**********************
 
-The ``Solution`` object is the entry point for browsing the contents
-of a result file (see :ref:`user_guide_post_processing`). It provides
-access to important metadata such as the analysis type and listings of
-available results.
+In addition to the :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>`
+object being the entry point for browsing the contents of a result file, it provides
+important metadata, such as the analysis type and the available results.
 
-This information is accessible as follows.
+Here is how you browse result metadata:
 
 .. code:: python
 
@@ -19,7 +18,7 @@ This information is accessible as follows.
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Access the result information
+    Browse result metadata
 
     >>> result_info = solution.get_result_info()
     >>> print(result_info)
@@ -41,16 +40,16 @@ This information is accessible as follows.
          -  temperature
 
 
-Four different analysis types are presently supported in DPF-Post:
+DPF-Post supports four different analysis types:
 
-* static analysis
-* modal analysis
-* harmonic analysis
-* transient analysis
+* Static analysis
+* Modal analysis
+* Harmonic analysis
+* Transient analysis
 
 Mesh
 ----
-The mesh can also be accessed from the ``Solution`` object.
+From the ``Solution`` object, you can also access the mesh:
 
 .. code:: python
 
@@ -60,7 +59,7 @@ The mesh can also be accessed from the ``Solution`` object.
     >>> from ansys.dpf.post import examples
     >>> solution = post.load_solution(examples.multishells_rst)
 
-    Get the mesh
+    Access the mesh
 
     >>> mesh = solution.mesh
     >>> print(mesh)
@@ -68,3 +67,4 @@ The mesh can also be accessed from the ``Solution`` object.
     	7079 nodes
     	4220 elements
     	Unit: m
+

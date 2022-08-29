@@ -1,12 +1,13 @@
 .. _ref_api_solution:
 
-***************
-``DpfSolution``
-***************
+*********************
+``DpfSolution`` class
+*********************
 
 The :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` class is
-the entry point for browsing the contents of the results file. This code shows how
-to load the file and obtain the instance.
+the entry point for browsing the contents of the result file.
+
+This code shows how to load a result file:
 
 .. code:: python
 

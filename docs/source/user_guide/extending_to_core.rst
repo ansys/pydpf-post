@@ -1,33 +1,28 @@
 .. _user_guide_extending_to_core:
 
-*****************************************
-Using DPF-Core for More General Operators
-*****************************************
+**********************
+Use DPF-Core operators
+**********************
 
-The DPF-Post package provides a Python interface to DPF (Data
-Processing Framework) that is streamlined for post-processing. It also
-works hand-in-hand with the wider DPF-Core package that is especially
-suited for representing more general data transformations with the use
-of powerful, scalable operators.
+DPF-Post is based on DPF-Core, but it is streamlined for postprocessing.
+Because DPF-Post works hand-in-hand with DPF-Core, you can use the powerful,
+scalable  `operators <https://dpfdocs.pyansys.com/operator_reference.html>`_
+in DPF-Core to facilitate data manipulation and more general data transformations.
 
-DPF-Core is equipped to access data from Ansys solver result files as well as
-third-party formats. Various `operators
-<https://dpfdocs.pyansys.com/operator_reference.html>`_ are available to
-facilitate data manipulation and transformation. DPF-Core allows you to arbitrarily
-assemble complex workflows from simpler building blocks by chaining
-together operators. The data in DPF is represented by physics-agnostic
-mathematical quantities described in a self-sufficient entity called a
-:class:`Field <ansys.dpf.core.field.Field>`.
+DPF-Core can access data from Ansys solver result files as well as from
+third-party file formats. With DPF-Core, you can assemble complex workflows
+from simpler building blocks by chaining them together with operators.
+The data in DPF is represented by physics-agnostic mathematical quantities
+described in a self-sufficient entity called a :class:`Field <ansys.dpf.core.field.Field>`.
 
-Because DPF-Post is based on DPF-Core, it is helpful to see their
-interplay to appreciate their range of capabilities, as done in the
-following examples.
+To show the range of DPF-Core and DPF-Post capabilities, the following
+examples show they work together.
 
 
-Export VTK
-----------
+Export to VTK file
+------------------
 
-The following code shows how to export a fields container in VTK format:
+This code shows how to export a fields container to a VTK file:
 
 .. code:: python
 
@@ -45,19 +40,19 @@ The following code shows how to export a fields container in VTK format:
 
     >>> norm = displacement.norm
 
-    The result fields_container is extracted from the result data.
+    Extract the fields_container result from the result data.
 
     >>> fields_container = norm.result_fields_container
     
-    Now the Core API needs to be imported.
+    Import the DFP-Core API.
 
     >>> from ansys.dpf import core
 
-    # A dedicated operator needs to be instantiated.
+    # Instantiate a dedicated operator
 
     >>> vtk_operator = core.Operator("vtk_export")
 
-    Connections must be set.
+    Set connections.
 
     >>> vtk_operator.inputs.mesh.connect(solution.mesh)
     >>> vtk_operator.inputs.file_path.connect("vtk_example.vtk")
@@ -68,11 +63,11 @@ The following code shows how to export a fields container in VTK format:
     >>> vtk_operator.run()
 
 
-Export HDF5
------------
+Export to HDF5 file
+-------------------
 
-The following code shows how to proceed to **export a fields container
-in HDF5 format**:
+This code shows how to export the same fields container
+to an HDF5 file:
 
 .. code:: python
 
@@ -86,15 +81,15 @@ in HDF5 format**:
 
     >>> displacement = solution.displacement()
 
-    This is the result data (data container)
+    This is the result data (data container).
 
     >>> norm = displacement.norm
 
-    Extract the result fields_container from the result data.
+    Extract the fields_container result from the result data.
 
     >>> fields_container = norm.result_fields_container
     
-    Now the Core API needs to be imported.
+    Import the DPF-Core API.
 
     >>> from ansys.dpf import core
 
@@ -108,7 +103,7 @@ in HDF5 format**:
     >>> h5_operator.inputs.file_path.connect("hdf5_example.h5")
     >>> h5_operator.inputs.data.connect(fields_container)
 
-    Evaluate the the operator.
+    Evaluate the operator.
 
     >>> h5_operator.eval()
 

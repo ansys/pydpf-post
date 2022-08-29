@@ -5,11 +5,11 @@ from ansys.dpf.post.tensor import ComplexTensor, Tensor
 
 
 class Stress(Tensor):
-    """Defines the stress object, that is a tensor object.
+    """Defines the stress object, which is a tensor object.
 
     Examples
     --------
-    Extract the stress from a solution
+    Extract the stress from a solution.
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
@@ -28,7 +28,7 @@ class Stress(Tensor):
 
     @property
     def von_mises(self):
-        """Get the von Mises stress."""
+        """Result data for the von Mises stress."""
         return super()._get_result_data("S_eqv", self._data_sources, self._model)
 
 
@@ -46,12 +46,12 @@ class ComplexStress(ComplexTensor, Stress):
 
     @property
     def von_mises_amplitude(self):
-        """Get the von Mises stress amplitude."""
+        """Amplitude for the von Mises stress."""
         res_data = super()._get_result_data("S_eqv", self._data_sources, self._model)
         return Result._get_amplitude_evaluation(self, res_data)
 
     def von_mises_at_phase(self, phase: float):
-        """Return the von Mises stress at a specific phase."""
+        """Get the von Mises stress at a specific phase."""
         return super()._get_result_data(
             "S_eqv", self._data_sources, self._model, phase=phase
         )

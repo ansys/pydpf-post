@@ -8,7 +8,7 @@ class Scalar(Result):
 
     @property
     def scalar(self):
-        """Get result data for the scalar values."""
+        """Result data for the scalar values."""
         return super()._get_result_data(
             self._operator_name, self._data_sources, self._model
         )

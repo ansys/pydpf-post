@@ -3,30 +3,27 @@ from scooby import Report as ScoobyReport
 
 
 class Report(ScoobyReport):
-    """Generate a report of the installed packages for ansys-dpf-post."""
+    """Generate a report of installed packages for PyDPF-Post."""
 
     def __init__(self, additional=None, ncol=3, text_width=80, sort=False, gpu=True):
         """Generate a :class:`scooby.Report` instance.
 
         Parameters
         ----------
-        additional : list(ModuleType), list(str)
-            List of packages or package names to add to output information.
-
+        additional : list(ModuleType), list(str), optional
+            List of packages or package names to add to the output information.
+            The default is ``None``.
         ncol : int, optional
-            Number of package-columns in html table; only has effect if
-            ``mode='HTML'`` or ``mode='html'``. Defaults to 3.
-
+            Number of package-columns in the HTML table. This parameter is only
+            used only if ``mode='HTML'`` or ``mode='html'``. The default is ``3``.
         text_width : int, optional
-            The text width for non-HTML display modes
-
+            Text width for non-HTML display modes. The default is ``80``.
         sort : bool, optional
-            Alphabetically sort the packages
-
-        gpu : bool
-            Gather information about the GPU. Defaults to ``True`` but if
-            experiencing renderinng issues, pass ``False`` to safely generate
-            a report.
+            Whether to sort packages alphabetically. The default is ``False``.
+        gpu : bool, optional
+            Whether to gather a report on the GPU. The default is ``True``.
+            If rendering issues are experienced, set to ``False`` to safely generate
+            the report.
 
         """
         # Mandatory packages.

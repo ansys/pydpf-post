@@ -52,7 +52,7 @@ class Temperature(Scalar):
 
 
 class HeatFlux(Vector):
-    """Defines the heat flux object for thermal analysis, which is a scalar object."""
+    """Defines the heat flux object, which is a scalar object, for thermal analysis."""
 
     def __init__(self, **kwargs):
         """Initialize this class."""

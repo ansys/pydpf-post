@@ -1,5 +1,5 @@
 .. _ref_overview:
 
-DPF-Post Overview
-~~~~~~~~~~~~~~~~~
-Here are a quick overview of DPF-Post module with ``ansys-dpf-post``.
+DPF-Post overview
+-----------------
+This example provides an overview of how you use DPF-Post.
