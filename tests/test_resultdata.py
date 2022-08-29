@@ -7,7 +7,6 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-
 import ansys.dpf.post.errors
 from ansys.dpf.post.result_data import ResultData
 

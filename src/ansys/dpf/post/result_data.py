@@ -9,8 +9,8 @@ from ansys.dpf.core import errors as core_errors
 from ansys.dpf.core.common import DefinitionLabels, types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 
-import ansys.dpf.post.errors
 from ansys.dpf.post import errors as dpf_errors
+import ansys.dpf.post.errors
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
 

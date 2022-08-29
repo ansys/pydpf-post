@@ -28,5 +28,8 @@ class LabelSpaceError(ValueError):
 
     def __init__(self):
         """Initialize this class."""
-        ValueError.__init__(self, """Arguments display_option and option_id are not correct.
-    No corresponding field found to plot.""")
+        ValueError.__init__(
+            self,
+            """Arguments display_option and option_id are not correct.
+    No corresponding field found to plot.""",
+        )
