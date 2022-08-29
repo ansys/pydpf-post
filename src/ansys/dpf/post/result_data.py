@@ -9,6 +9,7 @@ from ansys.dpf.core import errors as core_errors
 from ansys.dpf.core.common import DefinitionLabels, types
 from ansys.dpf.core.plotter import Plotter as DpfPlotter
 
+import ansys.dpf.post.errors
 from ansys.dpf.post import errors as dpf_errors
 from ansys.dpf.post.result_evaluation import ResultEvaluator
 
@@ -315,12 +316,10 @@ class ResultData:
                     lab_names.append(key)
         for name in lab_names:
             new_fields_container.add_label(name)
+        if len(label_spaces) == 0:
+            raise ansys.dpf.post.errors.LabelSpaceError
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
-            if not field:
-                txt = """Arguments display_option and option_id are not correct.
-                No corresponding field found to plot."""
-                raise Exception(txt)
             new_fields_container.add_field(label, field)
         return new_fields_container
 

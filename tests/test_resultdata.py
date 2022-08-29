@@ -7,6 +7,8 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
+
+import ansys.dpf.post.errors
 from ansys.dpf.post.result_data import ResultData
 
 # currently running dpf on docker.  Used for testing on CI
@@ -223,6 +225,14 @@ def test_plot_contour_one_field(plate_msup):
     s = stress.tensor
     s.plot_contour("time", 1)
     s.plot_contour()
+
+
+def test_plot_contour_wrong_label(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
+    stress = solution.stress(location=post.locations.elemental, time_scoping=[1])
+    s = stress.tensor
+    with pytest.raises(ansys.dpf.post.errors.LabelSpaceError):
+        s.plot_contour("egg", 30)
 
 
 def test_plot_contour_two_fields(allkindofcomplexity):

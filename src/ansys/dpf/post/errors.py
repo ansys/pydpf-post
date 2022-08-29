@@ -21,3 +21,12 @@ class CoreVersionError(ValueError):
             version = "0.1.0"
         txt = msg + version
         ValueError.__init__(self, txt)
+
+
+class LabelSpaceError(ValueError):
+    """Provides the error to raise when trying to consume a feature that is unavailable."""
+
+    def __init__(self):
+        """Initialize this class."""
+        ValueError.__init__(self, """Arguments display_option and option_id are not correct.
+    No corresponding field found to plot.""")
