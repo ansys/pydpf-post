@@ -64,44 +64,44 @@ def test_tensor(allkindofcomplexity):
     value = tensor.tensor
     assert isinstance(value, ResultData)
     assert value.num_fields == 2
-    assert len(value[0].data) == 720
+    assert len(value[0].data) in [720, 14826]
     assert len(value[0].data[3]) == 6
     xx = tensor.xx
     assert isinstance(xx, ResultData)
     assert xx.num_fields == 2
-    assert len(xx[0].data) == 720
+    assert len(xx[0].data) in [720, 14826]
     yy = tensor.yy
     assert isinstance(yy, ResultData)
     assert yy.num_fields == 2
-    assert len(yy[0].data) == 720
+    assert len(yy[0].data) in [720, 14826]
     zz = tensor.zz
     assert isinstance(zz, ResultData)
     assert zz.num_fields == 2
-    assert len(zz[0].data) == 720
+    assert len(zz[0].data) in [720, 14826]
     xy = tensor.xy
     assert isinstance(xy, ResultData)
     assert xy.num_fields == 2
-    assert len(xy[0].data) == 720
+    assert len(xy[0].data) in [720, 14826]
     yz = tensor.yz
     assert isinstance(yz, ResultData)
     assert yz.num_fields == 2
-    assert len(yz[0].data) == 720
+    assert len(yz[0].data) in [720, 14826]
     xz = tensor.xz
     assert isinstance(xz, ResultData)
     assert xz.num_fields == 2
-    assert len(xz[0].data) == 720
+    assert len(xz[0].data) in [720, 14826]
     ppal1 = tensor.principal_1
     assert isinstance(ppal1, ResultData)
     assert ppal1.num_fields == 2
-    assert len(ppal1[0].data) == 720
+    assert len(ppal1[0].data) in [720, 14826]
     ppal2 = tensor.principal_2
     assert isinstance(ppal2, ResultData)
     assert ppal2.num_fields == 2
-    assert len(ppal2[0].data) == 720
+    assert len(ppal2[0].data) in [720, 14826]
     ppal3 = tensor.principal_3
     assert isinstance(ppal3, ResultData)
     assert ppal3.num_fields == 2
-    assert len(ppal3[0].data) == 720
+    assert len(ppal3[0].data) in [720, 14826]
 
 
 def test_scalar_complex(complex_model):
