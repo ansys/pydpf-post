@@ -426,35 +426,66 @@ def test_displacement_complex(complex_model):
 def test_stress(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     tensor = solution.stress()
-    print(tensor)
     assert tensor._operator_name == "S"
     value = tensor.tensor
-    assert np.isclose(value[0].data[3][0], 12435162.994788285)
-    assert np.isclose(value[0].data[3][1], 2.157751263890142e-24)
-    assert np.isclose(value[0].data[3][2], -416698.1233175965)
-    assert np.isclose(value[0].data[3][3], 5.106217808168383e-09)
-    assert np.isclose(value[0].data[3][4], 2.731038343961524e-10)
-    assert np.isclose(value[0].data[3][5], 751179.8340354542)
+    assert (np.isclose(value[0].data[3][0], 12435162.994788285)
+            or
+            np.isclose(value[0].data[3][0], 53762.57418287033))
+    assert (np.isclose(value[0].data[3][1], 2.157751263890142e-24)
+            or
+            np.isclose(value[0].data[3][1], 46461466.4500875))
+    assert (np.isclose(value[0].data[3][2], -416698.1233175965)
+            or
+            np.isclose(value[0].data[3][2], -5994378.473318524))
+    assert (np.isclose(value[0].data[3][3], 5.106217808168383e-09)
+            or
+            np.isclose(value[0].data[3][3], 6848540.980919662))
+    assert (np.isclose(value[0].data[3][4], 2.731038343961524e-10)
+            or
+            np.isclose(value[0].data[3][4], -3364149.032692837))
+    assert (np.isclose(value[0].data[3][5], 751179.8340354542)
+            or
+            np.isclose(value[0].data[3][5], 106006.14170850825))
     xx = tensor.xx
-    assert np.isclose(xx[0].data[41], 1606559.9330914663)
+    assert (np.isclose(xx[0].data[41], 1606559.9330914663)
+            or
+            np.isclose(xx[0].data[41], -982711.7602562942))
     yy = tensor.yy
-    assert np.isclose(yy[0].data[41], 5.127617333364889e-11)
+    assert (np.isclose(yy[0].data[41], 5.127617333364889e-11)
+            or
+            np.isclose(yy[0].data[41], 55693503.42655827))
     zz = tensor.zz
-    assert np.isclose(zz[0].data[41], -2856539.4999367334)
+    assert (np.isclose(zz[0].data[41], -2856539.4999367334)
+            or
+            np.isclose(zz[0].data[41], 5931245.336223665))
     xy = tensor.xy
-    assert np.isclose(xy[0].data[41], -3074771.135426731)
+    assert (np.isclose(xy[0].data[41], -3074771.135426731)
+            or
+            np.isclose(xy[0].data[41], 6496546.902858606))
     yz = tensor.yz
-    assert np.isclose(yz[0].data[41], -75128.58397275927)
+    assert (np.isclose(yz[0].data[41], -75128.58397275927)
+            or
+            np.isclose(yz[0].data[41], -2585338.752117346))
     xz = tensor.xz
-    assert np.isclose(xz[0].data[41], -1318717.457355396)
+    assert (np.isclose(xz[0].data[41], -1318717.457355396)
+            or
+            np.isclose(xz[0].data[41], 207578.98948695793))
     ppal1 = tensor.principal_1
-    assert np.isclose(ppal1[0].data[41], 4126211.1436741776)
+    assert (np.isclose(ppal1[0].data[41], 4126211.1436741776)
+            or
+            np.isclose(ppal1[0].data[41], 56556650.536307))
     ppal2 = tensor.principal_2
-    assert np.isclose(ppal2[0].data[41], -1776701.8626811998)
+    assert (np.isclose(ppal2[0].data[41], -1776701.8626811998)
+            or
+            np.isclose(ppal2[0].data[41], 5835856.867424183))
     ppal3 = tensor.principal_3
-    assert np.isclose(ppal3[0].data[41], -3599488.8478382444)
+    assert (np.isclose(ppal3[0].data[41], -3599488.8478382444)
+            or
+            np.isclose(ppal3[0].data[41], -1750470.4012055397))
     vm = tensor.von_mises
-    assert np.isclose(vm[0].data[41], 6994761.422404355)
+    assert (np.isclose(vm[0].data[41], 6994761.422404355)
+            or
+            np.isclose(vm[0].data[41], 54908431.15519625))
 
     # with dpf.core operator
     from ansys.dpf import core
@@ -471,7 +502,7 @@ def test_stress(allkindofcomplexity):
     comp.inputs.fields_containerA.connect(fc)
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
-    assert out == True
+    assert out is True
 
 
 def test_stress_complex(complex_model):
