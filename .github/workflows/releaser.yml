@@ -53,7 +53,7 @@ jobs:
         run: |
           pip install twine
           pip install build
-          python -m build --wheel
+          python -m build
           twine upload --skip-existing dist/*
         env:
           TWINE_USERNAME: __token__
