@@ -74,7 +74,9 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             return ThermalTransientAnalysisSolution(data_sources, _model)
         else:
             raise ValueError(f"Unknown analysis type '{analysis_type}' for thermal.")
-    elif physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical:
+    elif (
+        physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
+    ):
         if analysis_type == _AnalysisType.static:
             return StaticAnalysisSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.modal:
