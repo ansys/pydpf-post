@@ -61,10 +61,10 @@ class DpfSolution:
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> solution = post.load_solution(examples.static_rst)
-        >>> print(solution.get_result_info()) # doctest: +NORMALIZE_WHITESPACE
+        >>> print(solution.get_result_info()) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         Static analysis
         Unit system: MKS: m, kg, N, s, V, A, degC
-        Physics Type: Mecanic
+        Physics Type: ...
         Available results:
              -  displacement: Nodal Displacement
              -  reaction_force: Nodal Force

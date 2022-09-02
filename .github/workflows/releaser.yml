@@ -52,7 +52,8 @@ jobs:
       - name: "Upload to Public PyPi"
         run: |
           pip install twine
-          python setup.py sdist
+          pip install build
+          python -m build --wheel
           twine upload --skip-existing dist/*
         env:
           TWINE_USERNAME: __token__
