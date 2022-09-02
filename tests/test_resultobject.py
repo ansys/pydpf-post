@@ -610,30 +610,60 @@ def test_elastic_strain(allkindofcomplexity):
     print(tensor)
     assert tensor._operator_name == "EPEL"
     value = tensor.tensor
-    assert np.isclose(value[0].data[3][0], 0.00018234479152259739)
-    assert np.isclose(value[0].data[3][1], -5.752129670174516e-05)
-    assert np.isclose(value[0].data[3][2], -6.555912852208456e-05)
-    assert np.isclose(value[0].data[3][3], 1.408180713961465e-19)
-    assert np.isclose(value[0].data[3][4], 5.856422410131196e-20)
-    assert np.isclose(value[0].data[3][5], 2.8979526592230692e-05)
+    assert (np.isclose(value[0].data[3][0], 0.00018234479152259739)
+            or
+            np.isclose(value[0].data[3][0], -0.00019289886088688752))
+    assert (np.isclose(value[0].data[3][1], -5.752129670174516e-05)
+            or
+            np.isclose(value[0].data[3][1], 0.0007022751225061967))
+    assert (np.isclose(value[0].data[3][2], -6.555912852208456e-05)
+            or
+            np.isclose(value[0].data[3][2], -0.0003095635105341226))
+    assert (np.isclose(value[0].data[3][3], 1.408180713961465e-19)
+            or
+            np.isclose(value[0].data[3][3], 0.0002642076723603524))
+    assert (np.isclose(value[0].data[3][4], 5.856422410131196e-20)
+            or
+            np.isclose(value[0].data[3][4], -0.00012978442968764246))
+    assert (np.isclose(value[0].data[3][5], 2.8979526592230692e-05)
+            or
+            np.isclose(value[0].data[3][5], 4.08957704053128e-06))
     xx = tensor.xx
-    assert np.isclose(xx[0].data[41], 3.697197923235083e-05)
+    assert (np.isclose(xx[0].data[41], 3.697197923235083e-05)
+            or
+            np.isclose(xx[0].data[41], -0.00030919331184879395))
     yy = tensor.yy
-    assert np.isclose(yy[0].data[41], 5.982498289469741e-06)
+    assert (np.isclose(yy[0].data[41], 5.982498289469741e-06)
+            or
+            np.isclose(yy[0].data[41], 0.0007840534785567665))
     zz = tensor.zz
-    assert np.isclose(zz[0].data[41], -4.91182636382439e-05)
+    assert (np.isclose(zz[0].data[41], -4.91182636382439e-05)
+            or
+            np.isclose(zz[0].data[41], -0.00017582764196745465))
     xy = tensor.xy
-    assert np.isclose(xy[0].data[41], 1.1077761300601659e-20)
+    assert (np.isclose(xy[0].data[41], 1.1077761300601659e-20)
+            or
+            np.isclose(xy[0].data[41], 0.00025062820538946913))
     yz = tensor.yz
-    assert np.isclose(yz[0].data[41], 1.9300360020838987e-20)
+    assert (np.isclose(yz[0].data[41], 1.9300360020838987e-20)
+            or
+            np.isclose(yz[0].data[41], -9.973895693447632e-05))
     xz = tensor.xz
-    assert np.isclose(xz[0].data[41], -5.087437906548738e-05)
+    assert (np.isclose(xz[0].data[41], -5.087437906548738e-05)
+            or
+            np.isclose(xz[0].data[41], 8.008123452288731e-06))
     ppal1 = tensor.principal_1
-    assert np.isclose(ppal1[0].data[41], 6.056832330223573e-05)
+    assert (np.isclose(ppal1[0].data[41], 6.056832330223573e-05)
+            or
+            np.isclose(ppal1[0].data[41], 0.0008477320572429164))
     ppal2 = tensor.principal_2
-    assert np.isclose(ppal2[0].data[41], 5.982498289469729e-06)
+    assert (np.isclose(ppal2[0].data[41], 5.982498289469729e-06)
+            or
+            np.isclose(ppal2[0].data[41], -0.00018021298952699551))
     ppal3 = tensor.principal_3
-    assert np.isclose(ppal3[0].data[41], -7.271460770812878e-05)
+    assert (np.isclose(ppal3[0].data[41], -7.271460770812878e-05)
+            or
+            np.isclose(ppal3[0].data[41], -0.00036848654297540293))
 
     # with dpf.core operator
     from ansys.dpf import core
@@ -650,7 +680,7 @@ def test_elastic_strain(allkindofcomplexity):
     comp.inputs.fields_containerA.connect(fc)
     comp.inputs.fields_containerB.connect(value.result_fields_container)
     out = comp.outputs.boolean()
-    assert out == True
+    assert out is True
 
 
 def test_elastic_strain_complex(complex_model):
