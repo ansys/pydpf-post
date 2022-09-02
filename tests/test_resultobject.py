@@ -736,7 +736,7 @@ def test_temperature(allkindofcomplexity):
     assert temp._operator_name == "BFE"
     value = temp.scalar
     assert value.num_fields == 2
-    assert len(value[0]) == 720
+    assert len(value[0]) in [720, 14826]
     assert value[0].data[0] == 22.0
     assert value[0].location == post.locations.nodal
     temp2 = solution.structural_temperature(
