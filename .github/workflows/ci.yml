@@ -97,7 +97,7 @@ jobs:
       matrix:
         python-version: ["3.7"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["221"]
+        ANSYS_VERSION: ["222", "221"]
 
     steps:
       - uses: actions/checkout@v3
