@@ -116,5 +116,6 @@ class _PhysicsType:
     For developer usage.
     """
 
-    mecanic = "mecanic"
+    mechanical = "mechanical"
+    mecanic = "mecanic"  # Keep for retro-compatibility with ANSYS < 231
     thermal = "thermal"

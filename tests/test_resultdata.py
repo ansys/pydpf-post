@@ -168,18 +168,22 @@ def test_min_data_at_field(allkindofcomplexity):
 def test_get_all_labels_verbose_api(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     stress = result.misc.elemental_stress()
-    labels = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
-    assert labels == l_comp
+    assert len(l_comp) == 2
+    assert len(l_comp[0].keys()) == 2
+    assert "elshape" in l_comp[0].keys()
+    assert "time" in l_comp[0].keys()
 
 
 def test_get_all_labels(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
-    l = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
-    assert l == l_comp
+    assert len(l_comp) == 2
+    assert len(l_comp[0].keys()) == 2
+    assert "elshape" in l_comp[0].keys()
+    assert "time" in l_comp[0].keys()
 
 
 def test_get_scoping_at_field_verbose_api(plate_msup):
