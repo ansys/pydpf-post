@@ -7,6 +7,7 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
+import ansys.dpf.post.errors
 from ansys.dpf.post.result_data import ResultData
 
 # currently running dpf on docker.  Used for testing on CI
@@ -167,18 +168,22 @@ def test_min_data_at_field(allkindofcomplexity):
 def test_get_all_labels_verbose_api(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     stress = result.misc.elemental_stress()
-    l = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
-    assert l == l_comp
+    assert len(l_comp) == 2
+    assert len(l_comp[0].keys()) == 2
+    assert "elshape" in l_comp[0].keys()
+    assert "time" in l_comp[0].keys()
 
 
 def test_get_all_labels(modalallkindofcomplexity):
     result = post.load_solution(modalallkindofcomplexity)
     s = result.stress(location=post.locations.elemental)
     stress = s.tensor
-    l = [{"elshape": 1, "time": 1}, {"elshape": 0, "time": 1}]
     l_comp = stress.get_all_label_spaces()
-    assert l == l_comp
+    assert len(l_comp) == 2
+    assert len(l_comp[0].keys()) == 2
+    assert "elshape" in l_comp[0].keys()
+    assert "time" in l_comp[0].keys()
 
 
 def test_get_scoping_at_field_verbose_api(plate_msup):
@@ -223,6 +228,14 @@ def test_plot_contour_one_field(plate_msup):
     s = stress.tensor
     s.plot_contour("time", 1)
     s.plot_contour()
+
+
+def test_plot_contour_wrong_label(allkindofcomplexity):
+    solution = post.load_solution(allkindofcomplexity)
+    stress = solution.stress(location=post.locations.elemental, time_scoping=[1])
+    s = stress.tensor
+    with pytest.raises(ansys.dpf.post.errors.LabelSpaceError):
+        s.plot_contour("egg", 30)
 
 
 def test_plot_contour_two_fields(allkindofcomplexity):

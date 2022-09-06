@@ -37,7 +37,7 @@ DPF-Post supports two types of result files:
 * Structural (RST)
 * Thermal/electric (RTH)
 
-Once loaded into a :py:class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
+Once loaded into a :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
 object, a result file offers a variety of :class:`Result <ansys.dpf.post.result_object.Result>`
 objects, depending on its type.
 
@@ -76,7 +76,7 @@ result object with:
 
     >>> displacement = solution.displacement()
 
-The displacement ``Result``objectcorresponds to a vector field. To obtain the scalar
+The displacement ``Result`` object corresponds to a vector field. To obtain the scalar
 components (y-components) of this field, access the subresult with:
 
 .. code:: python

@@ -315,12 +315,10 @@ class ResultData:
                     lab_names.append(key)
         for name in lab_names:
             new_fields_container.add_label(name)
+        if len(label_spaces) == 0:
+            raise dpf_errors.LabelSpaceError
         for label in label_spaces:
             field = self.result_fields_container.get_field(label)
-            if not field:
-                txt = """Arguments display_option and option_id are not correct.
-                No corresponding field found to plot."""
-                raise Exception(txt)
             new_fields_container.add_field(label, field)
         return new_fields_container
 
@@ -377,7 +375,7 @@ class ResultData:
             # Try and use the new DpfPlotter from PyDPF-Core
             try:
                 from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
-            except:
+            except ImportError:
                 raise dpf_errors.CoreVersionError(version="0.3.4")
             # Initialize the plotter
             pl = DpfPlotterObj(**kwargs)
