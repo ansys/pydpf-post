@@ -8,7 +8,6 @@ Install using ``pip``
 ---------------------
 
 `pip <https://pypi.org/project/pip/>`_ is the package installer for Python.
-
 To use PyDPF-Post with Ansys 2021 R1 or later, install the latest version
 with:
 

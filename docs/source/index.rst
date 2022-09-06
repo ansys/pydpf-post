@@ -50,7 +50,6 @@ MAPDL:
     Basic stress contour plot
 
 Here is how you extract the raw data as a :class:`numpy.ndarray` array:
-
 .. code:: python
 
    >>> stress.xx.get_data_at_field(0)
