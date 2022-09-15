@@ -198,6 +198,12 @@ class ResultEvaluator:
                 forward_op = Operator("forward_fc")
                 forward_op.inputs.fields.connect(centroid_op.outputs.field)
                 self._result_operator = forward_op
+        else:
+            time_scoping = dpf.core.Scoping()
+            time_scoping.ids = range(
+                1, self._model.metadata.time_freq_support.n_sets + 1
+            )
+            self._result_operator.inputs.time_scoping.connect(time_scoping)
         if path is not None:
             mapping_operator = Operator("mapping")
             mapping_operator.inputs.fields_container.connect(
