@@ -322,6 +322,22 @@ class ResultData:
             new_fields_container.add_field(label, field)
         return new_fields_container
 
+    def animate(self):
+        """Animate the ResultData's FieldsContainer."""
+        print(self)
+        print(self.result_fields_container)
+        print(self.result_fields_container[0])
+        mesh = self.result_fields_container[0].meshed_region
+        print(mesh)
+        print("====")
+        print(mesh.nodes.scoping)
+        # print(mesh.nodes.scoping.ids)
+        scoping = mesh.nodes.scoping
+        print(scoping)
+        print(scoping.ids)
+
+        # self.result_fields_container.animate()
+
     def plot_contour(self, display_option: str = "time", option_id=1, **kwargs):
         """Plot the contour result on its mesh support.
 
