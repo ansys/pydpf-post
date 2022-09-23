@@ -44,6 +44,8 @@ release = version = __version__
 # ones.
 extensions = [
     "notfound.extension",
+    "sphinx.ext.autodoc.typehints",
+    "sphinx.ext.napoleon",
     "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -52,6 +54,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
 ]
+autodoc_typehints = "description"
 
 # Intersphinx mapping
 intersphinx_mapping = {
