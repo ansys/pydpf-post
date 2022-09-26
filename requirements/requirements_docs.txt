@@ -2,7 +2,7 @@ pypandoc==1.9
 imageio==2.22.0
 numpydoc==1.4.0
 imageio-ffmpeg==0.4.7
-Sphinx==5.1.1
+Sphinx==5.2.1
 sphinx-autobuild==2021.3.14
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-websupport==1.2.4
