@@ -322,7 +322,7 @@ class ResultData:
             new_fields_container.add_field(label, field)
         return new_fields_container
 
-    def plot_contour(self, display_option: str = "time", option_id=1, **kwargs):
+    def plot_contour(self, display_option: str = "time", option_id: int = 1, **kwargs):
         """Plot the contour result on its mesh support.
 
         The obtained figure depends on the support, which can be a
@@ -333,9 +333,9 @@ class ResultData:
 
         Parameters
         ----------
-        display_option : str, optional
+        display_option : optional
             Name of the label to display. The default is ``"time"``.
-        option_id: int, optional
+        option_id: optional
             Label ID to display. The default is ``1``.
         **kwargs : optional
             Additional keyword arguments for the plotter. For keyword
