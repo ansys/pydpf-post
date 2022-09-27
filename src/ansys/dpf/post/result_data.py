@@ -333,11 +333,13 @@ class ResultData:
 
         Parameters
         ----------
-        :display_option: Name of the label to display. The default is ``"time"``.
-        :option_id: Label ID to display. The default is ``1``.
-        :**kwargs: optional
+        display_option :
+            Name of the label to display. Optional, the default is ``"time"``.
+        option_id :
+            Label ID to display. Optional, the default is ``1``.
+        **kwargs :
             Additional keyword arguments for the plotter. For keyword
-            arguments, see ``help(pyvista.plot)``.
+            arguments, see ``help(pyvista.plot)``. Optional.
 
         Examples
         --------
