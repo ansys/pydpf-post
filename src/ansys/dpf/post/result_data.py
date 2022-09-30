@@ -323,12 +323,7 @@ class ResultData:
             new_fields_container.add_field(label, field)
         return new_fields_container
 
-    def plot_contour(
-        self,
-        display_option: Optional[str] = "time",
-        option_id: Optional[int] = 1,
-        **kwargs
-    ):
+    def plot_contour(self, display_option: str = "time", option_id: int = 1, **kwargs):
         """Plot the contour result on its mesh support.
 
         The obtained figure depends on the support, which can be a
