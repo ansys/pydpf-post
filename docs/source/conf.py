@@ -55,7 +55,8 @@ extensions = [
     "sphinx_gallery.gen_gallery",
 ]
 
-autodoc_typehints = "description"
+typehints_defaults = "comma"
+simplify_optional_unions = False
 
 # Intersphinx mapping
 intersphinx_mapping = {

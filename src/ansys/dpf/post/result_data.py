@@ -3,6 +3,7 @@
 This module, which is used heavily in DPF-Post, is a fields container wrapper.
 """
 from textwrap import wrap
+from typing import Optional
 
 from ansys.dpf.core import FieldsContainer, Operator
 from ansys.dpf.core import errors as core_errors
@@ -322,7 +323,7 @@ class ResultData:
             new_fields_container.add_field(label, field)
         return new_fields_container
 
-    def plot_contour(self, display_option: str = "time", option_id: int = 1, **kwargs):
+    def plot_contour(self, display_option: Optional[str] = "time", option_id: Optional[int] = 1, **kwargs):
         """Plot the contour result on its mesh support.
 
         The obtained figure depends on the support, which can be a
@@ -334,12 +335,12 @@ class ResultData:
         Parameters
         ----------
         display_option :
-            Name of the label to display. Optional, the default is ``"time"``.
+            Name of the label to display.
         option_id :
-            Label ID to display. Optional, the default is ``1``.
+            Label ID to display.
         **kwargs :
             Additional keyword arguments for the plotter. For keyword
-            arguments, see ``help(pyvista.plot)``. Optional.
+            arguments, see ``help(pyvista.plot)``.
 
         Examples
         --------
