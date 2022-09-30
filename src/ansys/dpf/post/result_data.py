@@ -3,7 +3,6 @@
 This module, which is used heavily in DPF-Post, is a fields container wrapper.
 """
 from textwrap import wrap
-from typing import Optional
 
 from ansys.dpf.core import FieldsContainer, Operator
 from ansys.dpf.core import errors as core_errors
