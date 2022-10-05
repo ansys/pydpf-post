@@ -55,6 +55,9 @@ extensions = [
     "sphinx_gallery.gen_gallery",
 ]
 
+typehints_defaults = "comma"
+simplify_optional_unions = False
+
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/dev", None),
