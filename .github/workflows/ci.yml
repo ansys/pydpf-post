@@ -19,7 +19,7 @@ env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
   ANSYS_VERSION: 231
-  pydpf_actions_version: prepare_v2.2
+  pydpf-actions_version: prepare_v2.2
 
 jobs:
   style:
@@ -45,13 +45,13 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
         os: ["windows-latest", "ubuntu-latest"]
     env:
-      pydpf_actions: ${{env.pydpf_actions_version}}
+      pydpf-actions: ${{ env.pydpf-actions_version }}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: "Build Package"
-        uses: pyansys/pydpf_actions/build_package@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/build_package@${{ env.pydpf-actions }}
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -62,12 +62,12 @@ jobs:
           wheelhouse: true
 
       - name: "Prepare Testing Environment"
-        uses: pyansys/pydpf_actions/prepare_tests@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/prepare_tests@${{ env.pydpf-actions }}
         with:
           DEBUG: true
 
       - name: "Test Docstrings"
-        uses: pyansys/pydpf_actions/test_docstrings@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/test_docstrings@${{ env.pydpf-actions }}
         with:
           MODULE: ${{env.MODULE}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
@@ -80,7 +80,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: pyansys/pydpf_actions/kill-dpf-servers@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/kill-dpf-servers@${{ env.pydpf-actions }}
         if: always()
 
       - name: "Upload Test Results"
@@ -103,13 +103,13 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
         ANSYS_VERSION: ["222", "221"]
     env:
-      pydpf_actions: ${{env.pydpf_actions_version}}
+      pydpf-actions: ${{ env.pydpf-actions_version }}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: "Build Package"
-        uses: pyansys/pydpf_actions/build_package@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/build_package@${{ env.pydpf-actions }}
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
@@ -127,7 +127,7 @@ jobs:
         if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
-        uses: pyansys/pydpf_actions/prepare_tests@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/prepare_tests@${{ env.pydpf-actions }}
         with:
           DEBUG: true
 
@@ -138,7 +138,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: pyansys/pydpf_actions/kill-dpf-servers@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/kill-dpf-servers@${{ env.pydpf-actions }}
         if: always()
 
       - name: "Upload Test Results"
@@ -155,13 +155,13 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     env:
-      pydpf_actions: ${{env.pydpf_actions_version}}
+      pydpf-actions: ${{ env.pydpf-actions_version }}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: "Build Documentation"
-        uses: pyansys/pydpf_actions/build_doc@${{env.pydpf_actions}}
+        uses: pyansys/pydpf-actions/build_doc@${{ env.pydpf-actions }}
         with:
           python-version: "3.8"
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
