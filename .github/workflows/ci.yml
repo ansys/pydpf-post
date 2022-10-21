@@ -19,7 +19,6 @@ env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
   ANSYS_VERSION: 231
-  ACTIONS: prepare_v2.2
 
 jobs:
   style:
@@ -49,7 +48,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@${{ $ACTIONS }}
+        uses: pyansys/pydpf-actions/build_package@prepare_v2.2
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{env.ANSYS_VERSION}}
