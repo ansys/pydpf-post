@@ -1,5 +1,5 @@
 pypandoc==1.10
-imageio==2.22.2
+imageio==2.22.3
 numpydoc==1.4.0
 imageio-ffmpeg==0.4.7
 Sphinx==5.1.1
