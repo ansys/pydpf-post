@@ -123,8 +123,8 @@ class DpfSolution:
         return txt
 
 
-class DpfMecanicSolution(DpfSolution):
-    """Provides the mecanic solution."""
+class DpfMechanicSolution(DpfSolution):
+    """Provides the mechanic solution."""
 
     def __init__(self, data_sources, model):
         """Initialize this class."""
@@ -149,6 +149,24 @@ class DpfMecanicSolution(DpfSolution):
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
+
+    def nodal_stress(self, **kwargs):
+        """Get a stress object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> stress = solution.stress(node_scoping = [1, 43])
+        """
+        return Stress(data_sources=self._data_sources, model=self._model, location=locations.nodal, **kwargs)
 
     def elastic_strain(self, **kwargs):
         """Get an elastic strain object, from which you can possibly get result data.
@@ -231,7 +249,7 @@ class DpfMecanicSolution(DpfSolution):
         )
 
 
-class DpfMecanicComplexSolution(DpfSolution):
+class DpfMechanicComplexSolution(DpfSolution):
     """Provides the main class of the DPF-Post solution if the analysis gives a complex solution."""
 
     def __init__(self, data_sources, model):
@@ -355,6 +373,113 @@ class DpfMecanicComplexSolution(DpfSolution):
         >>> stress = solution.stress(node_scoping = [1, 43])
         """
         return ComplexStress(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
+
+
+class DpfMechanicTransientSolution(DpfMechanicSolution):
+    """Solution helper to access data varying over time."""
+
+    def __init__(self, data_sources, model):
+        """Initialize this class."""
+        super().__init__(data_sources, model)
+
+    # result classes
+    def nodal_stress_at_time(self, **kwargs):
+        """Get a stress object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> stress = solution.stress(node_scoping = [1, 43])
+        """
+        return Stress(data_sources=self._data_sources, model=self._model, **kwargs)
+
+    def elastic_strain(self, **kwargs):
+        """Get an elastic strain object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> elastic_strain = solution.elastic_strain(node_scoping = [1, 43])
+        """
+        return ElasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
+
+    def plastic_strain(self, **kwargs):
+        """Return a plastic strain object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> plastic_strain = solution.plastic_strain(node_scoping = [1, 43])
+        """
+        return PlasticStrain(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
+
+    def displacement(self, **kwargs):
+        """Get a displacement object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.static_rst)
+        >>> displacement = solution.displacement(node_scoping = [1, 43])
+        """
+        return Displacement(
+            data_sources=self._data_sources, model=self._model, **kwargs
+        )
+
+    def structural_temperature(self, **kwargs):
+        """Get a temperature object, from which you can possibly get result data.
+
+        Parameters
+        ----------
+        **kwargs
+            List of keyword arguments. You can use the :class:`print_available_keywords
+            <ansys.dpf.post.print_available_keywords>` method to find keyword arguments.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> solution = post.load_solution(examples.download_all_kinds_of_complexity())
+        >>> temperature = solution.structural_temperature(node_scoping = [1, 43])
+        """
+        return StructuralTemperature(
             data_sources=self._data_sources, model=self._model, **kwargs
         )
 

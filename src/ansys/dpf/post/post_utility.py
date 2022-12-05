@@ -19,8 +19,9 @@ from ansys.dpf.post.transient_analysis import (
 
 
 def load_solution(data_sources, physics_type=None, analysis_type=None):
-    """Loads a solution with a data sources to get access to the solution's
-    data: mesh, results...
+    """Solution Factory: Loads a solution with a data sources to get
+    access to the solution's data (mesh, results...) depending on the
+    physics and analysis types.
 
     Parameters
     ----------
@@ -38,7 +39,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
 
     Returns
     -------
-    ansys.dpf.post.DpfSolution
+    DpfSolution,
 
     Examples
     --------

@@ -1,9 +1,9 @@
 """Module containing the specific Transient Analysis Solution class."""
 
-from ansys.dpf.post.dpf_solution import DpfMecanicSolution, DpfThermalSolution
+from ansys.dpf.post.dpf_solution import DpfMechanicSolution, DpfThermalSolution
 
 
-class TransientAnalysisSolution(DpfMecanicSolution):
+class TransientAnalysisSolution(DpfMechanicSolution):
     """Transient solution class, which will provide all the API for Transient analysis."""
 
 
