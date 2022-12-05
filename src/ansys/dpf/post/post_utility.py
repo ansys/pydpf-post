@@ -2,6 +2,7 @@
 
 This module is used for the initialization of DPF-Post objects.
 """
+import warnings
 from ansys.dpf.core.model import Model
 
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
@@ -18,23 +19,26 @@ from ansys.dpf.post.transient_analysis import (
 
 
 def load_solution(data_sources, physics_type=None, analysis_type=None):
-    """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
-
-    This class provides information on a given set on a given scoping.
+    """Loads a solution with a data sources to get access to the solution's
+    data: mesh, results...
 
     Parameters
     ----------
     data_sources : str or ansys.dpf.core.DataSources
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
-    physics_type : common._PhysicsType, str, optional
+    physics_type : ansys.dpf.post.PhysicsType, str, optional
         Type of phsyics described in the specified data sources. Options are
         ``"mecanic"`` or ``"thermal"``. The default is ``None``, in which case
         the data sources are read to determine the physics type.
-    analysis_type : common._AnalysisType, str, optional
+    analysis_type : ansys.dpf.post.AnalysisType, str, optional
         Type of analysis described in the specified data sources. Options are
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
+
+    Returns
+    -------
+    ansys.dpf.post.DpfSolution
 
     Examples
     --------

@@ -6,11 +6,22 @@ a result object regarding the wanted result type.
 This module also contains the ``DpfComplexSolution`` class, which is a
 child of the ``DpfSolution`` class.  In addition to the classic APIs, the complex
 result introduces an amplitude evaluation.
+
+
+.. autoexception:: MeshedRegion
+   :members:
+
+.. autoexception:: TimeFreqSupport
+   :members:
+
+.. autoexception:: ResultInfo
+   :members:
+
 """
 
 import re
 
-from ansys.dpf.core import locations
+from ansys.dpf.core import locations, MeshedRegion, TimeFreqSupport, ResultInfo
 
 from ansys.dpf.post.common import _AvailableKeywords
 from ansys.dpf.post.displacement import ComplexDisplacement, Displacement
@@ -33,7 +44,7 @@ from ansys.dpf.post.temperature import (
 
 
 class DpfSolution:
-    """Provides the main class of the DPF-Post solution."""
+    """Gives access to results of a model."""
 
     def __init__(self, data_sources, model):
         """Initialize the solution using ``data_sources`` and ``dpf.core.Model`` objects."""
@@ -44,17 +55,28 @@ class DpfSolution:
     def mesh(self):
         """Mesh representation of the model.
 
-        Returns the :class:`ansys.dpf.core.MeshedRegion` class.
+        Returns
+        -------
+        MeshedRegion
         """
         return self._model.metadata.meshed_region
 
     @property
     def time_freq_support(self):
-        """Description of the temporal/frequency analysis of the model."""
+        """Description of the temporal/frequency analysis of the model.
+
+        Returns
+        -------
+        TimeFreqSupport
+        """
         return self._model.metadata.time_freq_support
 
     def get_result_info(self):
         """Get result file information.
+
+        Returns
+        -------
+        ResultInfo
 
         Examples
         --------
@@ -91,7 +113,7 @@ class DpfSolution:
     def __str__(self):
         """Get the string representation of this class."""
         txt = (
-            "%s object." % re.sub(r"(?<!^)(?=[A-Z])", " ", type(self).__name__)
+            "%s." % re.sub(r"(?<!^)(?=[A-Z])", " ", type(self).__name__)
             + "\n\n\nData Sources\n------------------------------\n"
         )
         ds_str = self._data_sources.__str__()

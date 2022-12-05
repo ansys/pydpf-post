@@ -25,6 +25,8 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version("ansys-dpf-post")
 
 from ansys.dpf.post.common import Grouping as grouping
+from ansys.dpf.post.common import _PhysicsType as PhysicsType
+from ansys.dpf.post.common import _AnalysisType as AnalysisType
 from ansys.dpf.post.dpf_path import create_path_on_coordinates
 from ansys.dpf.post.misc import Report
 from ansys.dpf.post.post_utility import load_solution, print_available_keywords
