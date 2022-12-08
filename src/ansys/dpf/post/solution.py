@@ -4,6 +4,7 @@ import re
 from typing import Optional, Union
 
 from ansys.dpf import core
+from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.selection import Selection
@@ -196,7 +197,11 @@ class MechanicalSolution(Solution):
         # We will use the DataObject thing here.
         wf.set_output_name("out", disp_op.outputs.fields_container)
 
-        return wf.get_output("out", core.types.fields_container)[0]
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            columns=["X", "Y", "Z"],
+            mesh_scoping=mesh_scoping,
+        )
 
 
 #     def velocity(
