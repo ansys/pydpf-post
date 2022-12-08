@@ -4,7 +4,8 @@ Selection
 
 """
 
-from ansys.dpf.core import Scoping, time_freq_scoping_factory, Field, locations, operators, Workflow, types
+from ansys.dpf.core import Scoping, time_freq_scoping_factory, Field, locations, operators, \
+    Workflow, types
 from ansys.dpf.core.field import _get_size_of_list
 from typing import Union
 
@@ -115,7 +116,7 @@ class TimeFreqSelection:
 
     def __init__(self, server):
         self._server = server
-        self._selection = None
+        self._selection = Workflow(server=self._server)
 
     def select_time_freq_indices(self, time_freq_indices) -> None:
         """Select time frequency sets by their indices (0 based).
@@ -134,7 +135,14 @@ class TimeFreqSelection:
         ----------
         time_freq_indices: list[int]
         """
-        self._selection = time_freq_scoping_factory.scoping_by_sets(time_freq_sets, server=self._server)
+        sets = time_freq_scoping_factory.scoping_by_sets(time_freq_sets,
+                                                         server=self._server)
+        op = operators.utility.forward(
+            sets,
+            server=self._server
+        )
+        self._selection.add_operator(op)
+        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
     def select_time_freq_values(self, time_freq_values) -> None:
         """Select time frequency sets by their cumulative sets (1 based).
@@ -144,12 +152,43 @@ class TimeFreqSelection:
         time_freq_indices: list[float], np.ndarray, ansys.dpf.core.Field
         """
         if isinstance(time_freq_values, Field):
-            self._selection = time_freq_values
+            values = time_freq_values
         else:
             time_freq_field = Field(location=locations.time_freq, server=self._server)
             time_freq_field.data = time_freq_values
             time_freq_field.scoping.ids = range(1, _get_size_of_list(time_freq_values))
-            self._selection = time_freq_field
+            values = time_freq_field
+        op = operators.utility.forward(
+            values,
+            server=self._server
+        )
+        self._selection.add_operator(op)
+        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+
+    def evaluate_on(self, solution) -> Scoping:
+        """Returns what is evaluated from the selections made on a given Solution.
+        This scoping is internally used to evaluate result on the right spatial domain.
+
+        Parameters
+        ----------
+        solution: Solution
+
+        Returns
+        -------
+        Scoping
+        """
+        if self._selection is None:
+            return None
+        input_names = self._selection.input_names
+        # TO DO: connect streams
+        # if solution._model.metadata.streams_provider is not None and _WfNames.streams in input_names:
+        #     self._selection.connect(_WfNames.streams,
+        #                             solution._model.metadata.streams_provider.outputs.streams_container())
+        # el
+        if _WfNames.data_sources in input_names:
+            self._selection.connect(_WfNames.data_sources, solution._model.metadata.data_sources)
+
+        return self._selection.get_output(_WfNames.scoping, types.scoping)
 
 
 class SpatialSelection:
@@ -245,13 +284,14 @@ class SpatialSelection:
             spatial_selection = SpatialSelection(selection=spatial_selection, server=self._server)
 
         intersect_op = operators.scoping.intersect(server=self._server)
+
         new_wf = Workflow(self._server)
         new_wf.add_operator(intersect_op)
         new_wf.set_input_name(_WfNames.scoping_a, intersect_op.inputs.scopingA)
         new_wf.set_input_name(_WfNames.scoping_b, intersect_op.inputs.scopingB)
         new_wf.set_output_name(_WfNames.scoping, intersect_op.outputs.intersection)
-        new_wf.connect_with(self._selection)
-        new_wf.connect_with(spatial_selection._selection)
+        new_wf.connect_with(self._selection, {_WfNames.scoping: _WfNames.scoping_a})
+        new_wf.connect_with(spatial_selection._selection, {_WfNames.scoping: _WfNames.scoping_b})
         self._selection = new_wf
 
     def evaluate_on(self, solution) -> Scoping:
@@ -269,9 +309,12 @@ class SpatialSelection:
         if self._selection is None:
             return None
         input_names = self._selection.input_names
-        if solution._model.metadata.streams_provider is not None and _WfNames.streams in input_names:
-            self._selection.connect(_WfNames.streams, solution._model.metadata.streams_provider.outputs.streams_container())
-        elif _WfNames.data_sources in input_names:
+        # TO DO: connect streams
+        # if solution._model.metadata.streams_provider is not None and _WfNames.streams in input_names:
+        #     self._selection.connect(_WfNames.streams,
+        #                             solution._model.metadata.streams_provider.outputs.streams_container())
+        # el
+        if _WfNames.data_sources in input_names:
             self._selection.connect(_WfNames.data_sources, solution._model.metadata.data_sources)
 
         return self._selection.get_output(_WfNames.scoping, types.scoping)
