@@ -1,5 +1,5 @@
 import pandas as pd    #Make sure that pandas is in the requirements
-import numpy as np     #Make sure that pandas is in the requirements
+import numpy as np     #Make sure that numpy is in the requirements
 from ansys.dpf.core.fields_container import FieldsContainer
 
 class DataObject(FieldsContainer):
