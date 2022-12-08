@@ -12,9 +12,10 @@ from ansys.dpf.post.selection import Selection
 class Solution:
     """Provides the main class of the DPF-Post solution."""
 
-    def __init__(self, model: core.Model):
+    def __init__(self, data_sources: core.DataSources, model: core.Model):
         """Initialize the solution using a ``dpf.core.Model`` object."""
         self._model = model
+        self._data_sources = data_sources
         self._active_selection = None
         self._mesh = None
 
@@ -87,31 +88,70 @@ class Solution:
 class MechanicalSolution(Solution):
     """Provides a mechanical type solution."""
 
-    def __init__(self, model: core.Model):
-        super().__init__(model)
+    def __init__(self, data_sources: core.DataSources, model: core.Model):
+        super().__init__(data_sources, model)
 
-    def _selec_selection(self, selection: Selection):
-        if selection is None:
-            selection = self._active_selection
+    def _select_time_freq(self, selection=None, steps=None):
+        """Select time"""
+        # Build the time_scoping from steps or selection
+        time_scoping = None
+        if selection:
+            time_scoping = selection.time_scoping  # needs to be changed.
+        if steps:
+            time_scoping = core.time_freq_scoping_factory.scoping_by_sets(
+                steps, server=self._model._server
+            )
+        return time_scoping
 
-        if self._active_selection is None:
-            selection = Selection()
+    def _select_mesh_scoping(
+        self, selection=None, nodes=None, elements=None, named_selection=None
+    ):
+        if (nodes is not None or elements is not None) and named_selection is not None:
+            raise ValueError(
+                "nodes/elements and named_selection are mutually exclusive"
+            )
+
+        if selection is not None and (
+            nodes is not None or named_selection is not None or elements is not None
+        ):
+            raise ValueError(
+                "selection and nodes/elements/named_selection are mutually exclusive"
+            )
+
+        mesh_scoping = None
+        if selection:
+            mesh_scoping = selection.mesh_scoping
+
+        if named_selection:
+            mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+                named_selection, server=self._model._server
+            )
+        if nodes:
+            mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+                nodes, server=self._model._server
+            )
+
+        if elements:
+            mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
+                element_ids=elements, server=self._model._server
+            )
+
+        return mesh_scoping
 
     def displacement(
         self,
         selection: Optional[Selection] = None,
         steps: Optional[list[int]] = None,
         nodes: Optional[list[int]] = None,
+        elements: Optional[list[int]] = None,
         component: Optional[Union[int, str, list[str]]] = None,
         named_selection: Optional[str] = None,
-        ordered: bool = True,
+        # ordered: bool = True,
         **kwargs
     ) -> ResultData:
 
-        # Getting a selection
-        self._selec_selection(selection)
-
         wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
 
         # Select the operator based on component
         if component is None:
@@ -130,128 +170,116 @@ class MechanicalSolution(Solution):
 
         disp_op = self._model.operator(name=op_name)
 
-        # Build the time_scoping from steps or selection
-        time_scoping = None
-        if selection:
-            time_scoping = selection.time_scoping
-        if steps:
-            time_scoping = core.time_freq_scoping_factory.scoping_by_sets(
-                steps, server=self._model._server
-            )
+        time_scoping = self._select_time_freq(selection, steps)
+
         # Set the time_scoping if necessary
         if time_scoping:
             disp_op.connect(0, time_scoping)
 
         # Build the mesh_scoping from nodes or selection
-        mesh_scoping = None
-        if selection:
-            mesh_scoping = selection.mesh_scoping
-
-        if named_selection:
-            mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
-                named_selection, server=self._model._server
-            )
-        if nodes:
-            mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-                nodes, server=self._model._server
-            )
+        mesh_scoping = self._select_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
         # Set the mesh_scoping if necessary
         if mesh_scoping:
             disp_op.connect(1, mesh_scoping)
 
         wf.add_operator(disp_op)
 
-        if ordered:
-            ord_op = self._model.operator(name="Rescope_fc")
-            ord_op.connect(0, disp_op.get_output(0))
-            wf.set_output_name("out", ord_op.get_output(0))
-        else:
-            wf.set_output_name("out", disp_op.get_output(0))
+        # Reorder
+        # ord_op = self._model.operator(name="Rescope_fc")
+        # ord_op.inputs.fields_container.connect(disp_op.outputs.fields_container)
+        # ord_op.inputs.mesh_scoping.connect(mesh_scoping)
 
-        fc = wf.get_output("out", core.types.fields_container)
-        return ResultData(fc)
+        # ord_op.connect(0, disp_op.outputs.fields_container)
 
-    def velocity(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
+        # We will use the DataObject thing here.
+        wf.set_output_name("out", disp_op.outputs.fields_container)
 
-    def nodal_stress(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        elements: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,
-        element_shape: Optional[core.elements._element_shapes] = None,
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
-
-    def elemental_stress(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        elements: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,
-        element_shape: Optional[core.elements._element_shapes] = None,
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
-
-    def raw_stress(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        elements: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,
-        element_shape: Optional[core.elements._element_shapes] = None,
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
+        return wf.get_output("out", core.types.fields_container)[0]
 
 
-class FluidSolution(Solution):
-    """Provides a fluid type solution."""
+#     def velocity(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
 
-    def __init__(self, data_sources, model):
-        super().__init__(data_sources, model)
+#     def nodal_stress(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         elements: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,
+#         element_shape: Optional[core.elements._element_shapes] = None,
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
 
-    def displacement(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
+#     def elemental_stress(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         elements: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,
+#         element_shape: Optional[core.elements._element_shapes] = None,
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
 
-    def velocity(
-        self,
-        steps: Optional[list[int]] = None,
-        components: Optional[Union[int, str, list[str]]] = None,
-        nodes: Optional[list[int]] = None,
-        named_selection: Optional[str] = None,
-        selection: Optional[Selection] = None,  # Can deal with qualifiers
-        ordered: bool = True,
-        **kwargs
-    ) -> ResultData:
-        pass
+#     def raw_stress(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         elements: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,
+#         element_shape: Optional[core.elements._element_shapes] = None,
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
+
+
+# class FluidSolution(Solution):
+#     """Provides a fluid type solution."""
+
+#     def __init__(self, data_sources, model):
+#         super().__init__(data_sources, model)
+
+#     def displacement(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
+
+#     def velocity(
+#         self,
+#         steps: Optional[list[int]] = None,
+#         components: Optional[Union[int, str, list[str]]] = None,
+#         nodes: Optional[list[int]] = None,
+#         named_selection: Optional[str] = None,
+#         selection: Optional[Selection] = None,  # Can deal with qualifiers
+#         ordered: bool = True,
+#         **kwargs
+#     ) -> ResultData:
+#         pass
