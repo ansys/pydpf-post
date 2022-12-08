@@ -7,7 +7,7 @@ class DataObject(FieldsContainer):
 
     Parameters
     ----------
-    fields_container : class:`fieldc_from_dpf`
+    fields_container : class:`ansys.dpf.core.fields_container.FieldsContainer`
         fields_container
     server: str
         Name of the server.
