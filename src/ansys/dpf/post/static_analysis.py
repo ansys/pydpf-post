@@ -1,6 +1,7 @@
 """Module containing the specific Static Analysis Solution class."""
 
-from ansys.dpf.post.dpf_solution import DpfMecanicSolution, DpfThermalSolution
+from ansys.dpf.post.dpf_solution import DpfThermalSolution  # DpfMecanicSolution
+from ansys.dpf.post.solution import MechanicalSolution as DpfMecanicSolution
 
 
 class StaticAnalysisSolution(DpfMecanicSolution):
