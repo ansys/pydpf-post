@@ -4,7 +4,11 @@ Selection
 
 """
 from __future__ import annotations
-from ansys.dpf.post.solution import Solution
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ansys.dpf.post.solution import Solution
+
 from ansys.dpf.core import Scoping, time_freq_scoping_factory, Field, locations, operators, \
     Workflow, types
 from ansys.dpf.core.server_types import BaseServer
@@ -319,7 +323,6 @@ class Selection:
     def spatial_selection(self, value: SpatialSelection):
         self._spatial_selection = value
 
-
     def select_time_freq_indices(self, time_freq_indices: list[int]) -> None:
         """Select time frequency sets by their indices (0 based).
 
@@ -339,25 +342,29 @@ class Selection:
         self._time_freq_selection.select_time_freq_sets(time_freq_sets)
 
     def select_time_freq_values(self,
-                                time_freq_values: Union[]) -> None:
+                                time_freq_values: Union[list[float], ndarray, Field]
+                                ) -> None:
         """Select time frequency sets by their cumulative sets (1 based).
 
         Parameters
         ----------
-        time_freq_indices: list[float], np.ndarray, ansys.dpf.core.Field
+        time_freq_values: list[float], np.ndarray, ansys.dpf.core.Field
         """
         self._time_freq_selection.select_time_freq_values(time_freq_values)
 
-    def select_named_selection(self, named_selection_name, location=None) -> None:
+    def select_named_selection(self,
+                               named_selection: str,
+                               location: Optional[Union[str, locations]] = None
+                               ) -> None:
         """Select a mesh scoping corresponding to a named selection.
 
         Parameters
         ----------
-        named_selection_name : list[str]
+        named_selection:
 
-        location: str, ansys.dpf.core.locations, optional
+        location:
         """
-        self._spatial_selection.select_named_selection(named_selection_name, location)
+        self._spatial_selection.select_named_selection(named_selection, location)
 
     def select_nodes(self, nodes: Union[list[int], Scoping]) -> None:
         """Select a mesh scoping with its node Ids.
