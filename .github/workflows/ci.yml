@@ -169,7 +169,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: documentation-html
-          path: doc/build/html
+          path: docs/build/html
           retention-days: 7
 
   upload_dev_docs:
