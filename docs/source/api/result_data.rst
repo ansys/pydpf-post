@@ -5,7 +5,7 @@
 ********************
 
 The :class:`ResultData <ansys.dpf.post.result_data.ResultData>` class is
-created using the :class:`Result <ansys.dpf.core.results.Result>` class.  The ``Result``
+created using the :class:`Result <ansys.dpf.core.results.Result>` class. The ``Result``
 class provides access to the result values contained in the ``Result`` object.
 
 This example shows how to access ``displacement`` result values:
