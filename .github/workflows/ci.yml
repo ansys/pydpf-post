@@ -147,7 +147,7 @@ jobs:
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v3
 
-  docs-style:
+  doc-style:
     name: "Check doc style"
     uses: ./.github/workflows/docs-style.yml
     secrets: inherit
@@ -155,7 +155,7 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
-    needs: [docs-style]
+    needs: [doc-style]
 
     steps:
       - uses: actions/checkout@v3
