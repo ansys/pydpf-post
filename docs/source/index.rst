@@ -74,7 +74,7 @@ scripts.
 
 **Easy to use**
 
-The PyDPF-Post API automates the use of DPF's chained operators to make
+The PyDPF-Post API automates the use of chained DPF operators to make
 postprocessing easier. The PyDPF-Post documentation describes how you can
 use operators to compute results. This allows you to build your own custom,
 low-level scripts to enable fast postprocessing of potentially multi-gigabyte
