@@ -172,18 +172,17 @@ jobs:
           path: docs/build/html
           retention-days: 7
 
-  upload_dev_docs:
-    name: "Upload development documentation"
-    if: github.ref == 'refs/heads/master'
+  upload_docs_release:
+    name: "Upload release documentation"
     runs-on: ubuntu-latest
     needs: [docs]
     steps:
-      - name: "Deploy the development documentation"
-        uses: pyansys/actions/doc-deploy-dev@v2
+      - name: Deploy the stable documentation
+        uses: pyansys/actions/doc-deploy-stable@v2
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
+          python-version: '3.9'
 
   draft_release:
     name: "Draft release"
