@@ -1,9 +1,7 @@
 import numpy as np
-from ansys.dpf.core.common import locations
 
 from ansys.dpf import post
-from ansys.dpf.post.selection import Selection, SpatialSelection
-import numpy
+from ansys.dpf.post.selection import SpatialSelection
 
 
 def test_spatial_scoping_selection(allkindofcomplexity):
@@ -25,8 +23,10 @@ def test_spatial_named_selection(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
 
     selection = SpatialSelection()
-    selection.select_named_selection(solution.mesh.available_named_selections[0],
-                                     location=post.selection.locations.nodal)
+    selection.select_named_selection(
+        solution.mesh.available_named_selections[0],
+        location=post.selection.locations.nodal,
+    )
     scoping = selection.evaluate_on(solution)
     assert scoping.location == post.selection.locations.nodal
     assert scoping.ids.size == 12970
