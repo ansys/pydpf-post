@@ -1,21 +1,31 @@
-"""
+"""Module containing selection classes.
+
 Selection
 ---------
 
 """
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ansys.dpf.post.solution import Solution
 
-from ansys.dpf.core import Scoping, time_freq_scoping_factory, Field, locations, operators, \
-    Workflow, types
-from ansys.dpf.core.server_types import BaseServer
-from ansys.dpf.core.server import get_or_create_server
+from typing import Union
+
+from ansys.dpf.core import (
+    Field,
+    Scoping,
+    Workflow,
+    locations,
+    operators,
+    time_freq_scoping_factory,
+    types,
+)
 from ansys.dpf.core.field import _get_size_of_list
+from ansys.dpf.core.server import get_or_create_server
+from ansys.dpf.core.server_types import BaseServer
 from numpy import ndarray
-from typing import Union, Optional
 
 
 class _WfNames:
@@ -27,11 +37,20 @@ class _WfNames:
 
 
 class TimeFreqSelection:
-    """Translate time/frequency selection types (index, sets, time/frequency values)
-    into DPF known entities.
+    """Define a time/frequency selection.
+
+    Translate time/frequency selection types (index, sets, time/frequency values) into DPF known
+    entities.
     """
 
-    def __init__(self, server: Optional[BaseServer] = None):
+    def __init__(self, server: BaseServer | None = None):
+        """Create a time/frequency selection.
+
+        Parameters
+        ----------
+        server:
+            DPF server on which to create the TimeFreqSelection.
+        """
         self._server = get_or_create_server(server)
         self._selection = Workflow(server=self._server)
 
@@ -54,18 +73,16 @@ class TimeFreqSelection:
         time_freq_sets:
             Cumulative set indices of the time-steps/frequencies to select.
         """
-        sets = time_freq_scoping_factory.scoping_by_sets(time_freq_sets,
-                                                         server=self._server)
-        op = operators.utility.forward(
-            sets,
-            server=self._server
+        sets = time_freq_scoping_factory.scoping_by_sets(
+            time_freq_sets, server=self._server
         )
+        op = operators.utility.forward(sets, server=self._server)
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
-    def select_time_freq_values(self,
-                                time_freq_values: Union[list[float], ndarray, Field]
-                                ) -> None:
+    def select_time_freq_values(
+        self, time_freq_values: Union[list[float], ndarray, Field]
+    ) -> None:
         """Select time frequency sets by their values (1 based).
 
         Parameters
@@ -80,15 +97,13 @@ class TimeFreqSelection:
             time_freq_field.data = time_freq_values
             time_freq_field.scoping.ids = range(1, _get_size_of_list(time_freq_values))
             values = time_freq_field
-        op = operators.utility.forward(
-            values,
-            server=self._server
-        )
+        op = operators.utility.forward(values, server=self._server)
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
-    def _evaluate_on(self, solution: Solution) -> Optional[Scoping]:
+    def _evaluate_on(self, solution: Solution) -> Scoping | None:
         """Returns what is evaluated from the selections made on a given Solution.
+
         This scoping is internally used to evaluate result on the right time/freq domain.
 
         Parameters
@@ -105,12 +120,15 @@ class TimeFreqSelection:
             return None
         input_names = self._selection.input_names
         # TO DO: connect streams
-        # if solution._model.metadata.streams_provider is not None and _WfNames.streams in input_names:
+        # if solution._model.metadata.streams_provider is not None
+        # and _WfNames.streams in input_names:
         #     self._selection.connect(_WfNames.streams,
         #                             solution._model.metadata.streams_provider.outputs.streams_container())
         # el
         if _WfNames.data_sources in input_names:
-            self._selection.connect(_WfNames.data_sources, solution._model.metadata.data_sources)
+            self._selection.connect(
+                _WfNames.data_sources, solution._model.metadata.data_sources
+            )
 
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
@@ -121,6 +139,7 @@ class TimeFreqSelection:
         ----------
         solution:
             PyDPF-Post Solution to apply the selection on.
+
         Returns
         -------
         IDs of the entities obtained after applying the selection.
@@ -130,22 +149,33 @@ class TimeFreqSelection:
 
 
 class SpatialSelection:
-    """Translate space selection types (node ids, elements ids, geometry selections, named selections...)
-    into DPF known entities.
+    """Define a spatial selection.
+
+    Translate space selection types (node ids, elements ids, geometry selections,
+    named selections...) into DPF known entities.
     """
 
-    def __init__(self, scoping: Optional[Scoping] = None,
-                 server: Optional[BaseServer] = None):
+    def __init__(
+        self, scoping: Scoping | None = None, server: BaseServer | None = None
+    ):
+        """Create a SpatialSelection.
+
+        Parameters
+        ----------
+        scoping:
+            Scoping to use to define the SpatialSelection.
+        server:
+            DPF server on which to create the SpatialSelection.
+        """
         self._server = get_or_create_server(server)
         self._selection = Workflow(server=self._server)
 
         if scoping is not None:
             self.select_with_scoping(scoping)
 
-    def select_named_selection(self,
-                               named_selection: str,
-                               location: Optional[Union[str, locations]] = None
-                               ) -> None:
+    def select_named_selection(
+        self, named_selection: str, location: Union[str, locations] | None = None
+    ) -> None:
         """Select a mesh scoping corresponding to a named selection.
 
         Parameters
@@ -159,7 +189,7 @@ class SpatialSelection:
         op = operators.scoping.on_named_selection(
             requested_location=location,
             named_selection_name=named_selection,
-            server=self._server
+            server=self._server,
         )
         self._selection.add_operator(op)
         self._selection.set_input_name(_WfNames.data_sources, op.inputs.data_sources)
@@ -175,13 +205,12 @@ class SpatialSelection:
             Scoping to use for spatial selection.
         """
         if not isinstance(scoping, Scoping):
-            raise TypeError(f"The input scoping is an instance of {str(type(scoping))} "
-                            f"instead of an expected {str(Scoping)}.")
+            raise TypeError(
+                f"The input scoping is an instance of {str(type(scoping))} "
+                f"instead of an expected {str(Scoping)}."
+            )
 
-        op = operators.utility.forward(
-            scoping,
-            server=self._server
-        )
+        op = operators.utility.forward(scoping, server=self._server)
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
@@ -210,12 +239,14 @@ class SpatialSelection:
         if isinstance(elements, Scoping):
             scoping = elements
         else:
-            scoping = Scoping(location=locations.elemental, ids=elements, server=self._server)
+            scoping = Scoping(
+                location=locations.elemental, ids=elements, server=self._server
+            )
         self.select_with_scoping(scoping)
 
-    def intersect(self,
-                  spatial_selection: Union[Selection, SpatialSelection, Scoping]
-                  ) -> None:
+    def intersect(
+        self, spatial_selection: Union[Selection, SpatialSelection, Scoping]
+    ) -> None:
         """Replaces the current selection by its intersection with the input.
 
         Parameters
@@ -227,7 +258,9 @@ class SpatialSelection:
         if isinstance(spatial_selection, Selection):
             spatial_selection = spatial_selection.spatial_selection
         elif isinstance(spatial_selection, Scoping):
-            spatial_selection = SpatialSelection(scoping=spatial_selection, server=self._server)
+            spatial_selection = SpatialSelection(
+                scoping=spatial_selection, server=self._server
+            )
 
         intersect_op = operators.scoping.intersect(server=self._server)
 
@@ -237,30 +270,42 @@ class SpatialSelection:
         new_wf.set_input_name(_WfNames.scoping_b, intersect_op.inputs.scopingB)
         new_wf.set_output_name(_WfNames.scoping, intersect_op.outputs.intersection)
         new_wf.connect_with(self._selection, {_WfNames.scoping: _WfNames.scoping_a})
-        new_wf.connect_with(spatial_selection._selection, {_WfNames.scoping: _WfNames.scoping_b})
+        new_wf.connect_with(
+            spatial_selection._selection, {_WfNames.scoping: _WfNames.scoping_b}
+        )
         self._selection = new_wf
 
-    def _evaluate_on(self, solution: Solution) -> Optional[Scoping]:
+    def _evaluate_on(self, solution: Solution) -> Scoping | None:
         """Performs the currently defined selection on the given Solution.
+
         This scoping is internally used to evaluate result on the right spatial domain.
 
         Parameters
         ----------
         solution:
             PyDPF-Post Solution to apply the selection on.
+
         Returns
         -------
         Scoping:
             Resulting time/freq scoping. Returns ``None`` if no selection was made beforehand.
+
         """
         if self._selection is None:
             return None
         input_names = self._selection.input_names
-        if solution._model.metadata.streams_provider is not None and _WfNames.streams in input_names:
-            self._selection.connect(_WfNames.streams,
-                                    solution._model.metadata.streams_provider.outputs.streams_container())
+        if (
+            solution._model.metadata.streams_provider is not None
+            and _WfNames.streams in input_names
+        ):
+            self._selection.connect(
+                _WfNames.streams,
+                solution._model.metadata.streams_provider.outputs.streams_container(),
+            )
         elif _WfNames.data_sources in input_names:
-            self._selection.connect(_WfNames.data_sources, solution._model.metadata.data_sources)
+            self._selection.connect(
+                _WfNames.data_sources, solution._model.metadata.data_sources
+            )
 
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
@@ -271,9 +316,11 @@ class SpatialSelection:
         ----------
         solution:
             PyDPF-Post Solution to apply the selection on.
+
         Returns
         -------
         IDs of the entities obtained after applying the selection.
+
         """
         scoping = self._evaluate_on(solution=solution)
         return scoping.ids
@@ -281,15 +328,18 @@ class SpatialSelection:
 
 class Selection:
     """The ``Selection`` class helps define the domain on which results are evaluated.
+
     The result domain defines the time/frequency and the spatial selection.
-
-    Parameters
-    ----------
-
-
     """
 
-    def __init__(self, server: Optional[BaseServer] = None):
+    def __init__(self, server: BaseServer | None = None):
+        """Instantiate a Selection.
+
+        Parameters
+        ----------
+        server:
+            DPF server on which to instantiate.
+        """
         self._server = get_or_create_server(server)
         self._spatial_selection = SpatialSelection(server=self._server)
         self._time_freq_selection = TimeFreqSelection(server=self._server)
@@ -302,6 +352,7 @@ class Selection:
         Returns
         -------
         selection:
+            Time/freq selection of the selection.
         """
         return self._time_freq_selection
 
@@ -316,6 +367,7 @@ class Selection:
         Returns
         -------
         selection:
+            Spatial selection of the selection.
         """
         return self._spatial_selection
 
@@ -329,6 +381,7 @@ class Selection:
         Parameters
         ----------
         time_freq_indices:
+            Time/freq indexes to select.
         """
         self._time_freq_selection.select_time_freq_indices(time_freq_indices)
 
@@ -338,36 +391,39 @@ class Selection:
         Parameters
         ----------
         time_freq_sets:
+            Time/freq sets to select.
         """
         self._time_freq_selection.select_time_freq_sets(time_freq_sets)
 
-    def select_time_freq_values(self,
-                                time_freq_values: Union[list[float], ndarray, Field]
-                                ) -> None:
+    def select_time_freq_values(
+        self, time_freq_values: Union[list[float], ndarray, Field]
+    ) -> None:
         """Select time frequency sets by their cumulative sets (1 based).
 
         Parameters
         ----------
         time_freq_values: list[float], np.ndarray, ansys.dpf.core.Field
+            Time/freq values to select.
         """
         self._time_freq_selection.select_time_freq_values(time_freq_values)
 
-    def select_named_selection(self,
-                               named_selection: str,
-                               location: Optional[Union[str, locations]] = None
-                               ) -> None:
+    def select_named_selection(
+        self, named_selection: str, location: Union[str, locations] | None = None
+    ) -> None:
         """Select a mesh scoping corresponding to a named selection.
 
         Parameters
         ----------
         named_selection:
-
+            Named selection to select.
         location:
+            Location to select.
         """
         self._spatial_selection.select_named_selection(named_selection, location)
 
     def select_nodes(self, nodes: Union[list[int], Scoping]) -> None:
         """Select a mesh scoping with its node Ids.
+
         Select a mesh scoping corresponding to a named selection.
 
         Parameters
@@ -379,6 +435,7 @@ class Selection:
 
     def select_elements(self, elements: Union[list[int], Scoping]) -> None:
         """Select a mesh scoping with its node Ids.
+
         Select a mesh scoping corresponding to a named selection.
 
         Parameters
