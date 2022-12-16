@@ -1,7 +1,6 @@
-"""Module containing the ``Solution`` class.
-"""
+"""Module containing the ``Solution`` class."""
 import re
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
@@ -22,7 +21,11 @@ class Solution:
         self._mesh = None
 
     @property
-    def results(self) -> list[str]:
+    def results(self) -> List[str]:
+        """Available results.
+
+        Returns a list of available results as strings.
+        """
         return self._model.metadata.result_info.available_results
 
     @property
@@ -36,13 +39,19 @@ class Solution:
         return self._mesh
 
     def activate_selection(self, selection_object: Selection):
+        """Selection currently active.
+
+        Returns the current active :class:`ansys.dpf.post.selection.Selection` class.
+        """
         self._active_selection = selection_object.selection
 
     def deactivate_selection(self):
+        """Deactivate the currently active selection."""
         self._active_selection = None
 
     @property
     def _time_frequencies(self):
+        """Description of the temporal/frequency analysis of the model."""
         return self._model.metadata.time_freq_support
 
     @property
@@ -95,10 +104,11 @@ class MechanicalSolution(Solution):
     """Provides a mechanical type solution."""
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
+        """Instantiate a mechanical type solution."""
         super().__init__(data_sources, model)
 
     def _select_time_freq(self, selection=None, steps=None):
-        """Select time"""
+        """Select time."""
         # Build the time_scoping from steps or selection
         time_scoping = None
         if selection:
@@ -155,7 +165,27 @@ class MechanicalSolution(Solution):
         # ordered: bool = True,
         **kwargs
     ) -> ResultData:
+        """Extract displacement results from the solution.
 
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.result_data.ResultData` instance.
+
+        """
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
