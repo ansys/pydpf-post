@@ -36,11 +36,12 @@ class LabelSpaceError(ValueError):
 
 
 class PandasImportError(ModuleNotFoundError):
-    """Error raised when Pandas could not be imported when trying export to a DataFrame."""
+    """Error raised when Pandas could not be imported while trying export to a DataFrame."""
 
     def __init__(
         self,
         msg="To export to a pandas.DataFrame, please install pandas "
         "with :\n pip install pandas",
     ):
+        """Initialize this class."""
         ModuleNotFoundError.__init__(self, msg)
