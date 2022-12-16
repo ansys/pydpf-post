@@ -1,6 +1,6 @@
 from ansys.dpf.core.fields_container import FieldsContainer
 import numpy as np  # Make sure that numpy is in the requirements
-import pandas as pd  # Make sure that pandas is in the requirements
+from ansys.dpf.post.errors import PandasImportError
 
 
 class DataObject(FieldsContainer):
@@ -67,7 +67,10 @@ class DataObject(FieldsContainer):
         >>> df = pd.DataFrame(data2, columns)
         >>> df = df.transpose()
         """
-
+        try:
+            import pandas as pd
+        except ModuleNotFoundError:
+            raise PandasImportError
         # columns = None
         # for arg in args:
         #     columns.appends(arg)

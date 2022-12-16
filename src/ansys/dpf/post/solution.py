@@ -17,8 +17,13 @@ class Solution:
         """Initialize the solution using a ``dpf.core.Model`` object."""
         self._model = model
         self._data_sources = data_sources
+        self._geometry = None
         self._active_selection = None
         self._mesh = None
+
+    @property
+    def results(self) -> list[str]:
+        return self._model.metadata.result_info.available_results
 
     @property
     def mesh(self) -> Mesh:
