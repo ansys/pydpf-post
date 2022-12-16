@@ -1,5 +1,7 @@
-"""Example of how to use the DPF-Post module to load
-a solution and plot the displacement of nodes 4 and 6."""
+"""Example of how to use the DPF-Post module.
+
+Show how to load a solution and plot the displacement of nodes 4 and 6.
+"""
 
 from ansys.dpf.post import examples, load_solution
 
