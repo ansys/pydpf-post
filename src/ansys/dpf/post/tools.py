@@ -1,20 +1,38 @@
-"""
+"""This module holds factories to create geometry, selections...
+
 tools
 =====
-This module holds factories to create geometry, selections...
+
 These factories help creating Objects used to defined which results are evaluated.
+
 """
 
 from ansys.dpf.post import selection
-from ansys.dpf.core.geometry_factory import *
+
+# from ansys.dpf.core.geometry_factory import *
 
 
-def select(time_freq_indexes=None, time_freq_sets=None, time_freq_values=None, named_selection_names=None, kwargs=None):
-    """Creates a ``Selection`` instance allowing to choose the domain on which results are evaluated.
+def select(
+    time_freq_indexes=None,
+    time_freq_sets=None,
+    time_freq_values=None,
+    named_selection_names=None,
+    **kwargs
+):
+    """Creates a ``Selection`` instance allowing to choose the domain on which to evaluate results.
+
     The results domain defines the time frequency and the spatial selection.
 
     Parameters
     ----------
+    time_freq_indexes:
+        Time/freq indexes to select.
+    time_freq_sets:
+        Time/freq sets to select.
+    time_freq_values:
+        Time/freq values to select.
+    named_selection_names:
+        Time/freq named selection to select.
 
     """
     current_selection = selection.Selection()
