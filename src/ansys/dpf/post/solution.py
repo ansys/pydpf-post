@@ -1,6 +1,6 @@
 """Module containing the ``Solution`` class."""
 import re
-from typing import List, Optional, Union
+from typing import List, Union
 
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
@@ -156,12 +156,12 @@ class MechanicalSolution(Solution):
 
     def displacement(
         self,
-        selection: Optional[Selection] = None,
-        steps: Optional[list[int]] = None,
-        nodes: Optional[list[int]] = None,
-        elements: Optional[list[int]] = None,
-        component: Optional[Union[int, str, list[str]]] = None,
-        named_selection: Optional[str] = None,
+        selection: Selection | None = None,
+        steps: list[int] | None = None,
+        nodes: list[int] | None = None,
+        elements: list[int] | None = None,
+        component: Union[int, str, list[str]] | None = None,
+        named_selection: str | None = None,
         # ordered: bool = True,
         **kwargs
     ) -> ResultData:
