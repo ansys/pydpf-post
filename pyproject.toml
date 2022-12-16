@@ -17,7 +17,7 @@ maintainers = [
     {name = "PyAnsys developers", email = "pyansys.support@ansys.com"},
 ]
 dependencies = [
-    "ansys.dpf.core @ git+ssh://git@github.com/pyansys/pydpf-core#feat/geometry-elements",
+    "ansys.dpf.core @ git://git@github.com/pyansys/pydpf-core#feat/geometry-elements",
     "scooby",
 ]
 classifiers = [
