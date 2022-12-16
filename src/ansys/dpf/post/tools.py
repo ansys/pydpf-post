@@ -6,6 +6,7 @@ These factories help creating Objects used to defined which results are evaluate
 """
 
 from ansys.dpf.post import selection
+from ansys.dpf.core.geometry_factory import *
 
 
 def select(time_freq_indexes=None, time_freq_sets=None, time_freq_values=None, named_selection_names=None, kwargs=None):
