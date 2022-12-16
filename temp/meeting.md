@@ -2,7 +2,7 @@
 
 ## Aim
 
-Simple, and intuitive, yet powerfull, easy-to-use entry level library which remains as an API to ``DPF-Core`` library.
+Simple, and intuitive, yet powerful, easy-to-use entry level library which remains as an API to ``DPF-Core`` library.
 
 ## Requirements
 
@@ -102,7 +102,7 @@ simulation.activate_selection(
           time_steps = [1, 2],
 ) # Remains applied in 'simulation' until cleared/deactivated
 
-simulation.displacement().plot()  # ploting only time_steps 1 and 2
+simulation.displacement().plot()  # plotting only time_steps 1 and 2
 
 simulation.deactivate_selection()
 ```
