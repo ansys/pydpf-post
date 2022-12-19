@@ -156,12 +156,12 @@ class MechanicalSolution(Solution):
 
     def displacement(
         self,
-        selection: Selection | None = None,
-        steps: list[int] | None = None,
-        nodes: list[int] | None = None,
-        elements: list[int] | None = None,
-        component: Union[int, str, list[str]] | None = None,
-        named_selection: str | None = None,
+        selection: Union[Selection, None] = None,
+        steps: Union[list[int], None] = None,
+        nodes: Union[list[int], None] = None,
+        elements: Union[list[int], None] = None,
+        component: Union[int, str, list[str], None] = None,
+        named_selection: Union[str, None] = None,
         # ordered: bool = True,
         **kwargs
     ) -> ResultData:

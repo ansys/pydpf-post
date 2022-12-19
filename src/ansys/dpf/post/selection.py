@@ -43,7 +43,7 @@ class TimeFreqSelection:
     entities.
     """
 
-    def __init__(self, server: BaseServer | None = None):
+    def __init__(self, server: Union[BaseServer, None] = None):
         """Create a time/frequency selection.
 
         Parameters
@@ -101,7 +101,7 @@ class TimeFreqSelection:
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
-    def _evaluate_on(self, solution: Solution) -> Scoping | None:
+    def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
         """Returns what is evaluated from the selections made on a given Solution.
 
         This scoping is internally used to evaluate result on the right time/freq domain.
@@ -156,7 +156,9 @@ class SpatialSelection:
     """
 
     def __init__(
-        self, scoping: Scoping | None = None, server: BaseServer | None = None
+        self,
+        scoping: Union[Scoping, None] = None,
+        server: Union[BaseServer, None] = None,
     ):
         """Create a SpatialSelection.
 
@@ -174,7 +176,7 @@ class SpatialSelection:
             self.select_with_scoping(scoping)
 
     def select_named_selection(
-        self, named_selection: str, location: Union[str, locations] | None = None
+        self, named_selection: str, location: Union[str, locations, None] = None
     ) -> None:
         """Select a mesh scoping corresponding to a named selection.
 
@@ -275,7 +277,7 @@ class SpatialSelection:
         )
         self._selection = new_wf
 
-    def _evaluate_on(self, solution: Solution) -> Scoping | None:
+    def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
         """Performs the currently defined selection on the given Solution.
 
         This scoping is internally used to evaluate result on the right spatial domain.
@@ -332,7 +334,7 @@ class Selection:
     The result domain defines the time/frequency and the spatial selection.
     """
 
-    def __init__(self, server: BaseServer | None = None):
+    def __init__(self, server: Union[BaseServer, None] = None):
         """Instantiate a Selection.
 
         Parameters
@@ -408,7 +410,7 @@ class Selection:
         self._time_freq_selection.select_time_freq_values(time_freq_values)
 
     def select_named_selection(
-        self, named_selection: str, location: Union[str, locations] | None = None
+        self, named_selection: str, location: Union[str, locations, None] = None
     ) -> None:
         """Select a mesh scoping corresponding to a named selection.
 
