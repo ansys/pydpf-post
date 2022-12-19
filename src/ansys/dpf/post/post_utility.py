@@ -30,7 +30,7 @@ def load_solution(
 
     Parameters
     ----------
-    data_sources: str or ansys.dpf.core.DataSources
+    data_sources: str, ansys.dpf.core.DataSources
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
     physics_type: common._PhysicsType, str, optional
         Type of phsyics described in the specified data sources. Options are

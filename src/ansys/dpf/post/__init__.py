@@ -28,7 +28,7 @@ from ansys.dpf.post.misc import Report
 from ansys.dpf.post.post_utility import load_solution, print_available_keywords
 
 # this must be after some ansys.dpf.post import
-__version__ = importlib_metadata.version("ansys-dpf-post")
+__version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
 
 if hasattr(core, "settings") and hasattr(
