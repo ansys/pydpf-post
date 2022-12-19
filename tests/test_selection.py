@@ -5,7 +5,7 @@ from ansys.dpf.post.selection import SpatialSelection
 
 
 def test_spatial_scoping_selection(allkindofcomplexity):
-    solution = post.load_solution(allkindofcomplexity)
+    solution = post.load_solution(allkindofcomplexity, legacy=False)
     selection = SpatialSelection()
     selection.select_nodes([1, 2, 3])
     scoping = selection.evaluate_on(solution)
@@ -20,7 +20,7 @@ def test_spatial_scoping_selection(allkindofcomplexity):
 
 
 def test_spatial_named_selection(allkindofcomplexity):
-    solution = post.load_solution(allkindofcomplexity)
+    solution = post.load_solution(allkindofcomplexity, legacy=False)
 
     selection = SpatialSelection()
     selection.select_named_selection(
@@ -35,7 +35,7 @@ def test_spatial_named_selection(allkindofcomplexity):
 
 
 def test_spatial_intersect_selection(allkindofcomplexity):
-    solution = post.load_solution(allkindofcomplexity)
+    solution = post.load_solution(allkindofcomplexity, legacy=False)
     selection1 = SpatialSelection()
     selection1.select_nodes([1, 2, 3])
     scoping = selection1.evaluate_on(solution)

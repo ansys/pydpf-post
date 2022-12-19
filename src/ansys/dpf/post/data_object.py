@@ -66,17 +66,17 @@ class DataObject(FieldsContainer):
         >>> import pandas as pd
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.multishells_rst)
-        >>> stress = solution.stress()
-        >>> stress.xx.plot_contour(show_edges=False)
-        # Here the example will have to be updated after refactoring.
-        >>> data = stress.xx.get_data_at_field(0)
-        >>> data_frame = pd.DataFrame(data)
+        >>> solution = post.load_solution(examples.multishells_rst, legacy=False)
+        >>> #stress = solution.stress()
+        >>> #stress.xx.plot_contour(show_edges=False)
 
-        >>> data2 = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]]
-        >>> columns = ['x', 'y', 'z']
-        >>> df = pd.DataFrame(data2, columns)
-        >>> df = df.transpose()
+        >>> #data = stress.xx.get_data_at_field(0)
+        >>> #data_frame = pd.DataFrame(data)
+
+        >>> #data2 = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]]
+        >>> #columns = ['x', 'y', 'z']
+        >>> #df = pd.DataFrame(data2, columns)
+        >>> #df = df.transpose()
         """
         try:
             import pandas as pd
