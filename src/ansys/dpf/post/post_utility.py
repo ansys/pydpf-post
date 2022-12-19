@@ -7,6 +7,7 @@ from ansys.dpf.core.model import Model
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
+from ansys.dpf.post.solution import MechanicalSolution
 from ansys.dpf.post.static_analysis import (
     StaticAnalysisSolution,
     ThermalStaticAnalysisSolution,
@@ -17,24 +18,31 @@ from ansys.dpf.post.transient_analysis import (
 )
 
 
-def load_solution(data_sources, physics_type=None, analysis_type=None):
+def load_solution(
+    data_sources,
+    physics_type=None,
+    analysis_type=None,
+    legacy=True,
+):
     """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
     This class provides information on a given set on a given scoping.
 
     Parameters
     ----------
-    data_sources : str or ansys.dpf.core.DataSources
+    data_sources: str, ansys.dpf.core.DataSources
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
-    physics_type : common._PhysicsType, str, optional
+    physics_type: common._PhysicsType, str, optional
         Type of phsyics described in the specified data sources. Options are
         ``"mecanic"`` or ``"thermal"``. The default is ``None``, in which case
         the data sources are read to determine the physics type.
-    analysis_type : common._AnalysisType, str, optional
+    analysis_type: common._AnalysisType, str, optional
         Type of analysis described in the specified data sources. Options are
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
+    legacy:
+        Whether to use the legacy DpfSolution class or the new Solution class.
 
     Examples
     --------
@@ -52,10 +60,10 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
             warnings.warn(
-                "Physics type is defaulting to 'mecanic'. Specify the physics type",
+                "Physics type is defaulting to 'mechanical'. Specify the physics type",
                 "keyword if it is invalid.",
             )
-            physics_type = _PhysicsType.mecanic
+            physics_type = _PhysicsType.mechanical
 
     if not analysis_type:
         try:
@@ -78,7 +86,10 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
         physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
     ):
         if analysis_type == _AnalysisType.static:
-            return StaticAnalysisSolution(data_sources, _model)
+            if legacy:
+                return StaticAnalysisSolution(data_sources, _model)
+            else:
+                return MechanicalSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.modal:
             return ModalAnalysisSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.harmonic:
