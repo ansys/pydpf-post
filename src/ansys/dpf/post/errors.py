@@ -33,3 +33,15 @@ class LabelSpaceError(ValueError):
             """Arguments display_option and option_id are not correct.
     No corresponding field found to plot.""",
         )
+
+
+class PandasImportError(ModuleNotFoundError):
+    """Error raised when Pandas could not be imported while trying export to a DataFrame."""
+
+    def __init__(
+        self,
+        msg="To export to a pandas.DataFrame, please install pandas "
+        "with :\n pip install pandas",
+    ):
+        """Initialize this class."""
+        ModuleNotFoundError.__init__(self, msg)
