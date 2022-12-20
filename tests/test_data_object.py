@@ -14,8 +14,7 @@ def test_data_object_sorting():
     fc.add_field({fc.labels[0]: 1}, field_1)
     fc.add_field({fc.labels[0]: 2}, field_2)
 
-    scoping = list(field_1.scoping.ids) + list(field_2.scoping.ids)
-    data = DataObject(fc, mesh_scoping=scoping)
+    data = DataObject(fc)
     assert data.is_sorted() == False
 
     data.sort()
