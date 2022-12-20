@@ -34,6 +34,7 @@ class _WfNames:
     scoping_a = "scoping_a"
     scoping_b = "scoping_b"
     streams = "streams"
+    streams_container = "streams_container"
 
 
 class TimeFreqSelection:
@@ -195,7 +196,9 @@ class SpatialSelection:
         )
         self._selection.add_operator(op)
         self._selection.set_input_name(_WfNames.data_sources, op.inputs.data_sources)
-        self._selection.set_input_name(_WfNames.streams, op.inputs.streams_container)
+        self._selection.set_input_name(
+            _WfNames.streams_container, op.inputs.streams_container
+        )
         self._selection.set_output_name(_WfNames.scoping, op.outputs.mesh_scoping)
 
     def select_with_scoping(self, scoping: Scoping):
