@@ -1,6 +1,6 @@
 """Module containing the ``DataObject`` class."""
 from ansys.dpf.core.fields_container import FieldsContainer
-import numpy as np  # Make sure that numpy is in the requirements
+import numpy as np
 
 from ansys.dpf.post.errors import PandasImportError
 
@@ -66,31 +66,30 @@ class DataObject(FieldsContainer):
         >>> import pandas as pd
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.multishells_rst, legacy=False)
-        >>> #stress = solution.stress()
-        >>> #stress.xx.plot_contour(show_edges=False)
+        >>> solution = post.load_simulation(examples.multishells_rst)
+        >>> # Export the displacements vector field at step 1 as a DataFrame
+        >>> displacement = solution.displacement(steps=[1], nodes=[1, 2, 3])
+        >>> df = displacement.as_data_frame()
+        >>> print(df)
+                  X          Y         Z
+        1  0.398320 -13.797378 -0.163767
+        2  0.233114 -13.797652 -0.153190
+        3  0.367542 -13.808151 -0.163739
 
-        >>> #data = stress.xx.get_data_at_field(0)
-        >>> #data_frame = pd.DataFrame(data)
-
-        >>> #data2 = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]]
-        >>> #columns = ['x', 'y', 'z']
-        >>> #df = pd.DataFrame(data2, columns)
-        >>> #df = df.transpose()
         """
         try:
             import pandas as pd
         except ModuleNotFoundError:
             raise PandasImportError
-        # columns = None
-        # for arg in args:
-        #     columns.appends(arg)
 
-        # #load data into a DataFrame object:
-        # data_frame = pd.DataFrame(self.field(0), columns)
-        # transposed = data_frame.transpose()
         if not columns:
             columns = self._columns
+        # The wrapped FieldsContainer should only contain one Field
+        if len(self) > 1:
+            raise NotImplementedError(
+                "This function requires for the DataObject to contain only"
+                "one data entity."
+            )
         return pd.DataFrame(
             self.as_array(), columns=columns, index=self._mesh_scoping.ids
         )
