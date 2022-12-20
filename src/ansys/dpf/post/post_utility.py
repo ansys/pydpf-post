@@ -2,6 +2,8 @@
 
 This module is used for the initialization of DPF-Post objects.
 """
+import warnings
+
 from ansys.dpf.core.model import Model
 
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
@@ -60,8 +62,10 @@ def load_solution(
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
             warnings.warn(
-                "Physics type is defaulting to 'mechanical'. Specify the physics type",
-                "keyword if it is invalid.",
+                Warning(
+                    "Physics type is defaulting to 'mechanical'. Specify the physics type",
+                    "keyword if it is invalid.",
+                )
             )
             physics_type = _PhysicsType.mechanical
 
@@ -70,8 +74,10 @@ def load_solution(
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
             warnings.warn(
-                "Analysis type is defaulting to 'static'. Specify the analysis"
-                "type keyword if it is invalid.",
+                Warning(
+                    "Analysis type is defaulting to 'static'. Specify the analysis"
+                    "type keyword if it is invalid."
+                )
             )
             analysis_type = _AnalysisType.static
 
