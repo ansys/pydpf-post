@@ -12,10 +12,8 @@ This example shows how to retrieve data sorted by node ID.
 # ~~~~~~~~~~~~~~~~~~~~~~
 # Import modules
 import ansys.dpf.core as core
-from ansys.dpf.post import examples, load_solution
-from ansys.dpf.post.data_object import DataObject
 
-import numpy as np
+from ansys.dpf.post.data_object import DataObject
 
 ###############################################################################
 # Create artificial FieldsContainer
@@ -38,7 +36,7 @@ fc.add_field({fc.labels[0]: 2}, field_2)
 ###############################################################################
 # Create DataObject
 # ~~~~~~~~~~~~~~~~~
-# TODO: This should be the first section of the example, creating a DataObject from arrays
+# TODO: This should be the first section of the example, creating a DataObject from arrays/lists
 
 # Create DataObject from FieldsContainer and check that the data is not sorted:
 data = DataObject(fc)

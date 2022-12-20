@@ -1,9 +1,9 @@
 """Module containing the ``DataObject`` class."""
+import ansys.dpf.core as core
+from ansys.dpf.core.fields_container import FieldsContainer
 import numpy as np  # Make sure that numpy is in the requirements
 
-import ansys.dpf.core as core
 from ansys.dpf.post.errors import PandasImportError
-from ansys.dpf.core.fields_container import FieldsContainer
 
 
 class DataObject(FieldsContainer):
@@ -56,7 +56,13 @@ class DataObject(FieldsContainer):
         return self._is_sorted
 
     def sort(self, **kwargs):
-        """Sort data by node ID."""
+        """Sort data by node ID.
+
+        Examples
+        --------
+        TODO
+
+        """
         # Loop over all fields to get a sorted set of all node IDs and create a Scoping
         ids_fc = set([])
         for field in self._fc:

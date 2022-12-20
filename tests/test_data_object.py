@@ -1,7 +1,7 @@
 import ansys.dpf.core as core
-from ansys.dpf.post.data_object import DataObject
-
 import numpy as np
+
+from ansys.dpf.post.data_object import DataObject
 
 
 def test_data_object_sorting():
@@ -13,10 +13,8 @@ def test_data_object_sorting():
     fc.labels = ["mesh_region"]
     fc.add_field({fc.labels[0]: 1}, field_1)
     fc.add_field({fc.labels[0]: 2}, field_2)
-
     data = DataObject(fc)
     assert data.is_sorted() == False
-
     data.sort()
     assert data.is_sorted() == True
     assert (data._fc[0].data == np.sort(field_1.data)).all()
