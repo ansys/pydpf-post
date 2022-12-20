@@ -7,10 +7,9 @@ import warnings
 from ansys.dpf.core.model import Model
 
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
-from ansys.dpf.post.dpf_solution import DpfSolution
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
-from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
+from ansys.dpf.post.simulation import MechanicalSimulation
 from ansys.dpf.post.static_analysis import (
     StaticAnalysisSolution,
     ThermalStaticAnalysisSolution,
@@ -21,7 +20,7 @@ from ansys.dpf.post.transient_analysis import (
 )
 
 
-def load_solution(data_sources, physics_type=None, analysis_type=None) -> DpfSolution:
+def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
     This class provides information on a given set on a given scoping.
@@ -106,7 +105,7 @@ def load_simulation(
     data_sources,
     physics_type=None,
     analysis_type=None,
-) -> Simulation:
+):
     """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
 
     This class provides the main interface to explore and manipulate results, meshes, geometries,
@@ -118,13 +117,17 @@ def load_simulation(
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
     physics_type: common._PhysicsType, str, optional
         Type of phsyics described in the specified data sources. Options are
-        ``"mecanic"`` or ``"thermal"``. The default is ``None``, in which case
+        ``"mechanical"`` or ``"thermal"``. The default is ``None``, in which case
         the data sources are read to determine the physics type.
     analysis_type: common._AnalysisType, str, optional
         Type of analysis described in the specified data sources. Options are
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
+
+    Returns
+    -------
+    An instance of the :class:`DataObject <ansys.dpf.post.data_object.DataObject>` class.
 
     .. versionadded:: 3.0
         This function replaces the deprecated :func:`load_solution` function.

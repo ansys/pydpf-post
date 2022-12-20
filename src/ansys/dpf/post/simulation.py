@@ -5,7 +5,6 @@ from typing import List, Union
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
-from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.selection import Selection
 
 
@@ -164,7 +163,7 @@ class MechanicalSimulation(Simulation):
         named_selection: Union[str, None] = None,
         # ordered: bool = True,
         **kwargs
-    ) -> ResultData:
+    ) -> DataObject:
         """Extract displacement results from the solution.
 
         Args:
@@ -183,7 +182,7 @@ class MechanicalSimulation(Simulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.result_data.ResultData` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
         wf = core.Workflow(server=self._model._server)
