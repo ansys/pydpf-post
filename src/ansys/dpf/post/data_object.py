@@ -1,8 +1,9 @@
 """Module containing the ``DataObject`` class."""
-from ansys.dpf.core.fields_container import FieldsContainer
 import numpy as np  # Make sure that numpy is in the requirements
 
+import ansys.dpf.core as core
 from ansys.dpf.post.errors import PandasImportError
+from ansys.dpf.core.fields_container import FieldsContainer
 
 
 class DataObject(FieldsContainer):
@@ -25,6 +26,7 @@ class DataObject(FieldsContainer):
             Columns to use.
         """
         self._fc = fields_container
+        self._is_sorted = False
         if columns:
             self._columns = columns
 
@@ -48,6 +50,27 @@ class DataObject(FieldsContainer):
     def min(self, **kwargs):
         """Return the minimum of the data."""
         return float(self.as_array().min())
+
+    def is_sorted(self):
+        """Return boolean indicating whether the data is sorted by node ID or not."""
+        return self._is_sorted
+
+    def sort(self, **kwargs):
+        """Sort data by node ID."""
+        # Loop over all fields to get a sorted set of all node IDs and create a Scoping
+        ids_fc = set([])
+        for field in self._fc:
+            ids_fc.update(field.scoping.ids)
+        field_scoping = core.mesh_scoping_factory.nodal_scoping(list(ids_fc))
+
+        # Use rescope_fc operator to sort the FieldsContainer by node ID
+        sorting_op = core.operators.scoping.rescope_fc()
+        sorting_op.inputs.fields_container.connect(self._fc)
+        sorting_op.inputs.mesh_scoping.connect(field_scoping)
+        self._fc = sorting_op.outputs.fields_container()
+
+        # Update is_sorted property
+        self._is_sorted = True
 
     def as_data_frame(self, columns=None, **kwargs):
         """Returns the data from the field container as a Pandas data_frame.
