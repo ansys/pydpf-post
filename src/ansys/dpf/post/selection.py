@@ -102,14 +102,14 @@ class TimeFreqSelection:
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
     def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
-        """Returns what is evaluated from the selections made on a given Solution.
+        """Returns what is evaluated from the selections made on a given Simulation.
 
         This scoping is internally used to evaluate result on the right time/freq domain.
 
         Parameters
         ----------
         solution:
-            DPF-Post Solution to evaluate the time/freq selection on.
+            DPF-Post Simulation to evaluate the time/freq selection on.
 
         Returns
         -------
@@ -133,12 +133,12 @@ class TimeFreqSelection:
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
     def apply_to(self, solution: Solution) -> list[int]:
-        """Performs the currently defined selection on the given Solution.
+        """Performs the currently defined selection on the given Simulation.
 
         Parameters
         ----------
         solution:
-            PyDPF-Post Solution to apply the selection on.
+            PyDPF-Post Simulation to apply the selection on.
 
         Returns
         -------
@@ -278,14 +278,14 @@ class SpatialSelection:
         self._selection = new_wf
 
     def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
-        """Performs the currently defined selection on the given Solution.
+        """Performs the currently defined selection on the given Simulation.
 
         This scoping is internally used to evaluate result on the right spatial domain.
 
         Parameters
         ----------
         solution:
-            PyDPF-Post Solution to apply the selection on.
+            PyDPF-Post Simulation to apply the selection on.
 
         Returns
         -------
@@ -312,12 +312,12 @@ class SpatialSelection:
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
     def apply_to(self, solution: Solution) -> list[int]:
-        """Performs the currently defined selection on the given Solution.
+        """Performs the currently defined selection on the given Simulation.
 
         Parameters
         ----------
         solution:
-            PyDPF-Post Solution to apply the selection on.
+            PyDPF-Post Simulation to apply the selection on.
 
         Returns
         -------

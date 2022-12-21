@@ -1,15 +1,14 @@
-"""Module containing the ``Solution`` class."""
+"""Module containing the ``Simulation`` class."""
 import re
 from typing import List, Union
 
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
-from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.selection import Selection
 
 
-class Solution:
+class Simulation:
     """Provides the main class of the DPF-Post solution."""
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
@@ -100,7 +99,7 @@ class Solution:
         return txt
 
 
-class MechanicalSolution(Solution):
+class MechanicalSimulation(Simulation):
     """Provides a mechanical type solution."""
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
@@ -164,7 +163,7 @@ class MechanicalSolution(Solution):
         named_selection: Union[str, None] = None,
         # ordered: bool = True,
         **kwargs
-    ) -> ResultData:
+    ) -> DataObject:
         """Extract displacement results from the solution.
 
         Args:
@@ -183,7 +182,7 @@ class MechanicalSolution(Solution):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.result_data.ResultData` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
         wf = core.Workflow(server=self._model._server)
@@ -294,7 +293,7 @@ class MechanicalSolution(Solution):
 #         pass
 
 
-# class FluidSolution(Solution):
+# class FluidSolution(Simulation):
 #     """Provides a fluid type solution."""
 
 #     def __init__(self, data_sources, model):

@@ -29,7 +29,11 @@ from ansys.dpf.post import tools
 from ansys.dpf.post.common import Grouping as grouping
 from ansys.dpf.post.dpf_path import create_path_on_coordinates
 from ansys.dpf.post.misc import Report
-from ansys.dpf.post.post_utility import load_solution, print_available_keywords
+from ansys.dpf.post.post_utility import (
+    load_simulation,
+    load_solution,
+    print_available_keywords,
+)
 
 # this must be after some ansys.dpf.post import
 __version__ = importlib_metadata.version("ansys-dpf-post")
