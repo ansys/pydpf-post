@@ -65,17 +65,33 @@ class DataObject:
         TODO
 
         """
-        # Loop over all fields to get a sorted set of all node IDs and create a Scoping
-        ids_fc = set([])
-        for field in self._fc:
-            ids_fc.update(field.scoping.ids)
-        field_scoping = core.mesh_scoping_factory.nodal_scoping(list(ids_fc))
+        ####################### USING "change_fc" operator ####################
+        # Create ScopingsContainer with the scoping of each Field
+        scoping_container = core.ScopingsContainer()
 
-        # Use rescope_fc operator to sort the FieldsContainer by node ID
-        sorting_op = core.operators.scoping.rescope_fc()
-        sorting_op.inputs.fields_container.connect(self._fc)
-        sorting_op.inputs.mesh_scoping.connect(field_scoping)
+        for i_field, field in enumerate(self._fc):
+            label_space = self._fc.get_label_space(i_field)
+            scoping_container.add_scoping(label_space, field.scoping)
+
+        # Use change_fc operator to sort the FieldsContainer by IDs
+        sorting_op = core.operators.scoping.change_fc()
+        sorting_op.inputs.field_or_fields_container.connect(self._fc)
+        sorting_op.inputs.mesh_scoping.connect(scoping_container)
         self._fc = sorting_op.outputs.fields_container()
+
+        ####################### USING "rescope_fc" operator ###################
+
+        # # Loop over all fields to get a sorted set of all IDs and create a Scoping
+        # ids_fc = set([])
+        # for field in self._fc:
+        #     ids_fc.update(field.scoping.ids)
+        # field_scoping = core.mesh_scoping_factory.nodal_scoping(list(ids_fc))
+
+        # # Use rescope_fc operator to sort the FieldsContainer by ID
+        # sorting_op = core.operators.scoping.rescope_fc()
+        # sorting_op.inputs.fields_container.connect(self._fc)
+        # sorting_op.inputs.mesh_scoping.connect(field_scoping)
+        # self._fc = sorting_op.outputs.fields_container()
 
         # Update is_sorted property
         self._is_sorted = True
