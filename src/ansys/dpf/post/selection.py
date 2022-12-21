@@ -54,6 +54,7 @@ class TimeFreqSelection:
         """
         self._server = get_or_create_server(server)
         self._selection = Workflow(server=self._server)
+        self._selection.progress_bar = False
 
     def select_time_freq_indices(self, time_freq_indices: list[int]) -> None:
         """Select time frequency sets by their indices (0 based).
@@ -172,6 +173,7 @@ class SpatialSelection:
         """
         self._server = get_or_create_server(server)
         self._selection = Workflow(server=self._server)
+        self._selection.progress_bar = False
 
         if scoping is not None:
             self.select_with_scoping(scoping)
@@ -270,6 +272,7 @@ class SpatialSelection:
         intersect_op = operators.scoping.intersect(server=self._server)
 
         new_wf = Workflow(self._server)
+        new_wf.progress_bar = False
         new_wf.add_operator(intersect_op)
         new_wf.set_input_name(_WfNames.scoping_a, intersect_op.inputs.scopingA)
         new_wf.set_input_name(_WfNames.scoping_b, intersect_op.inputs.scopingB)
