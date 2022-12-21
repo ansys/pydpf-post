@@ -5,7 +5,7 @@ from ansys.dpf.post.selection import SpatialSelection
 
 
 def test_spatial_selection_select_nodes(allkindofcomplexity):
-    solution = post.load_solution(allkindofcomplexity, legacy=False)
+    solution = post.load_solution(allkindofcomplexity)
     selection = SpatialSelection()
     selection.select_nodes([1, 2, 3])
     scoping = selection._evaluate_on(solution)

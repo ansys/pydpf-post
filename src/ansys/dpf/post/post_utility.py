@@ -9,7 +9,7 @@ from ansys.dpf.core.model import Model
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
-from ansys.dpf.post.solution import MechanicalSolution
+from ansys.dpf.post.simulation import MechanicalSimulation
 from ansys.dpf.post.static_analysis import (
     StaticAnalysisSolution,
     ThermalStaticAnalysisSolution,
@@ -20,12 +20,7 @@ from ansys.dpf.post.transient_analysis import (
 )
 
 
-def load_solution(
-    data_sources,
-    physics_type=None,
-    analysis_type=None,
-    legacy=True,
-):
+def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
     This class provides information on a given set on a given scoping.
@@ -43,8 +38,9 @@ def load_solution(
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
-    legacy:
-        Whether to use the legacy DpfSolution class or the new Solution class.
+
+    .. deprecated:: 3.0
+       Use :func:`load_simulation` instead.
 
     Examples
     --------
@@ -92,16 +88,103 @@ def load_solution(
         physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
     ):
         if analysis_type == _AnalysisType.static:
-            if legacy:
-                return StaticAnalysisSolution(data_sources, _model)
-            else:
-                return MechanicalSolution(data_sources, _model)
+            return StaticAnalysisSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.modal:
             return ModalAnalysisSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.harmonic:
             return HarmonicAnalysisSolution(data_sources, _model)
         elif analysis_type == _AnalysisType.transient:
             return TransientAnalysisSolution(data_sources, _model)
+        else:
+            raise ValueError(f"Unknown analysis type '{analysis_type}' for mechanical.")
+    else:
+        raise ValueError(f"Unknown physics type '{physics_type}.")
+
+
+def load_simulation(
+    data_sources,
+    physics_type=None,
+    analysis_type=None,
+):
+    """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
+
+    This class provides the main interface to explore and manipulate results, meshes, geometries,
+    associated with the result files given in input.
+
+    Parameters
+    ----------
+    data_sources: str, ansys.dpf.core.DataSources
+         Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
+    physics_type: common._PhysicsType, str, optional
+        Type of phsyics described in the specified data sources. Options are
+        ``"mechanical"`` or ``"thermal"``. The default is ``None``, in which case
+        the data sources are read to determine the physics type.
+    analysis_type: common._AnalysisType, str, optional
+        Type of analysis described in the specified data sources. Options are
+        ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
+        default is ``None``, in which case the data sources are read to determine
+        the analysis type.
+
+    Returns
+    -------
+    An instance of the :class:`DataObject <ansys.dpf.post.data_object.DataObject>` class.
+
+    .. versionadded:: 3.0
+        This function replaces the deprecated :func:`load_solution` function.
+
+    Examples
+    --------
+    Load the example static result.
+
+    >>> from ansys.dpf import post
+    >>> from ansys.dpf.post import examples
+    >>> simulation = post.load_simulation(examples.static_rst)
+    """
+    _model = Model(data_sources)
+    data_sources = _model.metadata.data_sources
+
+    if not physics_type:
+        try:
+            physics_type = _model.metadata.result_info.physics_type
+        except Exception as e:
+            warnings.warn(
+                Warning(
+                    "Physics type is defaulting to 'mechanical'. Specify the physics type",
+                    "keyword if it is invalid.",
+                )
+            )
+            physics_type = _PhysicsType.mechanical
+
+    if not analysis_type:
+        try:
+            analysis_type = _model.metadata.result_info.analysis_type
+        except Exception as e:
+            warnings.warn(
+                Warning(
+                    "Analysis type is defaulting to 'static'. Specify the analysis"
+                    "type keyword if it is invalid."
+                )
+            )
+            analysis_type = _AnalysisType.static
+
+    if physics_type == _PhysicsType.thermal:
+        if analysis_type == _AnalysisType.static:
+            raise NotImplementedError
+        elif analysis_type == _AnalysisType.transient:
+            raise NotImplementedError
+        else:
+            raise ValueError(f"Unknown analysis type '{analysis_type}' for thermal.")
+    elif (
+        physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
+    ):
+        if analysis_type == _AnalysisType.static:
+            return MechanicalSimulation(data_sources, _model)
+        elif analysis_type == _AnalysisType.modal:
+            raise NotImplementedError
+        elif analysis_type == _AnalysisType.harmonic:
+            raise NotImplementedError
+        elif analysis_type == _AnalysisType.transient:
+            raise NotImplementedError
         else:
             raise ValueError(f"Unknown analysis type '{analysis_type}' for mechanical.")
     else:
