@@ -86,6 +86,36 @@ class Simulation:
         """
         return self._model.metadata.result_info
 
+    @staticmethod
+    def _get_component(component: str) -> str:
+        """Returns a valid component for the operator naming."""
+        component_input_map = {
+            "X": "X",
+            "Y": "Y",
+            "Z": "Z",
+            "0": "X",
+            "1": "Y",
+            "2": "Z",
+            "XY": "XY",
+            "YZ": "YZ",
+            "XZ": "XZ",
+            "3": "XY",
+            "4": "YZ",
+            "5": "XZ",
+        }
+
+        # Select the operator based on component
+        comp = ""
+        if component is not None:
+            try:
+                comp = component_input_map[component]
+            except KeyError:
+                ValueError(
+                    f"Component {component} is not a valid component argument. "
+                    f"Valid component arguments are:\n{list(component_input_map.keys())}"
+                )
+        return comp
+
     def __str__(self):
         """Get the string representation of this class."""
         txt = (
@@ -161,10 +191,9 @@ class MechanicalSimulation(Simulation):
         elements: Union[List[int], None] = None,
         component: Union[int, str, List[str], None] = None,
         named_selection: Union[str, None] = None,
-        # ordered: bool = True,
-        **kwargs
+        **kwargs,
     ) -> DataObject:
-        """Extract displacement results from the solution.
+        """Extract displacement results from the simulation.
 
         Args:
             selection:
@@ -185,31 +214,21 @@ class MechanicalSimulation(Simulation):
             Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
+        operator_name_base = "U"
+
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
-
-        # Select the operator based on component
-        if component is None:
-            op_name = "U"
-        elif isinstance(component, (str, int)):
-            if component in ["X", 0]:
-                op_name = "UX"
-            elif component in ["Y", 1]:
-                op_name = "UY"
-            elif component in ["Z", 2]:
-                op_name = "UZ"
-            else:
-                op_name = "U"
-        else:
-            raise TypeError("Component must be a string or an integer")
-
-        disp_op = self._model.operator(name=op_name)
+        comp = self._get_component(component=str(component))
+        op_name = operator_name_base + comp
+        op = self._model.operator(name=op_name)
+        wf.set_output_name("out", op.outputs.fields_container)
+        wf.add_operator(op)
 
         time_scoping = self._select_time_freq(selection, steps)
 
         # Set the time_scoping if necessary
         if time_scoping:
-            disp_op.connect(0, time_scoping)
+            op.connect(0, time_scoping)
 
         # Build the mesh_scoping from nodes or selection
         mesh_scoping = self._select_mesh_scoping(
@@ -217,66 +236,164 @@ class MechanicalSimulation(Simulation):
         )
         # Set the mesh_scoping if necessary
         if mesh_scoping:
-            disp_op.connect(1, mesh_scoping)
+            op.connect(1, mesh_scoping)
 
-        wf.add_operator(disp_op)
-
-        # Reorder
-        # ord_op = self._model.operator(name="Rescope_fc")
-        # ord_op.inputs.fields_container.connect(disp_op.outputs.fields_container)
-        # ord_op.inputs.mesh_scoping.connect(mesh_scoping)
-
-        # ord_op.connect(0, disp_op.outputs.fields_container)
+        wf.add_operator(op)
 
         # We will use the DataObject thing here.
-        wf.set_output_name("out", disp_op.outputs.fields_container)
+        wf.set_output_name("out", op.outputs.fields_container)
 
+        columns = ["X", "Y", "Z"] if comp == "" else [comp]
         return DataObject(
             wf.get_output("out", core.types.fields_container),
-            columns=["X", "Y", "Z"],
+            name=op_name,
+            columns=columns,
             mesh_scoping=mesh_scoping,
         )
 
+    def velocity(
+        self,
+        selection: Union[Selection, None] = None,
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        component: Union[int, str, List[str], None] = None,
+        named_selection: Union[str, None] = None,
+        **kwargs,
+    ) -> DataObject:
+        """Extract velocity results from the simulation.
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
 
-#     def nodal_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
-#     def elemental_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+        """
+        operator_name_base = "V"
+
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+        comp = self._get_component(component=str(component))
+        op_name = operator_name_base + comp
+        op = self._model.operator(name=op_name)
+        wf.set_output_name("out", op.outputs.fields_container)
+        wf.add_operator(op)
+
+        time_scoping = self._select_time_freq(selection, steps)
+
+        # Set the time_scoping if necessary
+        if time_scoping:
+            op.connect(0, time_scoping)
+
+        # Build the mesh_scoping from nodes or selection
+        mesh_scoping = self._select_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            op.connect(1, mesh_scoping)
+
+        columns = ["X", "Y", "Z"] if comp == "" else [comp]
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            name=op_name,
+            columns=columns,
+            mesh_scoping=mesh_scoping,
+        )
+
+    #     def nodal_stress(
+    #         self,
+    #         steps: Optional[list[int]] = None,
+    #         components: Optional[Union[int, str, list[str]]] = None,
+    #         nodes: Optional[list[int]] = None,
+    #         elements: Optional[list[int]] = None,
+    #         named_selection: Optional[str] = None,
+    #         selection: Optional[Selection] = None,
+    #         element_shape: Optional[core.elements._element_shapes] = None,
+    #         ordered: bool = True,
+    #         **kwargs
+    #     ) -> ResultData:
+    #         pass
+
+    def elemental_stress(
+        self,
+        selection: Union[Selection, None] = None,
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        component: Union[int, str, List[str], None] = None,
+        named_selection: Union[str, None] = None,
+        element_shape: Union[
+            core.elements._element_shapes, None
+        ] = None,  # What is that for?
+        **kwargs,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        operator_name_base = "S"
+        # TODO: What about Principal stresses?
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+        comp = self._get_component(component=str(component))
+        op_name = operator_name_base + comp
+        op = self._model.operator(name=op_name)
+        wf.set_output_name("out", op.outputs.fields_container)
+        wf.add_operator(op)
+
+        time_scoping = self._select_time_freq(selection, steps)
+
+        # Set the time_scoping if necessary
+        if time_scoping:
+            op.connect(0, time_scoping)
+
+        # Build the mesh_scoping from nodes or selection
+        mesh_scoping = self._select_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            op.connect(1, mesh_scoping)
+
+        columns = ["X", "Y", "Z"] if comp == "" else [comp]
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            name=op_name,
+            columns=columns,
+            mesh_scoping=mesh_scoping,
+        )
+
 
 #     def raw_stress(
 #         self,
@@ -293,32 +410,81 @@ class MechanicalSimulation(Simulation):
 #         pass
 
 
-# class FluidSolution(Simulation):
-#     """Provides a fluid type solution."""
+class FluidSimulation(Simulation):
+    """Provides a fluid type simulation."""
 
-#     def __init__(self, data_sources, model):
-#         super().__init__(data_sources, model)
+    def __init__(self, data_sources, model):
+        """Initialize the class."""
+        super().__init__(data_sources, model)
 
-#     def displacement(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+    def displacement(
+        self,
+        selection: Union[Selection, None] = None,  # Can deal with qualifiers
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        qualifiers: Union[List[str], None] = None,
+        component: Union[int, str, List[str], None] = None,
+        named_selection: Union[str, None] = None,
+        **kwargs,
+    ) -> DataObject:
+        """Extract displacement results from the simulation.
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,  # Can deal with qualifiers
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            qualifiers:
+                List of qualifiers to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        pass
+
+    def velocity(
+        self,
+        selection: Union[Selection, None] = None,  # Can deal with qualifiers
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        qualifiers: Union[List[str], None] = None,
+        component: Union[int, str, List[str], None] = None,
+        named_selection: Union[str, None] = None,
+        **kwargs,
+    ) -> DataObject:
+        """Extract velocity results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            qualifiers:
+                List of qualifiers to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        pass
