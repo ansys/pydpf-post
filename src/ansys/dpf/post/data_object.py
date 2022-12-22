@@ -134,13 +134,7 @@ class DataObject:
             import pandas as pd
         except ModuleNotFoundError:
             raise PandasImportError
-        # columns = None
-        # for arg in args:
-        #     columns.appends(arg)
 
-        # #load data into a DataFrame object:
-        # data_frame = pd.DataFrame(self.field(0), columns)
-        # transposed = data_frame.transpose()
         if not columns:
             columns = self._columns
         # The wrapped FieldsContainer should only contain one Field

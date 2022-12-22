@@ -95,7 +95,7 @@ selection = select(
 solution.displacement(selection=selection)
 ```
 
-Changing state of the ``Solution`` class.
+Changing state of the ``Simulation`` class.
 
 ```py
 simulation.activate_selection(
