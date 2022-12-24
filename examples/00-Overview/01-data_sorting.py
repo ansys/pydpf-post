@@ -13,10 +13,10 @@ This example shows how to retrieve data sorted by node ID.
 # Import modules
 import ansys.dpf.core as core
 
-from ansys.dpf.post import examples, load_solution
+from ansys.dpf.post import examples, load_simulation
 from ansys.dpf.post.data_object import DataObject
 
-simulation = load_solution(examples.static_rst, legacy=False)
+simulation = load_simulation(examples.static_rst)
 # simulation = load_solution(examples.download_transient_result(), legacy=False)
 # simulation = load_solution(examples.download_all_kinds_of_complexity(), legacy=False)
 disp = simulation.displacement()
