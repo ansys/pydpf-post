@@ -123,6 +123,23 @@ class DataObject:
         """
         return self._fc[-1].data
 
+    def get_data_by_id(self):
+        """Retrieve data together with its ID information.
+
+        Parameters
+        ----------
+        TODO
+
+        Returns
+        -------
+        TODO
+
+        Examples
+        --------
+        TODO
+
+        """
+
     def plot(self, **kwargs):
         """Plot the result."""
         self._fc[-1].plot(**kwargs)
