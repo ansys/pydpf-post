@@ -1,4 +1,6 @@
 """Module containing the ``DataObject`` class."""
+import numpy as np
+
 from ansys.dpf.post.errors import PandasImportError
 
 
@@ -123,22 +125,56 @@ class DataObject:
         """
         return self._fc[-1].data
 
-    def get_data_by_id(self):
-        """Retrieve data together with its ID information.
+    def get_data_by_id(self, get_ids=None):
+        """Retrieve data from DataObject together with its ID information.
 
         Parameters
         ----------
-        TODO
+        get_ids: list, optional
+            List containing the ID numbers where the field's data will be retrieved.
 
         Returns
         -------
-        TODO
+        data: ndarray
+            Field's data for each ID.
+        ids: ndarray
+            ID number for each entry of ``data``.
 
         Examples
         --------
         TODO
 
         """
+        ids_list = []
+        data_list = []
+        for field in self._fc:
+            ids = field.scoping.ids
+            if get_ids:
+                requested_ids = [id_num for id_num in ids if id_num in get_ids]
+                idxs = [
+                    np.where(ids == requested_id)[0][0]
+                    for requested_id in requested_ids
+                ]
+                if not requested_ids == get_ids:
+                    print(
+                        "Warning when calling 'get_data_by_id': the following requested IDs were "
+                        + "not found in the model's mesh:\n "
+                        + f"{[id_num for id_num in get_ids if id_num not in requested_ids]}"
+                    )
+            else:
+                requested_ids = ids
+                idxs = range(len(ids))
+
+            # Append field data in lists
+            ids_list.append(requested_ids)
+            data_list.append(field.data[idxs])
+
+        # Check if there is only one field to reduce one dimension of the list
+        if len(self._fc) == 1:
+            ids_list = ids_list[0]
+            data_list = data_list[0]
+
+        return np.asarray(data_list), np.asarray(ids_list)
 
     def plot(self, **kwargs):
         """Plot the result."""
