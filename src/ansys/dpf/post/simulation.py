@@ -242,7 +242,19 @@ class MechanicalSimulation(Simulation):
     #     ) -> ResultData:
     #         pass
 
-    def nodal_stress(
+    def nodal_stress(self, **kwargs):
+        """Connect to the stress method with nodal location."""
+        return self.stress(**kwargs, location="Nodal")
+
+    def elemental_stress(self, **kwargs):
+        """Connect to the stress method with elemental location."""
+        return self.stress(**kwargs, location="Elemental")
+
+    def raw_stress(self, **kwargs):
+        """Connect to the stress method with elemental/nodal location."""
+        return self.stress(**kwargs, location="ElementalNodal")
+
+    def stress(
         self,
         selection: Union[Selection, None] = None,
         steps: Union[list[int], None] = None,
@@ -250,9 +262,10 @@ class MechanicalSimulation(Simulation):
         elements: Union[list[int], None] = None,
         component: Union[int, str, list[str], None] = None,
         named_selection: Union[str, None] = None,
+        location: str = None,
         **kwargs
     ) -> DataObject:
-        """Extract nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Args:
             selection:
@@ -298,7 +311,7 @@ class MechanicalSimulation(Simulation):
             raise TypeError("Component must be a string or an integer")
 
         disp_op = self._model.operator(name=op_name)
-        disp_op.connect(9, "Nodal")
+        disp_op.connect(9, location)
 
         time_scoping = self._select_time_freq(selection, steps)
 
@@ -323,35 +336,6 @@ class MechanicalSimulation(Simulation):
             wf.get_output("out", core.types.fields_container),
             mesh_scoping=mesh_scoping,
         )
-
-
-#     def elemental_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def raw_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
 
 
 # class FluidSolution(Simulation):

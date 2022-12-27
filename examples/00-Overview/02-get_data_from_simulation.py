@@ -25,7 +25,7 @@ print(disp)
 
 ###############################################################################
 # Plot displacements
-# disp[0].plot()
+disp[0].plot()
 
 ###############################################################################
 # Get and plot stresses
@@ -39,8 +39,8 @@ print(stress)
 
 ###############################################################################
 # Plot available stresses
-# stress[0].plot()
-# stress[1].plot()
+stress[0].plot()
+stress[1].plot()
 
 ###############################################################################
 # Get stresses in only 100 nodes
@@ -54,7 +54,7 @@ print(stress_nodes)
 
 ###############################################################################
 # Plot stresses
-# stress_nodes[0].plot()
+stress_nodes[0].plot()
 
 ###############################################################################
 # Get stresses in a named selection
@@ -68,7 +68,7 @@ print(stress_named_sel)
 
 ###############################################################################
 # Plot stresses
-# stress_named_sel[0].plot()
+stress_named_sel[0].plot()
 
 ###############################################################################
 # Get stresses in a few elements
@@ -83,3 +83,15 @@ print(stress_elements)
 ###############################################################################
 # Plot stresses
 stress_elements[0].plot()
+
+###############################################################################
+# Get elemental stress and raw stresses
+# -------------------------------------
+# Request elemental stresses and print information
+stress_elements = simulation.elemental_stress()
+print(stress_elements)
+
+###############################################################################
+# Request raw stresses ("ElementalNodal") and print information
+stress_raw = simulation.raw_stress()
+print(stress_raw)
