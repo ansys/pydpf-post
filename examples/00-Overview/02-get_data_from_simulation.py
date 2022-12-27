@@ -12,7 +12,7 @@ available results can be listed to see what results can be retrieved.
 # ------------------------------
 from ansys.dpf.post import examples, load_simulation
 
-simulation = load_simulation(examples.download_all_kinds_of_complexity())
+simulation = load_simulation(examples.download_transient_result())
 
 ###############################################################################
 # Get and plot displacements

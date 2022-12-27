@@ -116,6 +116,10 @@ class MechanicalSimulation(Simulation):
             time_scoping = core.time_freq_scoping_factory.scoping_by_sets(
                 steps, server=self._model._server
             )
+        if not time_scoping:
+            time_scoping = core.time_freq_scoping_factory.scoping_on_all_time_freqs(
+                self._model.metadata.time_freq_support
+            )
         return time_scoping
 
     def _select_mesh_scoping(
@@ -207,7 +211,7 @@ class MechanicalSimulation(Simulation):
 
         time_scoping = self._select_time_freq(selection, steps)
 
-        # Set the time_scoping if necessary
+        # Set the time_scoping if specified. Return all times available if not.
         if time_scoping:
             disp_op.connect(0, time_scoping)
 
