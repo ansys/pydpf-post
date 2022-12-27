@@ -42,6 +42,10 @@ class DataObject:
         """Return the maximum of the data."""
         return self.as_array().max()
 
+    def __getitem__(self, value):
+        """Return a Field in the FieldsContainer by index."""
+        return self._fc[value]
+
     def max(self, **kwargs):
         """Return the maximum of the data."""
         return float(self.as_array().max())
