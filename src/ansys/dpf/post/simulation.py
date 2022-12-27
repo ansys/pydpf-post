@@ -164,7 +164,7 @@ class MechanicalSimulation(Simulation):
         # ordered: bool = True,
         **kwargs
     ) -> DataObject:
-        """Extract displacement results from the solution.
+        """Extract displacement results from the simulation.
 
         Args:
             selection:
@@ -221,13 +221,6 @@ class MechanicalSimulation(Simulation):
 
         wf.add_operator(disp_op)
 
-        # Reorder
-        # ord_op = self._model.operator(name="Rescope_fc")
-        # ord_op.inputs.fields_container.connect(disp_op.outputs.fields_container)
-        # ord_op.inputs.mesh_scoping.connect(mesh_scoping)
-
-        # ord_op.connect(0, disp_op.outputs.fields_container)
-
         # We will use the DataObject thing here.
         wf.set_output_name("out", disp_op.outputs.fields_container)
 
@@ -237,32 +230,100 @@ class MechanicalSimulation(Simulation):
             mesh_scoping=mesh_scoping,
         )
 
+    #     def velocity(
+    #         self,
+    #         steps: Optional[list[int]] = None,
+    #         components: Optional[Union[int, str, list[str]]] = None,
+    #         nodes: Optional[list[int]] = None,
+    #         named_selection: Optional[str] = None,
+    #         selection: Optional[Selection] = None,
+    #         ordered: bool = True,
+    #         **kwargs
+    #     ) -> ResultData:
+    #         pass
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+    def nodal_stress(
+        self,
+        selection: Union[Selection, None] = None,
+        steps: Union[list[int], None] = None,
+        nodes: Union[list[int], None] = None,
+        elements: Union[list[int], None] = None,
+        component: Union[int, str, list[str], None] = None,
+        named_selection: Union[str, None] = None,
+        **kwargs
+    ) -> DataObject:
+        """Extract nodal stress results from the simulation.
 
-#     def nodal_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # Select the operator based on component
+        if component is None:
+            op_name = "S"
+        elif isinstance(component, str):
+            if component == "X":
+                op_name = "SX"
+            elif component == "XY":
+                op_name = "SXY"
+            elif component == "XZ":
+                op_name = "SXZ"
+            elif component == "Y":
+                op_name = "SY"
+            elif component == "YZ":
+                op_name = "SYZ"
+            elif component == "Z":
+                op_name = "SZ"
+            else:
+                op_name = "S"
+        else:
+            raise TypeError("Component must be a string or an integer")
+
+        disp_op = self._model.operator(name=op_name)
+        disp_op.connect(9, "Nodal")
+
+        time_scoping = self._select_time_freq(selection, steps)
+
+        # Set the time_scoping if necessary
+        if time_scoping:
+            disp_op.connect(0, time_scoping)
+
+        # Build the mesh_scoping from nodes or selection
+        mesh_scoping = self._select_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            disp_op.connect(1, mesh_scoping)
+
+        wf.add_operator(disp_op)
+
+        # We will use the DataObject thing here.
+        wf.set_output_name("out", disp_op.outputs.fields_container)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            mesh_scoping=mesh_scoping,
+        )
+
 
 #     def elemental_stress(
 #         self,
