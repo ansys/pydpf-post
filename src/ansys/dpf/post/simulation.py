@@ -322,13 +322,13 @@ class MechanicalSimulation(Simulation):
 
     def stress(
         self,
+        location: str = "Nodal",
         selection: Union[Selection, None] = None,
         steps: Union[List[int], None] = None,
         nodes: Union[List[int], None] = None,
         elements: Union[List[int], None] = None,
         component: Union[int, str, List[str], None] = None,
         named_selection: Union[str, None] = None,
-        location: str = "Nodal",
         **kwargs
     ) -> DataObject:
         """Extract stress results from the simulation.
