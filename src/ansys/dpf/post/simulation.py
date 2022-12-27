@@ -139,7 +139,7 @@ class MechanicalSimulation(Simulation):
 
         if named_selection:
             mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
-                named_selection, server=self._model._server
+                named_selection, self._model, server=self._model._server
             )
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
