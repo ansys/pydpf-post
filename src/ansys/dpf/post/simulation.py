@@ -230,17 +230,83 @@ class MechanicalSimulation(Simulation):
             mesh_scoping=mesh_scoping,
         )
 
-    #     def velocity(
-    #         self,
-    #         steps: Optional[list[int]] = None,
-    #         components: Optional[Union[int, str, list[str]]] = None,
-    #         nodes: Optional[list[int]] = None,
-    #         named_selection: Optional[str] = None,
-    #         selection: Optional[Selection] = None,
-    #         ordered: bool = True,
-    #         **kwargs
-    #     ) -> ResultData:
-    #         pass
+    def velocity(
+        self,
+        selection: Union[Selection, None] = None,
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        component: Union[int, str, List[str], None] = None,
+        named_selection: Union[str, None] = None,
+        # ordered: bool = True,
+        **kwargs
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+            steps:
+                List of steps to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            component:
+                Component to get results for.
+            named_selection:
+                Named selection to get results for.
+            location:
+                Stress location to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # Select the operator based on component
+        if component is None:
+            op_name = "V"
+        elif isinstance(component, (str, int)):
+            if component in ["X", 0]:
+                op_name = "VX"
+            elif component in ["Y", 1]:
+                op_name = "VY"
+            elif component in ["Z", 2]:
+                op_name = "VZ"
+            else:
+                op_name = "V"
+        else:
+            raise TypeError("Component must be a string or an integer")
+
+        disp_op = self._model.operator(name=op_name)
+
+        time_scoping = self._select_time_freq(selection, steps)
+
+        # Set the time_scoping if necessary
+        if time_scoping:
+            disp_op.connect(0, time_scoping)
+
+        # Build the mesh_scoping from nodes or selection
+        mesh_scoping = self._select_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            disp_op.connect(1, mesh_scoping)
+
+        wf.add_operator(disp_op)
+
+        # We will use the DataObject thing here.
+        wf.set_output_name("out", disp_op.outputs.fields_container)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            mesh_scoping=mesh_scoping,
+        )
 
     def nodal_stress(self, **kwargs):
         """Connect to the stress method with nodal location."""
@@ -257,10 +323,10 @@ class MechanicalSimulation(Simulation):
     def stress(
         self,
         selection: Union[Selection, None] = None,
-        steps: Union[list[int], None] = None,
-        nodes: Union[list[int], None] = None,
-        elements: Union[list[int], None] = None,
-        component: Union[int, str, list[str], None] = None,
+        steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        component: Union[int, str, List[str], None] = None,
         named_selection: Union[str, None] = None,
         location: str = "Nodal",
         **kwargs
