@@ -46,6 +46,11 @@ class DataObject:
         """Return a Field in the FieldsContainer by index."""
         return self._fc[value]
 
+    def __str__(self):
+        """Print DataObject information."""
+        txt = f"DPF DataObject:\n {self._fc}"
+        return txt
+
     def max(self, **kwargs):
         """Return the maximum of the data."""
         return float(self.as_array().max())
