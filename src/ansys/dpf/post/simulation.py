@@ -244,15 +244,15 @@ class MechanicalSimulation(Simulation):
 
     def nodal_stress(self, **kwargs):
         """Connect to the stress method with nodal location."""
-        return self.stress(**kwargs, location="Nodal")
+        return self.stress(location="Nodal", **kwargs)
 
     def elemental_stress(self, **kwargs):
         """Connect to the stress method with elemental location."""
-        return self.stress(**kwargs, location="Elemental")
+        return self.stress(location="Elemental", **kwargs)
 
     def raw_stress(self, **kwargs):
         """Connect to the stress method with elemental/nodal location."""
-        return self.stress(**kwargs, location="ElementalNodal")
+        return self.stress(location="ElementalNodal", **kwargs)
 
     def stress(
         self,
@@ -262,7 +262,7 @@ class MechanicalSimulation(Simulation):
         elements: Union[list[int], None] = None,
         component: Union[int, str, list[str], None] = None,
         named_selection: Union[str, None] = None,
-        location: str = None,
+        location: str = "Nodal",
         **kwargs
     ) -> DataObject:
         """Extract stress results from the simulation.
@@ -280,6 +280,8 @@ class MechanicalSimulation(Simulation):
                 Component to get results for.
             named_selection:
                 Named selection to get results for.
+            location:
+                Stress location to get results for.
 
         Returns
         -------
