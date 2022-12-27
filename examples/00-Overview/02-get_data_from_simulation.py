@@ -19,9 +19,13 @@ simulation = load_simulation(examples.download_all_kinds_of_complexity())
 # --------------------------
 disp = simulation.displacement()
 
+###############################################################################
+# Print information
 print(disp)
 
-disp[0].plot()
+###############################################################################
+# Plot displacements
+# disp[0].plot()
 
 ###############################################################################
 # Get and plot stresses
@@ -35,8 +39,8 @@ print(stress)
 
 ###############################################################################
 # Plot available stresses
-stress[0].plot()
-stress[1].plot()
+# stress[0].plot()
+# stress[1].plot()
 
 ###############################################################################
 # Get stresses in only 100 nodes
@@ -50,4 +54,32 @@ print(stress_nodes)
 
 ###############################################################################
 # Plot stresses
-stress_nodes[0].plot()
+# stress_nodes[0].plot()
+
+###############################################################################
+# Get stresses in a named selection
+# ---------------------------------
+# Request stress in named selection "_CM82"
+stress_named_sel = simulation.nodal_stress(named_selection="_CM82")
+
+###############################################################################
+# Print information
+print(stress_named_sel)
+
+###############################################################################
+# Plot stresses
+# stress_named_sel[0].plot()
+
+###############################################################################
+# Get stresses in a few elements
+# ------------------------------
+# Request stress only in a few elements by its ID
+stress_elements = simulation.nodal_stress(elements=[301, 302, 303])
+
+###############################################################################
+# Print information
+print(stress_elements)
+
+###############################################################################
+# Plot stresses
+stress_elements[0].plot()
