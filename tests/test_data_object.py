@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.dpf.post import examples, load_simulation
+from ansys.dpf.post import load_simulation
 
 
 @pytest.mark.parametrize("example", ["allkindofcomplexity", "simple_bar"])
@@ -107,7 +107,3 @@ def test_get_stresses_by_component(components, allkindofcomplexity):
     for component in components:
         stress = simulation.nodal_stress(component=component)
         assert stress[0].ndim == n_dim if component == "test" else 1
-
-
-if __name__ == "__main__":
-    test_get_stresses_by_component(examples.download_all_kinds_of_complexity())
