@@ -50,11 +50,9 @@ def test_get_stresses(allkindofcomplexity, static_rst):
     assert len(stress) == n_stress_bodies
     assert stress[0].ndim == n_dim
 
-    stress_xy_nodes = simulation.nodal_stress(
-        component="XY", nodes=[100, 101, 102, 103]
-    )
+    stress_xy_nodes = simulation.nodal_stress(nodes=[100, 101, 102, 103])
     assert len(stress_xy_nodes) == 1
-    assert stress_xy_nodes[0].ndim == 1
+    assert stress_xy_nodes[0].ndim == n_dim
     assert stress_xy_nodes[0].elementary_data_count == 4
 
     # Elemental stress
@@ -86,5 +84,30 @@ def test_get_stresses(allkindofcomplexity, static_rst):
     assert stress[0].ndim == n_dim
 
 
+components = (
+    "X",
+    "XY",
+    "XZ",
+    "Y",
+    "YZ",
+    "Z",
+    "test",
+    pytest.param(0.1, marks=pytest.mark.xfail(strict=True, raises=TypeError)),
+)
+
+
+@pytest.mark.parametrize("components", components)
+def test_get_stresses_by_component(components, allkindofcomplexity):
+    simulation = load_simulation(allkindofcomplexity)
+    for field in simulation.results:
+        if field.name == "stress":
+            n_dim = field.n_components
+            break
+
+    for component in components:
+        stress = simulation.nodal_stress(component=component)
+        assert stress[0].ndim == n_dim if component == "test" else 1
+
+
 if __name__ == "__main__":
-    test_get_stresses(examples.download_all_kinds_of_complexity(), examples.static_rst)
+    test_get_stresses_by_component(examples.download_all_kinds_of_complexity())
