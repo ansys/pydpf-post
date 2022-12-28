@@ -1,10 +1,10 @@
 """
-.. _ref_get_data_from_simulation:
+.. _ref_get_data_from_static_simulation:
 
-Get data from simulation
-========================
-This example show how to request data from a previously stored simulation. The
-available results can be listed to see what results can be retrieved.
+Get data from static simulation
+===============================
+This example show how to request data from a previously stored static simulation.
+The available results can be listed to see what results can be retrieved.
 """
 
 ###############################################################################
@@ -12,7 +12,7 @@ available results can be listed to see what results can be retrieved.
 # ------------------------------
 from ansys.dpf.post import examples, load_simulation
 
-simulation = load_simulation(examples.download_transient_result())
+simulation = load_simulation(examples.download_all_kinds_of_complexity())
 
 ###############################################################################
 # Get and plot displacements
