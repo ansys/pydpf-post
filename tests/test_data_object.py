@@ -107,3 +107,18 @@ def test_get_stresses_by_component(components, allkindofcomplexity):
     for component in components:
         stress = simulation.nodal_stress(component=component)
         assert stress[0].n_dim == n_dim if component == "test" else 1
+
+
+def test_data_frame():
+    from ansys.dpf.post import examples, load_simulation
+
+    simulation = load_simulation(examples.download_transient_result())
+    dispObject = simulation.displacement(nodes=[20, 200, 400], steps=[25])
+    df = dispObject.as_data_frame()
+    assert len(df.columns) == 3
+    assert len(df.index) == 3
+
+    stressObject = simulation.nodal_stress()
+    df = stressObject.as_data_frame()
+    assert len(df.columns) == 35 * 6
+    assert len(df.index) == 3812
