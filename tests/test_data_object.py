@@ -106,4 +106,4 @@ def test_get_stresses_by_component(components, allkindofcomplexity):
 
     for component in components:
         stress = simulation.nodal_stress(component=component)
-        assert stress[0].ndim == n_dim if component == "test" else 1
+        assert stress[0].n_dim == n_dim if component == "test" else 1

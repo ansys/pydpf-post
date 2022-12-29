@@ -97,15 +97,21 @@ class DataObject:
 
         if not columns:
             columns = self._columns
-        # The wrapped FieldsContainer should only contain one Field
-        if len(self) > 1:
-            raise NotImplementedError(
-                "This function requires for the DataObject to contain only"
-                "one data entity."
-            )
-        df = pd.DataFrame(
-            self.as_array(), columns=columns, index=self._mesh_scoping.ids
-        )
+
+        # Initialize dataframe
+        df = pd.DataFrame()
+        for field in self:
+            for component in range(field.n_dim):
+                column_name = f"{field.name} {columns[component]}"
+                data = field.data[:, component]
+                ids = field.ids
+                df = pd.concat(
+                    [df, pd.DataFrame({column_name: data}, index=ids)], axis=1
+                )
+
+        # df = pd.DataFrame(
+        #     self.as_array(), columns=columns, index=self._mesh_scoping.ids
+        # )
         df.name = self._fc[-1].name
         return df
 

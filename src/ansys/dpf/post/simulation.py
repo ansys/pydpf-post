@@ -104,6 +104,7 @@ class MechanicalSimulation(Simulation):
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
         """Instantiate a mechanical type solution."""
+        self._columns = None
         super().__init__(data_sources, model)
 
     def _select_time_freq(self, selection=None, steps=None):
@@ -195,15 +196,20 @@ class MechanicalSimulation(Simulation):
         # Select the operator based on component
         if component is None:
             op_name = "U"
+            self._columns = ["X", "Y", "Z"]
         elif isinstance(component, (str, int)):
             if component in ["X", 0]:
                 op_name = "UX"
+                self._columns = ["X"]
             elif component in ["Y", 1]:
                 op_name = "UY"
+                self._columns = ["Y"]
             elif component in ["Z", 2]:
                 op_name = "UZ"
+                self._columns = ["Z"]
             else:
                 op_name = "U"
+                self._columns = ["X", "Y", "Z"]
         else:
             raise TypeError("Component must be a string or an integer")
 
@@ -230,7 +236,7 @@ class MechanicalSimulation(Simulation):
 
         return DataObject(
             wf.get_output("out", core.types.fields_container),
-            columns=["X", "Y", "Z"],
+            columns=self._columns,
             mesh_scoping=mesh_scoping,
         )
 
@@ -364,21 +370,29 @@ class MechanicalSimulation(Simulation):
         # Select the operator based on component
         if component is None:
             op_name = "S"
+            self._columns = ["X", "Y", "Z", "XY", "YZ", "XZ"]
         elif isinstance(component, str):
             if component == "X":
                 op_name = "SX"
+                self._columns = ["X"]
             elif component == "XY":
                 op_name = "SXY"
+                self._columns = ["XY"]
             elif component == "XZ":
                 op_name = "SXZ"
+                self._columns = ["XZ"]
             elif component == "Y":
                 op_name = "SY"
+                self._columns = ["Y"]
             elif component == "YZ":
                 op_name = "SYZ"
+                self._columns = ["YZ"]
             elif component == "Z":
                 op_name = "SZ"
+                self._columns = ["Z"]
             else:
                 op_name = "S"
+                self._columns = ["X", "Y", "Z", "XY", "YZ", "XZ"]
         else:
             raise TypeError("Component must be a string or an integer")
 
@@ -406,6 +420,7 @@ class MechanicalSimulation(Simulation):
 
         return DataObject(
             wf.get_output("out", core.types.fields_container),
+            columns=self._columns,
             mesh_scoping=mesh_scoping,
         )
 
