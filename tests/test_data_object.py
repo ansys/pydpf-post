@@ -18,17 +18,17 @@ def test_get_displacements(example, request):
 
     disp = simulation.displacement()
     assert len(disp) == n_time_steps
-    assert disp[0].ndim == n_dim
+    assert disp[0].n_dim == n_dim
     # assert disp[0].elementary_data_count == n_nodes # HOW CAN WE CHECK THE n_entities?
     disp_x = simulation.displacement(component=0)
     assert len(disp_x) == n_time_steps
-    assert disp_x[0].ndim == 1
+    assert disp_x[0].n_dim == 1
     # assert disp[0].elementary_data_count == n_nodes # HOW CAN WE CHECK THE n_entities?
 
     if n_time_steps > 1:
         disp_time = simulation.displacement(steps=[1, 25])
         assert len(disp_time) == 2
-        assert disp[0].ndim == n_dim
+        assert disp[0].n_dim == n_dim
         # assert disp_time[0].elementary_data_count == n_nodes # HOW CAN WE CHECK THE n_entities?
 
 
@@ -48,23 +48,23 @@ def test_get_stresses(allkindofcomplexity, static_rst):
     # Nodal stress
     stress = simulation.nodal_stress()
     assert len(stress) == n_stress_bodies
-    assert stress[0].ndim == n_dim
+    assert stress[0].n_dim == n_dim
 
     stress_xy_nodes = simulation.nodal_stress(nodes=[100, 101, 102, 103])
     assert len(stress_xy_nodes) == 1
-    assert stress_xy_nodes[0].ndim == n_dim
-    assert stress_xy_nodes[0].elementary_data_count == 4
+    assert stress_xy_nodes[0].n_dim == n_dim
+    assert stress_xy_nodes[0].n_data == 4
 
     # Elemental stress
     stress = simulation.elemental_stress()
     assert len(stress) == n_stress_bodies
-    assert stress[0].ndim == n_dim
+    assert stress[0].n_dim == n_dim
 
     # Raw stress
     stress = simulation.raw_stress()
     assert len(stress) == 1
     # WHERE CAN WE GET BETTER INFO ON WHAT'S ON EACH ENTRY OF THE FIELDSCONTAINER?
-    assert stress[0].ndim == n_dim
+    assert stress[0].n_dim == n_dim
 
     ###########################################################################
     # static_rst example
@@ -77,11 +77,11 @@ def test_get_stresses(allkindofcomplexity, static_rst):
 
     stress = simulation.nodal_stress()
     assert len(stress) == 1
-    assert stress[0].ndim == n_dim
+    assert stress[0].n_dim == n_dim
 
     stress = simulation.elemental_stress()
     assert len(stress) == 1
-    assert stress[0].ndim == n_dim
+    assert stress[0].n_dim == n_dim
 
 
 components = (
