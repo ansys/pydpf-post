@@ -21,6 +21,14 @@ dispObject = simulation.displacement()
 print(dispObject)
 
 ###############################################################################
+# Show ``dispObject`` as Pandas DataFrame
+df = dispObject.as_data_frame()
+print(df)
+print(df.columns)
+print(df.index)
+print(df["displacement_0.676628s X"])
+
+###############################################################################
 # Get the one entry of the displacements. Select the last time step
 disp_time0 = dispObject[-1]
 print(disp_time0)
@@ -63,12 +71,17 @@ disp_last_time.plot()
 ###############################################################################
 # Get displacements for a single time step and a few nodes
 # --------------------------------------------------------
-dispObject = simulation.displacement(nodes=[3, 4, 6], steps=[1, 25])
+dispObject = simulation.displacement(nodes=[3, 4, 6], steps=[25])
 print(dispObject)
+
+df = dispObject.as_data_frame()
+print(df)
+print(df.columns)
+print(df.index)
 
 ###############################################################################
 # Inspect one of the two entries of ``dispObject``
-disp_time25 = dispObject[1]
+disp_time25 = dispObject[0]
 print(f"Name = {disp_time25.name}")
 print(f"Location = {disp_time25.location}")
 print(f"Unit = {disp_time25.unit}")
@@ -82,6 +95,11 @@ print(f"N_dim = {disp_time25.n_dim}")
 # --------------------------------------------------------
 stressObject = simulation.elemental_stress(elements=[14, 22, 75], component="XY")
 print(stressObject)
+
+df = stressObject.as_data_frame()
+print(df)
+print(df.columns)
+print(df.index)
 
 ###############################################################################
 # Inspect one entry of ``stressObject``

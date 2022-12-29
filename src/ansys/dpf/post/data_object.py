@@ -103,8 +103,11 @@ class DataObject:
         for field in self:
             for component in range(field.n_dim):
                 column_name = f"{field.name} {columns[component]}"
-                data = field.data[:, component]
                 ids = field.ids
+                if field.n_dim > 1:
+                    data = field.data[:, component]
+                else:
+                    data = field.data
                 df = pd.concat(
                     [df, pd.DataFrame({column_name: data}, index=ids)], axis=1
                 )
