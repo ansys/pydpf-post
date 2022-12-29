@@ -1,4 +1,5 @@
 """Module containing the ``DataObject`` class."""
+from ansys.dpf.post.data import Data
 from ansys.dpf.post.errors import PandasImportError
 
 
@@ -43,8 +44,8 @@ class DataObject:
         return self.as_array().max()
 
     def __getitem__(self, value):
-        """Return a Field in the FieldsContainer by index."""
-        return self._fc[value]
+        """Return a Data in DataObject by index."""
+        return Data(self._fc[value])
 
     def __str__(self):
         """Print DataObject information."""
