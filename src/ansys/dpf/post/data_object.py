@@ -48,7 +48,13 @@ class DataObject:
 
     def __str__(self):
         """Print DataObject information."""
-        txt = f"DPF DataObject:\n {self._fc}"
+        return self._reformat_fc_description()
+
+    def _reformat_fc_description(self):
+        txt = str(self._fc)
+        txt = txt.replace("Fields Container", "DataObject")
+        txt = txt.replace("field", "result")
+        txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
         return txt
 
     def max(self, **kwargs):
