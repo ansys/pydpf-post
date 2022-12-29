@@ -6,7 +6,10 @@ class Data:
 
     Parameters
     ----------
-    TODO
+    fields_container:
+            :class:`ansys.dpf.core.fields_container.FieldsContainer`to wrap.
+    server:
+        DPF server to use.
 
     Examples
     --------
@@ -14,9 +17,10 @@ class Data:
 
     """
 
-    def __init__(self, field):
+    def __init__(self, field, server=None):
         """Initialize Data class."""
         self._field = field
+        self._server = server
 
     @property
     def name(self):
@@ -63,3 +67,7 @@ class Data:
         from ansys.dpf.core.core import _description
 
         return _description(self._field._internal_obj, self._field._server)
+
+    def plot(self):
+        """Expose plot method to Data."""
+        return self._field.plot()
