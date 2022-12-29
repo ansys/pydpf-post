@@ -42,7 +42,7 @@ print(f"Data length is {len(disp_last_time.data)}.")
 ###############################################################################
 # Get the displacement IDs
 print(disp_last_time.ids)
-print(f"Data length is {len(disp_last_time.ids)}.")
+print(f"IDs length is {len(disp_last_time.ids)}.")
 
 ###############################################################################
 # Get the displacement n_data
@@ -54,7 +54,7 @@ print(disp_last_time.n_dim)
 
 ###############################################################################
 # Get the displacement unit
-disp_last_time.unit == "Pa"
+print(disp_last_time.unit)
 
 ###############################################################################
 # Plot displacement field
@@ -69,8 +69,27 @@ print(dispObject)
 ###############################################################################
 # Inspect one of the two entries of ``dispObject``
 disp_time25 = dispObject[1]
-print(disp_time25.name)
-print(disp_time25.location)
-print(disp_time25.unit)
-print(disp_time25.data)
-print(disp_time25.ids)
+print(f"Name = {disp_time25.name}")
+print(f"Location = {disp_time25.location}")
+print(f"Unit = {disp_time25.unit}")
+print(f"Data = {disp_time25.data}")
+print(f"IDs = {disp_time25.ids}")
+print(f"N_data = {disp_time25.n_data}")
+print(f"N_dim = {disp_time25.n_dim}")
+
+###############################################################################
+# Get elemental stresses for one component and a few elements
+# --------------------------------------------------------
+stressObject = simulation.elemental_stress(elements=[14, 22, 75], component="XY")
+print(stressObject)
+
+###############################################################################
+# Inspect one entry of ``stressObject``
+stress_xy = stressObject[0]
+print(f"Name = {stress_xy.name}")
+print(f"Location = {stress_xy.location}")
+print(f"Unit = {stress_xy.unit}")
+print(f"Data = {stress_xy.data}")
+print(f"IDs = {stress_xy.ids}")
+print(f"N_data = {stress_xy.n_data}")
+print(f"N_dim = {stress_xy.n_dim}")
