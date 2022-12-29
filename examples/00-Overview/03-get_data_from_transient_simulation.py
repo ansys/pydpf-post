@@ -2,7 +2,7 @@
 .. _ref_get_data_from_transient_simulation:
 
 Get data from transient simulation
-===============================
+==================================
 This example show how to request data from a previously stored transient simulation.
 The available results can be listed to see what results can be retrieved.
 """
