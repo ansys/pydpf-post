@@ -75,19 +75,23 @@ class DataObject:
         Examples
         --------
         >>> import pandas as pd
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.multishells_rst)
-        >>> # Export the displacements vector field at step 1 as a DataFrame
-        >>> displacement = simulation.displacement(steps=[1], nodes=[1, 2, 3])
-        >>> df = displacement.as_data_frame()
+        >>> from ansys.dpf.post import examples, load_simulation
+        >>> simulation = load_simulation(examples.download_transient_result())
+        >>> dispObject = simulation.displacement(nodes=[20, 200, 400], steps=[25])
+        >>> df = dispObject.as_data_frame()
         >>> print(df)
-                  X          Y         Z
-        1  0.398320 -13.797378 -0.163767
-        2  0.233114 -13.797652 -0.153190
-        3  0.367542 -13.808151 -0.163739
-        >>> print(df.name)
-        displacement_1.s
+             displacement_0.477975s X  ...  displacement_0.477975s Z
+        20                  -0.005752  ...             -4.518793e-07
+        200                 -0.001655  ...              4.959668e-08
+        400                 -0.001658  ...              8.819955e-08
+        <BLANKLINE>
+        [3 rows x 3 columns]
+        >>> print(df.columns)
+        Index(['displacement_0.477975s X', 'displacement_0.477975s Y',
+               'displacement_0.477975s Z'],
+              dtype='object')
+        >>> print(df.index)
+        Int64Index([20, 200, 400], dtype='int64')
 
         """
         try:

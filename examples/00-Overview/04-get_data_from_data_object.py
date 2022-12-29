@@ -71,7 +71,7 @@ disp_last_time.plot()
 ###############################################################################
 # Get displacements for a single time step and a few nodes
 # --------------------------------------------------------
-dispObject = simulation.displacement(nodes=[3, 4, 6], steps=[25])
+dispObject = simulation.displacement(nodes=[20, 200, 400], steps=[25])
 print(dispObject)
 
 df = dispObject.as_data_frame()
