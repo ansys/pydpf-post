@@ -18,23 +18,23 @@ print(simulation)
 ###############################################################################
 # Get displacements for all timesteps
 # -----------------------------------
-disp = simulation.displacement()
+displacement = simulation.displacement()
 
 ###############################################################################
 # Print displacement information
-print(disp)
+print(displacement)
 
 ###############################################################################
 # Get information for the last timestep displacement field
-print(disp[-1])
+print(displacement[-1])
 
 ###############################################################################
 # Get data for the last timestep displacement field
-print(disp[-1].data)
+print(displacement[-1].data)
 
 ###############################################################################
 # Plot data for the last timestep displacement field
-disp[-1].plot()
+displacement[-1].plot()
 
 ###############################################################################
 # Get displacements for one timestep
@@ -42,11 +42,11 @@ disp[-1].plot()
 # Request displacements only for the selectet time steps. Note that ``steps`` argument
 # allow you to select a certain time-step by its index (integers from 1 to n_time_steps).
 # This option is more efficient if only a few time steps are required.
-disp_times = simulation.displacement(steps=[2, 22])
+displacement_times = simulation.displacement(steps=[2, 22])
 
 ###############################################################################
 # Print displacement information
-print(disp_times)
+print(displacement_times)
 
 ###############################################################################
 # Get nodal stresses for a few nodes
