@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.dpf.post import load_simulation
+from ansys.dpf.post import examples, load_simulation
 
 
 @pytest.mark.parametrize("example", ["allkindofcomplexity", "simple_bar"])
@@ -110,8 +110,6 @@ def test_get_stresses_by_component(components, allkindofcomplexity):
 
 
 def test_data_frame():
-    from ansys.dpf.post import examples, load_simulation
-
     simulation = load_simulation(examples.download_transient_result())
     dispObject = simulation.displacement(nodes=[20, 200, 400], steps=[25])
     df = dispObject.as_data_frame()
