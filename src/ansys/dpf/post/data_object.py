@@ -84,6 +84,8 @@ class DataObject:
         20                  -0.005752  ...             -4.518793e-07
         200                 -0.001655  ...              4.959668e-08
         400                 -0.001658  ...              8.819955e-08
+        <BLANKLINE>
+        [3 rows x 3 columns]
         >>> print(df.columns)
         Index(['displacement_0.477975s X', 'displacement_0.477975s Y',
                'displacement_0.477975s Z'],
