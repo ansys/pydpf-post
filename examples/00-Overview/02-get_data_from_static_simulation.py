@@ -17,15 +17,15 @@ simulation = load_simulation(examples.download_all_kinds_of_complexity())
 ###############################################################################
 # Get and plot displacements
 # --------------------------
-disp = simulation.displacement()
+displacement = simulation.displacement()
 
 ###############################################################################
 # Print information
-print(disp)
+print(displacement)
 
 ###############################################################################
 # Plot displacements
-disp[0].plot()
+displacement[0].plot()
 
 ###############################################################################
 # Get and plot stresses
