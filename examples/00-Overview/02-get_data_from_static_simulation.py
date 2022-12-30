@@ -38,7 +38,9 @@ stress = simulation.nodal_stress(component="XY")
 print(stress)
 
 ###############################################################################
-# Plot available stresses
+# Plot available stresses. From the print above it can be seen that the two
+# stress fields available represent the stress for a single time = 1 in two different
+# parts of the structure, denoted with the label ``elshape = 1`` and ``elshape = 2``.
 stress[0].plot()
 stress[1].plot()
 
