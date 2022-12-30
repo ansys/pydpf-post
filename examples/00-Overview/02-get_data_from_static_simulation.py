@@ -3,7 +3,7 @@
 
 Get data from static simulation
 ===============================
-This example show how to request data from a previously stored static simulation.
+This example shows how to request data from a previously stored static simulation.
 The available results can be listed to see what results can be retrieved.
 """
 
@@ -73,7 +73,7 @@ stress_named_sel[0].plot()
 ###############################################################################
 # Get stresses in a few elements
 # ------------------------------
-# Request stress only in a few elements by its ID
+# Request stress only for a few elements selected by their ID
 stress_elements = simulation.nodal_stress(elements=[301, 302, 303])
 
 ###############################################################################
