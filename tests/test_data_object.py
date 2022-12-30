@@ -6,7 +6,6 @@ from ansys.dpf.post import load_simulation
 @pytest.mark.parametrize("example", ["allkindofcomplexity", "simple_bar"])
 def test_get_displacements(example, request):
     simulation = load_simulation(request.getfixturevalue(example))
-    # simulation = load_simulation(example)
 
     for field in simulation.results:
         if field.name == "displacement":

@@ -401,7 +401,7 @@ class MechanicalSimulation(Simulation):
 
         wf.add_operator(disp_op)
 
-        # We will use the DataObject thing here.
+        # Use the DataObject here.
         wf.set_output_name("out", disp_op.outputs.fields_container)
 
         return DataObject(
