@@ -3,6 +3,8 @@ from typing import List
 
 from ansys.dpf.core import MeshedRegion
 
+from ansys.dpf.post.data_object import DataObject
+
 
 class Mesh:
     """Exposes the mesh of the simulation.
@@ -47,3 +49,57 @@ class Mesh:
     def unit(self):
         """Return the unit of the mesh."""
         return self._meshed_region.unit
+
+    def plot(
+        self,
+        data: DataObject = None,
+        shell_layer: int = None,
+        deformation: DataObject = None,
+        scale_factor: float = 1.0,
+        **kwargs
+    ):
+        """Plot the mesh.
+
+        Parameters
+        ----------
+        data :
+            Data to plot on the mesh as a contour.
+        shell_layer :
+            Enum used to set the shell layer if there is data on shell elements.
+        deformation :
+            Data used to deform the plotted mesh. Must represent a 3D vector field.
+        scale_factor :
+            Scaling factor applied when deforming the mesh.
+        **kwargs : optional
+            Additional keyword arguments for the plotter. For additional keyword
+            arguments, see ``help(pyvista.plot)``.
+
+        Examples
+        --------
+        Plot displacement data on a mesh.
+
+        >>> import ansys.dpf.post as dpf
+        >>> from ansys.dpf.post import examples
+        >>> simulation = dpf.load_simulation(examples.static_rst)
+        >>> mesh = simulation.mesh
+        >>> displacement = simulation.displacement()
+        >>> mesh.plot(displacement)
+
+        Plot the deformed mesh.
+
+        >>> mesh.plot(deformation=displacement, scale_factor=2.0)
+
+        """
+        fc = None
+        if data:
+            fc = data._fc
+        deform_by = None
+        if deformation:
+            deform_by = deformation._fc
+        return self._meshed_region.plot(
+            field_or_fields_container=fc,
+            shell_layers=shell_layer,
+            deform_by=deform_by,
+            scale_factor=scale_factor,
+            **kwargs
+        )

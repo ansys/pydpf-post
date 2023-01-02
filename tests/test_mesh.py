@@ -28,3 +28,13 @@ def test_mesh(simulation):
     assert mesh.elements.n_elements == 10292
     assert mesh.nodes.n_nodes == 15129
     assert mesh.unit == "m"
+
+
+def test_mesh_plot(simulation):
+    mesh = simulation.mesh
+    displacement = simulation.displacement()
+    # mesh.plot()
+    # displacement.plot()
+    print(displacement)
+    mesh.plot(data=displacement)
+    mesh.plot(deformation=displacement, scale_factor=2.0)

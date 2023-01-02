@@ -14,7 +14,7 @@ from ansys.dpf import core
 from ansys.dpf.post import examples
 
 # enable off_screen plotting to avoid test interruption
-pv.OFF_SCREEN = True
+# pv.OFF_SCREEN = True
 mpl.use("Agg")
 
 
