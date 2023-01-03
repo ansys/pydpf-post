@@ -34,6 +34,7 @@ print(named_selections)
 
 # Print time-steps
 print(transient_simulation.time_freq_support)
+print(transient_simulation.time_steps)
 
 # Print the list of available results
 print(transient_simulation.results)

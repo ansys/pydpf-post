@@ -34,6 +34,7 @@ print(named_selections)
 
 # Print the list of steps (the time_freq_support)
 print(static_simulation.time_freq_support)
+print(static_simulation.steps)
 
 # Print the list of available results
 print(static_simulation.results)
