@@ -36,6 +36,8 @@ print(named_selections)
 
 # Print mode frequencies
 print(modal_simulation.time_freq_support)
+print(modal_simulation.modes)
+print(modal_simulation.frequencies)
 
 # Print the list of available results
 print(modal_simulation.results)
