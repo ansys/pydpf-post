@@ -34,6 +34,21 @@ class DataObject:
         """Return the length of the DataObject."""
         return len(self._fc)
 
+    def __getitem__(self, index: int):
+        """Retrieve the data at a requested index.
+
+        Parameters
+        ----------
+        index :
+            Index.
+
+        Returns
+        -------
+        data : DataObject
+            DataObject corresponding to the request.
+        """
+        return self._fc[index]
+
     def __min__(self, **kwargs):
         """Return the minimum of the data."""
         return self.as_array().min()
@@ -123,9 +138,19 @@ class DataObject:
         """
         return self._fc[-1].data
 
-    def plot(self, **kwargs):
-        """Plot the result."""
-        self._fc[-1].plot(**kwargs)
+    def plot(self, shell_layers=None, deformation=None, scale_factor=1.0, **kwargs):
+        """Plot the DataObject."""
+        deform_by = None
+        if deformation:
+            deform_by = deformation._fc[-1]
+            if deform_by.component_count != 3:
+                raise ValueError()
+        self._fc[-1].plot(
+            shell_layers=shell_layers,
+            deform_by=deform_by,
+            scale_factor=scale_factor,
+            **kwargs
+        )
 
     def animate(self, **kwargs):
         """Animate the result.
