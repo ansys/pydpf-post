@@ -81,3 +81,15 @@ strain_eqv = static_simulation.raw_strain(
     component="EQV", selection=selection, steps=[1]
 )
 print(strain_eqv)
+
+# -----------------------------------------------------------------------------------------
+# Extract the mesh
+mesh = static_simulation.mesh
+print(mesh)
+
+# Show the mesh with defaults for static:
+# - not deformed
+# - at last step
+mesh.plot(
+    opacity=0.3, title="Static mesh plot", text="defaults to not deformed, last step"
+)

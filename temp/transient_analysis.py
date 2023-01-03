@@ -81,3 +81,15 @@ strain_eqv = transient_simulation.raw_strain(
     component="EQV", selection=selection, steps=[1]
 )
 print(strain_eqv)
+
+# -----------------------------------------------------------------------------------------
+# Extract the mesh
+mesh = transient_simulation.mesh
+
+# Show the mesh with defaults for transient:
+# - deformed if displacements are available
+# - at last timestep
+# - eroded elements not shown
+mesh.plot(
+    opacity=0.3, title="Transient mesh plot", text="defaults to deformed, last timestep"
+)

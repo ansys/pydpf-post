@@ -83,3 +83,16 @@ strain_eqv = harmonic_simulation.raw_strain(
     component="EQV", selection=selection, steps=[1]
 )
 print(strain_eqv)
+
+# -----------------------------------------------------------------------------------------
+# Extract the mesh
+mesh = harmonic_simulation.mesh
+
+# Show the mesh with defaults for harmonic:
+# - not deformed
+# (- at first frequency)
+# (- at first phase angle (0°))
+mesh.plot(opacity=0.3, title="Harmonic mesh plot", text="defaults to not deformed")
+
+# Bode plot - Frequency response plot
+# gives displacement and phase angle at location of peak response

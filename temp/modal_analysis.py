@@ -84,3 +84,12 @@ strain_eqv = modal_simulation.raw_strain(
     component="EQV", selection=selection, steps=[1]
 )
 print(strain_eqv)
+
+# -----------------------------------------------------------------------------------------
+# Extract the mesh
+mesh = modal_simulation.mesh
+
+# Show the mesh with defaults for modal:
+# - not deformed
+# - at first mode/frequency
+mesh.plot(opacity=0.3, title="Modal mesh plot", text="defaults to deformed, first mode")
