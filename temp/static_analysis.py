@@ -48,18 +48,21 @@ print(static_simulation.results)
 # - the boundary conditions
 static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
 
+
 # -----------------------------------------------------------------------------------------
 # Create and use geometry
-# TODO
+# Creation of geometry is for now in PyDPF-Core.
+# Do we expose those in Post in some way? Simply by importing them in a specific Post module?
+
 
 # -----------------------------------------------------------------------------------------
 # Define and use boundary conditions
-# TODO
+# TODO: TBD
 
 
 # -----------------------------------------------------------------------------------------
 # Define and use loads
-# TODO
+# TODO: TBD
 
 # Mapping loads from one mesh to another
 load = Load(data=data_object)
