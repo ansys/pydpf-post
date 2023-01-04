@@ -150,7 +150,7 @@ displacement_X = static_simulation.displacement(
     component="X", nodes=[1, 2, 3], steps=[1]
 )
 
-# Extract displacements along X for nodes 1, 2 and 3 at step 1
+# Extract norm of displacements for nodes 1, 2 and 3 at step 1
 displacement_norm = static_simulation.displacement(
     component="N", nodes=[1, 2, 3], steps=[1]
 )
