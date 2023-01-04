@@ -77,6 +77,7 @@ selection.select_nodes(nodes=[1, 2, 3])
 selection.select_elements(elements=[1, 2, 3])
 selection.select_time_freq_indices(time_freq_indices=[1])  # Rework?
 # selection.select_steps(steps=[1])
+selection.select_geometry(geometry=Line())
 selection.select_named_selection(named_selection=named_selections[0])
 
 # Intersect two spatial selections
