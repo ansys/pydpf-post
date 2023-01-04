@@ -252,6 +252,16 @@ stress_S1_step_1.plot()
 max_stress_S1_node_1.graph(x="steps", names="ID")
 
 
+# Animate a DataObject
+# animate a contour in time
+stress_S1.animate(axis="steps")
+
+
+# Animate graphs?
+# animate a curve in time
+max_stress_S1_node_1.animate_graph(axis="steps", x="ID")
+
+
 # Interpolate data from one mesh to another
 # Starts from the mesh support of the DataObject
 # Performs interpolation for each step and for each component present by default (for each field)
