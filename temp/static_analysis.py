@@ -235,8 +235,9 @@ print(mesh_1)
 
 # Plot a DataObject (3D contour plots)
 # TODO
+# plotting and graphing functions can return the Plotter instance
 # plot a multi-step DataObject - takes an optional "step" argument, defaults to last
-stress_S1.plot(step=3)
+pl = stress_S1.plot(step=3, return_plotter=True)
 
 # plot a one-step DataObject - the "step" argument is not read
 stress_S1_step_1.plot()
@@ -250,6 +251,8 @@ stress_S1_step_1.plot()
 # the graph method would take optional "x", "y", "names" arguments.
 # graph a multi-step DataObject
 max_stress_S1_node_1.graph(x="steps", names="ID")
+# or as proposed in the GitHub discussion #213
+max_stress_S1_node_1.plot(graph=True, individual_figures=False)
 
 
 # Animate a DataObject
