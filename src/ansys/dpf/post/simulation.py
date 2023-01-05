@@ -15,7 +15,7 @@ class Simulation:
         """Initialize the solution using a ``dpf.core.Model`` object."""
         self._model = model
         self._data_sources = data_sources
-        self._geometry = None
+        self._geometries = None
         self._active_selection = None
         self._mesh = None
 
@@ -26,6 +26,14 @@ class Simulation:
         Returns a list of available results as strings.
         """
         return self._model.metadata.result_info.available_results
+
+    @property
+    def geometries(self):
+        """Constructed geometries present.
+
+        Returns a list of geometry objects.
+        """
+        return self._geometries
 
     @property
     def mesh(self) -> Mesh:
