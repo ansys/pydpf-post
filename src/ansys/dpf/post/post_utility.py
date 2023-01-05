@@ -9,7 +9,12 @@ from ansys.dpf.core.model import Model
 from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
-from ansys.dpf.post.simulation import MechanicalSimulation
+from ansys.dpf.post.simulation import (
+    HarmonicMechanicalSimulation,
+    ModalMechanicalSimulation,
+    StaticMechanicalSimulation,
+    TransientMechanicalSimulation,
+)
 from ansys.dpf.post.static_analysis import (
     StaticAnalysisSolution,
     ThermalStaticAnalysisSolution,
@@ -178,13 +183,13 @@ def load_simulation(
         physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
     ):
         if analysis_type == _AnalysisType.static:
-            return MechanicalSimulation(data_sources, _model)
+            return StaticMechanicalSimulation(data_sources, _model)
         elif analysis_type == _AnalysisType.modal:
-            raise NotImplementedError
+            return ModalMechanicalSimulation(data_sources, _model)
         elif analysis_type == _AnalysisType.harmonic:
-            raise NotImplementedError
+            return HarmonicMechanicalSimulation(data_sources, _model)
         elif analysis_type == _AnalysisType.transient:
-            raise NotImplementedError
+            return TransientMechanicalSimulation(data_sources, _model)
         else:
             raise ValueError(f"Unknown analysis type '{analysis_type}' for mechanical.")
     else:
