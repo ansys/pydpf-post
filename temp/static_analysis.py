@@ -270,6 +270,9 @@ max_stress_S1_node_1.graph(x="steps", names="ID")
 # or as proposed in the GitHub discussion #213
 max_stress_S1_node_1.plot(graph=True, individual_figures=False)
 
+# Plot waterfall/stagger diagrams -> a waterfall diagram is different from a waterfall plot!
+# Plot waterfall plots
+
 
 # Animate a DataObject
 # animate a contour in time
