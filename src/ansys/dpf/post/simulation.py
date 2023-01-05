@@ -293,6 +293,22 @@ class MechanicalSimulation(Simulation):
 #         pass
 
 
+class StaticMechanicalSimulation(MechanicalSimulation):
+    """Provides a mechanical static type simulation."""
+
+
+class TransientMechanicalSimulation(MechanicalSimulation):
+    """Provides a mechanical transient type simulation."""
+
+
+class ModalMechanicalSimulation(MechanicalSimulation):
+    """Provides a mechanical modal type simulation."""
+
+
+class HarmonicMechanicalSimulation(MechanicalSimulation):
+    """Provides a mechanical harmonic type simulation."""
+
+
 # class FluidSolution(Simulation):
 #     """Provides a fluid type solution."""
 
