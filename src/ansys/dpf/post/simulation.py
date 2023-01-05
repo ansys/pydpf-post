@@ -17,6 +17,7 @@ class Simulation:
         self._data_sources = data_sources
         self._geometries = []
         self._boundary_conditions = []
+        self._loads = []
         self._active_selection = None
         self._mesh = None
 
@@ -43,6 +44,14 @@ class Simulation:
         Returns a list of boundary_condition objects.
         """
         return self._boundary_conditions
+
+    @property
+    def loads(self):
+        """List of loads in the simulation.
+
+        Returns a list of load objects.
+        """
+        return self._loads
 
     @property
     def mesh(self) -> Mesh:
