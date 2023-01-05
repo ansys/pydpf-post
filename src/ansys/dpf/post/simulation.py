@@ -28,7 +28,9 @@ class Simulation:
 
         Returns a list of available results as strings.
         """
-        return self._model.metadata.result_info.available_results
+        return [
+            str(result) for result in self._model.metadata.result_info.available_results
+        ]
 
     @property
     def geometries(self):
