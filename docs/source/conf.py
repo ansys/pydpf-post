@@ -2,7 +2,7 @@
 from datetime import datetime
 import os
 
-from ansys_sphinx_theme import pyansys_logo_black
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import numpy as np
 import pyvista
 
@@ -31,6 +31,7 @@ author = "ANSYS Inc."
 
 # The short X.Y version
 release = version = __version__
+cname = os.getenv("DOCUMENTATION_CNAME", "nocname.com")
 
 
 # -- General configuration ---------------------------------------------------
@@ -155,6 +156,7 @@ sphinx_gallery_conf = {
 html_short_title = html_title = "PyDPF-Post"
 html_theme = "ansys_sphinx_theme"
 html_logo = pyansys_logo_black
+html_facivon = ansys_favicon
 html_theme_options = {
     "github_url": "https://github.com/pyansys/pydpf-post",
     "show_prev_next": False,
@@ -162,6 +164,11 @@ html_theme_options = {
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
     ],
+    "switcher": {
+        "json_url": f"https://{cname}/release/versions.json",
+        "version_match": get_version_match(__version__),
+    },
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

@@ -4,43 +4,11 @@ on:
   release:
     types: [published]
 
+env:
+  DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
+  PYTHON_MAIN_VERSION: '3.10'
+
 jobs:
-  Deploy_Documentation:
-    name: "Deploy live documentation"
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: "Get the version"
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-      - name: "Download Release Asset - HTML"
-        uses: dsaltares/fetch-gh-release-asset@1.1.0
-        with:
-          file: HTML-doc-ansys-dpf-post.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Unzip the HMTL documentation"
-        uses: montudor/action-zip@v1
-        with:
-          args: unzip -qq HTML-doc-ansys-dpf-post.zip -d HTML-doc-ansys-dpf-post
-
-      - name: "Deploy to gh-pages"
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: HTML-doc-ansys-dpf-post/
-          token: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          branch: gh-pages
-          git-config-name: pyansys-ci-bot
-          git-config-email: pyansys.github.bot@ansys.com
-          repository-name: pyansys/DPF-Post-docs
-          commit-message: Documentation generated for ${{ steps.get_version.outputs.VERSION }}
-          clean-exclude: "CNAME"
-          tag: doc-${{ steps.get_version.outputs.VERSION }}
 
   Publish_to_PyPI:
     name: Publish to PyPI
@@ -58,3 +26,17 @@ jobs:
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+
+  upload_docs_release:
+    name: "Upload release documentation"
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    needs: [Publish_to_PyPI]
+    steps:
+      - name: Deploy the stable documentation
+        uses: pyansys/actions/doc-deploy-stable@v2
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
