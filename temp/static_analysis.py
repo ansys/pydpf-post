@@ -64,11 +64,19 @@ static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
 # Define and use loads
 # TODO: TBD
 
-# Mapping loads from one mesh to another
+# Loads are not read from files yet
+# A load would then be derived from a DataObject, which has a mesh support, thus:
 load = Load(data=data_object)
-# A load would be derived from a DataObject, which has a mesh support, thus:
+# Mapping loads from one mesh to another (which is the same as DataObject.interpolate?)
 load.interpolate(mesh=another_mesh)
+# This means a load has a support, either nodal, elemental or face.
+# This means location.face must be available.
+# It can also vary with step/time/frequency/rpm or any dimension present in the DataObject.
 
+# The metadata and functionalities unique to a Load would be:
+# - its naming
+# - its string representation
+# - its graphic representation
 
 # -----------------------------------------------------------------------------------------
 # Define and use a selection
