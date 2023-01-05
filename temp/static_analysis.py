@@ -68,9 +68,9 @@ static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
 
 # Loads are not read from files yet
 # A load would then be derived from a DataObject, which has a mesh support, thus:
-load = Load(data=data_object)
+# load = Load(data=data_object)
 # Mapping loads from one mesh to another (which is the same as DataObject.interpolate?)
-load.interpolate(mesh=another_mesh)
+# load.interpolate(mesh=another_mesh)
 # This means a load has a support, either nodal, elemental or face.
 # This means location.face must be available.
 # It can also vary with step/time/frequency/rpm or any dimension present in the DataObject.
@@ -87,7 +87,7 @@ selection.select_nodes(nodes=[1, 2, 3])
 selection.select_elements(elements=[1, 2, 3])
 selection.select_time_freq_indices(time_freq_indices=[1])  # Rework?
 # selection.select_steps(steps=[1])
-selection.select_geometry(geometry=Line())
+# selection.select_geometry(geometry=Line())
 selection.select_named_selection(named_selection=named_selections[0])
 
 # Intersect two spatial selections
@@ -118,8 +118,8 @@ selection_4.select_nodes(nodes=[3, 4, 5])
 space_sel_3 = selection_3.spatial_selection
 space_sel_4 = selection_4.spatial_selection
 
-space_sel_3.union(space_sel_4)
-print(space_sel_3)
+# space_sel_3.union(space_sel_4)
+# print(space_sel_3)
 # Spatial selection with 5 node(s):
 # [1, 2, 3, 4, 5]
 
@@ -154,7 +154,7 @@ mesh.plot(triads=True)
 
 # Map a load onto the mesh
 # A load is a DataObject, so has a mesh support. Thus:
-load_2 = mesh.interpolate(load)
+# load_2 = mesh.interpolate(load)
 
 
 # -----------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ max_stress_S1_node_1.animate_graph(axis="steps", x="ID")
 # Interpolate data from one mesh to another
 # Starts from the mesh support of the DataObject
 # Performs interpolation for each step and for each component present by default (for each field)
-stress_S1_on_another_mesh = stress_S1.interpolate(mesh=another_mesh)
+# stress_S1_on_another_mesh = stress_S1.interpolate(mesh=another_mesh)
 
 
 # Export to a numpy ndarray
