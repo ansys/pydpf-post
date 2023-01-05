@@ -2,6 +2,8 @@
 import re
 from typing import List, Union
 
+from ansys.dpf.core.plotter import DpfPlotter
+
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
@@ -75,6 +77,46 @@ class Simulation:
         if self._named_selections is None:
             self._named_selections = self._model.metadata.available_named_selections
         return self._named_selections
+
+    def plot(
+        self,
+        mesh: bool = True,
+        geometry: bool = True,
+        loads: bool = True,
+        boundary_conditions: bool = True,
+    ):
+        """General plot of the simulation object.
+
+        Plots by default the complete mesh contained in the simulation,
+        as well as a representation of the constructed geometry,
+        the loads, and the boundary conditions currently defined.
+        Each representation can be deactivated with its respective boolean argument.
+
+        Args:
+            mesh:
+                Whether to plot the mesh representation.
+            geometry:
+                Whether to plot the geometries.
+            loads:
+                Whether to plot the loads.
+            boundary_conditions:
+                Whether to plot the boundary conditions.
+
+        Returns
+        -------
+            Returns a plotter instance of the active visualization backend.
+        """
+        plt = DpfPlotter()
+        if mesh:
+            plt.add_mesh(self.mesh._meshed_region)
+        if geometry:
+            for geom in self.geometries:
+                getattr(plt, "add_" + str(type(geom)).lower())(geom)
+        if loads:
+            pass
+        if boundary_conditions:
+            pass
+        plt.show_figure()
 
     def activate_selection(self, selection_object: Selection):
         """Selection currently active.
