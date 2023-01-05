@@ -150,6 +150,10 @@ mesh.plot(
 # plot elements triads
 mesh.plot(triads=True)
 
+# Map a load onto the mesh
+# A load is a DataObject, so has a mesh support. Thus:
+load_2 = mesh.interpolate(load)
+
 
 # -----------------------------------------------------------------------------------------
 # Extract results
