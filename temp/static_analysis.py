@@ -4,8 +4,10 @@ import ansys.dpf.post as dpf
 from ansys.dpf.post import examples
 from ansys.dpf.post.selection import Selection
 
-# Provide Enums for available physics_types and analysis_types
+# Provide Public Enums for available physics_types and analysis_types
 # from ansys.dpf.post import physics_types, analysis_types
+# instead of having them private
+# from ansys.dpf.post.common import _AnalysisType, _PhysicsType
 
 # Load the simulation files
 static_simulation = dpf.load_simulation(examples.simple_bar)
