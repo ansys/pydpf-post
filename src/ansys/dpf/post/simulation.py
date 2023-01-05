@@ -111,7 +111,7 @@ class Simulation:
             plt.add_mesh(self.mesh._meshed_region)
         if geometry:
             for geom in self.geometries:
-                getattr(plt, "add_" + str(type(geom)).lower())(geom)
+                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom)
         if loads:
             pass
         if boundary_conditions:
