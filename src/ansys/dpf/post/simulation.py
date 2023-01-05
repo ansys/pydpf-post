@@ -19,6 +19,7 @@ class Simulation:
         self._boundary_conditions = []
         self._loads = []
         self._active_selection = None
+        self._named_selections = None
         self._mesh = None
 
     @property
@@ -62,6 +63,16 @@ class Simulation:
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
         return self._mesh
+
+    @property
+    def named_selections(self) -> List[str]:
+        """List of named selections in the simulation.
+
+        Returns a list of named selections names.
+        """
+        if self._named_selections is None:
+            self._named_selections = self._model.metadata.available_named_selections
+        return self._named_selections
 
     def activate_selection(self, selection_object: Selection):
         """Selection currently active.
