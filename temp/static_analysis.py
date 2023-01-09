@@ -134,7 +134,7 @@ space_sel_4 = selection_4.spatial_selection
 # TODO
 
 # Set a selection as default for a simulation for further result extractions
-static_simulation.activate_selection(selection_object=selection)
+static_simulation.activate_selection(selection=selection)
 
 # Remove a selection as default for a simulation for further result extractions
 static_simulation.deactivate_selection()
@@ -146,6 +146,13 @@ list_of_IDs = selection.spatial_selection.apply_to(static_simulation)
 # Extract the mesh
 mesh = static_simulation.mesh
 print(mesh)
+out = r"""
+DPF Mesh:
+    XXXX nodes
+    XXXX elements
+    Unit: m
+    with solid (3D) elements
+"""
 
 # Show the mesh with defaults for static:
 # - not deformed
@@ -210,6 +217,33 @@ print(stress_S1)
 # For:
 # - steps: 1, 2, 3, ...
 # - named selection: {named_selection[0]}
+data_object_str_DPF_style = r"""
+DPF DataObject:
+Nodal stress S1
+    on:
+    - named selection {named_selection_name} # if present
+    - N nodes/elements/faces:
+        [1, ..., 45]  # summarized list representation if less than X characters long
+    - N steps/frequencies/times:
+        [...]
+    with:
+    - S1 stress (Pa)
+        [range]
+"""
+# Or print-out the DataObject in a dataframe style,
+# with an index on the main supporting mesh entity id
+data_object_str_dataframe_style = r"""
+DPF DataObject:
+Nodal stress S1 [on *named_selection_name*] # if present
+ node ID   step  component   value
+       1      1         S1     0.1
+       2      1         S1     0.2
+       3      1         S1     0.3
+       ...
+       1      2         S1     0.2
+       2      2         S1     0.3
+       3      2         S1     NaN
+"""
 
 # Get the name of the DataObject
 print(stress_S1.name)
