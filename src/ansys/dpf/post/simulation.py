@@ -118,12 +118,13 @@ class Simulation:
             pass
         plt.show_figure()
 
-    def activate_selection(self, selection_object: Selection):
-        """Selection currently active.
+    def activate_selection(self, selection: Selection):
+        """Sets a selection as active on the simulation.
 
-        Returns the current active :class:`ansys.dpf.post.selection.Selection` class.
+        Activating a given selection on a simulation means it is used
+        as a default selection/filter in further result queries.
         """
-        self._active_selection = selection_object.selection
+        self._active_selection = selection
 
     def deactivate_selection(self):
         """Deactivate the currently active selection."""
