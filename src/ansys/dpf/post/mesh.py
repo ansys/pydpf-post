@@ -11,6 +11,10 @@ class Mesh:
         """Initialize this class."""
         self._meshed_region = meshed_region
 
+    def __str__(self):
+        """String representation of this class."""
+        return str(self._meshed_region)
+
     @property
     def available_named_selections(self) -> List[str]:
         """Returns the available named selection of the mesh."""
