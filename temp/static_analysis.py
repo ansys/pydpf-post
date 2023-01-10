@@ -48,13 +48,18 @@ print(static_simulation.results)
 # - the mesh, not deformed, at step 0
 # - the geometry
 # - the boundary conditions
-static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
+# static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
 
 
 # -----------------------------------------------------------------------------------------
 # Create and use geometry
 # Creation of geometry is for now in PyDPF-Core.
 # Do we expose those in Post in some way? Simply by importing them in a specific Post module?
+from ansys.dpf.core.geometry import Line
+
+line = Line(coordinates=[[1.0, 0.0, 1.0], [5.0, 0.0, 1.0]])
+static_simulation.geometries.append(line)
+# static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
 
 
 # -----------------------------------------------------------------------------------------
@@ -105,7 +110,7 @@ print(space_sel_2)
 # Spatial selection with 3 node(s):
 # [3, 4, 5]
 
-space_sel_1.intersect(space_sel_2)
+# space_sel_1.intersect(space_sel_2)
 print(space_sel_1)
 # Spatial selection with 1 node(s):
 # [3]
