@@ -2,6 +2,7 @@
 import re
 from typing import List, Union
 
+from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
 
 from ansys.dpf import core
@@ -13,7 +14,7 @@ from ansys.dpf.post.selection import Selection
 class Simulation:
     """Provides the main class of the DPF-Post solution."""
 
-    def __init__(self, data_sources: core.DataSources, model: core.Model):
+    def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the solution using a ``dpf.core.Model`` object."""
         self._model = model
         self._data_sources = data_sources
