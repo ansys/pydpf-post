@@ -333,6 +333,11 @@ class MechanicalSimulation(Simulation):
 class StaticMechanicalSimulation(MechanicalSimulation):
     """Provides a mechanical static type simulation."""
 
+    @property
+    def steps(self) -> List[float]:
+        """List of the steps in the simulation."""
+        return self._time_frequencies.time_frequencies.data
+
 
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides a mechanical transient type simulation."""
