@@ -20,9 +20,11 @@ You can specify the physics type and analysis type.
 ```
 
 To that end, we might want to provide Public Enums for available physics_types and analysis_types
-instead of having them private.
+instead of having them private. -> Give Enum of available simulation subtypes
 ```pycon
 >>> from ansys.dpf.post import physics_types, analysis_types
+>>> from ansys.dpf.post import simulation_types
+simulation_types: Enum of available subclasses
 >>> # instead of
 >>> # from ansys.dpf.post.common import _AnalysisType, _PhysicsType
 ```
@@ -71,17 +73,18 @@ Cumulative     Time (s)       LoadStep       Substep
 Print the mesh
 ```pycon
 >>> print(static_simulation.mesh)
-DPF  Meshed Region: 
+Mesh: 
   3751 nodes 
   3000 elements 
   Unit: m 
   With solid (3D) elements
+  Element types
 ```
 
 Print the list of constructed geometries
 ```pycon
 >>> print(static_simulation.geometries)
-[]
+[<Line_Object>]
 ```
 
 Print the list of boundary conditions
@@ -109,8 +112,12 @@ DPF  Time/Freq Support:
   Number of sets: 1 
 Cumulative     Time (s)       LoadStep       Substep         
 1              1.000000       1              1      
->>> print(static_simulation.steps)
+>>> print(static_simulation.times)
 [1.]
+>>> print(static_simulation.steps)
+[1]
+>>> print(static_simulation.nsteps)
+1
 ```
 
 Print the list of available results
@@ -305,10 +312,20 @@ A load is a DataObject, so has a mesh support. Thus:
 
 ## Extract specific results
 
+Arguments:
+components: list of components
+nodes
+elements
+named_selection
+selection
+times
+set_indices
+
+
 ### Extract displacements along X for nodes 1, 2 and 3 at step 1
 ```pycon
 >>> displacement_X = static_simulation.displacement(
-...     component="X", nodes=[1, 2, 3], steps=[1]
+...     components=["X", "Y], nodes=[1, 2, 3], steps=[1]
 ... )
 ```
 
@@ -328,14 +345,14 @@ A load is a DataObject, so has a mesh support. Thus:
 
 ### Extract first principal nodal stress for a named (elemental or nodal) selection at all steps
 ```pycon
->>> stress_S1 = static_simulation.nodal_stress(
-...     component="S1", named_selection=named_selections[0]
+>>> stress_S1 = static_simulation.nodal_principal_stress(
+...     components=1, named_selection=named_selections[0]
 ... )
 ```
 
 ### Extract elemental Von Mises stress everywhere at all steps
 ```pycon
->>> stress_VM = static_simulation.elemental_stress(component="VM")
+>>> stress_VM = static_simulation.elemental_von_mises_eqv_stress()
 ```
 
 ### Extract equivalent elemental nodal elastic strain for a selection at step 1
@@ -347,10 +364,11 @@ A load is a DataObject, so has a mesh support. Thus:
 
 ### Extract first principal nodal strain for a selection at step 1
 ```pycon
->>> elastic_strain_E1 = static_simulation.nodal_elastic_strain(
-...     component="E1", selection=selection, steps=[1]
+>>> elastic_strain_E1 = static_simulation.nodal_elastic_principal_strain(
+...     component=1, selection=selection, steps=[1]
 ... )
 ```
+Write in the doc that this is E1 so that researching in doc will get you there.
 
 ### Extract nodal plastic strain for a selection at step 1
 ```pycon
