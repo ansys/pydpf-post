@@ -210,7 +210,9 @@ def load_simulation(
         else:
             raise ValueError(f"Unknown physics type '{physics_type}.")
 
-    if issubclass(simulation_type, Simulation):
+    if simulation_type in [
+        getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
+    ]:
         return simulation_type(data_sources, _model)
     else:
         raise ValueError(

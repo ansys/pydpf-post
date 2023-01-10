@@ -1,3 +1,5 @@
+import pytest
+
 import ansys.dpf.post as dpf
 from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.simulation import (
@@ -46,3 +48,11 @@ def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
     )
     assert type(simulation) == HarmonicMechanicalSimulation
+
+
+def test_load_simulation_raise_simulation_type(simple_bar):
+    with pytest.raises(ValueError, match="is not a recognized simulation type"):
+        _ = dpf.load_simulation(
+            data_sources=simple_bar,
+            simulation_type="test",
+        )
