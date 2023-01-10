@@ -37,7 +37,7 @@ print(static_simulation.loads)
 named_selections = static_simulation.named_selections
 print(named_selections)
 
-# Print the list of steps (the time_freq_support)
+# Print the list of steps (the time_freq_support)? the list of sub-steps? both? the times?
 print(static_simulation.time_freq_support)
 print(static_simulation.steps)
 
