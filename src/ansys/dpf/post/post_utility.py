@@ -6,12 +6,18 @@ import warnings
 
 from ansys.dpf.core.model import Model
 
-from ansys.dpf.post.common import _AnalysisType, _AvailableKeywords, _PhysicsType
+from ansys.dpf.post.common import (
+    AvailableSimulationTypes,
+    _AnalysisType,
+    _AvailableKeywords,
+    _PhysicsType,
+)
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
 from ansys.dpf.post.simulation import (
     HarmonicMechanicalSimulation,
     ModalMechanicalSimulation,
+    Simulation,
     StaticMechanicalSimulation,
     TransientMechanicalSimulation,
 )
@@ -108,31 +114,37 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
 
 def load_simulation(
     data_sources,
-    physics_type=None,
-    analysis_type=None,
-):
+    simulation_type: AvailableSimulationTypes = None,
+) -> Simulation:
     """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
 
     This class provides the main interface to explore and manipulate results, meshes, geometries,
-    associated with the result files given in input.
+    and other entities associated with the result files given in input.
+    The interface exposed depends on the type of simulation selected with the argument
+    `simulation_type`. Each one proposes a post-processing context with its specific vocabulary and
+    most common post-processing functionalities.
+    Available simulation types are listed in
+    :class:`<AvailableSimulationTypes> ansys.dpf.post.common.AvailableSimulationTypes`.
 
     Parameters
     ----------
     data_sources: str, ansys.dpf.core.DataSources
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
-    physics_type: common._PhysicsType, str, optional
-        Type of phsyics described in the specified data sources. Options are
-        ``"mechanical"`` or ``"thermal"``. The default is ``None``, in which case
-        the data sources are read to determine the physics type.
-    analysis_type: common._AnalysisType, str, optional
-        Type of analysis described in the specified data sources. Options are
-        ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
-        default is ``None``, in which case the data sources are read to determine
-        the analysis type.
+    simulation_type:
+        Type of simulation to create when loading the specified data sources.
+        Each type of simulation gives access to specific properties and methods to better fit
+        expectations and vocabulary of each context.
+        This defaults to the simulation type corresponding to the combination of physics type
+        and analysis type detected automatically by DPF when reading the result files.
+        If nothing is detected, this will default to a static mechanical type of simulation.
+        The best practice is to define this parameter to select the right post-processing context.
+        Options are given in
+        :class:`<AvailableSimulationTypes> ansys.dpf.post.common.AvailableSimulationTypes`.
 
     Returns
     -------
-    An instance of the :class:`DataObject <ansys.dpf.post.data_object.DataObject>` class.
+    An instance of one of the subclasses of the
+    :class:`Simulation <ansys.dpf.post.simulation.Simulation>` class.
 
     .. versionadded:: 3.0
         This function replaces the deprecated :func:`load_solution` function.
@@ -148,7 +160,7 @@ def load_simulation(
     _model = Model(data_sources)
     data_sources = _model.metadata.data_sources
 
-    if not physics_type:
+    if not simulation_type:
         try:
             physics_type = _model.metadata.result_info.physics_type
         except Exception as e:
@@ -159,8 +171,6 @@ def load_simulation(
                 )
             )
             physics_type = _PhysicsType.mechanical
-
-    if not analysis_type:
         try:
             analysis_type = _model.metadata.result_info.analysis_type
         except Exception as e:
@@ -172,28 +182,41 @@ def load_simulation(
             )
             analysis_type = _AnalysisType.static
 
-    if physics_type == _PhysicsType.thermal:
-        if analysis_type == _AnalysisType.static:
-            raise NotImplementedError
-        elif analysis_type == _AnalysisType.transient:
-            raise NotImplementedError
+        if physics_type == _PhysicsType.thermal:
+            if analysis_type == _AnalysisType.static:
+                raise NotImplementedError
+            elif analysis_type == _AnalysisType.transient:
+                raise NotImplementedError
+            else:
+                raise ValueError(
+                    f"Unknown analysis type '{analysis_type}' for thermal."
+                )
+        elif (
+            physics_type == _PhysicsType.mecanic
+            or physics_type == _PhysicsType.mechanical
+        ):
+            if analysis_type == _AnalysisType.static:
+                simulation_type = StaticMechanicalSimulation
+            elif analysis_type == _AnalysisType.modal:
+                simulation_type = ModalMechanicalSimulation
+            elif analysis_type == _AnalysisType.harmonic:
+                simulation_type = HarmonicMechanicalSimulation
+            elif analysis_type == _AnalysisType.transient:
+                simulation_type = TransientMechanicalSimulation
+            else:
+                raise ValueError(
+                    f"Unknown analysis type '{analysis_type}' for mechanical."
+                )
         else:
-            raise ValueError(f"Unknown analysis type '{analysis_type}' for thermal.")
-    elif (
-        physics_type == _PhysicsType.mecanic or physics_type == _PhysicsType.mechanical
-    ):
-        if analysis_type == _AnalysisType.static:
-            return StaticMechanicalSimulation(data_sources, _model)
-        elif analysis_type == _AnalysisType.modal:
-            return ModalMechanicalSimulation(data_sources, _model)
-        elif analysis_type == _AnalysisType.harmonic:
-            return HarmonicMechanicalSimulation(data_sources, _model)
-        elif analysis_type == _AnalysisType.transient:
-            return TransientMechanicalSimulation(data_sources, _model)
-        else:
-            raise ValueError(f"Unknown analysis type '{analysis_type}' for mechanical.")
+            raise ValueError(f"Unknown physics type '{physics_type}.")
+
+    if issubclass(simulation_type, Simulation):
+        return simulation_type(data_sources, _model)
     else:
-        raise ValueError(f"Unknown physics type '{physics_type}.")
+        raise ValueError(
+            f"Simulation type '{simulation_type}' is not a recognized simulation type."
+            f" Please use ansys.dpf.common.AvailableSimulationTypes."
+        )
 
 
 def print_available_keywords():

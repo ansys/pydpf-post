@@ -1,5 +1,11 @@
 """Module containing the common tools for a better usage of the DPF-Post module."""
 
+from ansys.dpf.post.simulation import (
+    HarmonicMechanicalSimulation,
+    ModalMechanicalSimulation,
+    StaticMechanicalSimulation,
+    TransientMechanicalSimulation,
+)
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
@@ -119,3 +125,12 @@ class _PhysicsType:
     mechanical = "mechanical"
     mecanic = "mecanic"  # Keep for retro-compatibility with ANSYS < 231
     thermal = "thermal"
+
+
+class AvailableSimulationTypes:
+    """Contains available simulation types to give the :func:`load_simulation` function."""
+
+    static_mechanical = StaticMechanicalSimulation
+    transient_mechanical = TransientMechanicalSimulation
+    modal_mechanical = ModalMechanicalSimulation
+    harmonic_mechanical = HarmonicMechanicalSimulation
