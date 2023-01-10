@@ -32,45 +32,85 @@ instead of having them private.
 Print information about the simulation
 ```pycon
 >>> print(static_simulation)
-TBD
+Static Mechanical Simulation.
+
+
+Data Sources
+------------------------------
+d:\ansysdev\sandbox\pydpf-core\src\ansys\dpf\core\examples\ASimpleBar.rst
+
+DPF Model
+------------------------------
+Static analysis
+Unit system: MKS: m, kg, N, s, V, A, degC
+Physics Type: Mechanical
+Available results:
+     -  displacement: Nodal Displacement
+     -  element_nodal_forces: ElementalNodal Element nodal Forces
+     -  elemental_volume: Elemental Volume
+     -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+     -  artificial_hourglass_energy: Elemental Hourglass Energy
+     -  thermal_dissipation_energy: Elemental thermal dissipation energy
+     -  kinetic_energy: Elemental Kinetic Energy
+     -  co_energy: Elemental co-energy
+     -  incremental_energy: Elemental incremental energy
+     -  structural_temperature: ElementalNodal Temperature
+------------------------------
+DPF  Meshed Region: 
+  3751 nodes 
+  3000 elements 
+  Unit: m 
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support: 
+  Number of sets: 1 
+Cumulative     Time (s)       LoadStep       Substep         
+1              1.000000       1              1
 ```
 
 Print the mesh
 ```pycon
 >>> print(static_simulation.mesh)
-TBD
+DPF  Meshed Region: 
+  3751 nodes 
+  3000 elements 
+  Unit: m 
+  With solid (3D) elements
 ```
 
 Print the list of constructed geometries
 ```pycon
 >>> print(static_simulation.geometries)
-TBD
+[]
 ```
 
 Print the list of boundary conditions
 ```pycon
 >>> print(static_simulation.boundary_conditions)
-TBD
+[]
 ```
 
 Print the list of loads
 ```pycon
 >>> print(static_simulation.loads)
-TBD
+[]
 ```
 
 Print the list of available named selections
 ```pycon
 >>> print(static_simulation.named_selections)
-TBD
+['_FIXEDSU']
 ```
 
 Print the list of steps (the time_freq_support)? the list of sub-steps? both? the times?
 ```pycon
 >>> print(static_simulation.time_freq_support)
-TBD
+DPF  Time/Freq Support: 
+  Number of sets: 1 
+Cumulative     Time (s)       LoadStep       Substep         
+1              1.000000       1              1      
 >>> print(static_simulation.steps)
-TBD
+[1.]
 ```
 
 Print the list of available results
