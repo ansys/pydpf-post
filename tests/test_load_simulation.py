@@ -18,8 +18,8 @@ def test_load_simulation_static_mechanical(simple_bar, complex_model):
     assert type(simulation) == StaticMechanicalSimulation
 
 
-def test_load_simulation_transient_mechanical(transient_rst, complex_model):
-    simulation = dpf.load_simulation(data_sources=transient_rst)
+def test_load_simulation_transient_mechanical(plate_msup, complex_model):
+    simulation = dpf.load_simulation(data_sources=plate_msup)
     assert type(simulation) == TransientMechanicalSimulation
     simulation = dpf.load_simulation(
         data_sources=complex_model,
