@@ -1,8 +1,8 @@
 pypandoc==1.10
-imageio==2.22.2
+imageio==2.23.0
 numpydoc==1.4.0
 imageio-ffmpeg==0.4.7
-Sphinx==5.3.0
+Sphinx==6.1.2
 sphinx-autobuild==2021.3.14
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-websupport==1.2.4
@@ -10,5 +10,5 @@ pytest-sphinx==0.5.0
 sphinx-notfound-page==0.8.3
 sphinx-copybutton==0.5.0
 sphinx-gallery==0.11.1
-ansys_sphinx_theme==0.7.2
-sphinx-autodoc-typehints==1.19.5
+ansys_sphinx_theme==0.8.0
+sphinx-autodoc-typehints==1.20.1

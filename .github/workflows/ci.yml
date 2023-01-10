@@ -19,6 +19,7 @@ env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
   ANSYS_VERSION: 231
+  DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
 
 jobs:
   style:
@@ -27,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v4.3.0
+        uses: actions/setup-python@v4.4.0
         with:
           python-version: 3.9
       - name: Install pre-commit
@@ -146,9 +147,15 @@ jobs:
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v3
 
+  doc-style:
+    name: "Check doc style"
+    uses: ./.github/workflows/docs-style.yml
+    secrets: inherit
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest
+    needs: [doc-style]
 
     steps:
       - uses: actions/checkout@v3
@@ -165,6 +172,24 @@ jobs:
           debug: true
         timeout-minutes: 30
 
+      - name: "Upload HTML documentation artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation-html
+          path: docs/build/html
+          retention-days: 7
+
+  upload_dev_docs:
+    name: "Upload dev documentation"
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: [docs]
+    steps:
+      - name: Deploy the latest documentation
+        uses: pyansys/actions/doc-deploy-dev@v2
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   draft_release:
     name: "Draft release"
@@ -173,7 +198,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Set up Python"
-        uses: actions/setup-python@v4.3.0
+        uses: actions/setup-python@v4.4.0
         with:
           python-version: 3.9
 
