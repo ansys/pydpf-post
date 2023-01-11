@@ -63,7 +63,7 @@ class Simulation:
     def mesh(self) -> Mesh:
         """Mesh representation of the model.
 
-        Returns the :class:`ansys.dpf.post.mesh.Mesh` class.
+        Returns a :class:`ansys.dpf.post.mesh.Mesh` object.
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
