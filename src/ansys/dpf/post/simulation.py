@@ -1,4 +1,5 @@
 """Module containing the ``Simulation`` class."""
+from abc import ABC, abstractmethod
 import re
 from typing import List, Union
 
@@ -11,8 +12,23 @@ from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
 
 
-class Simulation:
+class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
+
+    _component_id_to_str = {
+        "1": "X",
+        "2": "Y",
+        "3": "Z",
+        "4": "XY",
+        "5": "YZ",
+        "6": "XZ",
+        "X": "X",
+        "Y": "Y",
+        "Z": "Z",
+        "XY": "XY",
+        "YZ": "YZ",
+        "XZ": "XZ",
+    }
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -250,8 +266,34 @@ class Simulation:
         txt += self._model.__str__()
         return txt
 
+    def _build_op_names_from_components(self, op_name_base, components):
+        # Create operator internal names based on components
+        op_names = []
+        if components is None:
+            op_names = [op_name_base]
+        else:
+            if isinstance(components, str) or isinstance(components, int):
+                raise ValueError("Argument 'components' must be a list.")
+            for comp in components:
+                if not (isinstance(comp, str) or isinstance(comp, int)):
+                    raise ValueError(
+                        "Argument 'components' must be a list of integers and/or strings."
+                    )
+                if isinstance(comp, int):
+                    comp = str(comp)
+                if comp not in self._component_id_to_str.keys():
+                    raise ValueError(
+                        f"Component {comp} is not valid. Please use one of: "
+                        f"{list(self._component_id_to_str.keys())}."
+                    )
+                op_comp = self._component_id_to_str[comp]
+                op_names.append(op_name_base + op_comp)
 
-class MechanicalSimulation(Simulation):
+        # Take unique values
+        return list(set(op_names))
+
+
+class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
 
     This class provides common methods and properties for all mechanical type simulations.
@@ -261,19 +303,7 @@ class MechanicalSimulation(Simulation):
         """Instantiate a mechanical type simulation."""
         super().__init__(data_sources, model)
 
-    def _select_time_freq(self, selection=None, steps=None):
-        """Select time."""
-        # Build the time_scoping from steps or selection
-        time_scoping = None
-        if selection:
-            time_scoping = selection.time_scoping  # needs to be changed.
-        if steps:
-            time_scoping = core.time_freq_scoping_factory.scoping_by_sets(
-                steps, server=self._model._server
-            )
-        return time_scoping
-
-    def _select_mesh_scoping(
+    def _build_mesh_scoping(
         self, selection=None, nodes=None, elements=None, named_selection=None
     ):
         if (nodes is not None or elements is not None) and named_selection is not None:
@@ -308,28 +338,97 @@ class MechanicalSimulation(Simulation):
 
         return mesh_scoping
 
+    @abstractmethod
+    def displacement(self):
+        """Abstract method for displacement result extraction."""
+        pass
+
+
+class StaticMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical static simulations."""
+
+    def _build_time_freq_scoping(
+        self,
+        selection: Union[Selection, None],
+        times: Union[List[float], None],
+        set_ids: Union[List[int], None],
+        load_steps: Union[List[int], None],
+        sub_steps: Union[List[int], None],
+    ) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        time_scoping = None
+        # create from selection in priority
+        if selection:
+            return selection.time_freq_selection._evaluate_on(simulation=self)
+        # else from set_ids
+        if set_ids:
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=set_ids, server=self._model._server
+            )
+        # else from times
+        if times:
+            raise NotImplementedError
+        # else from sub_steps and load_steps
+        if sub_steps:
+            if not load_steps or len(load_steps) != 1:
+                raise ValueError(
+                    "Argument sub_steps requires argument load_steps to have one value."
+                )
+            # Translate to cumulative indices (set IDs)
+            set_ids = []
+            for sub_step in sub_steps:
+                set_id = (
+                    self._model.metadata.time_freq_support.get_cumulative_index(
+                        step=load_steps[0] - 1, substep=sub_step
+                    )
+                    + 2
+                )
+                set_ids.append(set_id)
+                print(set_ids)
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=set_ids, server=self._model._server
+            )
+        # else load_steps only
+        if load_steps:
+            return core.time_freq_scoping_factory.scoping_by_load_steps(
+                load_steps=load_steps, server=self._model._server
+            )
+        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
+        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+
     def displacement(
         self,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
-        steps: Union[List[int], None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
         nodes: Union[List[int], None] = None,
         elements: Union[List[int], None] = None,
-        component: Union[int, str, List[str], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
         Args:
+            components:
+                Components to get results for.
             selection:
                 Selection to get results for.
-            steps:
-                List of steps to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             nodes:
                 List of nodes to get results for.
             elements:
                 List of elements to get results for.
-            component:
-                Component to get results for.
             named_selection:
                 Named selection to get results for.
 
@@ -338,54 +437,54 @@ class MechanicalSimulation(Simulation):
             Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
+        print(time_scoping)
+        print(time_scoping.ids)
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+        print(mesh_scoping)
+        print(mesh_scoping.ids)
+
+        # Build the list of required operators
+        op_names = self._build_op_names_from_components(
+            op_name_base="U", components=components
+        )
+
+        # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
-        # Select the operator based on component
-        if component is None:
-            op_name = "U"
-        elif isinstance(component, (str, int)):
-            if component in ["X", 0]:
-                op_name = "UX"
-            elif component in ["Y", 1]:
-                op_name = "UY"
-            elif component in ["Z", 2]:
-                op_name = "UZ"
-            else:
-                op_name = "U"
-        else:
-            raise TypeError("Component must be a string or an integer")
+        # If more than one operator is required for extraction,
+        # a merging step using utility.merge_fields_containers is needed in the workflow.
+        merge_op = self._model.operator(name="merge::fields_container")
 
-        disp_op = self._model.operator(name=op_name)
+        # Set the global output of the workflow
+        wf.set_output_name("out", merge_op.outputs.merged_fields_container)
 
-        time_scoping = self._select_time_freq(selection, steps)
-
-        # Set the time_scoping if necessary
-        if time_scoping:
-            disp_op.connect(0, time_scoping)
-
-        # Build the mesh_scoping from nodes or selection
-        mesh_scoping = self._select_mesh_scoping(
-            selection, nodes, elements, named_selection
-        )
-        # Set the mesh_scoping if necessary
-        if mesh_scoping:
-            disp_op.connect(1, mesh_scoping)
-
-        wf.add_operator(disp_op)
-
-        # We will use the DataObject thing here.
-        wf.set_output_name("out", disp_op.outputs.fields_container)
+        # For each required operator
+        for pin, op_name in enumerate(op_names):
+            # Instantiate the operator
+            op = self._model.operator(name=op_name)
+            # Set the time_scoping if necessary
+            if time_scoping:
+                op.connect(0, time_scoping)
+            # Set the mesh_scoping if necessary
+            if mesh_scoping:
+                op.connect(1, mesh_scoping)
+            # Connect its output to the merge operator
+            merge_op.connect(pin=pin, inpt=op.outputs.fields_container)
 
         return DataObject(
             wf.get_output("out", core.types.fields_container),
-            columns=["X", "Y", "Z"],
+            columns=op_names,
             mesh_scoping=mesh_scoping,
         )
-
-
-class StaticMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical static simulations."""
 
 
 class TransientMechanicalSimulation(MechanicalSimulation):
