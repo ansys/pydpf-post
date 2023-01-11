@@ -301,72 +301,17 @@ class MechanicalSimulation(Simulation):
         )
 
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def nodal_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def elemental_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def raw_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-
 class StaticMechanicalSimulation(MechanicalSimulation):
-    """Provides a mechanical static type simulation."""
+    """Provides methods for mechanical static simulations."""
 
 
 class TransientMechanicalSimulation(MechanicalSimulation):
-    """Provides a mechanical transient type simulation."""
+    """Provides methods for mechanical transient simulations."""
 
 
 class ModalMechanicalSimulation(MechanicalSimulation):
-    """Provides a mechanical modal type simulation."""
+    """Provides methods for mechanical modal simulations."""
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
-    """Provides a mechanical harmonic type simulation."""
+    """Provides methods for mechanical harmonic simulations."""
