@@ -27,9 +27,17 @@ class Simulation:
 
     @property
     def results(self) -> List[str]:
-        """Available results.
+        r"""Available results.
 
         Returns a list of available results as strings.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ['displacement\nOperator name: "U"\n...Units: degc\n']
         """
         return [
             str(result) for result in self._model.metadata.result_info.available_results
@@ -40,6 +48,14 @@ class Simulation:
         """List of constructed geometries in the simulation.
 
         Returns a list of geometry objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.geometries) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
         """
         return self._geometries
 
@@ -48,6 +64,14 @@ class Simulation:
         """List of boundary conditions in the simulation.
 
         Returns a list of boundary_condition objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
         """
         return self._boundary_conditions
 
@@ -56,6 +80,14 @@ class Simulation:
         """List of loads in the simulation.
 
         Returns a list of load objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
         """
         return self._loads
 
@@ -64,6 +96,14 @@ class Simulation:
         """Mesh representation of the model.
 
         Returns a :class:`ansys.dpf.post.mesh.Mesh` object.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ...
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
@@ -74,6 +114,14 @@ class Simulation:
         """List of named selections in the simulation.
 
         Returns a list of named selections names.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.named_selections) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ['_FIXEDSU']
         """
         if self._named_selections is None:
             self._named_selections = self._model.metadata.available_named_selections
@@ -106,6 +154,13 @@ class Simulation:
         Returns
         -------
             Returns a plotter instance of the active visualization backend.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> simulation.plot() # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         """
         plt = DpfPlotter()
         if mesh:
@@ -124,6 +179,16 @@ class Simulation:
         """Active selection used by default for result queries.
 
         Returns a :object:`ansys.dpf.post.selection.Selection` object.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
         """
         return self._active_selection
 
@@ -132,11 +197,35 @@ class Simulation:
 
         Activating a given selection on a simulation means it is used
         as a default selection/filter in further result queries.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
         """
         self._active_selection = selection
 
     def deactivate_selection(self):
-        """Deactivate the currently active selection."""
+        """Deactivate the currently active selection.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
+        >>> simulation.deactivate_selection()
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        None
+        """
         self._active_selection = None
 
     @property
@@ -163,7 +252,10 @@ class Simulation:
 
 
 class MechanicalSimulation(Simulation):
-    """Provides a mechanical type simulation."""
+    """Base class for mechanical type simulations.
+
+    This class provides common methods and properties for all mechanical type simulations.
+    """
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
         """Instantiate a mechanical type simulation."""
