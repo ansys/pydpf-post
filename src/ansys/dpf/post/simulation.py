@@ -12,10 +12,10 @@ from ansys.dpf.post.selection import Selection
 
 
 class Simulation:
-    """Provides the main class of the DPF-Post solution."""
+    """Base class of all PyDPF-Post simulation types."""
 
     def __init__(self, data_sources: DataSources, model: Model):
-        """Initialize the solution using a ``dpf.core.Model`` object."""
+        """Initialize the simulation using a ``dpf.core.Model`` object."""
         self._model = model
         self._data_sources = data_sources
         self._geometries = []
@@ -149,34 +149,6 @@ class Simulation:
         """Description of the temporal/frequency analysis of the model."""
         return self._time_frequencies
 
-    def get_result_info(self):
-        """Get result file information.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.static_rst)
-        >>> print(solution.get_result_info()) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        Static analysis
-        Unit system: MKS: m, kg, N, s, V, A, degC
-        Physics Type: ...
-        Available results:
-             -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force
-             -  stress: ElementalNodal Stress
-             -  elemental_volume: Elemental Volume
-             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
-             -  artificial_hourglass_energy: Elemental Hourglass Energy
-             -  thermal_dissipation_energy: Elemental thermal dissipation energy
-             -  kinetic_energy: Elemental Kinetic Energy
-             -  co_energy: Elemental co-energy
-             -  incremental_energy: Elemental incremental energy
-             -  elastic_strain: ElementalNodal Strain
-             -  structural_temperature: ElementalNodal Temperature
-        """
-        return self._model.metadata.result_info
-
     def __str__(self):
         """Get the string representation of this class."""
         txt = (
@@ -191,10 +163,10 @@ class Simulation:
 
 
 class MechanicalSimulation(Simulation):
-    """Provides a mechanical type solution."""
+    """Provides a mechanical type simulation."""
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
-        """Instantiate a mechanical type solution."""
+        """Instantiate a mechanical type simulation."""
         super().__init__(data_sources, model)
 
     def _select_time_freq(self, selection=None, steps=None):
@@ -255,7 +227,7 @@ class MechanicalSimulation(Simulation):
         # ordered: bool = True,
         **kwargs
     ) -> DataObject:
-        """Extract displacement results from the solution.
+        """Extract displacement results from the simulation.
 
         Args:
             selection:
@@ -398,34 +370,3 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
     """Provides a mechanical harmonic type simulation."""
-
-
-# class FluidSolution(Simulation):
-#     """Provides a fluid type solution."""
-
-#     def __init__(self, data_sources, model):
-#         super().__init__(data_sources, model)
-
-#     def displacement(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,  # Can deal with qualifiers
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
