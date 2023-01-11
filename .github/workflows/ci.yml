@@ -16,9 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PACKAGE_NAME: ansys-dpf-post
-  MODULE: post
-  ANSYS_VERSION: 231
+  PACKAGE_NAME: 'ansys-dpf-post'
+  MODULE: 'post'
+  ANSYS_VERSION: '231'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
 
 jobs:
@@ -172,13 +172,6 @@ jobs:
           debug: true
         timeout-minutes: 30
 
-      - name: "Upload HTML documentation artifact"
-        uses: actions/upload-artifact@v3
-        with:
-          name: documentation-html
-          path: docs/build/html
-          retention-days: 7
-
   upload_dev_docs:
     name: "Upload dev documentation"
     if: github.ref == 'refs/heads/master'
@@ -190,6 +183,7 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: HTML-doc-${{ env.PACKAGE_NAME }}
 
   draft_release:
     name: "Draft release"
