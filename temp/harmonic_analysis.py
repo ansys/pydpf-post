@@ -62,26 +62,24 @@ harmonic_simulation.deactivate_selection()
 
 # Extract displacements along X for nodes 1, 2 and 3 at f=0.05Hz
 displacement_X = harmonic_simulation.displacement(
-    component="X", nodes=[1, 2, 3], frequencies=[0.05]
+    components=["X"], nodes=[1, 2, 3], frequencies=[0.05]
 )
 print(displacement_X)
 
-# Extract nodal XY stresses for elements 1, 2 and 3 at frequency 1
+# Extract nodal XY stresses for elements 1, 2 and 3 at set 1
 stress_XY = harmonic_simulation.elemental_stress(
-    component="XY", elements=[1, 2, 3], steps=[1]
+    components=["XY"], elements=[1, 2, 3], set_ids=[1]
 )
 print(stress_XY)
 
 # Extract first principal nodal stress for a named (elemental or nodal) selection at all frequencies
-stress_S1 = harmonic_simulation.nodal_stress(
-    component="S1", named_selection=named_selections[0]
+stress_S1 = harmonic_simulation.nodal_principal_stress(
+    components=["1"], named_selection=named_selections[0]
 )
 print(stress_S1)
 
-# Extract equivalent elemental nodal strain for a selection at the second frequency
-strain_eqv = harmonic_simulation.raw_strain(
-    component="EQV", selection=selection, steps=[1]
-)
+# Extract equivalent elemental strain for a selection at set 1
+strain_eqv = harmonic_simulation.elemental_eqv_strain(selection=selection, set_ids=[1])
 print(strain_eqv)
 
 # -----------------------------------------------------------------------------------------

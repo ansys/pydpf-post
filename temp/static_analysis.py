@@ -172,41 +172,43 @@ mesh.plot(triads=True)
 # -----------------------------------------------------------------------------------------
 # Extract results
 
-# Extract displacements along X for nodes 1, 2 and 3 at step 1
+# Extract displacements along X and Y for nodes 1, 2 and 3 at (load step 1, sub-step 1)
 displacement_X = static_simulation.displacement(
-    component="X", nodes=[1, 2, 3], steps=[1]
+    components=["X", "Y"], nodes=[1, 2, 3], load_steps=[1], substeps=[1]
 )
 
-# Extract norm of displacements for nodes 1, 2 and 3 at step 1
+# Extract norm of displacements for nodes 1, 2 and 3 for all sub-steps of load step 1
 displacement_norm = static_simulation.displacement(
-    component="N", nodes=[1, 2, 3], steps=[1]
+    components=["N"], nodes=[1, 2, 3], load_steps=[1]
 )
 
-# Extract nodal XY stresses for elements 1, 2 and 3 at step 1
+# Extract nodal XY stresses for elements 1, 2 and 3 at set 1
 stress_XY = static_simulation.elemental_stress(
-    component="XY", elements=[1, 2, 3], steps=[1]
+    components=["XY"], elements=[1, 2, 3], set_ids=[1]
 )
 
-# Extract first principal nodal stress for a named (elemental or nodal) selection at all steps
-stress_S1 = static_simulation.nodal_stress(
-    component="S1", named_selection=named_selections[0]
+# Extract first principal nodal stress for a named (elemental or nodal) selection at all sets
+stress_S1 = static_simulation.nodal_principal_stress(
+    components=[1], named_selection=named_selections[0]
 )
 
-# Extract elemental Von Mises stress everywhere at all steps
-stress_VM = static_simulation.elemental_stress(component="VM")
+# Extract elemental Von Mises stress everywhere at all sets
+stress_VM = static_simulation.elemental_von_mises_eqv_stress()
 
-# Extract equivalent elemental nodal elastic strain for a selection at step 1
+# Extract equivalent elemental nodal elastic strain for a selection at set 1
 elastic_strain_XY = static_simulation.nodal_elastic_strain(
-    component="XY", selection=selection, steps=[1]
+    components=["XY"], selection=selection, set_ids=[1]
 )
 
-# Extract first principal nodal strain for a selection at step 1
+# Extract first principal nodal strain for a selection at set 1
 elastic_strain_E1 = static_simulation.nodal_elastic_strain(
-    component="E1", selection=selection, steps=[1]
+    components=[1], selection=selection, set_ids=[1]
 )
 
-# Extract nodal plastic strain for a selection at step 1
-plastic_strain = static_simulation.nodal_plastic_strain(selection=selection, steps=[1])
+# Extract nodal plastic strain for a selection at set 1
+plastic_strain = static_simulation.nodal_plastic_strain(
+    selection=selection, set_ids=[1]
+)
 
 # -----------------------------------------------------------------------------------------
 # Manipulate results with DataObject

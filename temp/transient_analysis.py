@@ -103,40 +103,40 @@ mesh.plot(triads=True)
 
 # Extract displacements along X for nodes 1, 2 and 3 at t=0.05s
 displacement_X = transient_simulation.displacement(
-    component="X", nodes=[1, 2, 3], times=[0.05]
+    components=["X"], nodes=[1, 2, 3], times=[0.05]
 )
 
-# Extract norm of displacements for nodes 1, 2 and 3 at time-step 1
+# Extract norm of displacements for nodes 1, 2 and 3 at all sub-steps of time-step 1
 displacement_norm = transient_simulation.displacement(
-    component="N", nodes=[1, 2, 3], steps=[1]
+    components=["N"], nodes=[1, 2, 3], time_steps=[1]
 )
 
-# Extract nodal XY stresses for elements 1, 2 and 3 at time-step 1
+# Extract nodal XY stresses for elements 1, 2 and 3 at set 1
 stress_XY = transient_simulation.elemental_stress(
-    component="XY", elements=[1, 2, 3], steps=[1]
+    components=["XY"], elements=[1, 2, 3], set_ids=[1]
 )
 
-# Extract first principal nodal stress for a named (elemental or nodal) selection at all time-steps
-stress_S1 = transient_simulation.nodal_stress(
-    component="S1", named_selection=named_selections[0]
+# Extract nodal first principal stress for a named (elemental or nodal) selection at all time-steps
+stress_S1 = transient_simulation.nodal_principal_stress(
+    components=["1"], named_selection=named_selections[0]
 )
 
 # Extract elemental Von Mises stress everywhere at all steps
-stress_VM = transient_simulation.elemental_stress(component="VM")
+stress_VM = transient_simulation.elemental_eqv_von_mises_stress()
 
-# Extract equivalent elemental nodal elastic strain for a selection at step 1
+# Extract equivalent elemental nodal elastic strain for a selection at time-step 1
 elastic_strain_XY = transient_simulation.nodal_elastic_strain(
-    component="XY", selection=selection, steps=[1]
+    components=["XY"], selection=selection, time_steps=[1]
 )
 
-# Extract first principal nodal strain for a selection at step 1
-elastic_strain_E1 = transient_simulation.nodal_elastic_strain(
-    component="E1", selection=selection, steps=[1]
+# Extract first principal elemental strain for a selection at time-step 1
+elastic_strain_E1 = transient_simulation.elemental_elastic_principal_strain(
+    components=["1"], selection=selection, time_steps=[1]
 )
 
-# Extract nodal plastic strain for a selection at step 1
+# Extract nodal plastic strain for a selection at time-step 1
 plastic_strain = transient_simulation.nodal_plastic_strain(
-    selection=selection, steps=[1]
+    selection=selection, time_steps=[1]
 )
 
 # Extract global internal energy at all times

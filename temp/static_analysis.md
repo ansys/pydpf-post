@@ -10,23 +10,19 @@ The `ansys.dpf.post.load_simulation` function detects by default the type physic
 and the type of analysis based on the metadata in the underlying `ansys.dpf.core.Model` instance.
 If no physics type or analysis type is recognized automatically, 
 it will default to static and mechanical.
-You can specify the physics type and analysis type. 
+The combination of physics type and analysis type found enable choosing between different 
+simulation types.
+
+Available simulation types are listed in `ansys.dpf.post.common.AvailableSimulationTypes`.
+These can be used to directly choose a simulation type when loading the result files.
 
 ```pycon
+>>> from ansys.dpf.post import AvailableSimulationTypes
 >>> static_simulation = dpf.load_simulation(examples.simple_bar)
->>> static_simulation = dpf.load_simulation(examples.simple_bar,
-...                                        physics_type=physics_types.mechanical,
-...                                        analysis_type=analysis_types.static)
-```
-
-To that end, we might want to provide Public Enums for available physics_types and analysis_types
-instead of having them private. -> Give Enum of available simulation subtypes
-```pycon
->>> from ansys.dpf.post import physics_types, analysis_types
->>> from ansys.dpf.post import simulation_types
-simulation_types: Enum of available subclasses
->>> # instead of
->>> # from ansys.dpf.post.common import _AnalysisType, _PhysicsType
+>>> static_simulation = dpf.load_simulation(
+...         examples.simple_bar,
+...         simulation_type=AvailableSimulationTypes.static_mechanical
+... )
 ```
 
 ## Explore the simulation object
@@ -313,66 +309,73 @@ A load is a DataObject, so has a mesh support. Thus:
 ## Extract specific results
 
 Arguments:
-components: list of components
-nodes
-elements
-named_selection
-selection
-times
-set_indices
+- components: list of components amongst
+  - [1, 2, 3, 4, 5, 6] equivalent to ["X", "Y", "Z", "XY', "YZ", "XZ"], or "N" for the norm
+  - [1, 2, 3] for S1, S2, S3, E1, E2, or E3 when requesting principal stresses/strains
+- nodes: list of node IDs
+- elements: list of element IDs
+- named_selection: string name of a named selection
+- selection: Selection object
+- times: list of float values defining time values
+- set_ids: based on cumulative indices, really a list of set IDs (base 1). These are unique
+identifiers for each combination of all defining dimensions.
+- load_steps: list of integers, list of LoadStep names/IDs. 
+These work more like IDs/names as they do not have to be consecutive nor start at 1 or 0. 
+- substep: requires load_steps, enables selecting for a list of Substep IDs/names.
 
-
-### Extract displacements along X for nodes 1, 2 and 3 at step 1
+### Extract displacements along X and Y for nodes 1, 2 and 3 at (load step 1, sub-step 1)
 ```pycon
 >>> displacement_X = static_simulation.displacement(
-...     components=["X", "Y], nodes=[1, 2, 3], steps=[1]
+...     components=["X", "Y"], nodes=[1, 2, 3], load_steps=[1], substeps=[1]
 ... )
 ```
 
-### Extract norm of displacements for nodes 1, 2 and 3 at step 1
+### Extract norm of displacements for nodes 1, 2 and 3 for all sub-steps of load step 1
 ```pycon
 >>> displacement_norm = static_simulation.displacement(
-...     component="N", nodes=[1, 2, 3], steps=[1]
+...     components=["N"], nodes=[1, 2, 3], load_steps=[1]
 ... )
 ```
 
-### Extract nodal XY stresses for elements 1, 2 and 3 at step 1
+### Extract nodal XY stresses for elements 1, 2 and 3 at set 1 
+Set 1 is the unique identifier for the combination {load step 1 + sub-step 1}.
+It exposes PyDPF-Core's badly named `cumulative index` (as it is one-based).
 ```pycon
 >>> stress_XY = static_simulation.elemental_stress(
-...     component="XY", elements=[1, 2, 3], steps=[1]
+...     components=["XY"], elements=[1, 2, 3], set_ids=[1]
 ... )
 ```
 
-### Extract first principal nodal stress for a named (elemental or nodal) selection at all steps
+### Extract first principal nodal stress for a named (elemental or nodal) selection at all sets
 ```pycon
 >>> stress_S1 = static_simulation.nodal_principal_stress(
-...     components=1, named_selection=named_selections[0]
+...     components=[1], named_selection=named_selections[0]
 ... )
 ```
 
-### Extract elemental Von Mises stress everywhere at all steps
+### Extract elemental Von Mises stress everywhere at all sets
 ```pycon
 >>> stress_VM = static_simulation.elemental_von_mises_eqv_stress()
 ```
 
-### Extract equivalent elemental nodal elastic strain for a selection at step 1
+### Extract equivalent elemental nodal elastic strain for a selection at set 1
 ```pycon
 >>> elastic_strain_XY = static_simulation.nodal_elastic_strain(
-...     component="XY", selection=selection, steps=[1]
+...     components=["XY"], selection=selection, set_ids=[1]
 ... )
 ```
 
-### Extract first principal nodal strain for a selection at step 1
+### Extract first principal nodal strain for a selection at set 1
 ```pycon
 >>> elastic_strain_E1 = static_simulation.nodal_elastic_principal_strain(
-...     component=1, selection=selection, steps=[1]
+...     components=[1], selection=selection, set_ids=[1]
 ... )
 ```
 Write in the doc that this is E1 so that researching in doc will get you there.
 
-### Extract nodal plastic strain for a selection at step 1
+### Extract nodal plastic strain for a selection at set 1
 ```pycon
->>> plastic_strain = static_simulation.nodal_plastic_strain(selection=selection, steps=[1])
+>>> plastic_strain = static_simulation.nodal_plastic_strain(selection=selection, set_ids=[1])
 ```
 
 ## Manipulate results with DataObject
