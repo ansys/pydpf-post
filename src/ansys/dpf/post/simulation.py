@@ -119,6 +119,14 @@ class Simulation:
             pass
         plt.show_figure()
 
+    @property
+    def active_selection(self) -> Selection:
+        """Active selection used by default for result queries.
+
+        Returns a :object:`ansys.dpf.post.selection.Selection` object.
+        """
+        return self._active_selection
+
     def activate_selection(self, selection: Selection):
         """Sets a selection as active on the simulation.
 
