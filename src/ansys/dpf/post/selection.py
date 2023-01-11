@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ansys.dpf.post.solution import Solution
+    from ansys.dpf.post.simulation import Simulation
 
 from typing import Union
 
@@ -101,14 +101,14 @@ class TimeFreqSelection:
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
-    def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
+    def _evaluate_on(self, simulation: Simulation) -> Union[Scoping, None]:
         """Returns what is evaluated from the selections made on a given Simulation.
 
         This scoping is internally used to evaluate result on the right time/freq domain.
 
         Parameters
         ----------
-        solution:
+        simulation:
             DPF-Post Simulation to evaluate the time/freq selection on.
 
         Returns
@@ -127,24 +127,24 @@ class TimeFreqSelection:
         # el
         if _WfNames.data_sources in input_names:
             self._selection.connect(
-                _WfNames.data_sources, solution._model.metadata.data_sources
+                _WfNames.data_sources, simulation._model.metadata.data_sources
             )
 
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
-    def apply_to(self, solution: Solution) -> list[int]:
+    def apply_to(self, simulation: Simulation) -> list[int]:
         """Performs the currently defined selection on the given Simulation.
 
         Parameters
         ----------
-        solution:
+        simulation:
             PyDPF-Post Simulation to apply the selection on.
 
         Returns
         -------
         IDs of the entities obtained after applying the selection.
         """
-        scoping = self._evaluate_on(solution=solution)
+        scoping = self._evaluate_on(simulation=simulation)
         return scoping.ids
 
 
@@ -277,14 +277,14 @@ class SpatialSelection:
         )
         self._selection = new_wf
 
-    def _evaluate_on(self, solution: Solution) -> Union[Scoping, None]:
+    def _evaluate_on(self, simulation: Simulation) -> Union[Scoping, None]:
         """Performs the currently defined selection on the given Simulation.
 
         This scoping is internally used to evaluate result on the right spatial domain.
 
         Parameters
         ----------
-        solution:
+        simulation:
             PyDPF-Post Simulation to apply the selection on.
 
         Returns
@@ -297,26 +297,26 @@ class SpatialSelection:
             return None
         input_names = self._selection.input_names
         if (
-            solution._model.metadata.streams_provider is not None
+            simulation._model.metadata.streams_provider is not None
             and _WfNames.streams in input_names
         ):
             self._selection.connect(
                 _WfNames.streams,
-                solution._model.metadata.streams_provider.outputs.streams_container(),
+                simulation._model.metadata.streams_provider.outputs.streams_container(),
             )
         elif _WfNames.data_sources in input_names:
             self._selection.connect(
-                _WfNames.data_sources, solution._model.metadata.data_sources
+                _WfNames.data_sources, simulation._model.metadata.data_sources
             )
 
         return self._selection.get_output(_WfNames.scoping, types.scoping)
 
-    def apply_to(self, solution: Solution) -> list[int]:
+    def apply_to(self, simulation: Simulation) -> list[int]:
         """Performs the currently defined selection on the given Simulation.
 
         Parameters
         ----------
-        solution:
+        simulation:
             PyDPF-Post Simulation to apply the selection on.
 
         Returns
@@ -324,7 +324,7 @@ class SpatialSelection:
         IDs of the entities obtained after applying the selection.
 
         """
-        scoping = self._evaluate_on(solution=solution)
+        scoping = self._evaluate_on(simulation=simulation)
         return scoping.ids
 
 
