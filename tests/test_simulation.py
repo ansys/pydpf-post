@@ -1,7 +1,6 @@
 from pytest import fixture
 
 import ansys.dpf.post as dpf
-from ansys.dpf.post.mesh import Mesh
 
 
 @fixture
@@ -32,10 +31,19 @@ def test_simulation_loads(simulation):
 
 def test_simulation_mesh(simulation):
     mesh = simulation.mesh
-    assert isinstance(mesh, Mesh)
+    assert isinstance(mesh, dpf.mesh.Mesh)
 
 
 def test_simulation_named_selections(simulation):
     named_selections = simulation.named_selections
     assert len(named_selections) == 1
     assert all(isinstance(x, str) for x in named_selections)
+
+
+def test_simulation_active_selection(simulation):
+    assert simulation.active_selection is None
+    selection = dpf.selection.Selection()
+    simulation.activate_selection(selection=selection)
+    assert simulation.active_selection == selection
+    simulation.deactivate_selection()
+    assert simulation.active_selection is None
