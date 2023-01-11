@@ -316,8 +316,6 @@ class MechanicalSimulation(Simulation):
         elements: Union[List[int], None] = None,
         component: Union[int, str, List[str], None] = None,
         named_selection: Union[str, None] = None,
-        # ordered: bool = True,
-        **kwargs
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
@@ -375,13 +373,6 @@ class MechanicalSimulation(Simulation):
             disp_op.connect(1, mesh_scoping)
 
         wf.add_operator(disp_op)
-
-        # Reorder
-        # ord_op = self._model.operator(name="Rescope_fc")
-        # ord_op.inputs.fields_container.connect(disp_op.outputs.fields_container)
-        # ord_op.inputs.mesh_scoping.connect(mesh_scoping)
-
-        # ord_op.connect(0, disp_op.outputs.fields_container)
 
         # We will use the DataObject thing here.
         wf.set_output_name("out", disp_op.outputs.fields_container)
