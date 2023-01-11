@@ -103,7 +103,7 @@ class Simulation:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        ...
+        <ansys.dpf.post.mesh.Mesh object at ...>
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
