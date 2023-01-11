@@ -47,3 +47,7 @@ def test_simulation_active_selection(simulation):
     assert simulation.active_selection == selection
     simulation.deactivate_selection()
     assert simulation.active_selection is None
+
+
+def test_simulation_plot(simulation):
+    simulation.plot()
