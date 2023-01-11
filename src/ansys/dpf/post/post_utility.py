@@ -2,6 +2,7 @@
 
 This module is used for the initialization of DPF-Post objects.
 """
+from typing import TypeVar
 import warnings
 
 from ansys.dpf.core.model import Model
@@ -112,10 +113,13 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
         raise ValueError(f"Unknown physics type '{physics_type}.")
 
 
+SimulationType = TypeVar("SimulationType", bound=Simulation)
+
+
 def load_simulation(
     data_sources,
     simulation_type: AvailableSimulationTypes = None,
-) -> Simulation:
+) -> SimulationType:
     """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
 
     This class provides the main interface to explore and manipulate results, meshes, geometries,
