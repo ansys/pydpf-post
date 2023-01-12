@@ -395,15 +395,19 @@ class MechanicalSimulation(Simulation):
 
 class StaticMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical static simulations."""
+    pass
 
 
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""
+    pass
 
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""
+    pass
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical harmonic simulations."""
+    pass
