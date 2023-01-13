@@ -84,6 +84,12 @@ def simple_bar():
 
 
 @pytest.fixture()
+def transient_rst():
+    """Resolve the path of the "transient.rst" result file."""
+    return examples.download_transient_result()
+
+
+@pytest.fixture()
 def static_rst():
     """Resolve the path of the "static.rst" result file."""
     return examples.static_rst
