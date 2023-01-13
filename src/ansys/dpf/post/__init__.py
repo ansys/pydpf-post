@@ -25,7 +25,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata
 
-from ansys.dpf.post import tools
+from ansys.dpf.post import mesh, selection, tools
 from ansys.dpf.post.common import Grouping as grouping
 from ansys.dpf.post.dpf_path import create_path_on_coordinates
 from ansys.dpf.post.misc import Report

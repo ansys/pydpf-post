@@ -2,6 +2,9 @@
 import re
 from typing import List, Union
 
+from ansys.dpf.core import DataSources, Model
+from ansys.dpf.core.plotter import DpfPlotter
+
 from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
@@ -9,43 +12,220 @@ from ansys.dpf.post.selection import Selection
 
 
 class Simulation:
-    """Provides the main class of the DPF-Post solution."""
+    """Base class of all PyDPF-Post simulation types."""
 
-    def __init__(self, data_sources: core.DataSources, model: core.Model):
-        """Initialize the solution using a ``dpf.core.Model`` object."""
+    def __init__(self, data_sources: DataSources, model: Model):
+        """Initialize the simulation using a ``dpf.core.Model`` object."""
         self._model = model
         self._data_sources = data_sources
-        self._geometry = None
+        self._geometries = []
+        self._boundary_conditions = []
+        self._loads = []
         self._active_selection = None
+        self._named_selections = None
         self._mesh = None
 
     @property
     def results(self) -> List[str]:
-        """Available results.
+        r"""Available results.
 
         Returns a list of available results as strings.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ['displacement\nOperator name: "U"\n...Units: degc\n']
         """
-        return self._model.metadata.result_info.available_results
+        return [
+            str(result) for result in self._model.metadata.result_info.available_results
+        ]
+
+    @property
+    def geometries(self):
+        """List of constructed geometries in the simulation.
+
+        Returns a list of geometry objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.geometries) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
+        """
+        return self._geometries
+
+    @property
+    def boundary_conditions(self):
+        """List of boundary conditions in the simulation.
+
+        Returns a list of boundary_condition objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
+        """
+        return self._boundary_conditions
+
+    @property
+    def loads(self):
+        """List of loads in the simulation.
+
+        Returns a list of load objects.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
+        """
+        return self._loads
 
     @property
     def mesh(self) -> Mesh:
         """Mesh representation of the model.
 
-        Returns the :class:`ansys.dpf.post.mesh.Mesh` class.
+        Returns a :class:`ansys.dpf.post.mesh.Mesh` object.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.mesh.Mesh object at ...>
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
         return self._mesh
 
-    def activate_selection(self, selection_object: Selection):
-        """Selection currently active.
+    @property
+    def named_selections(self) -> List[str]:
+        """List of named selections in the simulation.
 
-        Returns the current active :class:`ansys.dpf.post.selection.Selection` class.
+        Returns a list of named selections names.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.named_selections) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ['_FIXEDSU']
         """
-        self._active_selection = selection_object.selection
+        if self._named_selections is None:
+            self._named_selections = self._model.metadata.available_named_selections
+        return self._named_selections
+
+    def plot(
+        self,
+        mesh: bool = True,
+        geometry: bool = True,
+        loads: bool = True,
+        boundary_conditions: bool = True,
+    ):
+        """General plot of the simulation object.
+
+        Plots by default the complete mesh contained in the simulation,
+        as well as a representation of the constructed geometry,
+        the loads, and the boundary conditions currently defined.
+        Each representation can be deactivated with its respective boolean argument.
+
+        Args:
+            mesh:
+                Whether to plot the mesh representation.
+            geometry:
+                Whether to plot the geometries.
+            loads:
+                Whether to plot the loads.
+            boundary_conditions:
+                Whether to plot the boundary conditions.
+
+        Returns
+        -------
+            Returns a plotter instance of the active visualization backend.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> simulation.plot() # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        """
+        plt = DpfPlotter()
+        if mesh:
+            plt.add_mesh(self.mesh._meshed_region)
+        if geometry:
+            for geom in self.geometries:
+                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom)
+        if loads:
+            pass
+        if boundary_conditions:
+            pass
+        plt.show_figure()
+
+    @property
+    def active_selection(self) -> Selection:
+        """Active selection used by default for result queries.
+
+        Returns a :object:`ansys.dpf.post.selection.Selection` object.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
+        """
+        return self._active_selection
+
+    def activate_selection(self, selection: Selection):
+        """Sets a selection as active on the simulation.
+
+        Activating a given selection on a simulation means it is used
+        as a default selection/filter in further result queries.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
+        """
+        self._active_selection = selection
 
     def deactivate_selection(self):
-        """Deactivate the currently active selection."""
+        """Deactivate the currently active selection.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> selection = post.selection.Selection()
+        >>> simulation.activate_selection(selection=selection)
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        <ansys.dpf.post.selection.Selection object at ...>
+        >>> simulation.deactivate_selection()
+        >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        None
+        """
         self._active_selection = None
 
     @property
@@ -57,34 +237,6 @@ class Simulation:
     def time_freq_support(self):
         """Description of the temporal/frequency analysis of the model."""
         return self._time_frequencies
-
-    def get_result_info(self):
-        """Get result file information.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> solution = post.load_solution(examples.static_rst)
-        >>> print(solution.get_result_info()) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        Static analysis
-        Unit system: MKS: m, kg, N, s, V, A, degC
-        Physics Type: ...
-        Available results:
-             -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force
-             -  stress: ElementalNodal Stress
-             -  elemental_volume: Elemental Volume
-             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
-             -  artificial_hourglass_energy: Elemental Hourglass Energy
-             -  thermal_dissipation_energy: Elemental thermal dissipation energy
-             -  kinetic_energy: Elemental Kinetic Energy
-             -  co_energy: Elemental co-energy
-             -  incremental_energy: Elemental incremental energy
-             -  elastic_strain: ElementalNodal Strain
-             -  structural_temperature: ElementalNodal Temperature
-        """
-        return self._model.metadata.result_info
 
     def __str__(self):
         """Get the string representation of this class."""
@@ -100,10 +252,13 @@ class Simulation:
 
 
 class MechanicalSimulation(Simulation):
-    """Provides a mechanical type solution."""
+    """Base class for mechanical type simulations.
+
+    This class provides common methods and properties for all mechanical type simulations.
+    """
 
     def __init__(self, data_sources: core.DataSources, model: core.Model):
-        """Instantiate a mechanical type solution."""
+        """Instantiate a mechanical type simulation."""
         super().__init__(data_sources, model)
 
     def _select_time_freq(self, selection=None, steps=None):
@@ -164,7 +319,7 @@ class MechanicalSimulation(Simulation):
         # ordered: bool = True,
         **kwargs
     ) -> DataObject:
-        """Extract displacement results from the solution.
+        """Extract displacement results from the simulation.
 
         Args:
             selection:
@@ -238,87 +393,25 @@ class MechanicalSimulation(Simulation):
         )
 
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+class StaticMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical static simulations."""
 
-#     def nodal_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def elemental_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
-
-#     def raw_stress(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         elements: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         element_shape: Optional[core.elements._element_shapes] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+    pass
 
 
-# class FluidSolution(Simulation):
-#     """Provides a fluid type solution."""
+class TransientMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical transient simulations."""
 
-#     def __init__(self, data_sources, model):
-#         super().__init__(data_sources, model)
+    pass
 
-#     def displacement(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
 
-#     def velocity(
-#         self,
-#         steps: Optional[list[int]] = None,
-#         components: Optional[Union[int, str, list[str]]] = None,
-#         nodes: Optional[list[int]] = None,
-#         named_selection: Optional[str] = None,
-#         selection: Optional[Selection] = None,  # Can deal with qualifiers
-#         ordered: bool = True,
-#         **kwargs
-#     ) -> ResultData:
-#         pass
+class ModalMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical modal simulations."""
+
+    pass
+
+
+class HarmonicMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical harmonic simulations."""
+
+    pass
