@@ -1,19 +1,14 @@
 """Pseudocode for PyDPF-Post Static Mechanical Simulations APIs."""
 
 import ansys.dpf.post as dpf
-from ansys.dpf.post import examples
+from ansys.dpf.post import AvailableSimulationTypes, examples
 from ansys.dpf.post.selection import Selection
-
-# Provide Public Enums for available physics_types and analysis_types
-# from ansys.dpf.post import physics_types, analysis_types
-# instead of having them private
-# from ansys.dpf.post.common import _AnalysisType, _PhysicsType
 
 # Load the simulation files
 static_simulation = dpf.load_simulation(examples.simple_bar)
-# static_simulation = dpf.load_simulation(examples.simple_bar,
-#                                         physics_type=physics_types.mechanical,
-#                                         analysis_type=analysis_types.static)
+static_simulation = dpf.load_simulation(
+    examples.simple_bar, simulation_type=AvailableSimulationTypes.harmonic_mechanical
+)
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata
