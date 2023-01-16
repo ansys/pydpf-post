@@ -1,5 +1,5 @@
 """Module containing the ``Simulation`` class."""
-from abc import ABC, abstractmethod
+from abc import ABC
 import re
 from typing import List, Union
 
@@ -338,11 +338,6 @@ class MechanicalSimulation(Simulation, ABC):
 
         return mesh_scoping
 
-    @abstractmethod
-    def displacement(self):
-        """Abstract method for displacement result extraction."""
-        pass
-
 
 class StaticMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical static simulations."""
@@ -384,7 +379,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                     + 2
                 )
                 set_ids.append(set_id)
-                print(set_ids)
             return core.time_freq_scoping_factory.scoping_by_sets(
                 cumulative_sets=set_ids, server=self._model._server
             )
@@ -441,15 +435,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         time_scoping = self._build_time_freq_scoping(
             selection, times, set_ids, load_steps, sub_steps
         )
-        print(time_scoping)
-        print(time_scoping.ids)
+        # print(time_scoping)
+        # print(time_scoping.ids)
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
             selection, nodes, elements, named_selection
         )
-        print(mesh_scoping)
-        print(mesh_scoping.ids)
+        # print(mesh_scoping)
+        # print(mesh_scoping.ids)
+
+        # # Detect the case of component='N'
+        # if 'N' in components:
 
         # Build the list of required operators
         op_names = self._build_op_names_from_components(
@@ -462,10 +459,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # If more than one operator is required for extraction,
         # a merging step using utility.merge_fields_containers is needed in the workflow.
-        merge_op = self._model.operator(name="merge::fields_container")
+        assemble_op = self._model.operator(name="merge::fields_container")
+        # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
+        wf.add_operator(operator=assemble_op)
 
         # Set the global output of the workflow
-        wf.set_output_name("out", merge_op.outputs.merged_fields_container)
+        wf.set_output_name("out", assemble_op.outputs.merged_fields_container)
 
         # For each required operator
         for pin, op_name in enumerate(op_names):
@@ -478,7 +477,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             if mesh_scoping:
                 op.connect(1, mesh_scoping)
             # Connect its output to the merge operator
-            merge_op.connect(pin=pin, inpt=op.outputs.fields_container)
+            assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
+            wf.add_operator(operator=op)
 
         return DataObject(
             wf.get_output("out", core.types.fields_container),
