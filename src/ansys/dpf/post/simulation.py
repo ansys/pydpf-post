@@ -324,7 +324,7 @@ class MechanicalSimulation(Simulation, ABC):
 
         if named_selection:
             mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
-                named_selection, server=self._model._server
+                named_selection, server=self._model._server, model=self._model
             )
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
@@ -435,18 +435,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         time_scoping = self._build_time_freq_scoping(
             selection, times, set_ids, load_steps, sub_steps
         )
-        # print(time_scoping)
-        # print(time_scoping.ids)
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
             selection, nodes, elements, named_selection
         )
-        # print(mesh_scoping)
-        # print(mesh_scoping.ids)
-
-        # # Detect the case of component='N'
-        # if 'N' in components:
 
         # Build the list of required operators
         op_names = self._build_op_names_from_components(
@@ -476,6 +469,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             # Set the mesh_scoping if necessary
             if mesh_scoping:
                 op.connect(1, mesh_scoping)
+
             # Connect its output to the merge operator
             assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
             wf.add_operator(operator=op)

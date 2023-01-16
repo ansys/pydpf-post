@@ -63,16 +63,19 @@ class TestStaticMechanicalSimulation:
         assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_x._fc[0]
         assert field.component_count == 1
+        assert field.data.shape == (3,)
         assert np.allclose(
             field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
         )
-        displacement_x = static_simulation.displacement(
-            components=["X"], nodes=[1, 2, 3], load_steps=[1], sub_steps=[1]
+        displacement_y = static_simulation.displacement(
+            components=["2"],
+            named_selection=static_simulation.named_selections[0],
+            load_steps=[1],
+            sub_steps=[1],
         )
-        assert len(displacement_x._fc) == 1
-        assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
-        field = displacement_x._fc[0]
+        assert len(displacement_y._fc) == 1
+        assert displacement_y._fc.time_freq_support.time_frequencies.data == 1
+        field = displacement_y._fc[0]
         assert field.component_count == 1
-        assert np.allclose(
-            field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
-        )
+        assert field.data.shape == (121,)
+        assert np.allclose(field.data, 0.0)
