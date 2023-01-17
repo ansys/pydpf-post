@@ -410,12 +410,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def displacement(
         self,
-        components: Union[List[str], List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         nodes: Union[List[int], None] = None,
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
@@ -495,6 +495,352 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             wf.get_output("out", core.types.fields_container),
             columns=op_names,
+            mesh_scoping=mesh_scoping,
+        )
+
+    def elemental_stress(
+        self,
+        components: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+
+        # Build the list of required operators
+        op_names = self._build_op_names_from_components(
+            op_name_base="S", components=components
+        )
+
+        # Initialize a workflow
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # If more than one operator is required for extraction,
+        # a merging step using utility.merge_fields_containers is needed in the workflow.
+        assemble_op = self._model.operator(name="merge::fields_container")
+        # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
+        wf.add_operator(operator=assemble_op)
+
+        # Set the global output of the workflow
+        wf.set_output_name("out", assemble_op.outputs.merged_fields_container)
+
+        # For each required operator
+        for pin, op_name in enumerate(op_names):
+            # Instantiate the operator
+            op = self._model.operator(name=op_name)
+            # Set the time_scoping if necessary
+            if time_scoping:
+                op.connect(0, time_scoping)
+            # Set the mesh_scoping if necessary
+            if mesh_scoping:
+                op.connect(1, mesh_scoping)
+
+            op.connect(9, "Elemental")
+
+            # Connect its output to the merge operator
+            assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
+            wf.add_operator(operator=op)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            columns=op_names,
+            mesh_scoping=mesh_scoping,
+        )
+
+    def elemental_principal_stress(
+        self,
+        components: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection, None, elements, named_selection
+        )
+
+        # Build the list of required operators
+        op_names = self._build_op_names_from_principal_components(
+            op_name_base="S", components=components
+        )
+
+        # Initialize a workflow
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # If more than one operator is required for extraction,
+        # a merging step using utility.merge_fields_containers is needed in the workflow.
+        assemble_op = self._model.operator(name="merge::fields_container")
+        # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
+        wf.add_operator(operator=assemble_op)
+
+        # Set the global output of the workflow
+        wf.set_output_name("out", assemble_op.outputs.merged_fields_container)
+
+        # For each required operator
+        for pin, op_name in enumerate(op_names):
+            # Instantiate the operator
+            op = self._model.operator(name=op_name)
+            # Set the time_scoping if necessary
+            if time_scoping:
+                op.connect(0, time_scoping)
+            # Set the mesh_scoping if necessary
+            if mesh_scoping:
+                op.connect(1, mesh_scoping)
+
+            op.connect(9, "Elemental")
+
+            # Connect its output to the merge operator
+            assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
+            wf.add_operator(operator=op)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            columns=op_names,
+            mesh_scoping=mesh_scoping,
+        )
+
+    def nodal_principal_stress(
+        self,
+        components: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection, nodes, elements, named_selection
+        )
+
+        # Build the list of required operators
+        op_names = self._build_op_names_from_principal_components(
+            op_name_base="S", components=components
+        )
+
+        # Initialize a workflow
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # If more than one operator is required for extraction,
+        # a merging step using utility.merge_fields_containers is needed in the workflow.
+        assemble_op = self._model.operator(name="merge::fields_container")
+        # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
+        wf.add_operator(operator=assemble_op)
+
+        # Set the global output of the workflow
+        wf.set_output_name("out", assemble_op.outputs.merged_fields_container)
+
+        # For each required operator
+        for pin, op_name in enumerate(op_names):
+            # Instantiate the operator
+            op = self._model.operator(name=op_name)
+            # Set the time_scoping if necessary
+            if time_scoping:
+                op.connect(0, time_scoping)
+            # Set the mesh_scoping if necessary
+            if mesh_scoping:
+                op.connect(1, mesh_scoping)
+
+            op.connect(9, "Nodal")
+
+            # Connect its output to the merge operator
+            assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
+            wf.add_operator(operator=op)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            columns=op_names,
+            mesh_scoping=mesh_scoping,
+        )
+
+    def elemental_von_mises_eqv_stress(
+        self,
+        components: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection, None, elements, named_selection
+        )
+
+        # Instantiate the operator
+        op = self._model.operator(name="S_eqv")
+        # Set the time_scoping if necessary
+        if time_scoping:
+            op.connect(0, time_scoping)
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            op.connect(1, mesh_scoping)
+
+        op.connect(9, "Elemental")
+
+        # Initialize a workflow
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+        wf.add_operator(operator=op)
+
+        # Set the global output of the workflow
+        wf.set_output_name("out", op.outputs.fields_container)
+
+        return DataObject(
+            wf.get_output("out", core.types.fields_container),
+            columns="S_VM",
             mesh_scoping=mesh_scoping,
         )
 
