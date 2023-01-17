@@ -110,7 +110,7 @@ class TestStaticMechanicalSimulation:
 
     def test_elemental_stress(self, static_simulation):
         stress_x = static_simulation.elemental_stress(
-            components=["X"], elements=[1, 2, 3], set_ids=[1]
+            components=1, elements=[1000, 1001, 1002]
         )
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
