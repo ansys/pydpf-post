@@ -292,6 +292,24 @@ class Simulation(ABC):
         # Take unique values
         return list(set(op_names))
 
+    def _build_op_names_from_principal_components(self, op_name_base, components):
+        # Create operator internal names based on principal components
+        op_names = []
+        if components is None:
+            op_names = [op_name_base + "1", op_name_base + "2", op_name_base + "3"]
+        else:
+            if isinstance(components, str) or isinstance(components, int):
+                raise ValueError("Argument 'components' must be a list.")
+            for comp in components:
+                if isinstance(comp, int):
+                    comp = str(comp)
+                if comp not in ["1", "2", "3"]:
+                    raise ValueError("A principal component must be 1, 2, or 3.")
+                op_names.append(op_name_base + comp)
+
+        # Take unique values
+        return list(set(op_names))
+
 
 class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
