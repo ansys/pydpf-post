@@ -331,7 +331,7 @@ class MechanicalSimulation(Simulation, ABC):
         nodes=None,
         elements=None,
         named_selection=None,
-        location="Nodal",
+        location=core.locations.nodal,
     ):
         if (nodes is not None or elements is not None) and named_selection is not None:
             raise ValueError(
@@ -363,10 +363,17 @@ class MechanicalSimulation(Simulation, ABC):
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
                 element_ids=elements, server=self._model._server
             )
-            if location == "Nodal":
-                mesh_scoping = core.operators.scoping.transpose(
-                    mesh_scoping=mesh_scoping, meshed_region=self.mesh._meshed_region
-                ).eval()
+
+        if (
+            location == core.locations.nodal
+            and mesh_scoping.location != core.locations.nodal
+        ) or (
+            location == core.locations.elemental
+            and mesh_scoping.location != core.locations.elemental
+        ):
+            mesh_scoping = core.operators.scoping.transpose(
+                mesh_scoping=mesh_scoping, meshed_region=self.mesh._meshed_region
+            ).eval()
 
         return mesh_scoping
 
@@ -466,7 +473,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             nodes:
                 List of nodes to get results for.
             elements:
-                List of elements to get results for.
+                List of elements whose nodes to get results for.
             named_selection:
                 Named selection to get results for.
 
@@ -482,7 +489,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
-            selection, nodes, elements, named_selection
+            selection, nodes, elements, named_selection, location=core.locations.nodal
         )
 
         # Build the list of required operators
