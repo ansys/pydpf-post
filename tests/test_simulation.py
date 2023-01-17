@@ -67,6 +67,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(
             field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
         )
+
         displacement_y = static_simulation.displacement(
             components=["2"],
             named_selection=static_simulation.named_selections[0],
@@ -79,3 +80,43 @@ class TestStaticMechanicalSimulation:
         assert field.component_count == 1
         assert field.data.shape == (121,)
         assert np.allclose(field.data, 0.0)
+
+        displacement_z = static_simulation.displacement(
+            components="Z",
+            named_selection=static_simulation.named_selections[0],
+            load_steps=1,
+            sub_steps=1,
+        )
+        assert len(displacement_z._fc) == 1
+        assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
+        field = displacement_z._fc[0]
+        assert field.component_count == 1
+        assert field.data.shape == (121,)
+        assert np.allclose(field.data, 0.0)
+
+        displacement_z = static_simulation.displacement(
+            components="Z",
+            elements=[1000, 1001, 1002],
+            set_ids=1,
+        )
+        assert len(displacement_z._fc) == 1
+        assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
+        field = displacement_z._fc[0]
+        assert field.component_count == 1
+        assert field.data.shape == (20,)
+        assert np.allclose(
+            field.data[:3], [-9.39050454e-06, -7.80352677e-06, -7.86516275e-06]
+        )
+
+    def test_elemental_stress(self, static_simulation):
+        stress_x = static_simulation.elemental_stress(
+            components=["X"], elements=[1, 2, 3], set_ids=[1]
+        )
+        assert len(stress_x._fc) == 1
+        assert stress_x._fc.time_freq_support.time_frequencies.data == 1
+        field = stress_x._fc[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(
+            field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
+        )

@@ -272,6 +272,8 @@ class Simulation(ABC):
         if components is None:
             op_names = [op_name_base]
         else:
+            if isinstance(components, int) or isinstance(components, str):
+                components = [components]
             if isinstance(components, str) or isinstance(components, int):
                 raise ValueError("Argument 'components' must be a list.")
             for comp in components:
@@ -298,6 +300,8 @@ class Simulation(ABC):
         if components is None:
             op_names = [op_name_base + "1", op_name_base + "2", op_name_base + "3"]
         else:
+            if isinstance(components, int) or isinstance(components, str):
+                components = [components]
             if isinstance(components, str) or isinstance(components, int):
                 raise ValueError("Argument 'components' must be a list.")
             for comp in components:
@@ -322,7 +326,12 @@ class MechanicalSimulation(Simulation, ABC):
         super().__init__(data_sources, model)
 
     def _build_mesh_scoping(
-        self, selection=None, nodes=None, elements=None, named_selection=None
+        self,
+        selection=None,
+        nodes=None,
+        elements=None,
+        named_selection=None,
+        location="Nodal",
     ):
         if (nodes is not None or elements is not None) and named_selection is not None:
             raise ValueError(
@@ -344,6 +353,7 @@ class MechanicalSimulation(Simulation, ABC):
             mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
                 named_selection, server=self._model._server, model=self._model
             )
+
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
                 nodes, server=self._model._server
@@ -353,6 +363,10 @@ class MechanicalSimulation(Simulation, ABC):
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
                 element_ids=elements, server=self._model._server
             )
+            if location == "Nodal":
+                mesh_scoping = core.operators.scoping.transpose(
+                    mesh_scoping=mesh_scoping, meshed_region=self.mesh._meshed_region
+                ).eval()
 
         return mesh_scoping
 
@@ -363,27 +377,37 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     def _build_time_freq_scoping(
         self,
         selection: Union[Selection, None],
-        times: Union[List[float], None],
-        set_ids: Union[List[int], None],
-        load_steps: Union[List[int], None],
-        sub_steps: Union[List[int], None],
+        times: Union[float, List[float], None],
+        set_ids: Union[int, List[int], None],
+        load_steps: Union[int, List[int], None],
+        sub_steps: Union[int, List[int], None],
     ) -> core.time_freq_scoping_factory.Scoping:
         """Generate a time_freq_scoping from input arguments."""
-        time_scoping = None
         # create from selection in priority
         if selection:
             return selection.time_freq_selection._evaluate_on(simulation=self)
         # else from set_ids
         if set_ids:
+            if isinstance(set_ids, int):
+                set_ids = [set_ids]
             return core.time_freq_scoping_factory.scoping_by_sets(
                 cumulative_sets=set_ids, server=self._model._server
             )
         # else from times
         if times:
+            if isinstance(times, float):
+                times = [times]
             raise NotImplementedError
         # else from sub_steps and load_steps
         if sub_steps:
-            if not load_steps or len(load_steps) != 1:
+            if isinstance(sub_steps, int):
+                sub_steps = [sub_steps]
+            if isinstance(load_steps, int):
+                load_steps = [load_steps]
+            elif (
+                not load_steps
+                or (isinstance(load_steps, list) and len(load_steps)) != 1
+            ):
                 raise ValueError(
                     "Argument sub_steps requires argument load_steps to have one value."
                 )
@@ -402,6 +426,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             )
         # else load_steps only
         if load_steps:
+            if isinstance(load_steps, int):
+                load_steps = [load_steps]
             return core.time_freq_scoping_factory.scoping_by_load_steps(
                 load_steps=load_steps, server=self._model._server
             )
@@ -429,14 +455,14 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             times:
-                List of times to get results for.
+                Times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
+                Sub-steps to get results for. Requires load_steps to be defined.
             nodes:
                 List of nodes to get results for.
             elements:
