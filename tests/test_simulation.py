@@ -5,13 +5,13 @@ import ansys.dpf.post as dpf
 
 
 @fixture
-def static_simulation(simple_bar):
-    return dpf.load_simulation(data_sources=simple_bar)
+def static_simulation(static_rst):
+    return dpf.load_simulation(data_sources=static_rst)
 
 
 def test_simulation_results(static_simulation):
     results = static_simulation.results
-    assert len(results) == 10
+    assert len(results) == 12
     assert all(isinstance(x, str) for x in results)
 
 
@@ -57,16 +57,14 @@ def test_simulation_plot(static_simulation):
 class TestStaticMechanicalSimulation:
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
-            components=["X"], nodes=[1, 2, 3], set_ids=[1]
+            components=["X"], nodes=[42, 43, 44], set_ids=[1]
         )
         assert len(displacement_x._fc) == 1
         assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_x._fc[0]
         assert field.component_count == 1
         assert field.data.shape == (3,)
-        assert np.allclose(
-            field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
-        )
+        assert np.allclose(field.data, [2.26430754e-09, 1.89155604e-09, 2.14726184e-09])
 
         displacement_y = static_simulation.displacement(
             components=["2"],
@@ -78,7 +76,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_y._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_y._fc[0]
         assert field.component_count == 1
-        assert field.data.shape == (121,)
+        assert field.data.shape == (21,)
         assert np.allclose(field.data, 0.0)
 
         displacement_z = static_simulation.displacement(
@@ -91,32 +89,27 @@ class TestStaticMechanicalSimulation:
         assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_z._fc[0]
         assert field.component_count == 1
-        assert field.data.shape == (121,)
+        assert field.data.shape == (21,)
         assert np.allclose(field.data, 0.0)
 
         displacement_z = static_simulation.displacement(
             components="Z",
-            elements=[1000, 1001, 1002],
+            elements=[1, 2, 3],
             set_ids=1,
         )
         assert len(displacement_z._fc) == 1
         assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_z._fc[0]
         assert field.component_count == 1
-        assert field.data.shape == (20,)
-        assert np.allclose(
-            field.data[:3], [-9.39050454e-06, -7.80352677e-06, -7.86516275e-06]
-        )
+        assert field.data.shape == (44,)
+        assert np.allclose(field.data, 0.0)
 
     def test_elemental_stress(self, static_simulation):
-        stress_x = static_simulation.elemental_stress(
-            components=1, elements=[1000, 1001, 1002]
-        )
+        stress_x = static_simulation.elemental_stress(components=1, elements=[1, 2, 3])
+        print(stress_x._fc)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
         assert field.component_count == 1
         assert field.data.shape == (3,)
-        assert np.allclose(
-            field.data, [-6.57505989e-08, -3.54701562e-08, -1.44993319e-08]
-        )
+        assert np.allclose(field.data, 32.35137177)

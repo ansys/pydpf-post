@@ -363,7 +363,7 @@ class MechanicalSimulation(Simulation, ABC):
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
                 element_ids=elements, server=self._model._server
             )
-        print("Initial mesh scoping:", mesh_scoping)
+
         if (
             location == core.locations.nodal
             and mesh_scoping.location != core.locations.nodal
@@ -506,7 +506,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection,
             location=location,
         )
-        print("Given mesh_scoping:", mesh_scoping)
 
         # Build the list of required operators
         if category == "components":
@@ -542,7 +541,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             if mesh_scoping:
                 op.connect(1, mesh_scoping)
 
-            op.inputs.requested_location.connect(location)
+            op.connect(9, location)
 
             # Connect its output to the merge operator
             assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
