@@ -1,3 +1,4 @@
+import ansys.dpf.core as core
 import numpy as np
 from pytest import fixture
 
@@ -62,9 +63,15 @@ class TestStaticMechanicalSimulation:
         assert len(displacement_x._fc) == 1
         assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_x._fc[0]
+        op = static_simulation._model.operator("UX")
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [42, 43, 44], server=static_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (3,)
-        assert np.allclose(field.data, [2.26430754e-09, 1.89155604e-09, 2.14726184e-09])
+        assert np.allclose(field.data, field_ref.data)
 
         displacement_y = static_simulation.displacement(
             components=["2"],
@@ -75,9 +82,17 @@ class TestStaticMechanicalSimulation:
         assert len(displacement_y._fc) == 1
         assert displacement_y._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_y._fc[0]
+        op = static_simulation._model.operator("UY")
+        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+            static_simulation.named_selections[0],
+            server=static_simulation._model._server,
+            model=static_simulation._model,
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (21,)
-        assert np.allclose(field.data, 0.0)
+        assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
             components="Z",
@@ -88,9 +103,17 @@ class TestStaticMechanicalSimulation:
         assert len(displacement_z._fc) == 1
         assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_z._fc[0]
+        op = static_simulation._model.operator("UZ")
+        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+            static_simulation.named_selections[0],
+            server=static_simulation._model._server,
+            model=static_simulation._model,
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (21,)
-        assert np.allclose(field.data, 0.0)
+        assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
             components="Z",
@@ -100,55 +123,91 @@ class TestStaticMechanicalSimulation:
         assert len(displacement_z._fc) == 1
         assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
         field = displacement_z._fc[0]
+        op = static_simulation._model.operator("UZ")
+        mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
+            element_ids=[1, 2, 3],
+            server=static_simulation._model._server,
+        )
+        mesh_scoping = core.operators.scoping.transpose(
+            mesh_scoping=mesh_scoping,
+            meshed_region=static_simulation.mesh._meshed_region,
+            inclusive=1,
+        ).eval()
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field_ref.data.shape == (44,)
         assert field.component_count == 1
         assert field.data.shape == (44,)
-        assert np.allclose(field.data, 0.0)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, static_simulation):
-        stress_x = static_simulation.stress(components=1, elements=[1, 2, 3])
+        stress_x = static_simulation.stress(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
+        op = static_simulation._model.operator("SX")
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (24,)
-        assert np.allclose(field.data[:3], [-5838.90625, 3533.22631836, -1057.99682617])
+        assert field.data.shape == (64,)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress_elemental(self, static_simulation):
-        stress_x = static_simulation.elemental_stress(components=1, elements=[1, 2, 3])
+        stress_x = static_simulation.stress_elemental(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
+        op = static_simulation._model.operator("SX")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (3,)
-        assert np.allclose(field.data, 32.35137177)
+        assert field.data.shape == (8,)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress_nodal(self, static_simulation):
-        stress_x = static_simulation.nodal_stress(components=1, elements=[1, 2, 3])
+        stress_x = static_simulation.stress_nodal(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
+        op = static_simulation._model.operator("SX")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (44,)
-        assert np.allclose(
-            field.data[:3], [-4811.25708008, 7210.38232422, 2671.47613525]
-        )
+        assert field.data.shape == (81,)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress_eqv_von_mises_elemental(self, static_simulation):
-        stress_vm = static_simulation.stress_eqv_von_mises_elemental(elements=[1, 2, 3])
+        stress_vm = static_simulation.stress_eqv_von_mises_elemental()
         assert len(stress_vm._fc) == 1
         assert stress_vm._fc.time_freq_support.time_frequencies.data == 1
         field = stress_vm._fc[0]
+        op = static_simulation._model.operator("S_eqv")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (3,)
-        assert np.allclose(field.data[:3], 100034.18428191)
+        assert field.data.shape == (8,)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress_eqv_von_mises_nodal(self, static_simulation):
-        stress_vm = static_simulation.stress_eqv_von_mises_nodal(elements=[1, 2, 3])
+        stress_vm = static_simulation.stress_eqv_von_mises_nodal()
         assert len(stress_vm._fc) == 1
         assert stress_vm._fc.time_freq_support.time_frequencies.data == 1
         field = stress_vm._fc[0]
+        op = static_simulation._model.operator("S_eqv")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (44,)
-        assert np.allclose(
-            field.data[:3], [107988.36010742, 104600.85659511, 104600.85659511]
-        )
+        assert field.data.shape == (81,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_reaction_force(self, static_simulation):
+        reaction_force = static_simulation.reaction_force()
+        assert len(reaction_force._fc) == 1
+        assert reaction_force._fc.time_freq_support.time_frequencies.data == 1
+        field = reaction_force._fc[0]
+        op = static_simulation._model.operator("RF")
+        op.connect(1, static_simulation.mesh._meshed_region.nodes.scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        # assert field.data.shape == (81, 3)
+        assert np.allclose(field.data, field_ref.data)

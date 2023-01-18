@@ -342,7 +342,7 @@ class MechanicalSimulation(Simulation, ABC):
         elements=None,
         named_selection=None,
         location=core.locations.nodal,
-    ):
+    ) -> core.mesh_scoping_factory.Scoping:
         if (nodes is not None or elements is not None) and named_selection is not None:
             raise ValueError(
                 "nodes/elements and named_selection are mutually exclusive"
@@ -376,7 +376,9 @@ class MechanicalSimulation(Simulation, ABC):
 
         if mesh_scoping is None:
             # Take all nodes or elements if nothing was set as input
-            mesh_scoping = self.mesh._meshed_region.elements.scoping
+            mesh_scoping = self.mesh._meshed_region.nodes.scoping
+
+        # Transpose location if necessary
         if (
             location == core.locations.nodal
             and mesh_scoping.location != core.locations.nodal
@@ -540,12 +542,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # If more than one operator is required for extraction,
         # a merging step using utility.merge_fields_containers is needed in the workflow.
-        assemble_op = self._model.operator(name="merge::fields_container")
+        assemble_op = self._model.operator(name="forward_fc")
         # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
         wf.add_operator(operator=assemble_op)
 
         # Set the global output of the workflow
-        wf.set_output_name("out", assemble_op.outputs.merged_fields_container)
+        wf.set_output_name("out", assemble_op.outputs.fields_container)
 
         # For each required operator
         for pin, op_name in enumerate(op_names):
@@ -564,8 +566,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
             wf.add_operator(operator=op)
 
+        fc = wf.get_output("out", core.types.fields_container)
+
         return DataObject(
-            wf.get_output("out", core.types.fields_container),
+            fields_container=fc,
             columns=op_names,
             mesh_scoping=mesh_scoping,
         )
@@ -1442,6 +1446,61 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.elemental,
             category="components",
             components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def reaction_force(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract reaction force results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="RF",
+            location=core.locations.nodal,
+            category="equivalent",
+            components="",
             selection=selection,
             times=times,
             set_ids=set_ids,
