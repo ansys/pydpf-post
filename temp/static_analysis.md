@@ -340,22 +340,21 @@ These work more like IDs/names as they do not have to be consecutive nor start a
 ### Extract nodal XY stresses for elements 1, 2 and 3 at set 1 
 Set 1 is the unique identifier for the combination {load step 1 + sub-step 1}.
 It exposes PyDPF-Core's badly named `cumulative index` (as it is one-based).
+
 ```pycon
->>> stress_XY = static_simulation.elemental_stress(
-...     components=["XY"], elements=[1, 2, 3], set_ids=[1]
-... )
+>>> stress_XY = static_simulation.stress_elemental(components=["XY"],set_ids=[1],elements=[1, 2, 3])
 ```
 
 ### Extract first principal nodal stress for a named (elemental or nodal) selection at all sets
+
 ```pycon
->>> stress_S1 = static_simulation.nodal_principal_stress(
-...     components=[1], named_selection=named_selections[0]
-... )
+>>> stress_S1 = static_simulation.stress_principal_nodal(components=[1],named_selection=named_selections[0])
 ```
 
 ### Extract elemental Von Mises stress everywhere at all sets
+
 ```pycon
->>> stress_VM = static_simulation.elemental_von_mises_eqv_stress()
+>>> stress_VM = static_simulation.stress_eqv_von_mises_elemental()
 ```
 
 ### Extract equivalent elemental nodal elastic strain for a selection at set 1

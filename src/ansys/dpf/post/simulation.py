@@ -665,7 +665,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def elemental_stress(
+    def stress_elemental(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
@@ -721,7 +721,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def nodal_stress(
+    def stress_nodal(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
@@ -777,7 +777,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def elemental_principal_stress(
+    def stress_principal_elemental(
         self,
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
@@ -831,7 +831,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def nodal_principal_stress(
+    def stress_principal_nodal(
         self,
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
@@ -887,7 +887,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def elemental_von_mises_eqv_stress(
+    def stress_eqv_von_mises_elemental(
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
