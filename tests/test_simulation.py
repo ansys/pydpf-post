@@ -113,7 +113,7 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (24,)
         assert np.allclose(field.data[:3], [-5838.90625, 3533.22631836, -1057.99682617])
 
-    def test_elemental_stress(self, static_simulation):
+    def test_stress_elemental(self, static_simulation):
         stress_x = static_simulation.elemental_stress(components=1, elements=[1, 2, 3])
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
@@ -122,7 +122,7 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (3,)
         assert np.allclose(field.data, 32.35137177)
 
-    def test_nodal_stress(self, static_simulation):
+    def test_stress_nodal(self, static_simulation):
         stress_x = static_simulation.nodal_stress(components=1, elements=[1, 2, 3])
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
@@ -132,3 +132,12 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(
             field.data[:3], [-4811.25708008, 7210.38232422, 2671.47613525]
         )
+
+    def test_stress_eqv_von_mises_elemental(self, static_simulation):
+        stress_vm = static_simulation.stress_eqv_von_mises_elemental(elements=[1, 2, 3])
+        assert len(stress_vm._fc) == 1
+        assert stress_vm._fc.time_freq_support.time_frequencies.data == 1
+        field = stress_vm._fc[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data[:3], 100034.18428191)

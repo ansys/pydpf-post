@@ -448,7 +448,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         base_name: str,
         location: str,
         category: str,
-        components: Union[str, List[str], int, List[int]],
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -516,6 +516,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             op_names = self._build_op_names_from_principal_components(
                 op_name_base=base_name, components=components
             )
+        elif category == "equivalent":
+            op_names = [base_name + components]
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
@@ -922,39 +924,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
-        # Build the targeted time scoping
-        time_scoping = self._build_time_freq_scoping(
-            selection, times, set_ids, load_steps, sub_steps
-        )
-
-        # Build the targeted mesh scoping
-        mesh_scoping = self._build_mesh_scoping(
-            selection, None, elements, named_selection
-        )
-
-        # Instantiate the operator
-        op = self._model.operator(name="S_eqv")
-        # Set the time_scoping if necessary
-        if time_scoping:
-            op.connect(0, time_scoping)
-        # Set the mesh_scoping if necessary
-        if mesh_scoping:
-            op.connect(1, mesh_scoping)
-
-        op.connect(9, "Elemental")
-
-        # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
-        wf.progress_bar = False
-        wf.add_operator(operator=op)
-
-        # Set the global output of the workflow
-        wf.set_output_name("out", op.outputs.fields_container)
-
-        return DataObject(
-            wf.get_output("out", core.types.fields_container),
-            columns="S_VM",
-            mesh_scoping=mesh_scoping,
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="_eqv",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
         )
 
 
