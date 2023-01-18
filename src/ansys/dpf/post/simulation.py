@@ -364,6 +364,9 @@ class MechanicalSimulation(Simulation, ABC):
                 element_ids=elements, server=self._model._server
             )
 
+        if mesh_scoping is None:
+            # Take all nodes or elements if nothing was set as input
+            mesh_scoping = self.mesh._meshed_region.elements.scoping
         if (
             location == core.locations.nodal
             and mesh_scoping.location != core.locations.nodal
