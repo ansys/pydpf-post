@@ -1,5 +1,5 @@
 """Module containing the ``Simulation`` class."""
-from abc import ABC
+from abc import ABC, abstractmethod
 import re
 from typing import List, Union
 
@@ -313,6 +313,16 @@ class Simulation(ABC):
 
         # Take unique values
         return list(set(op_names))
+
+    @abstractmethod
+    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        pass
+
+    @abstractmethod
+    def _build_mesh_scoping(self) -> core.mesh_scoping_factory.Scoping:
+        """Generate a mesh_scoping from input arguments."""
+        pass
 
 
 class MechanicalSimulation(Simulation, ABC):
@@ -1446,10 +1456,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""
 
+    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        pass
+
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""
 
+    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        pass
+
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical harmonic simulations."""
+
+    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        pass
