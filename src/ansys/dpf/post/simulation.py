@@ -521,6 +521,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             )
         elif category == "equivalent":
             op_names = [base_name + components]
+        else:
+            raise ValueError(f"'{category}' is not a valid category value.")
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
