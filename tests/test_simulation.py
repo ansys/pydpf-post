@@ -211,3 +211,16 @@ class TestStaticMechanicalSimulation:
         assert field.component_count == 3
         # assert field.data.shape == (81, 3)
         assert np.allclose(field.data, field_ref.data)
+
+    # def test_stress_elemental_volume(self, static_simulation):
+    #     elemental_volume = static_simulation.elemental_volume()
+    #     assert len(elemental_volume._fc) == 1
+    #     assert elemental_volume._fc.time_freq_support.time_frequencies.data == 1
+    #     field = elemental_volume._fc[0]
+    #     op = static_simulation._model.operator("ENG_VOL")
+    #     # op.connect(9, core.locations.elemental)
+    #     field_ref = op.eval()[0]
+    #     print(field_ref)
+    #     assert field.component_count == 1
+    #     assert field.data.shape == (8,)
+    #     assert np.allclose(field.data, field_ref.data)
