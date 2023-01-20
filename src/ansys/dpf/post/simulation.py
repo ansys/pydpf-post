@@ -1563,6 +1563,391 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
+    def stiffness_matrix_energy(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stiffness matrix energy results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENG_SE",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def artificial_hourglass_energy(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract artificial hourglass energy results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENG_AHO",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def thermal_dissipation_energy(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract thermal dissipation energy results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENG_TH",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def kinetic_energy(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract kinetic energy results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENG_KE",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def structural_temperature(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract structural temperature element nodal results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="BFE",
+            location=core.locations.elemental_nodal,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def structural_temperature_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract structural temperature nodal results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="BFE",
+            location=core.locations.nodal,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def structural_temperature_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract structural temperature elemental results from the simulation.
+
+        Args:
+            components:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="BFE",
+            location=core.locations.elemental,
+            category="equivalent",
+            components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
 
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""

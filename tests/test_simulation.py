@@ -206,21 +206,110 @@ class TestStaticMechanicalSimulation:
         assert reaction_force._fc.time_freq_support.time_frequencies.data == 1
         field = reaction_force._fc[0]
         op = static_simulation._model.operator("RF")
-        op.connect(1, static_simulation.mesh._meshed_region.nodes.scoping)
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        # assert field.data.shape == (81, 3)
+        assert field.data.shape == (81, 3)
         assert np.allclose(field.data, field_ref.data)
 
-    # def test_stress_elemental_volume(self, static_simulation):
-    #     elemental_volume = static_simulation.elemental_volume()
-    #     assert len(elemental_volume._fc) == 1
-    #     assert elemental_volume._fc.time_freq_support.time_frequencies.data == 1
-    #     field = elemental_volume._fc[0]
-    #     op = static_simulation._model.operator("ENG_VOL")
-    #     # op.connect(9, core.locations.elemental)
-    #     field_ref = op.eval()[0]
-    #     print(field_ref)
-    #     assert field.component_count == 1
-    #     assert field.data.shape == (8,)
-    #     assert np.allclose(field.data, field_ref.data)
+    def test_stress_elemental_volume(self, static_simulation):
+        elemental_volume = static_simulation.elemental_volume()
+        assert len(elemental_volume._fc) == 1
+        assert elemental_volume._fc.time_freq_support.time_frequencies.data == 1
+        field = elemental_volume._fc[0]
+        op = static_simulation._model.operator("ENG_VOL")
+        field_ref = op.eval()[0]
+        print(field_ref)
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stiffness_matrix_energy(self, static_simulation):
+        stiffness_matrix_energy = static_simulation.stiffness_matrix_energy()
+        assert len(stiffness_matrix_energy._fc) == 1
+        assert stiffness_matrix_energy._fc.time_freq_support.time_frequencies.data == 1
+        field = stiffness_matrix_energy._fc[0]
+        op = static_simulation._model.operator("ENG_SE")
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_artificial_hourglass_energy(self, static_simulation):
+        artificial_hourglass_energy = static_simulation.artificial_hourglass_energy()
+        assert len(artificial_hourglass_energy._fc) == 1
+        assert (
+            artificial_hourglass_energy._fc.time_freq_support.time_frequencies.data == 1
+        )
+        field = artificial_hourglass_energy._fc[0]
+        op = static_simulation._model.operator("ENG_AHO")
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_thermal_dissipation_energy(self, static_simulation):
+        thermal_dissipation_energy = static_simulation.thermal_dissipation_energy()
+        assert len(thermal_dissipation_energy._fc) == 1
+        assert (
+            thermal_dissipation_energy._fc.time_freq_support.time_frequencies.data == 1
+        )
+        field = thermal_dissipation_energy._fc[0]
+        op = static_simulation._model.operator("ENG_TH")
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_kinetic_energy(self, static_simulation):
+        kinetic_energy = static_simulation.kinetic_energy()
+        assert len(kinetic_energy._fc) == 1
+        assert kinetic_energy._fc.time_freq_support.time_frequencies.data == 1
+        field = kinetic_energy._fc[0]
+        op = static_simulation._model.operator("ENG_KE")
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_structural_temperature(self, static_simulation):
+        structural_temperature = static_simulation.structural_temperature()
+        assert len(structural_temperature._fc) == 1
+        assert structural_temperature._fc.time_freq_support.time_frequencies.data == 1
+        field = structural_temperature._fc[0]
+        op = static_simulation._model.operator("BFE")
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (192,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_structural_temperature_nodal(self, static_simulation):
+        structural_temperature_nodal = static_simulation.structural_temperature_nodal()
+        assert len(structural_temperature_nodal._fc) == 1
+        assert (
+            structural_temperature_nodal._fc.time_freq_support.time_frequencies.data
+            == 1
+        )
+        field = structural_temperature_nodal._fc[0]
+        op = static_simulation._model.operator("BFE")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (81,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_structural_temperature_elemental(self, static_simulation):
+        structural_temperature_elemental = (
+            static_simulation.structural_temperature_elemental()
+        )
+        assert len(structural_temperature_elemental._fc) == 1
+        assert (
+            structural_temperature_elemental._fc.time_freq_support.time_frequencies.data
+            == 1
+        )
+        field = structural_temperature_elemental._fc[0]
+        op = static_simulation._model.operator("BFE")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (12,)
+        assert np.allclose(field.data, field_ref.data)
