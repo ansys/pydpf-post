@@ -342,7 +342,7 @@ class MechanicalSimulation(Simulation, ABC):
         elements=None,
         named_selection=None,
         location=core.locations.nodal,
-    ) -> core.mesh_scoping_factory.Scoping:
+    ) -> Union[core.mesh_scoping_factory.Scoping, None]:
         if (nodes is not None or elements is not None) and named_selection is not None:
             raise ValueError(
                 "nodes/elements and named_selection are mutually exclusive"
@@ -375,8 +375,7 @@ class MechanicalSimulation(Simulation, ABC):
             )
 
         if mesh_scoping is None:
-            # Take all nodes or elements if nothing was set as input
-            mesh_scoping = self.mesh._meshed_region.nodes.scoping
+            return mesh_scoping
 
         # Transpose location if necessary
         if (
@@ -560,6 +559,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             if mesh_scoping:
                 op.connect(1, mesh_scoping)
 
+            op.connect(7, self.mesh._meshed_region)
             op.connect(9, location)
 
             # Connect its output to the merge operator
