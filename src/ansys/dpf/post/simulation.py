@@ -468,6 +468,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         location: str,
         category: str,
         components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -488,6 +489,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Type of result requested. Can be "scalar", "vector", or "matrix".
             components:
                 Components to get results for.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -566,17 +569,23 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         if to_extract is not None:
             # Extract the components
-            print(f"Components to be extracted: {components}")
             extract_op = self._model.operator(name="component_selector_fc")
             extract_op.connect(0, op.outputs.fields_container)
             extract_op.connect(1, to_extract)
             wf.add_operator(operator=extract_op)
             # assemble_op.connect(pin=0, inpt=extract_op.outputs.fields_container)
             # Set the global output of the workflow
-            wf.set_output_name("out", extract_op.outputs.fields_container)
+            out = extract_op.outputs.fields_container
         else:
-            wf.set_output_name("out", op.outputs.fields_container)
+            out = op.outputs.fields_container
 
+        if norm:
+            norm_op = self._model.operator(name="norm_fc")
+            norm_op.connect(0, out)
+            wf.add_operator(operator=norm_op)
+            out = norm_op.outputs.fields_container
+
+        wf.set_output_name("out", out)
         fc = wf.get_output("out", core.types.fields_container)
 
         return DataObject(
@@ -588,6 +597,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     def displacement(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -602,6 +612,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         Args:
             components:
                 Components to get results for.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -631,6 +643,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.nodal,
             category="vector",
             components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,

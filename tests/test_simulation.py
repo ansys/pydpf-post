@@ -140,6 +140,24 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (44,)
         assert np.allclose(field.data, field_ref.data)
 
+        displacement_norm = static_simulation.displacement(
+            norm=True, nodes=[42, 43, 44], set_ids=[1]
+        )
+        assert len(displacement_norm._fc) == 1
+        assert displacement_norm._fc.time_freq_support.time_frequencies.data == 1
+        field = displacement_norm._fc[0]
+        op = static_simulation._model.operator("U")
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [42, 43, 44], server=static_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        norm_op = static_simulation._model.operator("norm_fc")
+        norm_op.connect(0, op.outputs.fields_container)
+        field_ref = norm_op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
     def test_stress(self, static_simulation):
         stress_x = static_simulation.stress(components=1)
         assert len(stress_x._fc) == 1
