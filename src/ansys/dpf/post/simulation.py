@@ -1975,6 +1975,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     def element_nodal_forces(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1989,6 +1990,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         Args:
             components:
                 Components to get results for.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2018,6 +2021,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.elemental_nodal,
             category="vector",
             components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -2031,6 +2035,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     def element_nodal_forces_nodal(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2045,6 +2050,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         Args:
             components:
                 Components to get results for.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2074,6 +2081,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.nodal,
             category="vector",
             components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -2087,6 +2095,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     def element_nodal_forces_elemental(
         self,
         components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2100,6 +2109,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         Args:
             components:
                 Components to get results for.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2127,6 +2138,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.elemental,
             category="vector",
             components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
