@@ -317,8 +317,6 @@ class TestStaticMechanicalSimulation:
     def test_element_nodal_forces(self, allkindofcomplexity):
         static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces()
-        print(element_nodal_forces._fc)
-        print(element_nodal_forces._fc[0])
         assert len(element_nodal_forces._fc) == 1
         assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
         field = element_nodal_forces._fc[0]
@@ -326,4 +324,30 @@ class TestStaticMechanicalSimulation:
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert field.data.shape == (103766, 3)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+        static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
+        element_nodal_forces = static_simulation.element_nodal_forces_nodal()
+        assert len(element_nodal_forces._fc) == 3
+        assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
+        field = element_nodal_forces._fc[0]
+        op = static_simulation._model.operator("ENF")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert field.data.shape == (14982, 3)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+        static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
+        element_nodal_forces = static_simulation.element_nodal_forces_elemental()
+        assert len(element_nodal_forces._fc) == 3
+        assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
+        field = element_nodal_forces._fc[0]
+        op = static_simulation._model.operator("ENF")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert field.data.shape == (9433, 3)
         assert np.allclose(field.data, field_ref.data)
