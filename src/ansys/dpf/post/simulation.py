@@ -15,19 +15,19 @@ from ansys.dpf.post.selection import Selection
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
 
-    _component_id_to_str = {
-        "1": "X",
-        "2": "Y",
-        "3": "Z",
-        "4": "XY",
-        "5": "YZ",
-        "6": "XZ",
-        "X": "X",
-        "Y": "Y",
-        "Z": "Z",
-        "XY": "XY",
-        "YZ": "YZ",
-        "XZ": "XZ",
+    _component_to_id = {
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3,
+        "5": 4,
+        "6": 5,
+        "X": 0,
+        "Y": 1,
+        "Z": 2,
+        "XY": 3,
+        "YZ": 4,
+        "XZ": 5,
     }
 
     def __init__(self, data_sources: DataSources, model: Model):
@@ -266,53 +266,58 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_op_names_from_components(self, op_name_base, components):
+    def _build_components_from_components(self, components):
         # Create operator internal names based on components
-        op_names = []
+        out = []
         if components is None:
-            op_names = [op_name_base]
+            return None
         else:
             if isinstance(components, int) or isinstance(components, str):
                 components = [components]
-            if isinstance(components, str) or isinstance(components, int):
-                raise ValueError("Argument 'components' must be a list.")
+            if not isinstance(components, list):
+                raise ValueError(
+                    "Argument 'components' must be an int, a str, or a list of either."
+                )
             for comp in components:
                 if not (isinstance(comp, str) or isinstance(comp, int)):
                     raise ValueError(
-                        "Argument 'components' must be a list of integers and/or strings."
+                        "Argument 'components' can only contain integers and/or strings."
                     )
                 if isinstance(comp, int):
                     comp = str(comp)
-                if comp not in self._component_id_to_str.keys():
+                if comp not in self._component_to_id.keys():
                     raise ValueError(
                         f"Component {comp} is not valid. Please use one of: "
-                        f"{list(self._component_id_to_str.keys())}."
+                        f"{list(self._component_to_id.keys())}."
                     )
-                op_comp = self._component_id_to_str[comp]
-                op_names.append(op_name_base + op_comp)
+                out.append(self._component_to_id[comp])
 
         # Take unique values
-        return list(set(op_names))
+        return list(set(out))
 
-    def _build_op_names_from_principal_components(self, op_name_base, components):
+    def _build_components_from_principal(self, components):
         # Create operator internal names based on principal components
-        op_names = []
+        out = []
         if components is None:
-            op_names = [op_name_base + "1", op_name_base + "2", op_name_base + "3"]
+            return None
         else:
             if isinstance(components, int) or isinstance(components, str):
                 components = [components]
-            if isinstance(components, str) or isinstance(components, int):
-                raise ValueError("Argument 'components' must be a list.")
+            if not isinstance(components, list):
+                raise ValueError(
+                    "Argument 'components' must be an int, a str, or a list of either."
+                )
             for comp in components:
-                if isinstance(comp, int):
-                    comp = str(comp)
-                if comp not in ["1", "2", "3"]:
+                if not (isinstance(comp, str) or isinstance(comp, int)):
+                    raise ValueError(
+                        "Argument 'components' can only contain integers and/or strings."
+                    )
+                if str(comp) not in ["1", "2", "3"]:
                     raise ValueError("A principal component must be 1, 2, or 3.")
-                op_names.append(op_name_base + comp)
+                out.append(comp)
 
         # Take unique values
-        return list(set(op_names))
+        return list(set(out))
 
     @abstractmethod
     def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
@@ -437,7 +442,7 @@ class MechanicalSimulation(Simulation, ABC):
         return self._get_result(
             base_name="ENF",
             location=core.locations.elemental_nodal,
-            category="components",
+            category="vector",
             components=components,
             selection=selection,
             times=times,
@@ -493,7 +498,7 @@ class MechanicalSimulation(Simulation, ABC):
         return self._get_result(
             base_name="ENF",
             location=core.locations.nodal,
-            category="components",
+            category="vector",
             components=components,
             selection=selection,
             times=times,
@@ -546,7 +551,7 @@ class MechanicalSimulation(Simulation, ABC):
         return self._get_result(
             base_name="ENF",
             location=core.locations.elemental,
-            category="components",
+            category="vector",
             components=components,
             selection=selection,
             times=times,
@@ -645,7 +650,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location:
                 Location requested.
             category:
-                Type of result requested. Can be "component", "principal", or "equivalent".
+                Type of result requested. Can be "scalar", "vector", or "matrix".
             components:
                 Components to get results for.
             selection:
@@ -686,56 +691,62 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=location,
         )
 
-        # Build the list of required operators
-        if category == "components":
-            op_names = self._build_op_names_from_components(
-                op_name_base=base_name, components=components
-            )
+        # Build the list of requested results
+        columns = []
+        to_extract = None
+        if category in ["vector", "matrix"]:
+            to_extract = self._build_components_from_components(components=components)
+            if to_extract is None and category == "vector":
+                columns = [base_name + comp for comp in ["X", "Y", "Z"]]
+            elif to_extract is None and category == "matrix":
+                columns = [
+                    base_name + comp for comp in ["X", "Y", "Z", "XX", "XY", "YZ"]
+                ]
         elif category == "principal":
-            op_names = self._build_op_names_from_principal_components(
-                op_name_base=base_name, components=components
-            )
-        elif category == "equivalent":
-            op_names = [base_name + components]
+            to_extract = self._build_components_from_principal(components=components)
+            if to_extract is None:
+                columns = [base_name + comp for comp in ["1", "2", "3"]]
+        elif category == "scalar":
+            columns = [base_name]
         else:
             raise ValueError(f"'{category}' is not a valid category value.")
+        if columns is []:
+            columns = [base_name + comp for comp in to_extract]
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
-        # If more than one operator is required for extraction,
-        # a merging step using utility.merge_fields_containers is needed in the workflow.
-        assemble_op = self._model.operator(name="forward_fc")
-        # assemble_op = self._model.operator(name="utility::assemble_scalars_to_vectors_fc")
-        wf.add_operator(operator=assemble_op)
+        # Instantiate the result operator
+        op = self._model.operator(name=base_name)
+        # Set the time_scoping if necessary
+        if time_scoping:
+            op.connect(0, time_scoping)
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            op.connect(1, mesh_scoping)
 
-        # Set the global output of the workflow
-        wf.set_output_name("out", assemble_op.outputs.fields_container)
+        op.connect(7, self.mesh._meshed_region)
+        op.connect(9, location)
 
-        # For each required operator
-        for pin, op_name in enumerate(op_names):
-            # Instantiate the operator
-            op = self._model.operator(name=op_name)
-            # Set the time_scoping if necessary
-            if time_scoping:
-                op.connect(0, time_scoping)
-            # Set the mesh_scoping if necessary
-            if mesh_scoping:
-                op.connect(1, mesh_scoping)
-
-            op.connect(7, self.mesh._meshed_region)
-            op.connect(9, location)
-
-            # Connect its output to the merge operator
-            assemble_op.connect(pin=pin, inpt=op.outputs.fields_container)
-            wf.add_operator(operator=op)
+        if to_extract is not None:
+            # Extract the components
+            print(f"Components to be extracted: {components}")
+            extract_op = self._model.operator(name="component_selector_fc")
+            extract_op.connect(0, op.outputs.fields_container)
+            extract_op.connect(1, to_extract)
+            wf.add_operator(operator=extract_op)
+            # assemble_op.connect(pin=0, inpt=extract_op.outputs.fields_container)
+            # Set the global output of the workflow
+            wf.set_output_name("out", extract_op.outputs.fields_container)
+        else:
+            wf.set_output_name("out", op.outputs.fields_container)
 
         fc = wf.get_output("out", core.types.fields_container)
 
         return DataObject(
             fields_container=fc,
-            columns=op_names,
+            columns=columns,
             mesh_scoping=mesh_scoping,
         )
 
@@ -783,7 +794,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="U",
             location=core.locations.nodal,
-            category="components",
+            category="vector",
             components=components,
             selection=selection,
             times=times,
@@ -839,7 +850,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.elemental_nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -895,7 +906,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.elemental,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -951,7 +962,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1109,10 +1120,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         """
         return self._get_result(
-            base_name="S",
+            base_name="S_eqv",
             location=core.locations.elemental,
-            category="equivalent",
-            components="_eqv",
+            category="scalar",
+            components=None,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1159,10 +1170,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         """
         return self._get_result(
-            base_name="S",
+            base_name="S_eqv",
             location=core.locations.nodal,
-            category="equivalent",
-            components="_eqv",
+            category="scalar",
+            components=None,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1217,7 +1228,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.elemental_nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1273,7 +1284,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1329,7 +1340,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.elemental,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1497,7 +1508,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.elemental_nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1553,7 +1564,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.nodal,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1609,7 +1620,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.elemental,
-            category="components",
+            category="matrix",
             components=components,
             selection=selection,
             times=times,
@@ -1664,8 +1675,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="RF",
             location=core.locations.nodal,
-            category="equivalent",
-            components="",
+            category="vector",
+            components=None,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1716,7 +1727,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_VOL",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -1771,7 +1782,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_SE",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -1826,7 +1837,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_AHO",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -1881,7 +1892,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_TH",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -1936,7 +1947,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_KE",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -1991,7 +2002,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.elemental_nodal,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -2046,7 +2057,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.nodal,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,
@@ -2101,7 +2112,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.elemental,
-            category="equivalent",
+            category="scalar",
             components="",
             selection=selection,
             times=times,

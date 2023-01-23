@@ -211,7 +211,7 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (81, 3)
         assert np.allclose(field.data, field_ref.data)
 
-    def test_stress_elemental_volume(self, static_simulation):
+    def test_elemental_volume(self, static_simulation):
         elemental_volume = static_simulation.elemental_volume()
         assert len(elemental_volume._fc) == 1
         assert elemental_volume._fc.time_freq_support.time_frequencies.data == 1
