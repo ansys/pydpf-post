@@ -58,7 +58,7 @@ def test_simulation_plot(static_simulation):
 class TestStaticMechanicalSimulation:
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
-            components=["X"], nodes=[42, 43, 44], set_ids=[1]
+            component_ids=["X"], nodes=[42, 43, 44], set_ids=[1]
         )
         assert len(displacement_x._fc) == 1
         assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
@@ -74,7 +74,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_y = static_simulation.displacement(
-            components=["2"],
+            component_ids=["2"],
             named_selection=static_simulation.named_selections[0],
             load_steps=[1],
             sub_steps=[1],
@@ -95,7 +95,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
-            components="Z",
+            component_ids="Z",
             named_selection=static_simulation.named_selections[0],
             load_steps=1,
             sub_steps=1,
@@ -116,7 +116,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
-            components="Z",
+            component_ids="Z",
             elements=[1, 2, 3],
             set_ids=1,
         )
@@ -159,7 +159,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, static_simulation):
-        stress_x = static_simulation.stress(components=1)
+        stress_x = static_simulation.stress(component_ids=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
@@ -171,7 +171,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_elemental(self, static_simulation):
-        stress_x = static_simulation.stress_elemental(components=1)
+        stress_x = static_simulation.stress_elemental(component_ids=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
@@ -183,7 +183,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_nodal(self, static_simulation):
-        stress_x = static_simulation.stress_nodal(components=1)
+        stress_x = static_simulation.stress_nodal(component_ids=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.time_freq_support.time_frequencies.data == 1
         field = stress_x._fc[0]
