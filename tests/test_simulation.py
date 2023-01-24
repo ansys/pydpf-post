@@ -1,5 +1,6 @@
 import ansys.dpf.core as core
 import numpy as np
+import pytest
 from pytest import fixture
 
 import ansys.dpf.post as dpf
@@ -56,6 +57,12 @@ def test_simulation_plot(static_simulation):
 
 
 class TestStaticMechanicalSimulation:
+    def test_warning_empty(self, static_simulation):
+        with pytest.warns(expected_warning=UserWarning, match="empty"):
+            _ = static_simulation.displacement(
+                component_ids=1, nodes=[1001, 1002, 1003]
+            )
+
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
             component_ids=["X"], nodes=[42, 43, 44], set_ids=[1]
