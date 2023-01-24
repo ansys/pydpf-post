@@ -961,7 +961,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract elemental equivalent Von Mises stress results from the simulation.
 
         Args:
             selection:
@@ -1062,7 +1062,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract nodal equivalent Von Mises stress results from the simulation.
 
         Args:
             selection:
