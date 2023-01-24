@@ -601,7 +601,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         wf.set_output_name("out", out)
         fc = wf.get_output("out", core.types.fields_container)
 
-        if len(fc) == 0 or [len(f) == 0 for f in fc]:
+        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
