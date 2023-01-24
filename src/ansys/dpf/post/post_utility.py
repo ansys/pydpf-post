@@ -2,7 +2,7 @@
 
 This module is used for the initialization of DPF-Post objects.
 """
-from typing import TypeVar
+from typing import TypeVar, Union
 import warnings
 
 from ansys.dpf.core.model import Model
@@ -12,16 +12,11 @@ from ansys.dpf.post.common import (
     _AnalysisType,
     _AvailableKeywords,
     _PhysicsType,
+    simulation_type_str_to_class,
 )
 from ansys.dpf.post.harmonic_analysis import HarmonicAnalysisSolution
 from ansys.dpf.post.modal_analysis import ModalAnalysisSolution
-from ansys.dpf.post.simulation import (
-    HarmonicMechanicalSimulation,
-    ModalMechanicalSimulation,
-    Simulation,
-    StaticMechanicalSimulation,
-    TransientMechanicalSimulation,
-)
+from ansys.dpf.post.simulation import Simulation
 from ansys.dpf.post.static_analysis import (
     StaticAnalysisSolution,
     ThermalStaticAnalysisSolution,
@@ -118,7 +113,7 @@ SimulationType = TypeVar("SimulationType", bound=Simulation)
 
 def load_simulation(
     data_sources,
-    simulation_type: AvailableSimulationTypes = None,
+    simulation_type: Union[AvailableSimulationTypes, str] = None,
 ) -> SimulationType:
     """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
 
@@ -200,13 +195,13 @@ def load_simulation(
             or physics_type == _PhysicsType.mechanical
         ):
             if analysis_type == _AnalysisType.static:
-                simulation_type = StaticMechanicalSimulation
+                simulation_type = AvailableSimulationTypes.static_mechanical
             elif analysis_type == _AnalysisType.modal:
-                simulation_type = ModalMechanicalSimulation
+                simulation_type = AvailableSimulationTypes.modal_mechanical
             elif analysis_type == _AnalysisType.harmonic:
-                simulation_type = HarmonicMechanicalSimulation
+                simulation_type = AvailableSimulationTypes.harmonic_mechanical
             elif analysis_type == _AnalysisType.transient:
-                simulation_type = TransientMechanicalSimulation
+                simulation_type = AvailableSimulationTypes.transient_mechanical
             else:
                 raise ValueError(
                     f"Unknown analysis type '{analysis_type}' for mechanical."
@@ -217,7 +212,7 @@ def load_simulation(
     if simulation_type in [
         getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
     ]:
-        return simulation_type(data_sources, _model)
+        return simulation_type_str_to_class[simulation_type](data_sources, _model)
     else:
         raise ValueError(
             f"Simulation type '{simulation_type}' is not a recognized simulation type."

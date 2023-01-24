@@ -130,7 +130,15 @@ class _PhysicsType:
 class AvailableSimulationTypes:
     """Contains available simulation types to give the :func:`load_simulation` function."""
 
-    static_mechanical = StaticMechanicalSimulation
-    transient_mechanical = TransientMechanicalSimulation
-    modal_mechanical = ModalMechanicalSimulation
-    harmonic_mechanical = HarmonicMechanicalSimulation
+    static_mechanical = "static mechanical"  # StaticMechanicalSimulation
+    transient_mechanical = "transient mechanical"  # TransientMechanicalSimulation
+    modal_mechanical = "modal mechanical"  # ModalMechanicalSimulation
+    harmonic_mechanical = "harmonic mechanical"  # HarmonicMechanicalSimulation
+
+
+simulation_type_str_to_class = {
+    AvailableSimulationTypes.static_mechanical: StaticMechanicalSimulation,
+    AvailableSimulationTypes.transient_mechanical: TransientMechanicalSimulation,
+    AvailableSimulationTypes.modal_mechanical: ModalMechanicalSimulation,
+    AvailableSimulationTypes.harmonic_mechanical: HarmonicMechanicalSimulation,
+}
