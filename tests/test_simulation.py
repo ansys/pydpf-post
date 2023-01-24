@@ -201,6 +201,18 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (81,)
         assert np.allclose(field.data, field_ref.data)
 
+    def test_stress_eqv_von_mises(self, static_simulation):
+        result = static_simulation.stress_eqv_von_mises()
+        assert len(result._fc) == 1
+        assert result._fc.time_freq_support.time_frequencies.data == 1
+        field = result._fc[0]
+        op = static_simulation._model.operator("S_eqv")
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (64,)
+        assert np.allclose(field.data, field_ref.data)
+
     def test_stress_eqv_von_mises_elemental(self, static_simulation):
         stress_vm = static_simulation.stress_eqv_von_mises_elemental()
         assert len(stress_vm._fc) == 1

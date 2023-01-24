@@ -1001,7 +1001,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def stress_eqv_von_mises_nodal(
+    def stress_eqv_von_mises(
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
@@ -1011,7 +1011,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
         Args:
             selection:
@@ -1038,7 +1038,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S_eqv",
-            location=core.locations.nodal,
+            location=core.locations.elemental_nodal,
             category="scalar",
             components=None,
             selection=selection,
@@ -1047,6 +1047,59 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             load_steps=load_steps,
             sub_steps=sub_steps,
             nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_eqv_von_mises_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S_eqv",
+            location=core.locations.nodal,
+            category="scalar",
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
             elements=elements,
             named_selection=named_selection,
         )
