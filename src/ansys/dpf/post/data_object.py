@@ -69,7 +69,7 @@ class DataObject:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.multishells_rst)
         >>> # Export the displacements vector field at step 1 as a DataFrame
-        >>> displacement = simulation.displacement(steps=[1], nodes=[1, 2, 3])
+        >>> displacement = simulation.displacement(load_steps=[1], nodes=[1, 2, 3])
         >>> df = displacement.as_data_frame()
         >>> print(df)
                   X          Y         Z
@@ -113,7 +113,7 @@ class DataObject:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.multishells_rst)
         >>> # Export the displacements vector field at step 1 as a DataFrame
-        >>> displacement = simulation.displacement(steps=[1], nodes=[1, 2, 3])
+        >>> displacement = simulation.displacement(load_steps=[1], nodes=[1, 2, 3])
         >>> arr = displacement.as_array()
         >>> print(arr)
         [[  0.39831985 -13.79737819  -0.16376683]
