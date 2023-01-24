@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 import re
 from typing import List, Union
+import warnings
 
 from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
@@ -29,6 +30,9 @@ class Simulation(ABC):
         "YZ": 4,
         "XZ": 5,
     }
+
+    _component_names = ["X", "Y", "Z", "XX", "XY", "YZ"]
+    _principal_names = ["1", "2", "3"]
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -266,11 +270,11 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_components_from_components(self, components):
+    def _build_components_from_components(self, base_name, category, components):
         # Create operator internal names based on components
         out = []
         if components is None:
-            return None
+            out = None
         else:
             if isinstance(components, int) or isinstance(components, str):
                 components = [components]
@@ -292,10 +296,18 @@ class Simulation(ABC):
                     )
                 out.append(self._component_to_id[comp])
 
-        # Take unique values
-        return list(set(out))
+        # Take unique values and build names list
+        if out is not None:
+            out = list(set(out))
+        if out is None and category == "vector":
+            columns = [base_name + comp for comp in self._component_names[:3]]
+        elif out is None and category == "matrix":
+            columns = [base_name + comp for comp in self._component_names]
+        else:
+            columns = [base_name + self._component_names[i] for i in out]
+        return out, columns
 
-    def _build_components_from_principal(self, components):
+    def _build_components_from_principal(self, base_name, components):
         # Create operator internal names based on principal components
         out = []
         if components is None:
@@ -312,12 +324,20 @@ class Simulation(ABC):
                     raise ValueError(
                         "Argument 'components' can only contain integers and/or strings."
                     )
-                if str(comp) not in ["1", "2", "3"]:
-                    raise ValueError("A principal component must be 1, 2, or 3.")
+                if str(comp) not in self._principal_names:
+                    raise ValueError(
+                        "A principal component ID must be one of: "
+                        f"{self._principal_names}."
+                    )
                 out.append(comp)
 
         # Take unique values
-        return list(set(out))
+        out = list(set(out))
+        # Build columns names
+        columns = [base_name]
+        if out is None:
+            columns = [base_name + str(comp) for comp in self._principal_names]
+        return out, columns
 
     @abstractmethod
     def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
@@ -530,26 +550,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Build the list of requested results
-        columns = []
         to_extract = None
         if category in ["vector", "matrix"]:
-            to_extract = self._build_components_from_components(components=components)
-            if to_extract is None and category == "vector":
-                columns = [base_name + comp for comp in ["X", "Y", "Z"]]
-            elif to_extract is None and category == "matrix":
-                columns = [
-                    base_name + comp for comp in ["X", "Y", "Z", "XX", "XY", "YZ"]
-                ]
+            to_extract, columns = self._build_components_from_components(
+                base_name=base_name, category=category, components=components
+            )
         elif category == "principal":
-            to_extract = self._build_components_from_principal(components=components)
-            if to_extract is None:
-                columns = [base_name + comp for comp in ["1", "2", "3"]]
+            to_extract, columns = self._build_components_from_principal(
+                base_name=base_name, components=components
+            )
         elif category == "scalar":
             columns = [base_name]
         else:
             raise ValueError(f"'{category}' is not a valid category value.")
-        if columns is []:
-            columns = [base_name + comp for comp in to_extract]
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
@@ -587,6 +600,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         wf.set_output_name("out", out)
         fc = wf.get_output("out", core.types.fields_container)
+
+        if len(fc) == 0 or [len(f) == 0 for f in fc]:
+            warnings.warn(
+                message=f"Returned Dataframe with columns {columns} is empty.",
+                category=UserWarning,
+            )
 
         return DataObject(
             fields_container=fc,
