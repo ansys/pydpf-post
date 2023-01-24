@@ -685,7 +685,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract elemental nodal stress results from the simulation.
 
         Args:
             component_ids:
@@ -741,7 +741,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract elemental stress results from the simulation.
 
         Args:
             component_ids:
@@ -797,7 +797,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract nodal stress results from the simulation.
 
         Args:
             component_ids:
