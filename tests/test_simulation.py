@@ -201,6 +201,42 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (81,)
         assert np.allclose(field.data, field_ref.data)
 
+    def test_stress_principal(self, static_simulation):
+        result = static_simulation.stress_principal(component_ids=1)
+        assert len(result._fc) == 1
+        assert result._fc.time_freq_support.time_frequencies.data == 1
+        field = result._fc[0]
+        op = static_simulation._model.operator("S1")
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (64,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_nodal(self, static_simulation):
+        result = static_simulation.stress_principal_nodal(component_ids=1)
+        assert len(result._fc) == 1
+        assert result._fc.time_freq_support.time_frequencies.data == 1
+        field = result._fc[0]
+        op = static_simulation._model.operator("S1")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (81,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_elemental(self, static_simulation):
+        result = static_simulation.stress_principal_elemental(component_ids=1)
+        assert len(result._fc) == 1
+        assert result._fc.time_freq_support.time_frequencies.data == 1
+        field = result._fc[0]
+        op = static_simulation._model.operator("S1")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (8,)
+        assert np.allclose(field.data, field_ref.data)
+
     def test_stress_eqv_von_mises(self, static_simulation):
         result = static_simulation.stress_eqv_von_mises()
         assert len(result._fc) == 1

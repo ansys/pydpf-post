@@ -1,5 +1,6 @@
 """Module containing the ``Simulation`` class."""
 from abc import ABC, abstractmethod
+from enum import Enum
 import re
 from typing import List, Union
 import warnings
@@ -11,6 +12,16 @@ from ansys.dpf import core
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
+
+
+class ResultCategory(Enum):
+    """Enum for available result categories."""
+
+    scalar = 1
+    vector = 2
+    matrix = 3
+    principal = 4
+    equivalent = 5
 
 
 class Simulation(ABC):
@@ -299,9 +310,9 @@ class Simulation(ABC):
         # Take unique values and build names list
         if out is not None:
             out = list(set(out))
-        if out is None and category == "vector":
+        if out is None and category == ResultCategory.vector:
             columns = [base_name + comp for comp in self._component_names[:3]]
-        elif out is None and category == "matrix":
+        elif out is None and category == ResultCategory.matrix:
             columns = [base_name + comp for comp in self._component_names]
         else:
             columns = [base_name + self._component_names[i] for i in out]
@@ -311,7 +322,7 @@ class Simulation(ABC):
         # Create operator internal names based on principal components
         out = []
         if components is None:
-            return None
+            out = None
         else:
             if isinstance(components, int) or isinstance(components, str):
                 components = [components]
@@ -332,11 +343,13 @@ class Simulation(ABC):
                 out.append(comp)
 
         # Take unique values
-        out = list(set(out))
+        if out is not None:
+            out = list(set(out))
         # Build columns names
-        columns = [base_name]
         if out is None:
             columns = [base_name + str(comp) for comp in self._principal_names]
+        else:
+            columns = [base_name + self._component_names[i] for i in out]
         return out, columns
 
     @abstractmethod
@@ -348,6 +361,19 @@ class Simulation(ABC):
     def _build_mesh_scoping(self) -> core.mesh_scoping_factory.Scoping:
         """Generate a mesh_scoping from input arguments."""
         pass
+
+    def _build_result_operator(self, name, time_scoping, mesh_scoping, location):
+        op = self._model.operator(name=name)
+        # Set the time_scoping if necessary
+        if time_scoping:
+            op.connect(0, time_scoping)
+        # Set the mesh_scoping if necessary
+        if mesh_scoping:
+            op.connect(1, mesh_scoping)
+
+        op.connect(7, self.mesh._meshed_region)
+        op.connect(9, location)
+        return op
 
 
 class MechanicalSimulation(Simulation, ABC):
@@ -486,7 +512,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         self,
         base_name: str,
         location: str,
-        category: str,
+        category: ResultCategory,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
@@ -506,7 +532,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location:
                 Location requested.
             category:
-                Type of result requested. Can be "scalar", "vector", or "matrix".
+                Type of result requested. See the :class:`ResultCategory` class.
             components:
                 Components to get results for.
             norm:
@@ -550,17 +576,20 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Build the list of requested results
-        to_extract = None
-        if category in ["vector", "matrix"]:
+        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
+            # A scalar or equivalent result has no components
+            to_extract = None
+            columns = [base_name]
+        elif category in [ResultCategory.vector, ResultCategory.matrix]:
+            # A matrix or vector result can have components selected
             to_extract, columns = self._build_components_from_components(
                 base_name=base_name, category=category, components=components
             )
-        elif category == "principal":
+        elif category == ResultCategory.principal:
+            # A principal type of result can have components selected
             to_extract, columns = self._build_components_from_principal(
                 base_name=base_name, components=components
             )
-        elif category == "scalar":
-            columns = [base_name]
         else:
             raise ValueError(f"'{category}' is not a valid category value.")
 
@@ -568,45 +597,78 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
-        # Instantiate the result operator
-        op = self._model.operator(name=base_name)
-        # Set the time_scoping if necessary
-        if time_scoping:
-            op.connect(0, time_scoping)
-        # Set the mesh_scoping if necessary
-        if mesh_scoping:
-            op.connect(1, mesh_scoping)
+        # Instantiate the main result operator
+        result_op = self._build_result_operator(
+            name=base_name,
+            time_scoping=time_scoping,
+            mesh_scoping=mesh_scoping,
+            location=location,
+        )
+        # Its output is selected as future workflow output for now
+        out = result_op.outputs.fields_container
 
-        op.connect(7, self.mesh._meshed_region)
-        op.connect(9, location)
+        # Add a step to compute principal invariants if result is principal
+        if category == ResultCategory.principal:
+            # Instantiate the required operator
+            principal_op = self._model.operator(name="eig_values_fc")
+            principal_op.connect(0, out)
+            wf.add_operator(operator=principal_op)
+            # Set as future output of the workflow
+            out = principal_op.outputs.fields_container
 
-        if to_extract is not None:
-            # Extract the components
+        # Add a step to compute equivalent if result is equivalent
+        elif category == ResultCategory.equivalent:
+            # If a stress result, use one operator
+            if base_name[0] == "S":
+                equivalent_op = self._model.operator(name="segalmaneqv_fc")
+            # If a strain result, use another
+            elif base_name[0] == "E":
+                equivalent_op = self._model.operator(name="eqv_fc")
+            # Throw otherwise
+            else:
+                raise ValueError(
+                    f"Category {ResultCategory.equivalent} "
+                    "is only available for stress or strain results."
+                )
+            equivalent_op.connect(0, out)
+            wf.add_operator(operator=equivalent_op)
+            # Set as future output of the workflow
+            out = equivalent_op.outputs.fields_container
+
+        # Add an optional component selection step if result is vector, matrix, or principal
+        if (
+            category
+            in [ResultCategory.vector, ResultCategory.matrix, ResultCategory.principal]
+        ) and (to_extract is not None):
+            # Instantiate a component selector operator
             extract_op = self._model.operator(name="component_selector_fc")
-            extract_op.connect(0, op.outputs.fields_container)
+            # Feed it the current workflow output
+            extract_op.connect(0, out)
+            # Feed it the requested components
             extract_op.connect(1, to_extract)
             wf.add_operator(operator=extract_op)
-            # assemble_op.connect(pin=0, inpt=extract_op.outputs.fields_container)
-            # Set the global output of the workflow
+            # Set as future output of the workflow
             out = extract_op.outputs.fields_container
-        else:
-            out = op.outputs.fields_container
 
+        # Add an optional norm operation if requested
         if norm:
             norm_op = self._model.operator(name="norm_fc")
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
 
+        # Set the workflow output
         wf.set_output_name("out", out)
+        # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
+        # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
-
+        # Return the result wrapped in a DPF_Dataframe
         return DataObject(
             fields_container=fc,
             columns=columns,
@@ -660,7 +722,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="U",
             location=core.locations.nodal,
-            category="vector",
+            category=ResultCategory.vector,
             components=component_ids,
             norm=norm,
             selection=selection,
@@ -717,7 +779,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.elemental_nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -773,7 +835,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.elemental,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -829,7 +891,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -837,6 +899,59 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             load_steps=load_steps,
             sub_steps=sub_steps,
             nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_principal(
+        self,
+        component_ids: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal principal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
             elements=elements,
             named_selection=named_selection,
         )
@@ -849,11 +964,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        nodes: Union[List[int], None] = None,
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract elemental principal stress results from the simulation.
 
         Args:
             component_ids:
@@ -883,14 +997,14 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.elemental,
-            category="principal",
+            category=ResultCategory.principal,
             components=component_ids,
             selection=selection,
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
+            nodes=None,
             elements=elements,
             named_selection=named_selection,
         )
@@ -907,7 +1021,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract nodal principal stress results from the simulation.
 
         Args:
             component_ids:
@@ -939,7 +1053,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="S",
             location=core.locations.nodal,
-            category="principal",
+            category=ResultCategory.principal,
             components=component_ids,
             selection=selection,
             times=times,
@@ -947,56 +1061,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             load_steps=load_steps,
             sub_steps=sub_steps,
             nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
-        )
-
-    def stress_eqv_von_mises_elemental(
-        self,
-        selection: Union[Selection, None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
-    ) -> DataObject:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
-
-        Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            load_steps:
-                List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="S_eqv",
-            location=core.locations.elemental,
-            category="scalar",
-            components=None,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            load_steps=load_steps,
-            sub_steps=sub_steps,
-            nodes=None,
             elements=elements,
             named_selection=named_selection,
         )
@@ -1037,9 +1101,59 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         """
         return self._get_result(
-            base_name="S_eqv",
+            base_name="S",
             location=core.locations.elemental_nodal,
-            category="scalar",
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_eqv_von_mises_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[List[int], None] = None,
+        load_steps: Union[List[int], None] = None,
+        sub_steps: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental equivalent Von Mises stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental,
+            category=ResultCategory.equivalent,
             components=None,
             selection=selection,
             times=times,
@@ -1090,9 +1204,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         """
         return self._get_result(
-            base_name="S_eqv",
+            base_name="S",
             location=core.locations.nodal,
-            category="scalar",
+            category=ResultCategory.equivalent,
             components=None,
             selection=selection,
             times=times,
@@ -1148,7 +1262,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.elemental_nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1204,7 +1318,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1260,7 +1374,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.elemental,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1316,7 +1430,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.nodal,
-            category="principal",
+            category=ResultCategory.principal,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1372,7 +1486,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPEL",
             location=core.locations.elemental,
-            category="principal",
+            category=ResultCategory.principal,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1428,7 +1542,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.elemental_nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1484,7 +1598,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.nodal,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1540,7 +1654,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="EPPL",
             location=core.locations.elemental,
-            category="matrix",
+            category=ResultCategory.matrix,
             components=component_ids,
             selection=selection,
             times=times,
@@ -1593,7 +1707,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="RF",
             location=core.locations.nodal,
-            category="vector",
+            category=ResultCategory.vector,
             components=None,
             selection=selection,
             times=times,
@@ -1643,7 +1757,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_VOL",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1696,7 +1810,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_SE",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1749,7 +1863,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_AHO",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1802,7 +1916,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_TH",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1855,7 +1969,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENG_KE",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1908,7 +2022,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.elemental_nodal,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -1961,7 +2075,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.nodal,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -2014,7 +2128,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="BFE",
             location=core.locations.elemental,
-            category="scalar",
+            category=ResultCategory.scalar,
             components="",
             selection=selection,
             times=times,
@@ -2073,7 +2187,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENF",
             location=core.locations.elemental_nodal,
-            category="vector",
+            category=ResultCategory.vector,
             components=component_ids,
             norm=norm,
             selection=selection,
@@ -2133,7 +2247,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENF",
             location=core.locations.nodal,
-            category="vector",
+            category=ResultCategory.vector,
             components=component_ids,
             norm=norm,
             selection=selection,
@@ -2190,7 +2304,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return self._get_result(
             base_name="ENF",
             location=core.locations.elemental,
-            category="vector",
+            category=ResultCategory.vector,
             components=component_ids,
             norm=norm,
             selection=selection,
