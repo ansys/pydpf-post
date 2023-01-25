@@ -1701,6 +1701,159 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
+    def plastic_state_variable(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal plastic state variable results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_PSV",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def plastic_state_variable_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental plastic state variable results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_PSV",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def plastic_state_variable_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal plastic state variable results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_PSV",
+            location=core.locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
     def plastic_strain(
         self,
         component_ids: Union[str, List[str], int, List[int], None] = None,
@@ -2730,7 +2883,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         elements: Union[List[int], None] = None,
         named_selection: Union[str, None] = None,
     ) -> DataObject:
-        """Extract reaction force results from the simulation.
+        """Extract elemental volume results from the simulation.
 
         Args:
             selection:
@@ -2759,13 +2912,366 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ENG_VOL",
             location=core.locations.elemental,
             category=ResultCategory.scalar,
-            components="",
+            components=None,
             selection=selection,
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
             nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elemental_mass(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental mass results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ElementalMass",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elemental_heat_generation(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental heat generation results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EHC",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def element_centroids(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract element centroids results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="centroids",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def thickness(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract element thickness results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="thickness",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def element_orientations(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal element orientations results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EUL",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def element_orientations_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental element orientations results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EUL",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def element_orientations_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal element orientations results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EUL",
+            location=core.locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
             elements=elements,
             named_selection=named_selection,
         )
@@ -2972,6 +3478,165 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=core.locations.elemental,
             category=ResultCategory.scalar,
             components="",
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def hydrostatic_pressure(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract hydrostatic pressure element nodal results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_HPRES",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def hydrostatic_pressure_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract hydrostatic pressure nodal results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_HPRES",
+            location=core.locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def hydrostatic_pressure_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract hydrostatic pressure elemental results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="ENL_HPRES",
+            location=core.locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -3314,6 +3979,126 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             load_steps=load_steps,
             sub_steps=sub_steps,
             nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def nodal_force(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal force results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                Times to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                Load steps to get results for.
+            sub_steps:
+                Sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements whose nodes to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="F",
+            location=core.locations.nodal,
+            category=ResultCategory.vector,
+            components=component_ids,
+            norm=norm,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def nodal_moment(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal moment results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                Times to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                Load steps to get results for.
+            sub_steps:
+                Sub-steps to get results for. Requires load_steps to be defined.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements whose nodes to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="M",
+            location=core.locations.nodal,
+            category=ResultCategory.vector,
+            components=component_ids,
+            norm=norm,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
+            nodes=nodes,
             elements=elements,
             named_selection=named_selection,
         )
