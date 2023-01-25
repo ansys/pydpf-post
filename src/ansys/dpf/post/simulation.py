@@ -340,7 +340,7 @@ class Simulation(ABC):
                         "A principal component ID must be one of: "
                         f"{self._principal_names}."
                     )
-                out.append(comp)
+                out.append(comp - 1)
 
         # Take unique values
         if out is not None:
@@ -349,7 +349,7 @@ class Simulation(ABC):
         if out is None:
             columns = [base_name + str(comp) for comp in self._principal_names]
         else:
-            columns = [base_name + self._component_names[i] for i in out]
+            columns = [base_name + self._principal_names[i] for i in out]
         return out, columns
 
     @abstractmethod
