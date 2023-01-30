@@ -129,10 +129,10 @@ TBD
 
 General plot of the simulation object with, by default:
 - the mesh, not deformed, at step 0
-- the geometry
-- the boundary conditions
+- the constructed geometry
+- the boundary conditions active at step 0
 ```pycon
->>> static_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
+>>> static_simulation.plot(mesh=True, constructed_geometries=True, boundary_conditions=True)
 Image
 ```
 

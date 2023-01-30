@@ -45,9 +45,11 @@ print(harmonic_simulation.results)
 
 # General plot of the simulation object with, by default:
 # - the mesh, not deformed
-# - the geometry
+# - the constructed geometry
 # - the boundary conditions
-harmonic_simulation.plot(mesh=True, geometry=True, boundary_conditions=True)
+harmonic_simulation.plot(
+    mesh=True, constructed_geometries=True, boundary_conditions=True
+)
 
 # -----------------------------------------------------------------------------------------
 # Apply a selection

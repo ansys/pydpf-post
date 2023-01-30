@@ -161,7 +161,7 @@ class Simulation(ABC):
     def plot(
         self,
         mesh: bool = True,
-        geometry: bool = True,
+        constructed_geometries: bool = True,
         loads: bool = True,
         boundary_conditions: bool = True,
     ):
@@ -175,8 +175,8 @@ class Simulation(ABC):
         Args:
             mesh:
                 Whether to plot the mesh representation.
-            geometry:
-                Whether to plot the geometries.
+            constructed_geometries:
+                Whether to plot the constructed geometries.
             loads:
                 Whether to plot the loads.
             boundary_conditions:
@@ -196,7 +196,7 @@ class Simulation(ABC):
         plt = DpfPlotter()
         if mesh:
             plt.add_mesh(self.mesh._meshed_region)
-        if geometry:
+        if constructed_geometries:
             for geom in self.geometries:
                 getattr(plt, "add_" + str(type(geom).__name__).lower())(geom)
         if loads:
