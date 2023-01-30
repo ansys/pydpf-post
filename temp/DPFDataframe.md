@@ -27,7 +27,11 @@ It differs from other dataframes as it differentiates between spatial
 and time-like/set dimensions to be able to link data to the underlying simulation.
 
 A value is always indexed using a multi-index composed of at least one spatial entity ID and one
-time/set/frequency ID
+time/set/frequency ID.
+Index types could be used to differentiate them (see 
+[here](https://pandas.pydata.org/docs/user_guide/advanced.html#index-types)).
+These could be ``SpatialIndex`` and ``TimeIndex``.
+
 
 There will always be a spatial index axis, consisting of one or a combination of 1-based IDs:
 node ID, element ID, part ID, 'global', layer ID...
@@ -94,7 +98,7 @@ Viewing the last rows:
      2     2|   0.9   0.3   0.4
 ```
 
-Sorting values by mesh entity ID:
+Sorting by mesh entity ID:
 ```pycon
 >>> df.sort_values(by='node', ascending=True)
   step  node|    S1    S2    S3
@@ -118,19 +122,58 @@ Display the ``DataFrame.index`` or ``DataFrame.columns``:
 ```pycon
 >>> df.index
 {"spatial": Index([1, 2, 3, 4, 5], dtype='node'), 
-"event": Index([1, 2], dtype='step')}
+"time": Index([1, 2], dtype='step')}
 >>> df.columns
 Index(['S1', 'S2', 'S2'], dtype=[<stress>, <stress>, <stress>], units=['Pa', 'Pa', 'Pa'])
 ```
 
-"Time-like" index naming ideas:
-time, event, progress, progression, set, configuration
-
-Or name it depending on the simulation type.
+Name the 'time' index depending on the simulation type:
+- static: set ID
+- transient: time-step ID
+- modal: mode ID
+- harmonic: (frequency, phase) set ID?
 
 ## Select Data
 
-## Retrieve Data
+Note appearing in pandas documentation:
+
+```
+While standard Python / NumPy expressions for selecting and setting are intuitive and come in handy 
+for interactive work, for production code, we recommend the optimized pandas data access methods, 
+DataFrame.at(), DataFrame.iat(), DataFrame.loc() and DataFrame.iloc().
+```
+We, too, could provide ``DataFrame.at()``, ``DataFrame.iat()``, ``DataFrame.loc()`` and 
+``DataFrame.iloc()`` methods, while overriding regular Python dunder methods (``__get_item__``, ...).
+
+Should priority be given to optimized ``DataFrame.at()``, ``DataFrame.iat()``, ``DataFrame.loc()`` and 
+``DataFrame.iloc()`` methods?
+
+### Get Data
+
+Selecting a single column yields a one-dimensional ``DataFrame`` (no ``Series``).
+Could be equivalent to ``df.S1``.
+```pycon
+>>> df["S1"]
+  step  node|    S1
+     1     1|   0.4
+     1     2|   0.3
+     1     3|   0.2
+     1     4|   0.1
+dtype: <stress>, Unit: 'Pa'
+```
+
+Selecting via ``[]`` (``__get_item__``) slices the rows index by index.
+
+-> Actually, slicing a multi-indexed pandas.DataFrame requires explicit use of either 
+``DataFrame.loc`` or ``DataFrame.select``. 
+See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html#pandas-dataframe-loc)
+```pycon
+>>> df.loc[1, 1:2]
+  step  node|    S1    S2    S3
+     1     1|   0.4   0.2   0.3
+     1     2|   0.3   0.3   0.4
+```
+
 
 ## Interactions between dataframes
 
