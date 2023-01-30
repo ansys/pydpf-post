@@ -51,6 +51,11 @@ modal_simulation.plot(mesh=True, constructed_geometries=True, boundary_condition
 
 # -----------------------------------------------------------------------------------------
 # Apply a selection
+# Using the provided factories:
+from ansys.dpf.post import tools
+
+selection = tools.create_selection(nodes=[1, 2, 3], elements=[1, 2, 3], steps=[1])
+# or
 selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 selection = Selection()
 selection.nodes(nodes=[1, 2, 3])

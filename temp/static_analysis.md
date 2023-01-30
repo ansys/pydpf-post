@@ -186,6 +186,9 @@ The metadata and functionalities unique to a Load would be:
 
 ### Create a selection
 ```pycon
+>>> # Using the provided factories:
+>>> selection = tools.create_selection(nodes=[1, 2, 3], elements=[1, 2, 3], steps=[1])
+>>> # or
 >>> selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 >>> # or
 >>> selection = Selection()
