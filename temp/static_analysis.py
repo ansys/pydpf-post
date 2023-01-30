@@ -25,7 +25,7 @@ static_simulation = dpf.load_simulation(
 # print(static_simulation.mesh)
 #
 # # Print the list of constructed geometries
-# print(static_simulation.geometries)
+# print(static_simulation.constructed_geometries)
 #
 # # Print the list of boundary conditions
 # print(static_simulation.boundary_conditions)

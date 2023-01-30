@@ -26,7 +26,7 @@ print(modal_simulation)
 print(modal_simulation.mesh)
 
 # Print the list of constructed geometries
-print(modal_simulation.geometries)
+print(modal_simulation.constructed_geometries)
 
 # Print the list of boundary conditions
 print(modal_simulation.boundary_conditions)
