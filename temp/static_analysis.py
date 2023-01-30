@@ -87,13 +87,14 @@ named_selections = static_simulation.named_selections
 
 # -----------------------------------------------------------------------------------------
 # Define and use a selection
+# selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 selection = Selection()
-# selection.select_nodes(nodes=[1, 2, 3])
-# selection.select_elements(elements=[1, 2, 3])
-# selection.select_time_freq_indices(time_freq_indices=[1])  # Rework?
-# # selection.select_steps(steps=[1])
-# # selection.select_geometry(geometry=Line())
-selection.select_named_selection(named_selection=named_selections[0])
+# selection.nodes(nodes=[1, 2, 3])
+# selection.elements(elements=[1, 2, 3])
+# selection.time_freq_indices(time_freq_indices=[1])  # Rework?
+# # selection.steps(steps=[1])
+# # selection.geometry(geometry=Line())
+selection.named_selection(named_selection=named_selections[0])
 #
 # # Intersect two spatial selections
 # selection_1 = Selection()

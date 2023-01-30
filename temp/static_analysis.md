@@ -186,13 +186,15 @@ The metadata and functionalities unique to a Load would be:
 
 ### Create a selection
 ```pycon
+>>> selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
+>>> # or
 >>> selection = Selection()
->>> selection.select_nodes(nodes=[1, 2, 3])
->>> selection.select_elements(elements=[1, 2, 3])
->>> selection.select_time_freq_indices(time_freq_indices=[1])  # Rework?
->>> # selection.select_steps(steps=[1])
->>> # selection.select_geometry(geometry=Line())
->>> selection.select_named_selection(named_selection=named_selections[0])
+>>> selection.nodes(nodes=[1, 2, 3])
+>>> selection.elements(elements=[1, 2, 3])
+>>> selection.time_freq_indices(time_freq_indices=[1])  # Rework?
+>>> # selection.steps(steps=[1])
+>>> # selection.geometry(geometry=Line())
+>>> selection.named_selection(named_selection=named_selections[0])
 ```
 
 ### Retrieve the spatial part of a selection
