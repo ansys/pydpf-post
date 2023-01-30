@@ -84,7 +84,7 @@ Mesh:
 
 Print the list of constructed geometries
 ```pycon
->>> print(static_simulation.geometries)
+>>> print(static_simulation.constructed_geometries)
 [<Line_Object>]
 ```
 

@@ -26,7 +26,7 @@ print(transient_simulation)
 print(transient_simulation.mesh)
 
 # Print the list of constructed geometries
-print(transient_simulation.geometries)
+print(transient_simulation.constructed_geometries)
 
 # Print the list of boundary conditions
 print(transient_simulation.boundary_conditions)

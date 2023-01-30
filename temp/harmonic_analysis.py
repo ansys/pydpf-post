@@ -25,7 +25,7 @@ print(harmonic_simulation)
 print(harmonic_simulation.mesh)
 
 # Print the list of constructed geometries
-print(harmonic_simulation.geometries)
+print(harmonic_simulation.constructed_geometries)
 
 # Print the list of boundary conditions
 print(harmonic_simulation.boundary_conditions)
