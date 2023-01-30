@@ -5,16 +5,15 @@ from ansys.dpf.post import examples
 from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-# Provide Public Enums for available physics_types and analysis_types
-# from ansys.dpf.post import physics_types, analysis_types
-# instead of having them private
-# from ansys.dpf.post.common import _AnalysisType, _PhysicsType
-
 # Load the simulation files
-# static_simulation = dpf.load_simulation(examples.simple_bar)
 static_simulation = dpf.load_simulation(
     examples.simple_bar, simulation_type=AvailableSimulationTypes.static_mechanical
 )
+# # Also possible:
+# static_simulation = dpf.load_simulation(examples.simple_bar)
+# static_simulation = dpf.load_simulation(
+#     examples.simple_bar, simulation_type="static mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata

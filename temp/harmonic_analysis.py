@@ -2,16 +2,18 @@
 
 import ansys.dpf.post as dpf
 from ansys.dpf.post import examples
+from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-# Provide Enums for available physics_types and analysis_types
-# from ansys.dpf.post import physics_types, analysis_types
-
-
-harmonic_simulation = dpf.load_simulation(examples.complex_rst)
-# harmonic_simulation = dpf.load_simulation(examples.complex_rst,
-#                                           physics_type=physics_types.mechanical,
-#                                           analysis_type=analysis_types.harmonic)
+# Load the simulation files
+harmonic_simulation = dpf.load_simulation(
+    examples.complex_rst, simulation_type=AvailableSimulationTypes.harmonic_mechanical
+)
+# # Also possible:
+# harmonic_simulation = dpf.load_simulation(examples.complex_rst)
+# harmonic_simulation = dpf.load_simulation(
+#     examples.complex_rst, simulation_type="harmonic mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata

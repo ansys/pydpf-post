@@ -15,6 +15,7 @@ simulation types.
 
 Available simulation types are listed in `ansys.dpf.post.common.AvailableSimulationTypes`.
 These can be used to directly choose a simulation type when loading the result files.
+Their string equivalent can also be used.
 
 ```pycon
 >>> from ansys.dpf.post import AvailableSimulationTypes
@@ -22,6 +23,10 @@ These can be used to directly choose a simulation type when loading the result f
 >>> static_simulation = dpf.load_simulation(
 ...         examples.simple_bar,
 ...         simulation_type=AvailableSimulationTypes.static_mechanical
+... )
+>>> static_simulation = dpf.load_simulation(
+...         examples.simple_bar,
+...         simulation_type="static mechanical"
 ... )
 ```
 

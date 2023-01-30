@@ -2,18 +2,19 @@
 
 import ansys.dpf.post as dpf
 from ansys.dpf.post import examples
+from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-# Provide Enums for available physics_types and analysis_types
-# from ansys.dpf.post import physics_types, analysis_types
-
-
+# Load the simulation files
 modal_simulation = dpf.load_simulation(
-    examples.download_all_kinds_of_complexity_modal()
+    examples.download_all_kinds_of_complexity_modal(),
+    simulation_type=AvailableSimulationTypes.modal_mechanical,
 )
-# modal_simulation = dpf.load_simulation(examples.download_all_kinds_of_complexity_modal(),
-#                                        physics_type=physics_types.mechanical,
-#                                        analysis_type=analysis_types.modal)
+# # Also possible:
+# modal_simulation = dpf.load_simulation(examples.download_all_kinds_of_complexity_modal())
+# modal_simulation = dpf.load_simulation(
+#     examples.download_all_kinds_of_complexity_modal(), simulation_type="modal mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata

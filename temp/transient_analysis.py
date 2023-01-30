@@ -2,16 +2,19 @@
 
 import ansys.dpf.post as dpf
 from ansys.dpf.post import examples
+from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-# Provide Enums for available physics_types and analysis_types
-# from ansys.dpf.post import physics_types, analysis_types
-
-
-transient_simulation = dpf.load_simulation(examples.msup_transient)
-# transient_simulation = dpf.load_simulation(examples.msup_transient,
-#                                            physics_type=physics_types.mechanical,
-#                                            analysis_type=analysis_types.transient)
+# Load the simulation files
+transient_simulation = dpf.load_simulation(
+    examples.msup_transient,
+    simulation_type=AvailableSimulationTypes.transient_mechanical,
+)
+# # Also possible:
+# transient_simulation = dpf.load_simulation(examples.msup_transient)
+# transient_simulation = dpf.load_simulation(
+#     examples.msup_transient, simulation_type="transient mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata
