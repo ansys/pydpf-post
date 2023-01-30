@@ -163,15 +163,35 @@ dtype: <stress>, Unit: 'Pa'
 ```
 
 Selecting via ``[]`` (``__get_item__``) slices the rows index by index.
-
--> Actually, slicing a multi-indexed pandas.DataFrame requires explicit use of either 
-``DataFrame.loc`` or ``DataFrame.select``. 
+--> Complicated for multi-index. We would diverge from Pandas as slicing a multi-indexed 
+``pandas.DataFrame`` requires explicit use of either ``DataFrame.loc`` or ``DataFrame.select``. 
 See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html#pandas-dataframe-loc)
 ```pycon
->>> df.loc[1, 1:2]
+>>> df.loc[[1, 1:2]]
   step  node|    S1    S2    S3
      1     1|   0.4   0.2   0.3
      1     2|   0.3   0.3   0.4
+```
+
+Extract ``S2`` and ``S3``:
+```pycon
+>>> df.loc[[:, :], ["S2", "S3"]]
+  step  node|    S2    S3
+     1     1|   0.2   0.3
+     1     2|   0.3   0.4
+     1     3|   0.4   0.5
+     1     4|   0.5   0.6
+```
+
+Get a scalar value:
+```pycon
+>>> df.loc[[1, 1], "S2"]
+0.2
+```
+And its equivalent:
+```pycon
+>>> df.at[[1, 1], "S2"]
+0.2
 ```
 
 
