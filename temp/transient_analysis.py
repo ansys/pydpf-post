@@ -76,13 +76,14 @@ load.interpolate(mesh=another_mesh)
 
 # -----------------------------------------------------------------------------------------
 # Define and use a selection
+selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 selection = Selection()
-selection.select_nodes(nodes=[1, 2, 3])
-selection.select_elements(elements=[1, 2, 3])
-selection.select_time_freq_indices(time_freq_indices=[1])  # Rework?
-# selection.select_steps(steps=[1])
-selection.select_named_selection(named_selection=named_selections[0])
-selection.select_parts(part_ids=[1, 2])  # For LS-Dyna results.
+selection.nodes(nodes=[1, 2, 3])
+selection.elements(elements=[1, 2, 3])
+selection.time_freq_indices(time_freq_indices=[1])  # Rework?
+# selection.steps(steps=[1])
+selection.named_selection(named_selection=named_selections[0])
+selection.parts(part_ids=[1, 2])  # For LS-Dyna results.
 # Could be available for all analyses types but would be undefined by default.
 
 

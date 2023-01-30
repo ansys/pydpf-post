@@ -53,9 +53,10 @@ harmonic_simulation.plot(
 
 # -----------------------------------------------------------------------------------------
 # Apply a selection
+selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 selection = Selection()
-selection.select_nodes(nodes=[1, 2, 3])
-selection.select_time_freq_indices(time_freq_indices=[0, 1])
+selection.nodes(nodes=[1, 2, 3])
+selection.time_freq_indices(time_freq_indices=[0, 1])
 harmonic_simulation.activate_selection(selection_object=selection)
 
 # Deactivate a selection
