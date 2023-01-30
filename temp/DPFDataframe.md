@@ -173,6 +173,7 @@ See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.htm
      1     2|   0.3   0.3   0.4
 ```
 
+### Select by label (ID)
 Extract ``S2`` and ``S3``:
 ```pycon
 >>> df.loc[[:, :], ["S2", "S3"]]
@@ -194,12 +195,68 @@ And its equivalent:
 0.2
 ```
 
+### Select by position (index)
+Use ``DataFrame.iloc()`` or ``DataFrame.iat()`` ("fast-access version").
+
+Select via the position of the passed integers:
+```pycon
+>>> df.iloc[[1, 1], [1:2]]
+    S1   0.4   
+    S2   0.2
+set: 1, node: 1 
+```
+
+Get a value explicitly:
+```pycon
+>>> df.iloc[[1, 1], 1]
+0.4
+```
+
+### Boolean indexing
+
+One of the strengths of the ``pandas.DataFrame`` is the possibility to select using conditions:
+```pycon
+>>> df[df['S1']>0.2]
+  step  node|    S1    S2    S3
+     1     1|   0.4   0.2   0.3
+     1     2|   0.3   0.3   0.4
+```
+We should most likely restrict this to row filtering.
+
+Indeed, selecting sparse values from a ``pandas.DataFrame`` where a boolean condition is met 
+requires using ``np.nan`` to get a Pandas-like behavior:
+```pycon
+>>> df[df>0.3]
+  step  node|    S1    S2    S3
+     1     1|   0.4   NaN   NaN
+     1     2|   NaN   NaN   0.4
+     1     3|   NaN   0.4   0.5
+     1     4|   NaN   0.5   0.6
+```
+This would require us to deal with ``np.nan`` everywhere, which we said is a bad idea.
+
+Not having ``np.nan`` thus means we cannot filter by value on a multidimensional dataframe.
+Only filtering whole rows is feasible.
 
 ## Interactions between dataframes
 
 ## Statistics
 
 ## Plotting
+
+A possibility is to reuse the ``kind`` argument found in ``pandas.DataFrame.plot`` to include a 
+``contour`` option, which could even be the default. 
+See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html#pandas-dataframe-plot).
+
+Default backend to ``pandas.DataFrame.plot`` is ``matplotlib``.
+```py
+df.plot(
+    data,
+    x:
+    y:
+    kind:
+)
+```
 
 ## I/O
 
