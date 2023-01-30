@@ -1,13 +1,19 @@
 """Pseudocode for PyDPF-Post Harmonic Mechanical Simulations APIs."""
 
 import ansys.dpf.post as dpf
-from ansys.dpf.post import AvailableSimulationTypes, examples
+from ansys.dpf.post import examples
+from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-harmonic_simulation = dpf.load_simulation(examples.complex_rst)
+# Load the simulation files
 harmonic_simulation = dpf.load_simulation(
     examples.complex_rst, simulation_type=AvailableSimulationTypes.harmonic_mechanical
 )
+# # Also possible:
+# harmonic_simulation = dpf.load_simulation(examples.complex_rst)
+# harmonic_simulation = dpf.load_simulation(
+#     examples.complex_rst, simulation_type="harmonic mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata

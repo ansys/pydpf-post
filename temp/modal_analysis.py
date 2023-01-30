@@ -1,16 +1,20 @@
 """Pseudocode for PyDPF-Post Modal Mechanical Simulations APIs."""
 
 import ansys.dpf.post as dpf
-from ansys.dpf.post import AvailableSimulationTypes, examples
+from ansys.dpf.post import examples
+from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.selection import Selection
 
-modal_simulation = dpf.load_simulation(
-    examples.download_all_kinds_of_complexity_modal()
-)
+# Load the simulation files
 modal_simulation = dpf.load_simulation(
     examples.download_all_kinds_of_complexity_modal(),
     simulation_type=AvailableSimulationTypes.modal_mechanical,
 )
+# # Also possible:
+# modal_simulation = dpf.load_simulation(examples.download_all_kinds_of_complexity_modal())
+# modal_simulation = dpf.load_simulation(
+#     examples.download_all_kinds_of_complexity_modal(), simulation_type="modal mechanical"
+# )
 
 # -----------------------------------------------------------------------------------------
 # Explore the simulation metadata
