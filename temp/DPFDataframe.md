@@ -244,11 +244,15 @@ Only filtering whole rows is feasible.
 
 ## Plotting
 
+See [here](https://pandas.pydata.org/docs/user_guide/10min.html#plotting).
+There is no intrinsic notion of 3D plotting with ``pandas.DataFrame.plot``.
+Its default backend is ``matplotlib`` and it is only a helper which exposes usual arguments.
+
 A possibility is to reuse the ``kind`` argument found in ``pandas.DataFrame.plot`` to include a 
-``contour`` option, which could even be the default. 
+``contour`` option, which could even be the default, and which would switch the backend depending 
+on the kind of plot requested.
 See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html#pandas-dataframe-plot).
 
-Default backend to ``pandas.DataFrame.plot`` is ``matplotlib``.
 ```py
 df.plot(
     data,
