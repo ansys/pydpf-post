@@ -238,9 +238,92 @@ This would require us to deal with ``np.nan`` everywhere, which we said is a bad
 Not having ``np.nan`` thus means we cannot filter by value on a multidimensional dataframe.
 Only filtering whole rows is feasible.
 
-## Interactions between dataframes
+## Merge, join, concatenate and compare
 
-## Statistics
+We need to propose functionalities to combine or compare different dataframes.
+
+``dpf.DataFrame.concat``
+
+``dpf.DataFrame.merge``
+
+``dpf.DataFrame.compare``
+
+
+## Operations
+
+Let's have a dataframe ``df``:
+```pycon
+>>> df
+  step  node|    S1    S2    S3
+     1     1|   0.4   0.2   0.3
+     1     2|   0.3   0.3   0.4
+     1     3|   0.2   0.4   0.5
+     1     4|   0.1   0.5   0.6
+     2     1|   0.5   0.3   0.4
+     2     2|   0.4   0.4   0.5
+     2     3|   0.3   0.5   0.6
+     2     4|   0.2   0.6   0.7
+```
+
+### Stats
+
+IMO we should propose basic functions, doable with DPF, but not try to compete with Pandas.
+
+See [here](https://pandas.pydata.org/docs/user_guide/basics.html#descriptive-statistics).
+
+The method ``df.mean`` would allow for arguments such as for ``pandas.DataFrame.mean``.
+The first argument is ``axis``, which defines which axis to apply the operation on 
+(default ``axis=0``, meaning average along the rows/for each column.
+
+The default behavior would be to apply the mean on all present set and mesh IDs.
+```pycon
+>>> df.mean(axis=0)
+    S1   0.3   
+    S2   0.4
+    S3   0.5
+```
+The type of this result if to be defined. Do we need a ``dpf.Series``, or is a ``dict`` sufficient, 
+or a tuple?
+
+To get the mean for a specific subset, then a selection step is sufficient.
+To get the average on all nodes for each column but only on step 1: 
+```pycon
+>>> df.loc[[1, :]].mean(axis=0)
+    S1  0.25   
+    S2  0.35
+    S3  0.45
+```
+
+Applying the mean on ``axis=1`` would here get us average for each row:
+```pycon
+>>> df.mean(axis=1)
+  step  node|  
+     1     1|   0.3
+     1     2|0.3333
+     1     3|0.3667
+     1     4|   0.4
+     2     1|   0.4
+     2     2|0.4333
+     2     3|0.4667
+     2     4|   0.5
+```
+
+### Apply
+
+Applying a function on either ``axis``:
+```pycon
+>>> df.apply(np.mean, axis=1)
+  step  node|  
+     1     1|   0.3
+     1     2|0.3333
+     1     3|0.3667
+     1     4|   0.4
+     2     1|   0.4
+     2     2|0.4333
+     2     3|0.4667
+     2     4|   0.5
+```
+Is that doable with DPF?
 
 ## Plotting
 
@@ -266,5 +349,5 @@ df.plot(
 
 ```py
 df.to_pandas
-df.to_array
+df.to_ndarray
 ```
