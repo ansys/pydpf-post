@@ -13,7 +13,7 @@ disp = solution.displacement(nodes=[4, 6])
 disp.plot(cmap="viridis")
 
 # numpy as array
-disp.as_array()
+disp.to_numpy()
 
 # max
 disp.max()

@@ -36,19 +36,19 @@ class DataFrame:
 
     def __min__(self, **kwargs):
         """Return the minimum of the data."""
-        return self.as_array().min()
+        return self.to_numpy().min()
 
     def __max__(self, **kwargs):
         """Return the maximum of the data."""
-        return self.as_array().max()
+        return self.to_numpy().max()
 
     def max(self, **kwargs):
         """Return the maximum of the data."""
-        return float(self.as_array().max())
+        return float(self.to_numpy().max())
 
     def min(self, **kwargs):
         """Return the minimum of the data."""
-        return float(self.as_array().min())
+        return float(self.to_numpy().min())
 
     def to_pandas(self, columns=None, **kwargs):
         """Returns the current DPF DataFrame as a Pandas DataFrame.
@@ -94,27 +94,26 @@ class DataFrame:
                 "one data entity."
             )
         df = pd.DataFrame(
-            self.as_array(), columns=columns, index=self._mesh_scoping.ids
+            self.to_numpy(), columns=columns, index=self._mesh_scoping.ids
         )
         df.name = self._fc[-1].name
         return df
 
-    def as_array(self):
-        """Return the DataFrame as a NumPy array.
+    def to_numpy(self):
+        """Return the current DPF DataFrame as a NumPy ndarray.
 
         Returns
         -------
-        class:`pandas.core.frame.DataFrame`
+        class:`numpy.ndarray`
 
         Examples
         --------
-        >>> import pandas as pd
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.multishells_rst)
-        >>> # Export the displacements vector field at step 1 as a DataFrame
+        >>> # Export the displacements vector field at step 1 as a numpy.ndarray
         >>> displacement = simulation.displacement(steps=[1], nodes=[1, 2, 3])
-        >>> arr = displacement.as_array()
+        >>> arr = displacement.to_numpy()
         >>> print(arr)
         [[  0.39831985 -13.79737819  -0.16376683]
          [  0.23311378 -13.79765179  -0.15318972]
