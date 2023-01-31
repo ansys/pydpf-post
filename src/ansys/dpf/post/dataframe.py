@@ -50,8 +50,8 @@ class DataFrame:
         """Return the minimum of the data."""
         return float(self.as_array().min())
 
-    def as_data_frame(self, columns=None, **kwargs):
-        """Returns the data from the field container as a Pandas data_frame.
+    def to_pandas(self, columns=None, **kwargs):
+        """Returns the current DPF DataFrame as a Pandas DataFrame.
 
         Parameters
         ----------
@@ -70,7 +70,7 @@ class DataFrame:
         >>> simulation = post.load_simulation(examples.multishells_rst)
         >>> # Export the displacements vector field at step 1 as a DataFrame
         >>> displacement = simulation.displacement(steps=[1], nodes=[1, 2, 3])
-        >>> df = displacement.as_data_frame()
+        >>> df = displacement.to_pandas()
         >>> print(df)
                   X          Y         Z
         1  0.398320 -13.797378 -0.163767

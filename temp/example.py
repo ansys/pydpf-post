@@ -19,7 +19,7 @@ disp.as_array()
 disp.max()
 
 # As dataframe
-disp.as_data_frame()
+disp.to_pandas()
 
 # Animates the displacement (this is static though)
 disp.animate(cmap="viridis")
