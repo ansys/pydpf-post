@@ -6,7 +6,7 @@ from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
 
 from ansys.dpf import core
-from ansys.dpf.post.data_object import DataObject
+from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
 
@@ -318,7 +318,7 @@ class MechanicalSimulation(Simulation):
         named_selection: Union[str, None] = None,
         # ordered: bool = True,
         **kwargs
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract displacement results from the simulation.
 
         Args:
@@ -337,7 +337,7 @@ class MechanicalSimulation(Simulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.dataframe.DataFrame` instance.
 
         """
         wf = core.Workflow(server=self._model._server)
@@ -383,10 +383,10 @@ class MechanicalSimulation(Simulation):
 
         # ord_op.connect(0, disp_op.outputs.fields_container)
 
-        # We will use the DataObject thing here.
+        # We will use the DataFrame thing here.
         wf.set_output_name("out", disp_op.outputs.fields_container)
 
-        return DataObject(
+        return DataFrame(
             wf.get_output("out", core.types.fields_container),
             columns=["X", "Y", "Z"],
             mesh_scoping=mesh_scoping,
