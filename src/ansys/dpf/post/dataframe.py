@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar, Union
 
-from ansys.dpf.core import FieldsContainer
+from ansys.dpf.core import FieldsContainer, ScopingsContainer
+from ansys.dpf.core.operators.utility import merge_scopings
 import numpy
 import numpy as np
 
@@ -24,7 +25,7 @@ else:
     PandasDataFrameType = TypeVar("PandasDataFrameType")
 
 display_width = 80
-display_max_colwidth = 10
+display_max_colwidth = 16
 
 
 class DataFrame:
@@ -68,12 +69,12 @@ class DataFrame:
                     "Argument 'data' must be either a numpy.ndarray, "
                     "a pandas.DataFrame or an ansys.dpf.core.FieldsContainer."
                 )
-        if columns:
-            self.columns = columns
+        self._columns = columns
         if index:
             raise NotImplementedError("DataFrame creation using non-DPF entities.")
 
         self._str = None
+        self._len = None
         self._last_display_width = display_width
         self._last_display_max_colwidth = display_max_colwidth
 
@@ -92,6 +93,9 @@ class DataFrame:
     def _update_str(self, width: int, max_colwidth: int):
         """Updates the DataFrame string representation using given display options.
 
+        The string representation is limited to five lines, meaning any DataFrame with more than
+        five rows will be truncated and only the two first and two last rows are displayed.
+
         Parameters
         ----------
         width:
@@ -99,11 +103,125 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
-        txt = str(self._fc)
-        # txt = txt.replace("Fields Container", "DataFrame")
-        # txt = txt.replace("field", "result")
-        # txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
+        trunc_str = "..."
+        # Get the number of rows
+        nb_rows = len(self)
+        # print(f"{nb_rows=}")
+        if nb_rows > 5:
+            truncate_rows = True
+            row_indexes = [0, 1]
+            row_indexes_next = [nb_rows - 2, nb_rows - 1]
+        else:
+            truncate_rows = False
+            row_indexes = list(range(nb_rows))
+        # Get the number of columns
+        max_nb_col = width // max_colwidth - 2
+        # print("max_nb_col", max_nb_col)
+        nb_col = len(self.columns)
+        if nb_col > max_nb_col:
+            max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
+            col_indexes = list(range(max_nb_col // 2))
+            col_indexes_next = list(range(nb_col - (max_nb_col // 2), nb_col))
+            truncate_col = True
+        else:
+            col_indexes = list(range(nb_col))
+            truncate_col = False
+        labels = ["set ID", "node ID"]
+        labels.extend([self.columns[i] for i in col_indexes])
+        if truncate_col:
+            labels.extend(trunc_str)
+            labels.extend([self.columns[i] for i in col_indexes_next])
+        txt = "".join([label.rjust(max_colwidth) for label in labels]) + "\n"
+
+        def build_row_str(row_index):
+            set_id, mesh_id, values = self._get_row_data(row_index)
+            row_str = str(set_id).rjust(max_colwidth)
+            row_str += str(mesh_id).rjust(max_colwidth)
+            if len(values) > 0:
+                if type(values[0]) not in [float, int]:
+                    values = [v for value in values for v in value]
+                row_str += "".join(
+                    [f"{value:.6e}".rjust(max_colwidth) for value in values]
+                )
+            return row_str + "\n"
+
+        for row_index in row_indexes:
+            txt += build_row_str(row_index)
+
+        if truncate_rows:
+            txt += "".join(
+                [trunc_str.rjust(max_colwidth) for _ in range(len(col_indexes) + 2)]
+            )
+            if truncate_col:
+                txt += trunc_str.rjust(max_colwidth).join(
+                    [trunc_str.rjust(max_colwidth) for _ in col_indexes_next]
+                )
+            txt += "\n"
+            for row_index in row_indexes_next:
+                txt += build_row_str(row_index)
+
         self._str = txt
+
+    def _get_row_data(self, row_index):
+        # Find the set and entity ID corresponding to this row
+        # print(f"{row_index=}")
+        # print(f"{self._n_unique_mesh_entities=}")
+        set_index_in_fc = row_index // self._n_unique_mesh_entities
+        # print(f"{set_index_in_fc=}")
+        # print(self._fc)
+        # print(f"{self._unique_mesh_ids=}")
+        mesh_index = row_index % len(self._unique_mesh_ids)
+        # print(f"{mesh_index=}")
+        mesh_id = self._unique_mesh_ids[mesh_index]
+        # print(f"{mesh_id=}")
+        time_id = self._fc.get_label_scoping()[set_index_in_fc]
+        fields = self._fc.get_fields_by_time_complex_ids(timeid=time_id)
+        # print(f"{fields=}")
+        values = []
+        for field in fields:
+            try:
+                values.extend(field.get_entity_data_by_id(mesh_id))
+                # print(f"{values=}")
+            except Exception as e:
+                raise e
+        return time_id, mesh_id, values
+
+    def __len__(self):
+        """Returns the number of unique data sets in the DataFrame."""
+        if self._len is None:
+            self._update_len()
+        return self._len
+
+    def _update_len(self):
+        """Compute and store the DataFrame row length from underlying Fields."""
+        n_sets = self._fc.get_label_scoping().size
+        scoping_list = [f.scoping for f in self._fc]
+        sc = ScopingsContainer(server=self._fc._server)
+        sc.labels = ["field"]
+        for i, scoping in enumerate(scoping_list):
+            sc.add_scoping({"field": i}, scoping)
+        global_scoping = merge_scopings(scopings=sc, server=self._fc._server).eval()
+        n_unique_mesh_ids = global_scoping.size
+        self._unique_mesh_ids = global_scoping.ids
+        self._n_unique_mesh_entities = n_unique_mesh_ids
+        self._len = n_sets * n_unique_mesh_ids
+
+    @property
+    def columns(self) -> list:
+        """Returns a list of column labels."""
+        if self._columns is None:
+            self._update_columns()
+        return self._columns
+
+    def _update_columns(self):
+        """Update the list of columns from the underlying FieldsContainer."""
+        columns = []
+        for field in self._fc:
+            result = field.name
+            nb_components = field.component_count
+            for comp in range(nb_components):
+                columns.append(result.split("_")[0] + str(comp))
+        self._columns = columns
 
     def to_pandas(self, columns=None, **kwargs) -> PandasDataFrameType:
         """Returns the current DPF DataFrame as a Pandas DataFrame.
