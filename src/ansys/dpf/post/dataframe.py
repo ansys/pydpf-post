@@ -72,7 +72,14 @@ class DataFrame:
 
     def __str__(self) -> str:
         """String representation of the DataFrame."""
-        return str(self._fc)
+        return self._reformat_fc_description()
+
+    def _reformat_fc_description(self):
+        txt = str(self._fc)
+        txt = txt.replace("Fields Container", "DataFrame")
+        txt = txt.replace("field", "result")
+        txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
+        return txt
 
     def to_pandas(self, columns=None, **kwargs) -> PandasDataFrameType:
         """Returns the current DPF DataFrame as a Pandas DataFrame.
