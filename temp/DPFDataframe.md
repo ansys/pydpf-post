@@ -80,6 +80,20 @@ df = simulation.stress_principal_nodal()
 
 ## View Data
 
+Let's have a dataframe ``df``:
+```pycon
+>>> df
+  step  node|    S1    S2    S3
+     1     1|   0.4   0.2   0.3
+     1     2|   0.3   0.3   0.4
+     1     3|   0.2   0.4   0.5
+     1     4|   0.1   0.5   0.6
+     2     1|   0.5   0.3   0.4
+     2     2|   0.4   0.4   0.5
+     2     3|   0.3   0.5   0.6
+     2     4|   0.2   0.6   0.7
+```
+
 Viewing the first rows.
 A DPF DataFrame is sorted by the time/freq value by default.
 The mesh entity IDs are indeed not necessarily sorted:
@@ -273,20 +287,6 @@ We need to propose functionalities to combine or compare different dataframes.
 
 
 ## Operations
-
-Let's have a dataframe ``df``:
-```pycon
->>> df
-  step  node|    S1    S2    S3
-     1     1|   0.4   0.2   0.3
-     1     2|   0.3   0.3   0.4
-     1     3|   0.2   0.4   0.5
-     1     4|   0.1   0.5   0.6
-     2     1|   0.5   0.3   0.4
-     2     2|   0.4   0.4   0.5
-     2     3|   0.3   0.5   0.6
-     2     4|   0.2   0.6   0.7
-```
 
 ### Stats
 
