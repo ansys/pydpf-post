@@ -24,7 +24,7 @@ using a DataFrame style API."
 ### In our case
 A DPF DataFrame offers a DataFrame style API for manipulating DPF data.
 It differs from other dataframes as it differentiates between spatial
-and time-like/set dimensions to be able to link data to the underlying simulation.
+and time-like/set (sequence?) dimensions to be able to link data to the underlying simulation.
 
 A value is always indexed using a multi-index composed of at least one spatial entity ID and one
 time/set/frequency ID.
@@ -132,6 +132,29 @@ Name the 'time' index depending on the simulation type:
 - transient: time-step ID
 - modal: mode ID
 - harmonic: (frequency, phase) set ID?
+
+### Get info on the DataFrame
+
+The length of the whole DataFrame in Pandas returns the "number of rows".
+
+For DPF however, returning the number of rows has no meaning since Fields can have different lengths.
+Thus ``len()`` should work on axes, not on a full DataFrame.
+Or we can output the number of "sets IDs * mesh entity IDs".
+To get info on a full DataFrame:
+ - ``df.info``
+ - ``df.shape``
+ - ``df.columns``
+ - ``df.axes``
+ - ``len(df.axes[i])``
+
+Since the notion of ``Index`` is probably required anyway (exposing the DPF ``Scoping``),
+then the ``__len__`` dunder method can be defined at this level. 
+```pycon
+>>> len(df)
+Error: a DPF DataFrame has no length as it 
+>>> df.columns
+Index(['S1', 'S2', 'S2'], dtype=[<stress>, <stress>, <stress>], units=['Pa', 'Pa', 'Pa'])
+```
 
 ## Select Data
 
