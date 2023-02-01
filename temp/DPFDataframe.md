@@ -94,6 +94,31 @@ Let's have a dataframe ``df``:
      2     4|   0.2   0.6   0.7
 ```
 
+### Large arrays
+
+See [here](https://pandas.pydata.org/docs/user_guide/dsintro.html#console-display)
+
+Options exist in Pandas to configure the console display:
+- "pd.set_option("display.width", 40)  # default is 80"
+- "pd.set_option("display.max_colwidth", 100)"
+
+Printing ``df`` would print the 2 first and 2 last "rows" by default, 
+with the 3 first and 3 last "columns", or as much as can fit in the current ``display.width`` 
+using the current ``display.max_colwidth``.
+For example, for a big DataFrame:
+```pycon
+>>> df
+  step  node|    R1    R2    R3   ...   R18   R19   R20
+     1     1|   0.4   0.2   0.3   ...   0.4   0.2   0.3
+     1     2|   0.3   0.3   0.4   ...   0.4   0.2   0.3
+   ...   ...|   ...   ...   ...   ...   ...   ...   ...
+     2    99|   0.3   0.5   0.6   ...   0.4   0.2   0.3
+     2   100|   0.2   0.6   0.7   ...   0.4   0.2   0.3
+     
+[ 200 rows x 20 columns ]
+```
+
+### Head and tail 
 Viewing the first rows.
 A DPF DataFrame is sorted by the time/freq value by default.
 The mesh entity IDs are indeed not necessarily sorted:
@@ -112,6 +137,7 @@ Viewing the last rows:
      2     2|   0.9   0.3   0.4
 ```
 
+### Sorting
 Sorting by mesh entity ID:
 ```pycon
 >>> df.sort_values(by='node', ascending=True)
@@ -132,6 +158,7 @@ Sorting values by column value:
      1     2|   0.3   0.3   0.4
 ```
 
+### Index and columns
 Display the ``DataFrame.index`` or ``DataFrame.columns``:
 ```pycon
 >>> df.index

@@ -23,6 +23,9 @@ if PANDAS_PRESENT:
 else:
     PandasDataFrameType = TypeVar("PandasDataFrameType")
 
+display_width = 80
+display_max_colwidth = 10
+
 
 class DataFrame:
     """A DataFrame style API to manipulate DPF data."""
@@ -70,16 +73,37 @@ class DataFrame:
         if index:
             raise NotImplementedError("DataFrame creation using non-DPF entities.")
 
+        self._str = None
+        self._last_display_width = display_width
+        self._last_display_max_colwidth = display_max_colwidth
+
     def __str__(self) -> str:
         """String representation of the DataFrame."""
-        return self._reformat_fc_description()
+        if (
+            (self._str is None)
+            or (self._last_display_width != display_width)
+            or (self._last_display_max_colwidth != display_max_colwidth)
+        ):
+            self._update_str(width=display_width, max_colwidth=display_max_colwidth)
+            self._last_display_width = display_width
+            self._last_display_max_colwidth = display_max_colwidth
+        return self._str
 
-    def _reformat_fc_description(self):
+    def _update_str(self, width: int, max_colwidth: int):
+        """Updates the DataFrame string representation using given display options.
+
+        Parameters
+        ----------
+        width:
+            Number of characters to use for the total width.
+        max_colwidth:
+            Maximum number of characters to use for each column.
+        """
         txt = str(self._fc)
         # txt = txt.replace("Fields Container", "DataFrame")
         # txt = txt.replace("field", "result")
         # txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
-        return txt
+        self._str = txt
 
     def to_pandas(self, columns=None, **kwargs) -> PandasDataFrameType:
         """Returns the current DPF DataFrame as a Pandas DataFrame.
