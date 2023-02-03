@@ -221,7 +221,7 @@ class DataFrame:
             nb_components = field.component_count
             for comp in range(nb_components):
                 columns.append(result.split("_")[0] + str(comp))
-        self._columns = columns
+        self._columns = list(set(columns))
 
     def to_pandas(self, columns=None, **kwargs) -> PandasDataFrameType:
         """Returns the current DPF DataFrame as a Pandas DataFrame.
