@@ -1,7 +1,7 @@
 """Module containing the ``DataFrame`` class."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, Union
+from typing import TYPE_CHECKING, List, TypeVar, Union
 
 from ansys.dpf.core import FieldsContainer, ScopingsContainer
 from ansys.dpf.core.operators.utility import merge_scopings
@@ -30,6 +30,8 @@ display_max_colwidth = 16
 
 class DataFrame:
     """A DataFrame style API to manipulate DPF data."""
+
+    trunc_str = "..."
 
     def __init__(
         self,
@@ -90,6 +92,82 @@ class DataFrame:
             self._last_display_max_colwidth = display_max_colwidth
         return self._str
 
+    def head(self, n: int = 5) -> str:
+        """String representation of the n first rows of the DataFrame."""
+        nb_rows = len(self)
+        if nb_rows < n:
+            n = nb_rows
+        return self._print_rows(indexes=list(range(0, n)))
+
+    def tail(self, n: int = 5) -> str:
+        """String representation of the n last rows of the DataFrame."""
+        nb_rows = len(self)
+        if nb_rows < n:
+            n = nb_rows
+        return self._print_rows(indexes=list(range(nb_rows - n, nb_rows)))
+
+    def _print_rows(
+        self,
+        indexes: List,
+    ) -> str:
+        rows_str, truncate_col, col_indexes, col_indexes_next = self._build_columns_str(
+            display_width, display_max_colwidth
+        )
+        for i in indexes:
+            rows_str += self._build_row_str(
+                i, display_max_colwidth, truncate_col, col_indexes, col_indexes_next
+            )
+        return rows_str
+
+    def _build_row_str(
+        self,
+        row_index: int,
+        max_colwidth: int,
+        truncate_col: bool,
+        col_indexes: List[int],
+        col_indexes_next: List[int],
+    ):
+        set_id, mesh_id, values = self._get_row_data(row_index)
+        row_str = str(set_id).rjust(max_colwidth)
+        row_str += str(mesh_id).rjust(max_colwidth)
+        if len(values) > 0:
+            if type(values[0]) not in [float, int]:
+                values = [v for value in values for v in value]
+            row_str += "".join(
+                [f"{values[i]:.6e}".rjust(max_colwidth) for i in col_indexes]
+            )
+            if truncate_col:
+                row_str += "".join(self.trunc_str).join(
+                    [f"{values[i]:.6e}".rjust(max_colwidth) for i in col_indexes_next]
+                )
+        return row_str + "\n"
+
+    def _build_columns_str(self, width, max_colwidth):
+        # Get the number of columns
+        max_nb_col = width // max_colwidth - 2
+        # print("max_nb_col", max_nb_col)
+        nb_col = len(self.columns)
+        if nb_col > max_nb_col:
+            max_nb_col = ((width - len(self.trunc_str)) // max_colwidth - 2) // 2 * 2
+            col_indexes = list(range(max_nb_col // 2))
+            col_indexes_next = list(range(nb_col - (max_nb_col // 2), nb_col))
+            truncate_col = True
+        else:
+            col_indexes = list(range(nb_col))
+            truncate_col = False
+            col_indexes_next = []
+        labels = ["set ID", "node ID"]
+        labels.extend([self.columns[i] for i in col_indexes])
+        if truncate_col:
+            labels.extend(self.trunc_str)
+            labels.extend([self.columns[i] for i in col_indexes_next])
+        return (
+            "".join([label.rjust(max_colwidth) for label in labels]) + "\n",
+            truncate_col,
+            col_indexes,
+            col_indexes_next,
+        )
+
     def _update_str(self, width: int, max_colwidth: int):
         """Updates the DataFrame string representation using given display options.
 
@@ -103,7 +181,6 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
-        trunc_str = "..."
         # Get the number of rows
         nb_rows = len(self)
         # print(f"{nb_rows=}")
@@ -114,69 +191,44 @@ class DataFrame:
         else:
             truncate_rows = False
             row_indexes = list(range(nb_rows))
-        # Get the number of columns
-        max_nb_col = width // max_colwidth - 2
-        # print("max_nb_col", max_nb_col)
-        nb_col = len(self.columns)
-        if nb_col > max_nb_col:
-            max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
-            col_indexes = list(range(max_nb_col // 2))
-            col_indexes_next = list(range(nb_col - (max_nb_col // 2), nb_col))
-            truncate_col = True
-        else:
-            col_indexes = list(range(nb_col))
-            truncate_col = False
-        labels = ["set ID", "node ID"]
-        labels.extend([self.columns[i] for i in col_indexes])
-        if truncate_col:
-            labels.extend(trunc_str)
-            labels.extend([self.columns[i] for i in col_indexes_next])
-        txt = "".join([label.rjust(max_colwidth) for label in labels]) + "\n"
 
-        def build_row_str(row_index):
-            set_id, mesh_id, values = self._get_row_data(row_index)
-            row_str = str(set_id).rjust(max_colwidth)
-            row_str += str(mesh_id).rjust(max_colwidth)
-            if len(values) > 0:
-                if type(values[0]) not in [float, int]:
-                    values = [v for value in values for v in value]
-                row_str += "".join(
-                    [f"{value:.6e}".rjust(max_colwidth) for value in values]
-                )
-            return row_str + "\n"
+        txt, truncate_col, col_indexes, col_indexes_next = self._build_columns_str(
+            width, max_colwidth
+        )
 
         for row_index in row_indexes:
-            txt += build_row_str(row_index)
+            txt += self._build_row_str(
+                row_index, max_colwidth, truncate_col, col_indexes, col_indexes_next
+            )
 
         if truncate_rows:
             txt += "".join(
-                [trunc_str.rjust(max_colwidth) for _ in range(len(col_indexes) + 2)]
+                [
+                    self.trunc_str.rjust(max_colwidth)
+                    for _ in range(len(col_indexes) + 2)
+                ]
             )
             if truncate_col:
-                txt += trunc_str.rjust(max_colwidth).join(
-                    [trunc_str.rjust(max_colwidth) for _ in col_indexes_next]
+                txt += self.trunc_str.rjust(max_colwidth).join(
+                    [self.trunc_str.rjust(max_colwidth) for _ in col_indexes_next]
                 )
             txt += "\n"
             for row_index in row_indexes_next:
-                txt += build_row_str(row_index)
+                txt += self._build_row_str(
+                    row_index, max_colwidth, truncate_col, col_indexes, col_indexes_next
+                )
 
         self._str = txt
 
     def _get_row_data(self, row_index):
         # Find the set and entity ID corresponding to this row
-        # print(f"{row_index=}")
-        # print(f"{self._n_unique_mesh_entities=}")
         set_index_in_fc = row_index // self._n_unique_mesh_entities
-        # print(f"{set_index_in_fc=}")
-        # print(self._fc)
-        # print(f"{self._unique_mesh_ids=}")
         mesh_index = row_index % len(self._unique_mesh_ids)
-        # print(f"{mesh_index=}")
         mesh_id = self._unique_mesh_ids[mesh_index]
-        # print(f"{mesh_id=}")
         time_id = self._fc.get_label_scoping()[set_index_in_fc]
+        # Get the data
         fields = self._fc.get_fields_by_time_complex_ids(timeid=time_id)
-        # print(f"{fields=}")
+        # Build the str representation
         values = []
         for field in fields:
             try:
