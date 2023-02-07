@@ -108,10 +108,10 @@ using the current ``display.max_colwidth``.
 For example, for a big DataFrame with ``display_width=150`` (effective is 121):
 ```pycon
 >>> df
-    step|     1                                                 |     2                                                 
-  result|     U            |     S                              |     U            |     S                              
-    comp|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ
- node ID
+    step>     1                                                 |     2                                                 
+  result>     U            |     S                              |     U            |     S                              
+    comp>    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ
+ node ID.
        1|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5
        2|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5
      ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...
@@ -123,10 +123,10 @@ For example, for a big DataFrame with ``display_width=150`` (effective is 121):
 With ``display_width=80`` (effective is 77):
 ```pycon
 >>> df
-    step|     1                            ...     2                         
-  result|     U            |     S         ...     S               
-    comp|    UX    UY    UZ|   SXX   SYY   ...   SYY   SZZ   SXY   SYZ   SXZ
- node ID
+    step>     1                            ...     2                         
+  result>     U            |     S         ...     S               
+    comp>    UX    UY    UZ|   SXX   SYY   ...   SYY   SZZ   SXY   SYZ   SXZ
+ node ID.
        1|   0.0   0.1   0.2|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
        2|   0.3   0.1   0.1|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
      ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...   ...   ...
