@@ -246,7 +246,6 @@ class DataFrame:
 
     def _update_len(self):
         """Compute and store the DataFrame row length from underlying Fields."""
-        n_sets = self._fc.get_label_scoping().size
         scoping_list = [f.scoping for f in self._fc]
         sc = ScopingsContainer(server=self._fc._server)
         sc.labels = ["field"]
@@ -255,8 +254,7 @@ class DataFrame:
         global_scoping = merge_scopings(scopings=sc, server=self._fc._server).eval()
         n_unique_mesh_ids = global_scoping.size
         self._unique_mesh_ids = global_scoping.ids
-        self._n_unique_mesh_entities = n_unique_mesh_ids
-        self._len = n_sets * n_unique_mesh_ids
+        self._len = n_unique_mesh_ids
 
     @property
     def columns(self) -> list:
