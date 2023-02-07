@@ -26,20 +26,19 @@ A DPF DataFrame offers a DataFrame style API for manipulating DPF data.
 It differs from other dataframes as it differentiates between spatial
 and time-like/set (sequence?) dimensions to be able to link data to the underlying simulation.
 
-A value is always indexed using a multi-index composed of at least one spatial entity ID and one
-time/set/frequency ID.
+A value is by default indexed using the mesh entity ID, a single or multi-index 
+(in the case of ElementalNodal data).
+The set axis for time/set/frequency ID, is by default the main index of the columns,
+with results and then components as sub-indexes.
 Index types could be used to differentiate them (see 
 [here](https://pandas.pydata.org/docs/user_guide/advanced.html#index-types)).
 These could be ``SpatialIndex`` and ``TimeIndex``.
 
 
-There will always be a spatial index axis, consisting of one or a combination of 1-based IDs:
-node ID, element ID, part ID, 'global', layer ID...
-The underlying equivalent PyDPF-Core location being global, nodal, elemental, or elemental nodal.
-
-A DPF ``Dataframe`` wraps a ``FieldsContainer`` (or several?). Operations on the data, and thus on the 
-``FieldsContainer`` should be handled by DPF operators and workflows server-side whenever possible.
-When working with gRPC however, this would mean going back-and-forth...
+A DPF ``Dataframe`` wraps a ``FieldsContainer`` (or several?). Operations on the data, and thus on 
+the ``FieldsContainer`` should be handled by DPF operators and workflows server-side whenever 
+possible. When working with gRPC however, this would mean going back-and-forth, so calls to the 
+server should be minimized.
 
 ## Create from scratch
 
@@ -83,15 +82,16 @@ df = simulation.stress_principal_nodal()
 Let's have a dataframe ``df``:
 ```pycon
 >>> df
-  step  node|    S1    S2    S3
-     1     1|   0.4   0.2   0.3
-     1     2|   0.3   0.3   0.4
-     1     3|   0.2   0.4   0.5
-     1     4|   0.1   0.5   0.6
-     2     1|   0.5   0.3   0.4
-     2     2|   0.4   0.4   0.5
-     2     3|   0.3   0.5   0.6
-     2     4|   0.2   0.6   0.7
+    step|     1                     |     2                     |
+  result|     S      E      U       |     S      E      U       |
+    comp|    S1     E2     UX     UY|    S1     E2     UX     UY|
+ node ID
+       1|   0.4    0.2    0.3    0.3|   0.5    0.3    0.3    0.4|
+       2|   0.3    0.3    0.4    0.3|   0.5    0.3    0.3    0.4|
+       3|   0.2    0.4    0.5    0.3|   0.5    0.3    0.3    0.4|
+       4|   0.1    0.5    0.6    0.3|   0.5    0.3    0.3    0.4|
+
+[ 4 rows x 8 (2 steps x 4 results) columns]
 ```
 
 ### Large arrays
@@ -105,18 +105,42 @@ Options exist in Pandas to configure the console display:
 Printing ``df`` would print the 2 first and 2 last "rows" by default, 
 with the 3 first and 3 last "columns", or as much as can fit in the current ``display.width`` 
 using the current ``display.max_colwidth``.
-For example, for a big DataFrame:
+For example, for a big DataFrame with ``display_width=150`` (effective is 121):
 ```pycon
 >>> df
-  step  node|    R1    R2    R3   ...   R18   R19   R20
-     1     1|   0.4   0.2   0.3   ...   0.4   0.2   0.3
-     1     2|   0.3   0.3   0.4   ...   0.4   0.2   0.3
-   ...   ...|   ...   ...   ...   ...   ...   ...   ...
-     2    99|   0.3   0.5   0.6   ...   0.4   0.2   0.3
-     2   100|   0.2   0.6   0.7   ...   0.4   0.2   0.3
-     
-[ 200 rows x 20 columns ]
+    step|     1                                                 |     2                                                 
+  result|     U            |     S                              |     U            |     S                              
+    comp|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ
+ node ID
+       1|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5
+       2|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5
+     ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...
+      99|   0.3   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3|   0.3   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3
+     100|   0.2   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3|   0.2   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3
+
+[ 100 rows x 9 (1 step x 9 results) columns ]
 ```
+With ``display_width=80`` (effective is 77):
+```pycon
+>>> df
+    step|     1                            ...     2                         
+  result|     U            |     S         ...     S               
+    comp|    UX    UY    UZ|   SXX   SYY   ...   SYY   SZZ   SXY   SYZ   SXZ
+ node ID
+       1|   0.0   0.1   0.2|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
+       2|   0.3   0.1   0.1|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
+     ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...   ...   ...
+      99|   0.3   0.3   0.3|   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
+     100|   0.2   0.3   0.3|   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
+
+[ 100 rows x 9 (1 step x 9 results) columns ]
+```
+
+#### Memory usage
+Pandas offers a useful method for its DataFrame called ``DataFrame.memory_usage``. 
+See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.memory_usage.html#pandas-dataframe-memory-usage).
+Having the same would be useful, especially to assess and/or explain performance.
+It should also be printed-out in the ``DataFrame.info`` method.
 
 ### Head and tail 
 Viewing the first rows.
@@ -150,7 +174,7 @@ Sorting by mesh entity ID:
 
 Sorting values by column value:
 ```pycon
->>> df.sort_values(by='S1', ascending=True)
+>>> df.sort_values(by='S1', ascending=True, )
   step  node|    S1    S2    S3
      2     4|   0.0   0.0   0.1
      1     4|   0.1   0.5   0.6
@@ -231,7 +255,7 @@ Selecting via ``[]`` (``__get_item__``) slices the rows index by index.
 ``pandas.DataFrame`` requires explicit use of either ``DataFrame.loc`` or ``DataFrame.select``. 
 See [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html#pandas-dataframe-loc)
 ```pycon
->>> df.loc[[1, 1:2]]
+>>> df.iloc[[0, -1], [:, S1]]
   step  node|    S1    S2    S3
      1     1|   0.4   0.2   0.3
      1     2|   0.3   0.3   0.4
@@ -264,7 +288,7 @@ Use ``DataFrame.iloc()`` or ``DataFrame.iat()`` ("fast-access version").
 
 Select via the position of the passed integers:
 ```pycon
->>> df.iloc[[1, 1], [1:2]]
+>>> df.iloc[[1], [1, [1:2]]]
     S1   0.4   
     S2   0.2
 set: 1, node: 1 
