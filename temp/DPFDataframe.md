@@ -104,36 +104,37 @@ Options exist in Pandas to configure the console display:
 
 Printing ``df`` would print the 2 first and 2 last "rows" by default, 
 with the 3 first and 3 last "columns", or as much as can fit in the current ``display.width`` 
-using the current ``display.max_colwidth``.
-For example, for a big DataFrame with ``display_width=150`` (effective is 121):
+using the current ``display.min_colwidth``.
+For example, for a big DataFrame with ``display_width=150`` (effective is 117) and 
+``display.min_colwidth = display.max_colwidth = 6``:
 ```pycon
 >>> df
-    step>     1                                                 |     2                                                 
-  result>     U            |     S                              |     U            |     S                              
-    comp>    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ|    UX    UY    UZ|   SXX   SYY   SZZ   SXY   SYZ   SXZ
- node ID.
-       1|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5|   0.0   0.1   0.2|   0.3   0.4   0.5   0.3   0.4   0.5
-       2|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5|   0.3   0.1   0.1|   0.3   0.4   0.5   0.3   0.4   0.5
-     ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...
-      99|   0.3   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3|   0.3   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3
-     100|   0.2   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3|   0.2   0.3   0.3|   0.3   0.3   0.3   0.3   0.3   0.3
+    step     1                                                     2                                                 
+  result     U                 S                                   U                 S                              
+    comp    UX    UY    UZ   SXX   SYY   SZZ   SXY   SYZ   SXZ    UX    UY    UZ   SXX   SYY   SZZ   SXY   SYZ   SXZ
+ node ID
+       1   0.0   0.1   0.2   0.3   0.4   0.5   0.3   0.4   0.5   0.0   0.1   0.2   0.3   0.4   0.5   0.3   0.4   0.5
+       2   0.3   0.1   0.1   0.3   0.4   0.5   0.3   0.4   0.5   0.3   0.1   0.1   0.3   0.4   0.5   0.3   0.4   0.5
+     ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...
+      99   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3
+     100   0.2   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.2   0.3   0.3   0.3   0.3   0.3   0.3   0.3   0.3
 
-[ 100 rows x 9 (1 step x 9 results) columns ]
+[ 100 rows x 18 (2 steps x 9 results) columns ]
 ```
-With ``display_width=80`` (effective is 77):
+With ``display_width=80`` (effective is 75) and ``display.min_colwidth = display.max_colwidth = 6``:
 ```pycon
 >>> df
-    step>     1                            ...     2                         
-  result>     U            |     S         ...     S               
-    comp>    UX    UY    UZ|   SXX   SYY   ...   SYY   SZZ   SXY   SYZ   SXZ
- node ID.
-       1|   0.0   0.1   0.2|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
-       2|   0.3   0.1   0.1|   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
-     ...|   ...   ...   ...|   ...   ...   ...   ...   ...   ...   ...   ...
-      99|   0.3   0.3   0.3|   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
-     100|   0.2   0.3   0.3|   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
+    step     1                           ...     2                         
+  result     U                 S         ...     S               
+    comp    UX    UY    UZ   SXX   SYY   ...   SYY   SZZ   SXY   SYZ   SXZ
+ node ID
+       1   0.0   0.1   0.2   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
+       2   0.3   0.1   0.1   0.3   0.4   ...   0.5   0.5   0.3   0.4   0.5
+     ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...   ...
+      99   0.3   0.3   0.3   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
+     100   0.2   0.3   0.3   0.3   0.3   ...   0.5   0.3   0.3   0.3   0.3
 
-[ 100 rows x 9 (1 step x 9 results) columns ]
+[ 100 rows x 18 (2 steps x 9 results) columns ]
 ```
 
 #### Memory usage
