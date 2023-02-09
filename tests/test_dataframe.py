@@ -10,6 +10,16 @@ def test_dataframe_from_fields_container(simple_bar):
     assert df
 
 
+def test_dataframe_from_result(simple_bar):
+    simulation = dpf.load_simulation(simple_bar)
+    df = simulation.displacement()
+    assert len(df) == 3751
+    assert len(df.columns) == 3
+    print("df")
+    print(df)
+    print(df.columns)
+
+
 def test_dataframe_len(multishells, transient_rst):
     # Case of one set with two nodal fields
     model = core.Model(multishells)

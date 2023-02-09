@@ -222,7 +222,7 @@ class DataFrame:
 
     def _get_row_data(self, row_index):
         # Find the set and entity ID corresponding to this row
-        set_index_in_fc = row_index // self._n_unique_mesh_entities
+        set_index_in_fc = row_index // len(self)
         mesh_index = row_index % len(self._unique_mesh_ids)
         mesh_id = self._unique_mesh_ids[mesh_index]
         time_id = self._fc.get_label_scoping()[set_index_in_fc]
