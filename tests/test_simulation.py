@@ -4,11 +4,23 @@ import pytest
 from pytest import fixture
 
 import ansys.dpf.post as dpf
+from ansys.dpf.post.common import AvailableSimulationTypes
 
 
 @fixture
 def static_simulation(static_rst):
-    return dpf.load_simulation(data_sources=static_rst)
+    return dpf.load_simulation(
+        data_sources=static_rst,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
+def transient_simulation(transient_rst):
+    return dpf.load_simulation(
+        data_sources=transient_rst,
+        simulation_type=AvailableSimulationTypes.transient_mechanical,
+    )
 
 
 def test_simulation_results(static_simulation):
@@ -413,4 +425,27 @@ class TestStaticMechanicalSimulation:
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert field.data.shape == (9433, 3)
+        assert np.allclose(field.data, field_ref.data)
+
+
+class TestTransientMechanicalSimulation:
+    def test_displacement(self, transient_simulation):
+        displacement_x = transient_simulation.displacement(
+            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+        )
+        assert len(displacement_x._fc) == 1
+        assert displacement_x._fc.get_time_scoping().ids == [2]
+        field = displacement_x._fc[0]
+        op = transient_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=transient_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)

@@ -4107,9 +4107,239 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""
 
-    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
+    def _build_time_freq_scoping(
+        self,
+        selection: Union[Selection, None],
+        times: Union[float, List[float], None],
+        time_step_ids: Union[int, List[int], None],
+    ) -> core.time_freq_scoping_factory.Scoping:
         """Generate a time_freq_scoping from input arguments."""
-        pass
+        # create from selection in priority
+        if selection:
+            return selection.time_freq_selection._evaluate_on(simulation=self)
+        # else from time_step_ids
+        if time_step_ids:
+            if isinstance(time_step_ids, int):
+                time_step_ids = [time_step_ids]
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=time_step_ids, server=self._model._server
+            )
+        # else from times
+        if times:
+            if isinstance(times, float):
+                times = [times]
+            raise NotImplementedError
+        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
+        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+
+    def _get_result(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            base_name:
+                Base name for the requested result.
+            location:
+                Location requested.
+            category:
+                Type of result requested. See the :class:`ResultCategory` class.
+            components:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        # Build the targeted time scoping
+        time_scoping = self._build_time_freq_scoping(selection, times, time_step_ids)
+
+        # Build the targeted mesh scoping
+        mesh_scoping = self._build_mesh_scoping(
+            selection,
+            nodes,
+            elements,
+            named_selection,
+            location=location,
+        )
+
+        # Build the list of requested results
+        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
+            # A scalar or equivalent result has no components
+            to_extract = None
+            columns = [base_name]
+        elif category in [ResultCategory.vector, ResultCategory.matrix]:
+            # A matrix or vector result can have components selected
+            to_extract, columns = self._build_components_from_components(
+                base_name=base_name, category=category, components=components
+            )
+        elif category == ResultCategory.principal:
+            # A principal type of result can have components selected
+            to_extract, columns = self._build_components_from_principal(
+                base_name=base_name, components=components
+            )
+        else:
+            raise ValueError(f"'{category}' is not a valid category value.")
+
+        # Initialize a workflow
+        wf = core.Workflow(server=self._model._server)
+        wf.progress_bar = False
+
+        # Instantiate the main result operator
+        result_op = self._build_result_operator(
+            name=base_name,
+            time_scoping=time_scoping,
+            mesh_scoping=mesh_scoping,
+            location=location,
+        )
+        # Its output is selected as future workflow output for now
+        out = result_op.outputs.fields_container
+
+        # Add a step to compute principal invariants if result is principal
+        if category == ResultCategory.principal:
+            # Instantiate the required operator
+            principal_op = self._model.operator(name="eig_values_fc")
+            principal_op.connect(0, out)
+            wf.add_operator(operator=principal_op)
+            # Set as future output of the workflow
+            out = principal_op.outputs.fields_container
+
+        # Add a step to compute equivalent if result is equivalent
+        elif category == ResultCategory.equivalent:
+            # If a stress result, use one operator
+            if base_name[0] == "S":
+                equivalent_op = self._model.operator(name="segalmaneqv_fc")
+            # If a strain result, use another
+            elif base_name[0] == "E":
+                equivalent_op = self._model.operator(name="eqv_fc")
+            # Throw otherwise
+            else:
+                raise ValueError(
+                    f"Category {ResultCategory.equivalent} "
+                    "is only available for stress or strain results."
+                )
+            equivalent_op.connect(0, out)
+            wf.add_operator(operator=equivalent_op)
+            # Set as future output of the workflow
+            out = equivalent_op.outputs.fields_container
+
+        # Add an optional component selection step if result is vector, matrix, or principal
+        if (
+            category
+            in [ResultCategory.vector, ResultCategory.matrix, ResultCategory.principal]
+        ) and (to_extract is not None):
+            # Instantiate a component selector operator
+            extract_op = self._model.operator(name="component_selector_fc")
+            # Feed it the current workflow output
+            extract_op.connect(0, out)
+            # Feed it the requested components
+            extract_op.connect(1, to_extract)
+            wf.add_operator(operator=extract_op)
+            # Set as future output of the workflow
+            out = extract_op.outputs.fields_container
+
+        # Add an optional norm operation if requested
+        if norm:
+            norm_op = self._model.operator(name="norm_fc")
+            norm_op.connect(0, out)
+            wf.add_operator(operator=norm_op)
+            out = norm_op.outputs.fields_container
+
+        # Set the workflow output
+        wf.set_output_name("out", out)
+        # Evaluate  the workflow
+        fc = wf.get_output("out", core.types.fields_container)
+
+        # Test for empty results
+        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
+            warnings.warn(
+                message=f"Returned Dataframe with columns {columns} is empty.",
+                category=UserWarning,
+            )
+        # Return the result wrapped in a DPF_Dataframe
+        return DataObject(
+            fields_container=fc,
+            columns=columns,
+            mesh_scoping=mesh_scoping,
+        )
+
+    def displacement(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract displacement results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                Times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements whose nodes to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="U",
+            location=core.locations.nodal,
+            category=ResultCategory.vector,
+            components=component_ids,
+            norm=norm,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
 
 
 class ModalMechanicalSimulation(MechanicalSimulation):
