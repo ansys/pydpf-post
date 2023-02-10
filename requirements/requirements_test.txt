@@ -2,4 +2,4 @@ coverage==7.1.0
 pytest-cov==4.0.0
 pytest-rerunfailures==11.0
 pytest==7.2.1
-pyvista==0.36.1
+pyvista==0.38.1
