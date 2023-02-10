@@ -68,7 +68,7 @@ class TestStaticMechanicalSimulation:
             component_ids=["X"], nodes=[42, 43, 44], set_ids=[1]
         )
         assert len(displacement_x._fc) == 1
-        assert displacement_x._fc.time_freq_support.time_frequencies.data == 1
+        assert displacement_x._fc.get_time_scoping().ids == [1]
         field = displacement_x._fc[0]
         op = static_simulation._model.operator("UX")
         mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
@@ -87,7 +87,7 @@ class TestStaticMechanicalSimulation:
             sub_steps=[1],
         )
         assert len(displacement_y._fc) == 1
-        assert displacement_y._fc.time_freq_support.time_frequencies.data == 1
+        assert displacement_y._fc.get_time_scoping().ids == [1]
         field = displacement_y._fc[0]
         op = static_simulation._model.operator("UY")
         mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
@@ -108,7 +108,7 @@ class TestStaticMechanicalSimulation:
             sub_steps=1,
         )
         assert len(displacement_z._fc) == 1
-        assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
+        assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
         mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
@@ -128,7 +128,7 @@ class TestStaticMechanicalSimulation:
             set_ids=1,
         )
         assert len(displacement_z._fc) == 1
-        assert displacement_z._fc.time_freq_support.time_frequencies.data == 1
+        assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
         mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
@@ -151,7 +151,7 @@ class TestStaticMechanicalSimulation:
             norm=True, nodes=[42, 43, 44], set_ids=[1]
         )
         assert len(displacement_norm._fc) == 1
-        assert displacement_norm._fc.time_freq_support.time_frequencies.data == 1
+        assert displacement_norm._fc.get_time_scoping().ids == [1]
         field = displacement_norm._fc[0]
         op = static_simulation._model.operator("U")
         mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
@@ -168,7 +168,7 @@ class TestStaticMechanicalSimulation:
     def test_stress(self, static_simulation):
         stress_x = static_simulation.stress(component_ids=1)
         assert len(stress_x._fc) == 1
-        assert stress_x._fc.time_freq_support.time_frequencies.data == 1
+        assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
         op.connect(9, core.locations.elemental_nodal)
@@ -180,7 +180,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_elemental(self, static_simulation):
         stress_x = static_simulation.stress_elemental(component_ids=1)
         assert len(stress_x._fc) == 1
-        assert stress_x._fc.time_freq_support.time_frequencies.data == 1
+        assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
         op.connect(9, core.locations.elemental)
@@ -192,7 +192,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_nodal(self, static_simulation):
         stress_x = static_simulation.stress_nodal(component_ids=1)
         assert len(stress_x._fc) == 1
-        assert stress_x._fc.time_freq_support.time_frequencies.data == 1
+        assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
         op.connect(9, core.locations.nodal)
@@ -204,7 +204,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_principal(self, static_simulation):
         result = static_simulation.stress_principal(component_ids=1)
         assert len(result._fc) == 1
-        assert result._fc.time_freq_support.time_frequencies.data == 1
+        assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S1")
         op.connect(9, core.locations.elemental_nodal)
@@ -216,7 +216,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_principal_nodal(self, static_simulation):
         result = static_simulation.stress_principal_nodal(component_ids=2)
         assert len(result._fc) == 1
-        assert result._fc.time_freq_support.time_frequencies.data == 1
+        assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S2")
         op.connect(9, core.locations.nodal)
@@ -228,7 +228,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_principal_elemental(self, static_simulation):
         result = static_simulation.stress_principal_elemental(component_ids=3)
         assert len(result._fc) == 1
-        assert result._fc.time_freq_support.time_frequencies.data == 1
+        assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S3")
         op.connect(9, core.locations.elemental)
@@ -240,7 +240,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_eqv_von_mises(self, static_simulation):
         result = static_simulation.stress_eqv_von_mises()
         assert len(result._fc) == 1
-        assert result._fc.time_freq_support.time_frequencies.data == 1
+        assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S_eqv")
         op.connect(9, core.locations.elemental_nodal)
@@ -252,7 +252,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_eqv_von_mises_elemental(self, static_simulation):
         stress_vm = static_simulation.stress_eqv_von_mises_elemental()
         assert len(stress_vm._fc) == 1
-        assert stress_vm._fc.time_freq_support.time_frequencies.data == 1
+        assert stress_vm._fc.get_time_scoping().ids == [1]
         field = stress_vm._fc[0]
         op = static_simulation._model.operator("S_eqv")
         op.connect(9, core.locations.elemental)
@@ -264,7 +264,7 @@ class TestStaticMechanicalSimulation:
     def test_stress_eqv_von_mises_nodal(self, static_simulation):
         stress_vm = static_simulation.stress_eqv_von_mises_nodal()
         assert len(stress_vm._fc) == 1
-        assert stress_vm._fc.time_freq_support.time_frequencies.data == 1
+        assert stress_vm._fc.get_time_scoping().ids == [1]
         field = stress_vm._fc[0]
         op = static_simulation._model.operator("S_eqv")
         op.connect(9, core.locations.nodal)
@@ -276,7 +276,7 @@ class TestStaticMechanicalSimulation:
     def test_reaction_force(self, static_simulation):
         reaction_force = static_simulation.reaction_force()
         assert len(reaction_force._fc) == 1
-        assert reaction_force._fc.time_freq_support.time_frequencies.data == 1
+        assert reaction_force._fc.get_time_scoping().ids == [1]
         field = reaction_force._fc[0]
         op = static_simulation._model.operator("RF")
         field_ref = op.eval()[0]
@@ -287,7 +287,7 @@ class TestStaticMechanicalSimulation:
     def test_elemental_volume(self, static_simulation):
         elemental_volume = static_simulation.elemental_volume()
         assert len(elemental_volume._fc) == 1
-        assert elemental_volume._fc.time_freq_support.time_frequencies.data == 1
+        assert elemental_volume._fc.get_time_scoping().ids == [1]
         field = elemental_volume._fc[0]
         op = static_simulation._model.operator("ENG_VOL")
         field_ref = op.eval()[0]
@@ -299,7 +299,7 @@ class TestStaticMechanicalSimulation:
     def test_stiffness_matrix_energy(self, static_simulation):
         stiffness_matrix_energy = static_simulation.stiffness_matrix_energy()
         assert len(stiffness_matrix_energy._fc) == 1
-        assert stiffness_matrix_energy._fc.time_freq_support.time_frequencies.data == 1
+        assert stiffness_matrix_energy._fc.get_time_scoping().ids == [1]
         field = stiffness_matrix_energy._fc[0]
         op = static_simulation._model.operator("ENG_SE")
         field_ref = op.eval()[0]
@@ -310,9 +310,7 @@ class TestStaticMechanicalSimulation:
     def test_artificial_hourglass_energy(self, static_simulation):
         artificial_hourglass_energy = static_simulation.artificial_hourglass_energy()
         assert len(artificial_hourglass_energy._fc) == 1
-        assert (
-            artificial_hourglass_energy._fc.time_freq_support.time_frequencies.data == 1
-        )
+        assert artificial_hourglass_energy._fc.get_time_scoping().ids == [1]
         field = artificial_hourglass_energy._fc[0]
         op = static_simulation._model.operator("ENG_AHO")
         field_ref = op.eval()[0]
@@ -323,9 +321,7 @@ class TestStaticMechanicalSimulation:
     def test_thermal_dissipation_energy(self, static_simulation):
         thermal_dissipation_energy = static_simulation.thermal_dissipation_energy()
         assert len(thermal_dissipation_energy._fc) == 1
-        assert (
-            thermal_dissipation_energy._fc.time_freq_support.time_frequencies.data == 1
-        )
+        assert thermal_dissipation_energy._fc.get_time_scoping().ids == [1]
         field = thermal_dissipation_energy._fc[0]
         op = static_simulation._model.operator("ENG_TH")
         field_ref = op.eval()[0]
@@ -336,7 +332,7 @@ class TestStaticMechanicalSimulation:
     def test_kinetic_energy(self, static_simulation):
         kinetic_energy = static_simulation.kinetic_energy()
         assert len(kinetic_energy._fc) == 1
-        assert kinetic_energy._fc.time_freq_support.time_frequencies.data == 1
+        assert kinetic_energy._fc.get_time_scoping().ids == [1]
         field = kinetic_energy._fc[0]
         op = static_simulation._model.operator("ENG_KE")
         field_ref = op.eval()[0]
@@ -347,7 +343,7 @@ class TestStaticMechanicalSimulation:
     def test_structural_temperature(self, static_simulation):
         structural_temperature = static_simulation.structural_temperature()
         assert len(structural_temperature._fc) == 1
-        assert structural_temperature._fc.time_freq_support.time_frequencies.data == 1
+        assert structural_temperature._fc.get_time_scoping().ids == [1]
         field = structural_temperature._fc[0]
         op = static_simulation._model.operator("BFE")
         field_ref = op.eval()[0]
@@ -358,10 +354,7 @@ class TestStaticMechanicalSimulation:
     def test_structural_temperature_nodal(self, static_simulation):
         structural_temperature_nodal = static_simulation.structural_temperature_nodal()
         assert len(structural_temperature_nodal._fc) == 1
-        assert (
-            structural_temperature_nodal._fc.time_freq_support.time_frequencies.data
-            == 1
-        )
+        assert structural_temperature_nodal._fc.get_time_scoping().ids == [1]
         field = structural_temperature_nodal._fc[0]
         op = static_simulation._model.operator("BFE")
         op.connect(9, core.locations.nodal)
@@ -375,10 +368,7 @@ class TestStaticMechanicalSimulation:
             static_simulation.structural_temperature_elemental()
         )
         assert len(structural_temperature_elemental._fc) == 1
-        assert (
-            structural_temperature_elemental._fc.time_freq_support.time_frequencies.data
-            == 1
-        )
+        assert structural_temperature_elemental._fc.get_time_scoping().ids == [1]
         field = structural_temperature_elemental._fc[0]
         op = static_simulation._model.operator("BFE")
         op.connect(9, core.locations.elemental)
@@ -391,7 +381,7 @@ class TestStaticMechanicalSimulation:
         static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces()
         assert len(element_nodal_forces._fc) == 1
-        assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
+        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
         field_ref = op.eval()[0]
@@ -403,7 +393,7 @@ class TestStaticMechanicalSimulation:
         static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_nodal()
         assert len(element_nodal_forces._fc) == 3
-        assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
+        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
         op.connect(9, core.locations.nodal)
@@ -416,7 +406,7 @@ class TestStaticMechanicalSimulation:
         static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_elemental()
         assert len(element_nodal_forces._fc) == 3
-        assert element_nodal_forces._fc.time_freq_support.time_frequencies.data == 1
+        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
         op.connect(9, core.locations.elemental)
