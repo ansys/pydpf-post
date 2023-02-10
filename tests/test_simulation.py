@@ -16,9 +16,9 @@ def static_simulation(static_rst):
 
 
 @fixture
-def transient_simulation(transient_rst):
+def transient_simulation(plate_msup):
     return dpf.load_simulation(
-        data_sources=transient_rst,
+        data_sources=plate_msup,
         simulation_type=AvailableSimulationTypes.transient_mechanical,
     )
 
@@ -430,13 +430,55 @@ class TestStaticMechanicalSimulation:
 
 class TestTransientMechanicalSimulation:
     def test_displacement(self, transient_simulation):
-        displacement_x = transient_simulation.displacement(
+        result = transient_simulation.displacement(
             component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
         )
-        assert len(displacement_x._fc) == 1
-        assert displacement_x._fc.get_time_scoping().ids == [2]
-        field = displacement_x._fc[0]
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
         op = transient_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=transient_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_velocity(self, transient_simulation):
+        result = transient_simulation.velocity(
+            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("VX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=transient_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_acceleration(self, transient_simulation):
+        result = transient_simulation.acceleration(
+            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("AX")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )

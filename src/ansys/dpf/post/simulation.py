@@ -4341,6 +4341,108 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
+    def velocity(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract velocity results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                Times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements whose nodes to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="V",
+            location=core.locations.nodal,
+            category=ResultCategory.vector,
+            components=component_ids,
+            norm=norm,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def acceleration(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract acceleration results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            norm:
+                Whether to return the norm of the results.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                Times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements whose nodes to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="A",
+            location=core.locations.nodal,
+            category=ResultCategory.vector,
+            components=component_ids,
+            norm=norm,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""
