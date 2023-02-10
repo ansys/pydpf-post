@@ -5,9 +5,9 @@ from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.simulation import (
     HarmonicMechanicalSimulation,
     ModalMechanicalSimulation,
-    StaticMechanicalSimulation,
-    TransientMechanicalSimulation,
 )
+from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 
 def test_load_simulation_static_mechanical(simple_bar, complex_model):
