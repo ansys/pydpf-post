@@ -4443,6 +4443,408 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
+    def stress(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_elemental(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_nodal(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.nodal,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_principal(
+        self,
+        component_ids: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal principal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_principal_elemental(
+        self,
+        component_ids: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental principal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_principal_nodal(
+        self,
+        component_ids: Union[List[str], List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal principal stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.nodal,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_eqv_von_mises(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_eqv_von_mises_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental equivalent Von Mises stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.elemental,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def stress_eqv_von_mises_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal equivalent Von Mises stress results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="S",
+            location=core.locations.nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""

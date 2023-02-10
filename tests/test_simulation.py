@@ -491,3 +491,146 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)
+
+    def test_stress(self, transient_simulation):
+        result = transient_simulation.stress(component_ids=1, time_step_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_elemental(self, transient_simulation):
+        result = transient_simulation.stress_elemental(
+            component_ids=1, time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_nodal(self, transient_simulation):
+        result = transient_simulation.stress_nodal(component_ids=1, time_step_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal(self, transient_simulation):
+        result = transient_simulation.stress_principal(
+            component_ids=1, time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S1")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_nodal(self, transient_simulation):
+        result = transient_simulation.stress_principal_nodal(
+            component_ids=2, time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S2")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_elemental(self, transient_simulation):
+        result = transient_simulation.stress_principal_elemental(
+            component_ids=3, time_step_ids=[2]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S3")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises(self, transient_simulation):
+        result = transient_simulation.stress_eqv_von_mises(time_step_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises_elemental(self, transient_simulation):
+        result = transient_simulation.stress_eqv_von_mises_elemental(time_step_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises_nodal(self, transient_simulation):
+        result = transient_simulation.stress_eqv_von_mises_nodal(time_step_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
