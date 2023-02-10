@@ -1111,159 +1111,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def elastic_strain_eqv(
-        self,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
-    ) -> DataObject:
-        """Extract elemental nodal equivalent elastic strain results from the simulation.
-
-        Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            load_steps:
-                List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="EPEL",
-            location=core.locations.elemental_nodal,
-            category=ResultCategory.equivalent,
-            components=None,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            load_steps=load_steps,
-            sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
-        )
-
-    def elastic_strain_equivalent_nodal(
-        self,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
-    ) -> DataObject:
-        """Extract nodal equivalent elastic strain results from the simulation.
-
-        Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            load_steps:
-                List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="EPEL",
-            location=core.locations.nodal,
-            category=ResultCategory.equivalent,
-            components=None,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            load_steps=load_steps,
-            sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
-        )
-
-    def elastic_strain_equivalent_elemental(
-        self,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
-    ) -> DataObject:
-        """Extract elemental equivalent elastic strain results from the simulation.
-
-        Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            load_steps:
-                List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="EPEL",
-            location=core.locations.elemental,
-            category=ResultCategory.equivalent,
-            components=None,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            load_steps=load_steps,
-            sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
-        )
-
     def plastic_state_variable(
         self,
         selection: Union[Selection, None] = None,
@@ -1797,7 +1644,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def plastic_strain_equivalent_nodal(
+    def plastic_strain_eqv_nodal(
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -1850,7 +1697,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
-    def plastic_strain_equivalent_elemental(
+    def plastic_strain_eqv_elemental(
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
