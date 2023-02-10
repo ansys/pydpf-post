@@ -4845,6 +4845,410 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             named_selection=named_selection,
         )
 
+    def elastic_strain(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_nodal(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.nodal,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_elemental(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract stress results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental,
+            category=ResultCategory.matrix,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_principal(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal principal elastic strain results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_principal_nodal(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal principal elastic strain results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.nodal,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_principal_elemental(
+        self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental principal elastic strain results from the simulation.
+
+        Args:
+            component_ids:
+                Components to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental,
+            category=ResultCategory.principal,
+            components=component_ids,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_eqv(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental nodal equivalent elastic strain results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental_nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_equivalent_nodal(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        nodes: Union[List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract nodal equivalent elastic strain results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            nodes:
+                List of nodes to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=nodes,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
+    def elastic_strain_equivalent_elemental(
+        self,
+        selection: Union[Selection, None] = None,
+        times: Union[float, List[float], None] = None,
+        time_step_ids: Union[int, List[int], None] = None,
+        elements: Union[List[int], None] = None,
+        named_selection: Union[str, None] = None,
+    ) -> DataObject:
+        """Extract elemental equivalent elastic strain results from the simulation.
+
+        Args:
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            times:
+                List of times to get results for.
+            time_steps_ids:
+                List of time steps IDs to get results for.
+            elements:
+                List of elements to get results for.
+            named_selection:
+                Named selection to get results for.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            time_step_ids=time_step_ids,
+            nodes=None,
+            elements=elements,
+            named_selection=named_selection,
+        )
+
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""
