@@ -16,10 +16,13 @@ with this command:
 
    pip install ansys-dpf-post
 
+PyDPF-Post plotting capabilities require to have `PyVista <https://pyvista.org/>`_ installed.
 To install PyDPF-Post with its optional plotting functionalities, use:
 
 .. code::
    pip install ansys-dpf-post[plotting]
+
+For more information about PyDPF-Post plotting capabilities, see :ref:`_user_guide_plotting`.
 
 
 Install without internet
@@ -40,6 +43,7 @@ Beware that PyDPF-Post wheelhouses do not include the optional plotting dependen
 To allow for plotting capabilities, also download the wheel corresponding to your platform and Python interpreter version
 for `PyVista <https://pypi.org/project/pyvista/#files>`_, then place it in the same previous local directory and run the command above.
 
+
 Install in development mode
 ---------------------------
 
@@ -48,3 +52,16 @@ clone the repository and install it using ``pip`` with the ``-e``
 development flag:
 
 .. include:: ../pydpf-post_clone_install.rst
+
+
+Check the installation
+----------------------
+
+Run the following Python code to verify your PyDPF-Post installation:
+
+.. code::
+
+   from ansys.dpf import post
+   from ansys.dpf.post import examples
+   solution = post.load_solution(examples.simple_bar)
+   print(solution)
