@@ -66,6 +66,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -216,6 +217,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 Times to get results for.
             time_steps_ids:
@@ -268,6 +270,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 Times to get results for.
             time_steps_ids:
@@ -320,6 +323,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 Times to get results for.
             time_steps_ids:
@@ -369,6 +373,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -417,6 +422,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -465,6 +471,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -511,6 +518,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -555,6 +563,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -600,6 +609,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -643,6 +653,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -684,6 +695,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -726,6 +738,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -774,6 +787,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -822,6 +836,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -870,6 +885,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -916,6 +932,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -961,6 +978,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1007,6 +1025,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1048,6 +1067,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1089,6 +1109,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1131,6 +1152,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1179,6 +1201,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1227,6 +1250,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1275,6 +1299,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1321,6 +1346,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1366,6 +1392,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1412,6 +1439,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1453,6 +1481,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1495,6 +1524,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1538,6 +1568,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1587,6 +1618,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1631,6 +1663,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1672,6 +1705,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1713,6 +1747,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1754,6 +1789,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1795,6 +1831,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1836,6 +1873,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1877,6 +1915,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1919,6 +1958,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -1963,6 +2003,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2007,6 +2048,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2051,6 +2093,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2095,6 +2138,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2139,6 +2183,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2183,6 +2228,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2227,6 +2273,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2271,6 +2318,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2315,6 +2363,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2366,6 +2415,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2418,6 +2468,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2469,6 +2520,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2519,6 +2571,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
@@ -2571,6 +2624,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+                It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
             time_steps_ids:
