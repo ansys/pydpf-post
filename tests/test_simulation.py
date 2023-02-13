@@ -431,7 +431,7 @@ class TestStaticMechanicalSimulation:
 class TestTransientMechanicalSimulation:
     def test_displacement(self, transient_simulation):
         result = transient_simulation.displacement(
-            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -452,7 +452,7 @@ class TestTransientMechanicalSimulation:
 
     def test_velocity(self, transient_simulation):
         result = transient_simulation.velocity(
-            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -473,7 +473,7 @@ class TestTransientMechanicalSimulation:
 
     def test_acceleration(self, transient_simulation):
         result = transient_simulation.acceleration(
-            component_ids=["X"], nodes=[2, 3, 4], time_step_ids=[2]
+            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
