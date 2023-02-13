@@ -209,8 +209,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -261,8 +261,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -313,8 +313,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -364,8 +364,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -412,8 +412,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -460,8 +460,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -507,7 +507,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -551,7 +551,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -596,7 +596,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -769,8 +769,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -817,8 +817,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -865,8 +865,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -912,7 +912,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -957,7 +957,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1003,7 +1003,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1174,8 +1174,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1222,8 +1222,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1270,8 +1270,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z", "XX", "XY",
-                "XZ", or their respective equivalents 1, 2, 3, 4, 5, 6.
+                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1317,7 +1317,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1362,7 +1362,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1408,7 +1408,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1580,8 +1580,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2359,8 +2359,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2411,8 +2411,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2462,8 +2462,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2512,8 +2512,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2569,8 +2569,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for. Can be one or several of "X", "Y", "Z",
-                or their respective equivalents 1, 2, 3.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
