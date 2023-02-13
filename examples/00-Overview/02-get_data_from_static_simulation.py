@@ -47,7 +47,7 @@ stress._fc[0].plot()
 # Get stresses at only 5 nodes
 # ------------------------------
 # Request stress only at the first 5 nodes using their IDs.
-stress_nodes = simulation.stress_nodal(nodes=range(1, 6))
+stress_nodes = simulation.stress_nodal(node_ids=range(1, 6))
 
 ###############################################################################
 # Print information
@@ -63,7 +63,7 @@ stress_nodes._fc[0].plot()
 # Get the name of the first named selection in the simulation
 ns = simulation.named_selections[0]
 # Request nodal stresses for this named selection
-stress_named_sel = simulation.stress_nodal(named_selection=ns)
+stress_named_sel = simulation.stress_nodal(named_selections=ns)
 
 ###############################################################################
 # Print information
@@ -77,7 +77,7 @@ stress_named_sel._fc[0].plot()
 # Get stresses in a few elements
 # ------------------------------
 # Request stress only for a few elements selected by their ID
-stress_elements = simulation.stress_nodal(elements=[1, 2, 3])
+stress_elements = simulation.stress_nodal(element_ids=[1, 2, 3])
 
 ###############################################################################
 # Print information
