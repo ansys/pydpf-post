@@ -209,7 +209,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -260,7 +261,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -311,7 +313,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -1555,6 +1558,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def reaction_force(
         self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1565,6 +1570,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract reaction force results from the simulation.
 
         Args:
+            component_ids:
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1588,7 +1598,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="RF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=None,
+            components=component_ids,
+            norm=norm,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -2339,7 +2350,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2390,7 +2402,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2440,7 +2453,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2489,7 +2503,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2545,7 +2560,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Can be one or several of "X", "Y", "Z",
+                or their respective equivalents "1", "2", "3".
             norm:
                 Whether to return the norm of the results.
             selection:
