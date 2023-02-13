@@ -255,7 +255,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -2232,6 +2233,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def reaction_force(
         self,
+        component_ids: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2244,6 +2247,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract reaction force results from the simulation.
 
         Args:
+            component_ids:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2272,7 +2280,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="RF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=None,
+            components=component_ids,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -3233,7 +3242,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -3293,7 +3303,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -3352,7 +3363,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -3410,7 +3422,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
@@ -3470,7 +3483,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
             selection:
