@@ -485,7 +485,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -538,7 +538,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -592,7 +592,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -971,7 +971,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1025,7 +1025,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1080,7 +1080,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1457,7 +1457,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1511,7 +1511,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1566,7 +1566,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1943,7 +1943,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1997,7 +1997,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2052,7 +2052,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Args:
             component_ids:
-                Components to get results for.
+                Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
