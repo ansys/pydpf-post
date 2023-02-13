@@ -16,9 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PACKAGE_NAME: ansys-dpf-post
-  MODULE: post
-  ANSYS_VERSION: 231
+  PACKAGE_NAME: 'ansys-dpf-post'
+  MODULE: 'post'
+  ANSYS_VERSION: '231'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v4.4.0
+        uses: actions/setup-python@v4.5.0
         with:
           python-version: 3.9
       - name: Install pre-commit
@@ -172,13 +172,6 @@ jobs:
           debug: true
         timeout-minutes: 30
 
-      - name: "Upload HTML documentation artifact"
-        uses: actions/upload-artifact@v3
-        with:
-          name: documentation-html
-          path: docs/build/html
-          retention-days: 7
-
   upload_dev_docs:
     name: "Upload dev documentation"
     if: github.ref == 'refs/heads/master'
@@ -186,10 +179,11 @@ jobs:
     needs: [docs]
     steps:
       - name: Deploy the latest documentation
-        uses: pyansys/actions/doc-deploy-dev@v2
+        uses: pyansys/actions/doc-deploy-dev@v3
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: HTML-doc-${{ env.PACKAGE_NAME }}
 
   draft_release:
     name: "Draft release"
@@ -198,7 +192,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Set up Python"
-        uses: actions/setup-python@v4.4.0
+        uses: actions/setup-python@v4.5.0
         with:
           python-version: 3.9
 

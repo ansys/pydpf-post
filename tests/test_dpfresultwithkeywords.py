@@ -58,7 +58,6 @@ def test_displacement_with_scoping(allkindofcomplexity):
 
 
 def test_displacement_x_with_scoping(allkindofcomplexity):
-
     result = post.load_solution(allkindofcomplexity)
     # scoping as array
     disp = result.displacement(node_scoping=[1, 2])
