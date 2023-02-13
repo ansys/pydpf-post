@@ -83,9 +83,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -112,12 +112,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -132,9 +132,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
             selection,
-            nodes,
-            elements,
-            named_selection,
+            node_ids,
+            element_ids,
+            named_selections,
             location=location,
         )
 
@@ -247,9 +247,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
@@ -270,12 +270,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Load steps to get results for.
             sub_steps:
                 Sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -293,9 +293,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress(
@@ -306,9 +306,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
@@ -327,12 +327,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -349,9 +349,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_elemental(
@@ -362,9 +362,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
@@ -383,12 +383,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -405,9 +405,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_nodal(
@@ -418,9 +418,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
@@ -439,12 +439,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -461,9 +461,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_principal(
@@ -474,8 +474,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
@@ -514,9 +514,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_principal_elemental(
@@ -527,8 +527,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
@@ -567,9 +567,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_principal_nodal(
@@ -580,9 +580,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
@@ -601,12 +601,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -623,9 +623,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises(
@@ -635,8 +635,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
@@ -673,9 +673,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -685,8 +685,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
@@ -723,9 +723,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -735,9 +735,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[List[int], None] = None,
         load_steps: Union[List[int], None] = None,
         sub_steps: Union[List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
@@ -754,12 +754,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -776,9 +776,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain(
@@ -789,9 +789,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -810,12 +810,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -832,9 +832,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain_nodal(
@@ -845,9 +845,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -866,12 +866,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -888,9 +888,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain_elemental(
@@ -901,9 +901,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -922,12 +922,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -944,9 +944,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal(
@@ -957,8 +957,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
@@ -997,9 +997,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal_nodal(
@@ -1010,9 +1010,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1031,12 +1031,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1053,9 +1053,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal_elemental(
@@ -1066,8 +1066,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1106,9 +1106,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable(
@@ -1118,8 +1118,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
@@ -1156,9 +1156,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable_elemental(
@@ -1168,8 +1168,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1206,9 +1206,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable_nodal(
@@ -1218,9 +1218,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1237,12 +1237,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1259,9 +1259,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain(
@@ -1272,9 +1272,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
@@ -1293,12 +1293,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1315,9 +1315,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_nodal(
@@ -1328,9 +1328,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
@@ -1349,12 +1349,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1371,9 +1371,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_elemental(
@@ -1384,9 +1384,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
@@ -1405,12 +1405,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1427,9 +1427,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal(
@@ -1440,8 +1440,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
@@ -1480,9 +1480,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal_nodal(
@@ -1493,9 +1493,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -1514,12 +1514,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1536,9 +1536,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal_elemental(
@@ -1549,8 +1549,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -1589,9 +1589,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv(
@@ -1601,8 +1601,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
@@ -1639,9 +1639,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv_nodal(
@@ -1651,9 +1651,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -1670,12 +1670,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1692,9 +1692,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv_elemental(
@@ -1704,8 +1704,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -1742,9 +1742,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain(
@@ -1755,9 +1755,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
 
@@ -1776,12 +1776,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1798,9 +1798,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_nodal(
@@ -1811,9 +1811,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal creep strain results from the simulation.
 
@@ -1832,12 +1832,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1854,9 +1854,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_elemental(
@@ -1867,9 +1867,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental creep strain results from the simulation.
 
@@ -1888,12 +1888,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1910,9 +1910,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_principal(
@@ -1923,8 +1923,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
@@ -1963,9 +1963,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_principal_nodal(
@@ -1976,9 +1976,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal creep strain results from the simulation.
 
@@ -1997,12 +1997,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2019,9 +2019,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_principal_elemental(
@@ -2032,8 +2032,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal creep strain results from the simulation.
 
@@ -2072,9 +2072,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_eqv(
@@ -2084,8 +2084,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
@@ -2122,9 +2122,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_equivalent_nodal(
@@ -2134,9 +2134,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent creep strain results from the simulation.
 
@@ -2153,12 +2153,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2175,9 +2175,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def creep_strain_equivalent_elemental(
@@ -2187,8 +2187,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent creep strain results from the simulation.
 
@@ -2225,9 +2225,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def reaction_force(
@@ -2237,9 +2237,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
@@ -2256,12 +2256,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2278,9 +2278,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elemental_volume(
@@ -2290,8 +2290,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
@@ -2328,9 +2328,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elemental_mass(
@@ -2340,8 +2340,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
@@ -2378,9 +2378,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def elemental_heat_generation(
@@ -2390,8 +2390,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
@@ -2428,9 +2428,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_centroids(
@@ -2440,8 +2440,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
@@ -2478,9 +2478,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def thickness(
@@ -2490,8 +2490,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
@@ -2528,9 +2528,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_orientations(
@@ -2540,8 +2540,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -2578,9 +2578,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_orientations_elemental(
@@ -2590,8 +2590,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
@@ -2628,9 +2628,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_orientations_nodal(
@@ -2640,9 +2640,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
@@ -2659,12 +2659,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2681,9 +2681,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def stiffness_matrix_energy(
@@ -2693,9 +2693,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stiffness matrix energy results from the simulation.
 
@@ -2712,12 +2712,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2734,9 +2734,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def artificial_hourglass_energy(
@@ -2746,9 +2746,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -2765,12 +2765,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2787,9 +2787,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def thermal_dissipation_energy(
@@ -2799,9 +2799,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -2818,12 +2818,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2840,9 +2840,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def kinetic_energy(
@@ -2852,9 +2852,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
@@ -2871,12 +2871,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2893,9 +2893,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure(
@@ -2905,9 +2905,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -2924,12 +2924,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2946,9 +2946,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure_nodal(
@@ -2958,9 +2958,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -2977,12 +2977,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2999,9 +2999,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure_elemental(
@@ -3011,9 +3011,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -3030,12 +3030,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3052,9 +3052,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def structural_temperature(
@@ -3064,9 +3064,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3083,12 +3083,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3105,9 +3105,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def structural_temperature_nodal(
@@ -3117,9 +3117,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
@@ -3136,12 +3136,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3158,9 +3158,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def structural_temperature_elemental(
@@ -3170,9 +3170,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
@@ -3189,12 +3189,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3211,9 +3211,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces(
@@ -3225,9 +3225,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
@@ -3248,12 +3248,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3271,9 +3271,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces_nodal(
@@ -3285,9 +3285,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -3308,12 +3308,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of load steps to get results for.
             sub_steps:
                 List of sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3331,9 +3331,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces_elemental(
@@ -3345,8 +3345,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -3388,9 +3388,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=None,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def nodal_force(
@@ -3402,9 +3402,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
@@ -3425,12 +3425,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Load steps to get results for.
             sub_steps:
                 Sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3448,9 +3448,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
 
     def nodal_moment(
@@ -3462,9 +3462,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], None] = None,
         sub_steps: Union[int, List[int], None] = None,
-        nodes: Union[List[int], None] = None,
-        elements: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
@@ -3485,12 +3485,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Load steps to get results for.
             sub_steps:
                 Sub-steps to get results for. Requires load_steps to be defined.
-            nodes:
-                List of nodes to get results for.
-            elements:
-                List of elements whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -3508,7 +3508,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             load_steps=load_steps,
             sub_steps=sub_steps,
-            nodes=nodes,
-            elements=elements,
-            named_selection=named_selection,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
         )
