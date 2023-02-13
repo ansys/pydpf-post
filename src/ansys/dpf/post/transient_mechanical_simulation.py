@@ -87,7 +87,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         """
         # Build the targeted time scoping
-        time_scoping = self._build_time_freq_scoping(selection, times, time_step_ids)
+        time_scoping = self._build_time_freq_scoping(selection, time_step_ids, times)
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
