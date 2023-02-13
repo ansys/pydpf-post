@@ -389,16 +389,16 @@ class MechanicalSimulation(Simulation, ABC):
         selection=None,
         nodes=None,
         elements=None,
-        named_selection=None,
+        named_selections=None,
         location=core.locations.nodal,
     ) -> Union[core.mesh_scoping_factory.Scoping, None]:
-        if (nodes is not None or elements is not None) and named_selection is not None:
+        if (nodes is not None or elements is not None) and named_selections is not None:
             raise ValueError(
                 "nodes/elements and named_selection are mutually exclusive"
             )
 
         if selection is not None and (
-            nodes is not None or named_selection is not None or elements is not None
+            nodes is not None or named_selections is not None or elements is not None
         ):
             raise ValueError(
                 "selection and nodes/elements/named_selection are mutually exclusive"
@@ -408,10 +408,23 @@ class MechanicalSimulation(Simulation, ABC):
         if selection:
             mesh_scoping = selection.mesh_scoping
 
-        if named_selection:
-            mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
-                named_selection, server=self._model._server, model=self._model
-            )
+        if named_selections:
+            if type(named_selections) == str:
+                mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+                    named_selections, server=self._model._server, model=self._model
+                )
+            elif type(named_selections) == list:
+                merge_scopings_op = self._model.operator(name="merge::scoping")
+                for pin, named_selection in enumerate(named_selections):
+                    mesh_scoping_on_ns_op = self._model.operator(
+                        name="scoping_provider_by_ns"
+                    )
+                    mesh_scoping_on_ns_op.connect(0, location)
+                    mesh_scoping_on_ns_op.connect(1, named_selection)
+                    merge_scopings_op.connect(
+                        pin, mesh_scoping_on_ns_op.outputs.mesh_scoping
+                    )
+                mesh_scoping = merge_scopings_op.outputs.merged_scoping
 
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(

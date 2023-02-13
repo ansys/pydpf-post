@@ -48,7 +48,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -74,8 +74,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -90,7 +90,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection,
             node_ids,
             element_ids,
-            named_selection,
+            named_selections,
             location=location,
         )
 
@@ -203,7 +203,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
@@ -224,8 +224,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of element whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -243,7 +243,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def velocity(
@@ -255,7 +255,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract velocity results from the simulation.
 
@@ -276,8 +276,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of element whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -295,7 +295,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def acceleration(
@@ -307,7 +307,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract acceleration results from the simulation.
 
@@ -328,8 +328,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of element whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -347,7 +347,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress(
@@ -358,7 +358,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
@@ -377,8 +377,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -395,7 +395,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_elemental(
@@ -406,7 +406,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
@@ -425,8 +425,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -443,7 +443,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_nodal(
@@ -454,7 +454,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
@@ -473,8 +473,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -491,7 +491,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_principal(
@@ -501,7 +501,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
@@ -517,8 +517,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -535,7 +535,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_principal_elemental(
@@ -545,7 +545,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
@@ -561,8 +561,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -579,7 +579,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_principal_nodal(
@@ -590,7 +590,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
@@ -608,8 +608,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -626,7 +626,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises(
@@ -635,7 +635,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
@@ -649,8 +649,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -667,7 +667,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -676,7 +676,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
@@ -690,8 +690,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -708,7 +708,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -718,7 +718,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
@@ -734,8 +734,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -752,7 +752,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain(
@@ -763,7 +763,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -782,8 +782,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -800,7 +800,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain_nodal(
@@ -811,7 +811,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -830,8 +830,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -848,7 +848,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain_elemental(
@@ -859,7 +859,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -878,8 +878,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -896,7 +896,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal(
@@ -906,7 +906,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
@@ -922,8 +922,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -940,7 +940,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal_nodal(
@@ -951,7 +951,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -969,8 +969,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -987,7 +987,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elastic_strain_principal_elemental(
@@ -997,7 +997,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1013,8 +1013,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1031,7 +1031,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable(
@@ -1040,7 +1040,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
@@ -1054,8 +1054,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1072,7 +1072,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable_elemental(
@@ -1081,7 +1081,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1095,8 +1095,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1113,7 +1113,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_state_variable_nodal(
@@ -1123,7 +1123,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1139,8 +1139,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1157,7 +1157,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain(
@@ -1168,7 +1168,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
@@ -1187,8 +1187,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1205,7 +1205,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_nodal(
@@ -1216,7 +1216,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
@@ -1235,8 +1235,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1253,7 +1253,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_elemental(
@@ -1264,7 +1264,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
@@ -1283,8 +1283,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1301,7 +1301,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal(
@@ -1311,7 +1311,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
@@ -1327,8 +1327,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1345,7 +1345,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal_nodal(
@@ -1356,7 +1356,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -1374,8 +1374,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1392,7 +1392,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_principal_elemental(
@@ -1402,7 +1402,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -1418,8 +1418,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1436,7 +1436,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv(
@@ -1445,7 +1445,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
@@ -1459,8 +1459,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1477,7 +1477,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv_nodal(
@@ -1487,7 +1487,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -1503,8 +1503,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1521,7 +1521,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def plastic_strain_eqv_elemental(
@@ -1530,7 +1530,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -1544,8 +1544,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1562,7 +1562,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def reaction_force(
@@ -1574,7 +1574,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
@@ -1595,8 +1595,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1614,7 +1614,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elemental_volume(
@@ -1623,7 +1623,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
@@ -1637,8 +1637,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1655,7 +1655,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elemental_mass(
@@ -1664,7 +1664,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
@@ -1678,8 +1678,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1696,7 +1696,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def elemental_heat_generation(
@@ -1705,7 +1705,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
@@ -1719,8 +1719,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1737,7 +1737,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_centroids(
@@ -1746,7 +1746,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
@@ -1760,8 +1760,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1778,7 +1778,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def thickness(
@@ -1787,7 +1787,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
@@ -1801,8 +1801,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1819,7 +1819,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_orientations(
@@ -1828,7 +1828,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -1842,8 +1842,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1860,7 +1860,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_orientations_elemental(
@@ -1869,7 +1869,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
@@ -1883,8 +1883,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1901,7 +1901,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_orientations_nodal(
@@ -1911,7 +1911,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
@@ -1927,8 +1927,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1945,7 +1945,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def artificial_hourglass_energy(
@@ -1955,7 +1955,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -1971,8 +1971,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -1989,7 +1989,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def thermal_dissipation_energy(
@@ -1999,7 +1999,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -2015,8 +2015,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2033,7 +2033,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def kinetic_energy(
@@ -2043,7 +2043,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
@@ -2059,8 +2059,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2077,7 +2077,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure(
@@ -2087,7 +2087,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -2103,8 +2103,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2121,7 +2121,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure_nodal(
@@ -2131,7 +2131,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -2147,8 +2147,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2165,7 +2165,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def hydrostatic_pressure_elemental(
@@ -2175,7 +2175,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -2191,8 +2191,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2209,7 +2209,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def structural_temperature(
@@ -2219,7 +2219,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -2235,8 +2235,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2253,7 +2253,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def structural_temperature_nodal(
@@ -2263,7 +2263,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
@@ -2279,8 +2279,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2297,7 +2297,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def structural_temperature_elemental(
@@ -2307,7 +2307,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
@@ -2323,8 +2323,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2341,7 +2341,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces(
@@ -2353,7 +2353,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
@@ -2374,8 +2374,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2393,7 +2393,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces_nodal(
@@ -2405,7 +2405,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -2426,8 +2426,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2445,7 +2445,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def element_nodal_forces_elemental(
@@ -2456,7 +2456,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -2475,8 +2475,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of time steps IDs to get results for.
             elements:
                 List of elements to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2494,7 +2494,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=None,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def nodal_force(
@@ -2506,7 +2506,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
@@ -2527,8 +2527,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of element whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2546,7 +2546,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
 
     def nodal_moment(
@@ -2558,7 +2558,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         time_step_ids: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        named_selection: Union[str, None] = None,
+        named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
@@ -2579,8 +2579,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of element whose nodes to get results for.
-            named_selection:
-                Named selection to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
 
         Returns
         -------
@@ -2598,5 +2598,5 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             time_step_ids=time_step_ids,
             node_ids=node_ids,
             element_ids=element_ids,
-            named_selection=named_selection,
+            named_selections=named_selections,
         )
