@@ -450,6 +450,17 @@ class TestTransientMechanicalSimulation:
         assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)
 
+        result = transient_simulation.displacement(
+            component_ids=1,
+            named_selections=transient_simulation.named_selections[:2],
+            time_step_ids=[2],
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        assert field.component_count == 1
+        assert field.data.shape == (393,)
+
     def test_velocity(self, transient_simulation):
         result = transient_simulation.velocity(
             component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]

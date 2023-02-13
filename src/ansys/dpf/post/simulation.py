@@ -424,7 +424,7 @@ class MechanicalSimulation(Simulation, ABC):
                     merge_scopings_op.connect(
                         pin, mesh_scoping_on_ns_op.outputs.mesh_scoping
                     )
-                mesh_scoping = merge_scopings_op.outputs.merged_scoping
+                mesh_scoping = merge_scopings_op.eval()
 
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
