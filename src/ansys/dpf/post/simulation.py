@@ -351,11 +351,6 @@ class Simulation(ABC):
         return out, columns
 
     @abstractmethod
-    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        pass
-
-    @abstractmethod
     def _build_mesh_scoping(self) -> core.mesh_scoping_factory.Scoping:
         """Generate a mesh_scoping from input arguments."""
         pass

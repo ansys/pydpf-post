@@ -14,8 +14,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def _build_time_freq_scoping(
         self,
         selection: Union[Selection, None],
-        times: Union[float, List[float], None],
         time_step_ids: Union[int, List[int], None],
+        times: Union[float, List[float], None],
     ) -> core.time_freq_scoping_factory.Scoping:
         """Generate a time_freq_scoping from input arguments."""
         # create from selection in priority
@@ -51,6 +51,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             base_name:
@@ -208,6 +211,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -260,6 +266,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract velocity results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -314,6 +323,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract acceleration results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -366,6 +378,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -414,6 +429,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -464,6 +482,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -512,6 +533,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -556,6 +580,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -603,6 +630,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -649,6 +679,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -690,6 +723,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -733,6 +769,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -779,6 +818,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -829,6 +871,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -878,6 +923,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -926,6 +974,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -971,6 +1022,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -1019,6 +1073,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1063,6 +1120,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1104,6 +1164,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1147,6 +1210,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1193,6 +1259,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -1243,6 +1312,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1292,6 +1364,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1340,6 +1415,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1385,6 +1463,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -1433,6 +1514,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1477,6 +1561,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1519,6 +1606,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1564,6 +1654,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1608,6 +1701,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -1659,6 +1755,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1700,6 +1799,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1743,6 +1845,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1784,6 +1889,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1827,6 +1935,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1868,6 +1979,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1911,6 +2025,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1953,6 +2070,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -1999,6 +2119,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2043,6 +2166,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -2089,6 +2215,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2133,6 +2262,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -2179,6 +2311,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2223,6 +2358,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -2269,6 +2407,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2314,6 +2455,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2358,6 +2502,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             selection:
@@ -2405,6 +2552,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -2459,6 +2609,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -2511,6 +2664,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
+
         Args:
             component_ids:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -2561,6 +2717,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
@@ -2614,6 +2773,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
             component_ids:
