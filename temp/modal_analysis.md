@@ -1,39 +1,34 @@
-# DPF Refactoring: Harmonic Mechanical Analysis
+# DPF Refactoring: Modal Mechanical Analysis
 
-Pseudocode for HarmonicMechanicalSimulation
+Pseudocode for ModalMechanicalSimulation
 
 ## Extract results
 
 ### Typical result signature:
 
 ```pycon
-def displacement(
+def result(
         self,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        frequencies: Union[float, List[float], "All", None] = None, # -> are not unique
         components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,  # for displacement
-        amplitude: bool = False,
-        sweeping_phase: Union[float, Quantity, None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         load_steps: Union[int, List[int], 
             Tuple[Union[int, List[int], Union[int, List[int]], None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
     ) -> DataFrame:
 ```
 
-In docstring: if sweeping_phase is float, will be in degrees.
-Load_step + sub_step becomes a tuple
-
 ### Use-cases
 
-#### Extract displacements along X for nodes 1, 2 and 3 at f=0.05Hz and sweeping phase 30°
+#### Extract displacements along X for nodes 1, 2 and 3 at f=0.05Hz
 
 ```pycon
 displacement_X = harmonic_simulation.displacement(
-    components=["X"], node_ids=[1, 2, 3], frequencies=[0.05], sweeping_phases=[30.0]
+    components=["X"], node_ids=[1, 2, 3], frequencies=[0.05]
 )
 ```
 
