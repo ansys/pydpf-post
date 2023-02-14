@@ -450,6 +450,66 @@ class MechanicalSimulation(Simulation, ABC):
 
         return mesh_scoping
 
+    def _build_time_freq_scoping(
+        self,
+        selection: Union[Selection, None],
+        times: Union[float, List[float], None],
+        set_ids: Union[int, List[int], None],
+        load_steps: Union[int, List[int], None],
+        sub_steps: Union[int, List[int], None],
+    ) -> core.time_freq_scoping_factory.Scoping:
+        """Generate a time_freq_scoping from input arguments."""
+        # create from selection in priority
+        if selection:
+            return selection.time_freq_selection._evaluate_on(simulation=self)
+        # else from set_ids
+        if set_ids:
+            if isinstance(set_ids, int):
+                set_ids = [set_ids]
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=set_ids, server=self._model._server
+            )
+        # else from times
+        if times:
+            if isinstance(times, float):
+                times = [times]
+            raise NotImplementedError
+        # else from sub_steps and load_steps
+        if sub_steps:
+            if isinstance(sub_steps, int):
+                sub_steps = [sub_steps]
+            if isinstance(load_steps, int):
+                load_steps = [load_steps]
+            elif (
+                not load_steps
+                or (isinstance(load_steps, list) and len(load_steps)) != 1
+            ):
+                raise ValueError(
+                    "Argument sub_steps requires argument load_steps to have one value."
+                )
+            # Translate to cumulative indices (set IDs)
+            set_ids = []
+            for sub_step in sub_steps:
+                set_id = (
+                    self._model.metadata.time_freq_support.get_cumulative_index(
+                        step=load_steps[0] - 1, substep=sub_step
+                    )
+                    + 2
+                )
+                set_ids.append(set_id)
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=set_ids, server=self._model._server
+            )
+        # else load_steps only
+        if load_steps:
+            if isinstance(load_steps, int):
+                load_steps = [load_steps]
+            return core.time_freq_scoping_factory.scoping_by_load_steps(
+                load_steps=load_steps, server=self._model._server
+            )
+        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
+        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+
 
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""

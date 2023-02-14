@@ -11,66 +11,6 @@ from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 class StaticMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical static simulations."""
 
-    def _build_time_freq_scoping(
-        self,
-        selection: Union[Selection, None],
-        times: Union[float, List[float], None],
-        set_ids: Union[int, List[int], None],
-        load_steps: Union[int, List[int], None],
-        sub_steps: Union[int, List[int], None],
-    ) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        # create from selection in priority
-        if selection:
-            return selection.time_freq_selection._evaluate_on(simulation=self)
-        # else from set_ids
-        if set_ids:
-            if isinstance(set_ids, int):
-                set_ids = [set_ids]
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=set_ids, server=self._model._server
-            )
-        # else from times
-        if times:
-            if isinstance(times, float):
-                times = [times]
-            raise NotImplementedError
-        # else from sub_steps and load_steps
-        if sub_steps:
-            if isinstance(sub_steps, int):
-                sub_steps = [sub_steps]
-            if isinstance(load_steps, int):
-                load_steps = [load_steps]
-            elif (
-                not load_steps
-                or (isinstance(load_steps, list) and len(load_steps)) != 1
-            ):
-                raise ValueError(
-                    "Argument sub_steps requires argument load_steps to have one value."
-                )
-            # Translate to cumulative indices (set IDs)
-            set_ids = []
-            for sub_step in sub_steps:
-                set_id = (
-                    self._model.metadata.time_freq_support.get_cumulative_index(
-                        step=load_steps[0] - 1, substep=sub_step
-                    )
-                    + 2
-                )
-                set_ids.append(set_id)
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=set_ids, server=self._model._server
-            )
-        # else load_steps only
-        if load_steps:
-            if isinstance(load_steps, int):
-                load_steps = [load_steps]
-            return core.time_freq_scoping_factory.scoping_by_load_steps(
-                load_steps=load_steps, server=self._model._server
-            )
-        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
-        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
-
     def _get_result(
         self,
         base_name: str,
@@ -88,6 +28,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             base_name:
@@ -253,6 +197,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -313,6 +261,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -369,6 +321,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -427,6 +383,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -483,6 +443,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -535,6 +499,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -590,6 +558,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -644,6 +616,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -693,6 +669,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -744,6 +724,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -798,6 +782,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -856,6 +844,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -913,6 +905,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -969,6 +965,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1022,6 +1022,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1078,6 +1082,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1130,6 +1138,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1179,6 +1191,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1230,6 +1246,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1284,6 +1304,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1342,6 +1366,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1399,6 +1427,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1455,6 +1487,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1508,6 +1544,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1564,6 +1604,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1616,6 +1660,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1666,6 +1714,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1719,6 +1771,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -1770,6 +1826,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1828,6 +1888,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1885,6 +1949,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
@@ -1941,6 +2009,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -1994,6 +2066,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal creep strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2050,6 +2126,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
@@ -2102,6 +2182,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2152,6 +2236,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent creep strain results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2205,6 +2293,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent creep strain results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2257,6 +2349,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2316,6 +2412,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2365,6 +2465,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2416,6 +2520,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2465,6 +2573,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2516,6 +2628,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2565,6 +2681,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2616,6 +2736,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2666,6 +2790,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2720,6 +2848,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stiffness matrix energy results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2772,6 +2904,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2826,6 +2962,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2878,6 +3018,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2932,6 +3076,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -2984,6 +3132,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -3038,6 +3190,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -3090,6 +3246,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -3144,6 +3304,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             selection:
                 Selection to get results for.
@@ -3196,6 +3360,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -3251,6 +3419,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -3313,6 +3485,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -3373,6 +3549,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
         Args:
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
@@ -3431,6 +3611,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -3492,6 +3676,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:

@@ -11,31 +11,6 @@ from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""
 
-    def _build_time_freq_scoping(
-        self,
-        selection: Union[Selection, None],
-        time_step_ids: Union[int, List[int], None],
-        times: Union[float, List[float], None],
-    ) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        # create from selection in priority
-        if selection:
-            return selection.time_freq_selection._evaluate_on(simulation=self)
-        # else from time_step_ids
-        if time_step_ids:
-            if isinstance(time_step_ids, int):
-                time_step_ids = [time_step_ids]
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=time_step_ids, server=self._model._server
-            )
-        # else from times
-        if times:
-            if isinstance(times, float):
-                times = [times]
-            raise NotImplementedError
-        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
-        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
-
     def _get_result(
         self,
         base_name: str,
@@ -45,7 +20,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -53,7 +30,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             base_name:
@@ -72,8 +54,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -87,7 +74,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         """
         # Build the targeted time scoping
-        time_scoping = self._build_time_freq_scoping(selection, time_step_ids, times)
+        time_scoping = self._build_time_freq_scoping(
+            selection, times, set_ids, load_steps, sub_steps
+        )
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
@@ -204,7 +193,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -212,7 +203,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract displacement results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -226,8 +222,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 Times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -248,7 +249,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -260,7 +263,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -268,7 +273,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract velocity results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -282,8 +292,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 Times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -304,7 +319,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -316,7 +333,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -324,7 +343,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract acceleration results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -338,8 +362,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 Times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -360,7 +389,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -371,7 +402,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -379,7 +412,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -391,8 +429,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -412,7 +455,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -423,7 +468,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -431,7 +478,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract elemental stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -443,8 +495,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -464,7 +521,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -475,7 +534,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -483,7 +544,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -495,8 +561,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -516,7 +587,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -527,14 +600,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -545,8 +625,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -564,7 +649,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -575,14 +662,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -593,8 +687,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -612,7 +711,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -623,7 +724,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -631,7 +734,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -642,8 +750,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -663,7 +776,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -673,14 +788,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -689,8 +811,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -708,7 +835,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -718,14 +847,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -734,8 +870,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -753,7 +894,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -763,7 +906,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -771,7 +916,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -780,8 +930,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -801,7 +956,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -812,7 +969,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -820,7 +979,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -832,8 +996,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -853,7 +1022,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -864,7 +1035,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -872,7 +1045,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -884,8 +1062,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -905,7 +1088,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -916,7 +1101,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -924,7 +1111,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -936,8 +1128,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -957,7 +1154,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -968,14 +1167,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -986,8 +1192,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1005,7 +1216,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1016,7 +1229,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1024,7 +1239,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1035,8 +1255,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1056,7 +1281,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1067,14 +1294,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1085,8 +1319,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1104,7 +1343,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1114,14 +1355,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1130,8 +1378,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1149,7 +1402,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1159,14 +1414,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1175,8 +1437,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1194,7 +1461,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1204,7 +1473,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1212,7 +1483,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1221,8 +1497,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1242,7 +1523,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1253,7 +1536,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1261,7 +1546,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1273,8 +1563,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1294,7 +1589,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1305,7 +1602,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1313,7 +1612,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1325,8 +1629,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1346,7 +1655,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1357,7 +1668,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1365,7 +1678,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract elemental plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1377,8 +1695,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1398,7 +1721,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1409,14 +1734,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1427,8 +1759,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1446,7 +1783,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1457,7 +1796,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1465,7 +1806,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1476,8 +1822,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1497,7 +1848,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1508,14 +1861,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1526,8 +1886,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1545,7 +1910,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1555,14 +1922,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1571,8 +1945,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1590,7 +1969,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1600,7 +1981,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1608,7 +1991,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1617,8 +2005,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1638,7 +2031,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1648,14 +2043,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1664,8 +2066,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1683,7 +2090,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1695,7 +2104,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1703,7 +2114,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract reaction force results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -1717,8 +2133,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -1739,7 +2160,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1749,14 +2172,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1765,8 +2195,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1784,7 +2219,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1794,14 +2231,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1810,8 +2254,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1829,7 +2278,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1839,14 +2290,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1855,8 +2313,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1874,7 +2337,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1884,14 +2349,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1900,8 +2372,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1919,7 +2396,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1929,14 +2408,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1945,8 +2431,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -1964,7 +2455,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1974,14 +2467,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -1990,8 +2490,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -2009,7 +2514,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2019,14 +2526,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2035,8 +2549,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -2054,7 +2573,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2064,7 +2585,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2072,7 +2595,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2081,8 +2609,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2102,7 +2635,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2112,7 +2647,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2120,7 +2657,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract artificial hourglass energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2129,8 +2671,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2150,7 +2697,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2160,7 +2709,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2168,7 +2719,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract thermal dissipation energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2177,8 +2733,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2198,7 +2759,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2208,7 +2771,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2216,7 +2781,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract kinetic energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2225,8 +2795,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2246,7 +2821,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2256,7 +2833,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2264,7 +2843,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure element nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2273,8 +2857,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2294,7 +2883,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2304,7 +2895,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2312,7 +2905,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2321,8 +2919,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2342,7 +2945,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2352,7 +2957,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2360,7 +2967,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2369,8 +2981,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2390,7 +3007,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=None,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2400,7 +3019,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2408,7 +3029,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature element nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2417,8 +3043,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2438,7 +3069,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2448,7 +3081,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2456,7 +3091,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2465,8 +3105,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2486,7 +3131,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2496,7 +3143,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2504,7 +3153,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             selection:
@@ -2513,8 +3167,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2534,7 +3193,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components="",
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2546,7 +3207,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2554,7 +3217,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2568,8 +3236,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2590,7 +3263,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2602,7 +3277,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2610,7 +3287,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2624,8 +3306,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             elements:
@@ -2646,7 +3333,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2658,14 +3347,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2679,8 +3375,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selections:
@@ -2699,7 +3400,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2711,7 +3414,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2719,7 +3424,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal force results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2733,8 +3443,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2755,7 +3470,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2767,7 +3484,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
-        time_step_ids: Union[int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        load_steps: Union[int, List[int], None] = None,
+        sub_steps: Union[int, List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2775,7 +3494,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Extract nodal moment results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        The `time_step_ids` argument then takes precedence over `times`.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+
+        The `selection` argument overrides any other filtering argument.
+        Then, in order of priority (and from fine to coarse), the time selection argument
+        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
 
         Args:
             components:
@@ -2789,8 +3513,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 It takes precedence over any other filter argument.
             times:
                 List of times to get results for.
-            time_steps_ids:
-                List of time steps IDs to get results for.
+            set_ids:
+                List of sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            load_steps:
+                List of load steps to get results for.
+            sub_steps:
+                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2811,7 +3540,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             norm=norm,
             selection=selection,
             times=times,
-            time_step_ids=time_step_ids,
+            set_ids=set_ids,
+            load_steps=load_steps,
+            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
