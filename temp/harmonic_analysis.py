@@ -56,7 +56,7 @@ harmonic_simulation.plot(
 # Using the provided factories:
 from ansys.dpf.post import tools
 
-selection = tools.create_selection(nodes=[1, 2, 3], elements=[1, 2, 3], steps=[1])
+selection = tools.create_selection(node_ids=[1, 2, 3], element_ids=[1, 2, 3], steps=[1])
 # or
 selection = Selection(nodes=[1, 2, 4], time_freq_indices=[0, 1])
 selection = Selection()
@@ -72,19 +72,19 @@ harmonic_simulation.deactivate_selection()
 
 # Extract displacements along X for nodes 1, 2 and 3 at f=0.05Hz
 displacement_X = harmonic_simulation.displacement(
-    components=["X"], nodes=[1, 2, 3], frequencies=[0.05]
+    components=["X"], node_ids=[1, 2, 3], frequencies=[0.05]
 )
 print(displacement_X)
 
 # Extract nodal XY stresses for elements 1, 2 and 3 at set 1
 stress_XY = harmonic_simulation.elemental_stress(
-    components=["XY"], elements=[1, 2, 3], set_ids=[1]
+    components=["XY"], element_ids=[1, 2, 3], set_ids=[1]
 )
 print(stress_XY)
 
 # Extract first principal nodal stress for a named (elemental or nodal) selection at all frequencies
 stress_S1 = harmonic_simulation.nodal_principal_stress(
-    components=["1"], named_selection=named_selections[0]
+    components=["1"], named_selections=named_selections[0]
 )
 print(stress_S1)
 
