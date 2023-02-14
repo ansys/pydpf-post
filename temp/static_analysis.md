@@ -336,7 +336,7 @@ These work more like IDs/names as they do not have to be consecutive nor start a
 ### Extract displacements along X and Y for nodes 1, 2 and 3 at (load step 1, sub-step 1)
 ```pycon
 >>> displacement_X = static_simulation.displacement(
-...     components=["X", "Y"], nodes=[1, 2, 3], load_steps=[1], substeps=[1]
+...     components=["X", "Y"], nodes=[1, 2, 3], load_steps=(1, 1)
 ... )
 ```
 

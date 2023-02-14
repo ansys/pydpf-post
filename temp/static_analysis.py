@@ -186,7 +186,7 @@ print(displacement_X._fc)
 
 # Extract displacements along X for nodes 1, 2 and 3 at (load step 1, sub-step 1)
 displacement_Y = static_simulation.displacement(
-    components=["2"], named_selection=named_selections[0], load_steps=[1], sub_steps=[1]
+    components=["2"], named_selection=named_selections[0], load_steps=(1, 1)
 )
 print(displacement_Y._fc)
 
