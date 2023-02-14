@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 import re
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
@@ -388,11 +388,32 @@ class MechanicalSimulation(Simulation, ABC):
     def _build_mesh_scoping(
         self,
         selection=None,
-        nodes=None,
-        elements=None,
         named_selections=None,
+        elements=None,
+        nodes=None,
         location=core.locations.nodal,
     ) -> Union[core.Scoping, core.outputs.Output, None]:
+        """Generate a mesh_scoping from input arguments.
+
+        Only one input is used, by order of priority: selection, named_selection,
+        element_ids, node_ids.
+
+        Args:
+            selection:
+                Selection object to use.
+            named_selections:
+                Named selection to use.
+            elements:
+                Element IDs to use.
+            nodes:
+                Node IDs to use.
+            location:
+                Requested location for the returned Scoping.
+
+        Returns
+        -------
+            Returns a mesh Scoping or an operator Output giving a mesh Scoping.
+        """
         if (nodes is not None or elements is not None) and named_selections is not None:
             raise ValueError(
                 "nodes/elements and named_selection are mutually exclusive"
@@ -428,12 +449,7 @@ class MechanicalSimulation(Simulation, ABC):
                     )
                 mesh_scoping = merge_scopings_op.outputs.merged_scoping
 
-        if nodes:
-            mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-                nodes, server=self._model._server
-            )
-
-        if elements:
+        elif elements:
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
                 element_ids=elements, server=self._model._server
             )
@@ -445,17 +461,40 @@ class MechanicalSimulation(Simulation, ABC):
                 transpose_op.connect(2, 0)
                 mesh_scoping = transpose_op.outputs.mesh_scoping_as_scoping
 
+        elif nodes:
+            mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+                nodes, server=self._model._server
+            )
+
         return mesh_scoping
 
     def _build_time_freq_scoping(
         self,
         selection: Union[Selection, None],
-        times: Union[float, List[float], None],
         set_ids: Union[int, List[int], None],
-        load_steps: Union[int, List[int], None],
-        sub_steps: Union[int, List[int], None],
+        times: Union[float, List[float], None],
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
     ) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
+        """Generate a time_freq_scoping from input arguments.
+
+        Only one input is used, by order of priority: selection, set_ids, times, load_steps.
+
+        Args:
+            selection:
+                Selection to use (used in priority).
+            set_ids:
+                List of set IDs to use, if no selection is defined.
+            times:
+                Time values to use, if no selection nor set_ids are defined.
+            load_steps:
+                Load step IDs (and sub-step if tuple) to use, if no other is defined.
+
+        Returns
+        -------
+            A Scoping corresponding to the requested input, with time location.
+        """
         # create from selection in priority
         if selection:
             return selection.time_freq_selection._evaluate_on(simulation=self)
@@ -471,34 +510,25 @@ class MechanicalSimulation(Simulation, ABC):
             if isinstance(times, float):
                 times = [times]
             raise NotImplementedError
-        # else from sub_steps and load_steps
-        if sub_steps:
-            if isinstance(sub_steps, int):
-                sub_steps = [sub_steps]
-            if isinstance(load_steps, int):
-                load_steps = [load_steps]
-            elif (
-                not load_steps
-                or (isinstance(load_steps, list) and len(load_steps)) != 1
-            ):
-                raise ValueError(
-                    "Argument sub_steps requires argument load_steps to have one value."
-                )
-            # Translate to cumulative indices (set IDs)
-            set_ids = []
-            for sub_step in sub_steps:
-                set_id = (
+        # else from load_steps
+        if load_steps:
+            # If load_steps and sub_steps
+            if len(load_steps) == 2:
+                # Translate to cumulative indices (set IDs)
+                set_ids = []
+                sub_steps = load_steps[1]
+                if not isinstance(sub_steps, list):
+                    sub_steps = [sub_steps]
+                set_id_0 = (
                     self._model.metadata.time_freq_support.get_cumulative_index(
-                        step=load_steps[0] - 1, substep=sub_step
+                        step=load_steps[0] - 1, substep=sub_steps[0]
                     )
                     + 2
                 )
-                set_ids.append(set_id)
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=set_ids, server=self._model._server
-            )
-        # else load_steps only
-        if load_steps:
+                set_ids.extend([set_id_0 + i for i in range(len(sub_steps))])
+                return core.time_freq_scoping_factory.scoping_by_sets(
+                    cumulative_sets=set_ids, server=self._model._server
+                )
             if isinstance(load_steps, int):
                 load_steps = [load_steps]
             return core.time_freq_scoping_factory.scoping_by_load_steps(

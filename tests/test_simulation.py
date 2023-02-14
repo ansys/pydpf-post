@@ -95,8 +95,7 @@ class TestStaticMechanicalSimulation:
         displacement_y = static_simulation.displacement(
             components=["2"],
             named_selections=static_simulation.named_selections[0],
-            load_steps=[1],
-            sub_steps=[1],
+            load_steps=(1, 1),
         )
         assert len(displacement_y._fc) == 1
         assert displacement_y._fc.get_time_scoping().ids == [1]
@@ -116,8 +115,7 @@ class TestStaticMechanicalSimulation:
         displacement_z = static_simulation.displacement(
             components="Z",
             named_selections=static_simulation.named_selections[0],
-            load_steps=1,
-            sub_steps=1,
+            load_steps=(1, 1),
         )
         assert len(displacement_z._fc) == 1
         assert displacement_z._fc.get_time_scoping().ids == [1]

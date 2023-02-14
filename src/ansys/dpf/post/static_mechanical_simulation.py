@@ -1,5 +1,5 @@
 """Module containing the ``StaticMechanicalSimulation`` class."""
-from typing import List, Union
+from typing import List, Tuple, Union
 import warnings
 
 from ansys.dpf import core
@@ -21,8 +21,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -30,8 +31,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             base_name:
@@ -54,8 +57,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -70,7 +71,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         # Build the targeted time scoping
         time_scoping = self._build_time_freq_scoping(
-            selection, times, set_ids, load_steps, sub_steps
+            selection, times, set_ids, load_steps
         )
 
         # Build the targeted mesh scoping
@@ -189,8 +190,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -198,8 +200,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract displacement results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -241,7 +245,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -253,8 +256,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -262,8 +266,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -279,8 +285,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -302,7 +306,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -314,8 +317,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -323,8 +327,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -340,8 +346,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -363,7 +367,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -375,8 +378,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -384,8 +388,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -401,8 +407,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -424,7 +428,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -444,8 +447,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -460,8 +465,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -481,7 +484,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -501,8 +503,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -517,8 +521,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -538,7 +540,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -559,8 +560,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -575,8 +578,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -598,7 +599,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -617,8 +617,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -631,8 +633,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -652,7 +652,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -671,8 +670,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -685,8 +686,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -706,7 +705,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -726,8 +724,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -740,8 +740,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -763,7 +761,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -775,8 +772,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -784,8 +782,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -801,8 +801,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -824,7 +822,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -836,8 +833,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -845,8 +843,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -862,8 +862,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -885,7 +883,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -897,8 +894,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -906,8 +904,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -923,8 +923,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -946,7 +944,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -958,16 +955,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -982,8 +982,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1003,7 +1001,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1015,8 +1012,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1024,8 +1022,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1040,8 +1040,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1063,7 +1061,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1075,16 +1072,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1099,8 +1099,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1120,7 +1118,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1131,16 +1128,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1153,8 +1153,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1174,7 +1172,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1185,16 +1182,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1207,8 +1207,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1228,7 +1226,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1239,8 +1236,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1248,8 +1246,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal plastic state variable results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1262,8 +1262,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1285,7 +1283,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1297,8 +1294,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1306,8 +1304,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1323,8 +1323,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1346,7 +1344,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1358,8 +1355,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1367,8 +1365,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1384,8 +1384,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1407,7 +1405,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1419,8 +1416,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1428,8 +1426,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1445,8 +1445,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1468,7 +1466,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1480,16 +1477,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1504,8 +1504,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1525,7 +1523,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1537,8 +1534,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1546,8 +1544,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1562,8 +1562,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1585,7 +1583,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1597,16 +1594,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1621,8 +1621,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1642,7 +1640,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1653,16 +1650,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1675,8 +1675,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1696,7 +1694,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1707,8 +1704,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1716,8 +1714,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1730,8 +1730,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1753,7 +1751,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1764,16 +1761,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -1786,8 +1786,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1807,7 +1805,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1819,8 +1816,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1828,8 +1826,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1845,8 +1845,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1868,7 +1866,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1880,8 +1877,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1889,8 +1887,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1906,8 +1906,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1929,7 +1927,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1941,8 +1938,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -1950,8 +1948,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -1967,8 +1967,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1990,7 +1988,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2002,16 +1999,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -2026,8 +2026,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2047,7 +2045,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2059,8 +2056,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2068,8 +2066,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -2084,8 +2084,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2107,7 +2105,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2119,16 +2116,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -2143,8 +2143,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2164,7 +2162,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2175,16 +2172,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2197,8 +2197,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2218,7 +2216,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2229,8 +2226,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2238,8 +2236,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal equivalent creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2252,8 +2252,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2275,7 +2273,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2286,16 +2283,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent creep strain results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2308,8 +2308,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2329,7 +2327,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2342,8 +2339,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2351,8 +2349,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract reaction force results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -2370,8 +2370,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2394,7 +2392,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2405,16 +2402,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2427,8 +2427,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2448,7 +2446,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2459,16 +2456,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2481,8 +2481,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2502,7 +2500,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2513,16 +2510,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2535,8 +2535,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2556,7 +2554,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2567,16 +2564,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2589,8 +2589,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2610,7 +2608,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2621,16 +2618,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2643,8 +2643,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2664,7 +2662,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2675,16 +2672,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2697,8 +2697,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2718,7 +2716,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2729,16 +2726,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2751,8 +2751,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2772,7 +2770,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2783,8 +2780,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2792,8 +2790,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal element orientations results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2806,8 +2806,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2829,7 +2827,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2840,8 +2837,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2849,8 +2847,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stiffness matrix energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2863,8 +2863,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2886,7 +2884,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2897,8 +2894,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2906,8 +2904,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract artificial hourglass energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2920,8 +2920,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2943,7 +2941,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2954,8 +2951,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -2963,8 +2961,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract thermal dissipation energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -2977,8 +2977,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3000,7 +2998,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3011,8 +3008,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3020,8 +3018,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract kinetic energy results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3034,8 +3034,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3057,7 +3055,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3068,8 +3065,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3077,8 +3075,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure element nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3091,8 +3091,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3114,7 +3112,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3125,8 +3122,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3134,8 +3132,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3148,8 +3148,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3171,7 +3169,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3182,8 +3179,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3191,8 +3189,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract hydrostatic pressure elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3205,8 +3205,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3228,7 +3226,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3239,8 +3236,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3248,8 +3246,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature element nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3262,8 +3262,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3285,7 +3283,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3296,8 +3293,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3305,8 +3303,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3319,8 +3319,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3342,7 +3340,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3353,8 +3350,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3362,8 +3360,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract structural temperature elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             selection:
@@ -3376,8 +3376,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3399,7 +3397,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3412,8 +3409,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3421,8 +3419,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -3440,8 +3440,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3464,7 +3462,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3477,8 +3474,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3486,8 +3484,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces nodal results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -3505,8 +3505,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3529,7 +3527,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3542,16 +3539,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -3569,8 +3569,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             load_steps:
                 List of load steps to get results for.
-            sub_steps:
-                List of sub-steps to get results for. Requires load_steps to be defined.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -3591,7 +3589,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3604,8 +3601,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3613,8 +3611,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal force results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -3656,7 +3656,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3669,8 +3668,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
-        load_steps: Union[int, List[int], None] = None,
-        sub_steps: Union[int, List[int], None] = None,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -3678,8 +3678,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal moment results from the simulation.
 
         The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), the time selection argument
-        taken into account is: `set_ids`, `times`, `sub_steps`, and `load_steps`.
+        Then, in order of priority (and from fine to coarse), only one time selection argument
+        is taken into account: `set_ids`, then `times`, and then `load_steps`.
+        In the same manner, only one mesh entity argument is taken into account:
+        `named_selections`, then `element_ids`, and then `node_ids`.
 
         Args:
             components:
@@ -3721,7 +3723,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times=times,
             set_ids=set_ids,
             load_steps=load_steps,
-            sub_steps=sub_steps,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
