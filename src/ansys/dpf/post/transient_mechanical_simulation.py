@@ -30,17 +30,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             base_name:
@@ -87,8 +79,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
             selection=selection,
-            nodes=node_ids,
-            elements=element_ids,
+            node_ids=node_ids,
+            element_ids=element_ids,
             named_selections=named_selections,
             location=location,
         )
@@ -209,17 +201,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -281,17 +265,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract velocity results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -353,17 +329,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract acceleration results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -424,17 +392,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -492,17 +452,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -560,17 +512,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -627,17 +571,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -691,17 +627,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -756,17 +684,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -821,17 +741,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -882,17 +794,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -944,17 +848,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -1009,17 +905,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1077,17 +965,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1145,17 +1025,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1212,17 +1084,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1277,17 +1141,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1343,17 +1199,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1406,17 +1254,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -1467,17 +1307,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -1529,17 +1361,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -1594,17 +1418,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1662,17 +1478,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1730,17 +1538,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1797,17 +1597,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1862,17 +1654,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1928,17 +1712,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -1991,17 +1767,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2053,17 +1821,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2116,17 +1876,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2180,17 +1932,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -2249,17 +1993,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2310,17 +2046,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2371,17 +2099,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2432,17 +2152,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2493,17 +2205,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2554,17 +2258,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2615,17 +2311,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2677,17 +2365,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2741,17 +2421,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2805,17 +2477,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2869,17 +2533,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2933,17 +2589,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -2997,17 +2645,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -3061,17 +2701,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -3125,17 +2757,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -3189,17 +2813,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -3253,17 +2869,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             selection:
@@ -3319,17 +2927,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -3391,17 +2991,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -3462,17 +3054,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -3532,17 +3116,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:
@@ -3604,17 +3180,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
-
-        The `selection` argument overrides any other filtering argument.
-        Then, in order of priority (and from fine to coarse), only one time selection argument
-        is taken into account: `set_ids`, then `times`, and then `load_steps`.
-        In the same manner, only one mesh entity argument is taken into account:
-        `named_selections`, then `element_ids`, and then `node_ids`.
+        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
 
         Args:
             components:

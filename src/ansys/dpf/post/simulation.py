@@ -389,8 +389,8 @@ class MechanicalSimulation(Simulation, ABC):
         self,
         selection=None,
         named_selections=None,
-        elements=None,
-        nodes=None,
+        element_ids=None,
+        node_ids=None,
         location=core.locations.nodal,
     ) -> Union[core.Scoping, core.outputs.Output, None]:
         """Generate a mesh_scoping from input arguments.
@@ -403,9 +403,9 @@ class MechanicalSimulation(Simulation, ABC):
                 Selection object to use.
             named_selections:
                 Named selection to use.
-            elements:
+            element_ids:
                 Element IDs to use.
-            nodes:
+            node_ids:
                 Node IDs to use.
             location:
                 Requested location for the returned Scoping.
@@ -414,16 +414,16 @@ class MechanicalSimulation(Simulation, ABC):
         -------
             Returns a mesh Scoping or an operator Output giving a mesh Scoping.
         """
-        if (nodes is not None or elements is not None) and named_selections is not None:
+        tot = (
+            (node_ids is not None)
+            + (element_ids is not None)
+            + (named_selections is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
             raise ValueError(
-                "nodes/elements and named_selection are mutually exclusive"
-            )
-
-        if selection is not None and (
-            nodes is not None or named_selections is not None or elements is not None
-        ):
-            raise ValueError(
-                "selection and nodes/elements/named_selection are mutually exclusive"
+                "Arguments selection, named_selections, element_ids, "
+                "and node_ids are mutually exclusive"
             )
 
         # Build the mesh_scoping
@@ -449,9 +449,9 @@ class MechanicalSimulation(Simulation, ABC):
                     )
                 mesh_scoping = merge_scopings_op.outputs.merged_scoping
 
-        elif elements:
+        elif element_ids:
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
-                element_ids=elements, server=self._model._server
+                element_ids=element_ids, server=self._model._server
             )
             # Transpose location if necessary
             if location == core.locations.nodal:
@@ -461,9 +461,9 @@ class MechanicalSimulation(Simulation, ABC):
                 transpose_op.connect(2, 0)
                 mesh_scoping = transpose_op.outputs.mesh_scoping_as_scoping
 
-        elif nodes:
+        elif node_ids:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-                nodes, server=self._model._server
+                node_ids, server=self._model._server
             )
 
         return mesh_scoping
@@ -495,6 +495,17 @@ class MechanicalSimulation(Simulation, ABC):
         -------
             A Scoping corresponding to the requested input, with time location.
         """
+        tot = (
+            (set_ids is not None)
+            + (times is not None)
+            + (load_steps is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments selection, named_selections, element_ids, "
+                "and node_ids are mutually exclusive"
+            )
         # create from selection in priority
         if selection:
             return selection.time_freq_selection._evaluate_on(simulation=self)

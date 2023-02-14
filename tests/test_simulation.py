@@ -75,6 +75,12 @@ class TestStaticMechanicalSimulation:
                 components=1, node_ids=[1001, 1002, 1003]
             )
 
+    def test_raise_mutually_exclusive(self, static_simulation):
+        with pytest.raises(ValueError, match="exclusive"):
+            _ = static_simulation.displacement(node_ids=[42], element_ids=[1])
+        with pytest.raises(ValueError, match="exclusive"):
+            _ = static_simulation.displacement(load_steps=[1], set_ids=[1])
+
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
             components=["X"], node_ids=[42, 43, 44], set_ids=[1]
