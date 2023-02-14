@@ -351,11 +351,17 @@ class Simulation(ABC):
         return out, columns
 
     @abstractmethod
-    def _build_mesh_scoping(self) -> core.mesh_scoping_factory.Scoping:
+    def _build_mesh_scoping(self) -> Union[core.Scoping, core.outputs.Output, None]:
         """Generate a mesh_scoping from input arguments."""
         pass
 
-    def _build_result_operator(self, name, time_scoping, mesh_scoping, location):
+    def _build_result_operator(
+        self,
+        name: str,
+        time_scoping: core.Scoping,
+        mesh_scoping: Union[core.Scoping, core.outputs.Output],
+        location: core.locations,
+    ) -> core.Operator:
         op = self._model.operator(name=name)
         # Set the time_scoping if necessary
         if time_scoping:
@@ -386,7 +392,7 @@ class MechanicalSimulation(Simulation, ABC):
         elements=None,
         named_selections=None,
         location=core.locations.nodal,
-    ) -> Union[core.mesh_scoping_factory.Scoping, None]:
+    ) -> Union[core.Scoping, core.outputs.Output, None]:
         if (nodes is not None or elements is not None) and named_selections is not None:
             raise ValueError(
                 "nodes/elements and named_selection are mutually exclusive"
@@ -399,15 +405,16 @@ class MechanicalSimulation(Simulation, ABC):
                 "selection and nodes/elements/named_selection are mutually exclusive"
             )
 
+        # Build the mesh_scoping
         mesh_scoping = None
         if selection:
-            mesh_scoping = selection.mesh_scoping
+            mesh_scoping = selection.mesh_scoping_output
 
         if named_selections:
             if type(named_selections) == str:
-                mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
-                    named_selections, server=self._model._server, model=self._model
-                )
+                mesh_scoping_op = self._model.operator("scoping_provider_by_ns")
+                mesh_scoping_op.connect(1, named_selections)
+                mesh_scoping = mesh_scoping_op.outputs.mesh_scoping
             elif type(named_selections) == list:
                 merge_scopings_op = self._model.operator(name="merge::scoping")
                 for pin, named_selection in enumerate(named_selections):
@@ -419,7 +426,7 @@ class MechanicalSimulation(Simulation, ABC):
                     merge_scopings_op.connect(
                         pin, mesh_scoping_on_ns_op.outputs.mesh_scoping
                     )
-                mesh_scoping = merge_scopings_op.eval()
+                mesh_scoping = merge_scopings_op.outputs.merged_scoping
 
         if nodes:
             mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
@@ -430,23 +437,13 @@ class MechanicalSimulation(Simulation, ABC):
             mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
                 element_ids=elements, server=self._model._server
             )
-
-        if mesh_scoping is None:
-            return mesh_scoping
-
-        # Transpose location if necessary
-        if (
-            location == core.locations.nodal
-            and mesh_scoping.location != core.locations.nodal
-        ) or (
-            location == core.locations.elemental
-            and mesh_scoping.location != core.locations.elemental
-        ):
-            mesh_scoping = core.operators.scoping.transpose(
-                mesh_scoping=mesh_scoping,
-                meshed_region=self.mesh._meshed_region,
-                inclusive=1,
-            ).eval()
+            # Transpose location if necessary
+            if location == core.locations.nodal:
+                transpose_op = self._model.operator(name="transpose_scoping")
+                transpose_op.connect(0, mesh_scoping)
+                transpose_op.connect(1, self.mesh._meshed_region)
+                transpose_op.connect(2, 0)
+                mesh_scoping = transpose_op.outputs.mesh_scoping_as_scoping
 
         return mesh_scoping
 
