@@ -71,15 +71,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         # Build the targeted time scoping
         time_scoping = self._build_time_freq_scoping(
-            selection, times, set_ids, load_steps
+            selection=selection,
+            set_ids=set_ids,
+            times=times,
+            load_steps=load_steps,
         )
 
         # Build the targeted mesh scoping
         mesh_scoping = self._build_mesh_scoping(
-            selection,
-            node_ids,
-            element_ids,
-            named_selections,
+            selection=selection,
+            nodes=node_ids,
+            elements=element_ids,
+            named_selections=named_selections,
             location=location,
         )
 
