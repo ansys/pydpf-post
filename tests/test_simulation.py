@@ -72,12 +72,12 @@ class TestStaticMechanicalSimulation:
     def test_warning_empty(self, static_simulation):
         with pytest.warns(expected_warning=UserWarning, match="empty"):
             _ = static_simulation.displacement(
-                component_ids=1, node_ids=[1001, 1002, 1003]
+                components=1, node_ids=[1001, 1002, 1003]
             )
 
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
-            component_ids=["X"], node_ids=[42, 43, 44], set_ids=[1]
+            components=["X"], node_ids=[42, 43, 44], set_ids=[1]
         )
         assert len(displacement_x._fc) == 1
         assert displacement_x._fc.get_time_scoping().ids == [1]
@@ -93,7 +93,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_y = static_simulation.displacement(
-            component_ids=["2"],
+            components=["2"],
             named_selections=static_simulation.named_selections[0],
             load_steps=[1],
             sub_steps=[1],
@@ -114,7 +114,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
-            component_ids="Z",
+            components="Z",
             named_selections=static_simulation.named_selections[0],
             load_steps=1,
             sub_steps=1,
@@ -135,7 +135,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         displacement_z = static_simulation.displacement(
-            component_ids="Z",
+            components="Z",
             element_ids=[1, 2, 3],
             set_ids=1,
         )
@@ -178,7 +178,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, static_simulation):
-        stress_x = static_simulation.stress(component_ids=1)
+        stress_x = static_simulation.stress(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
@@ -190,7 +190,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_elemental(self, static_simulation):
-        stress_x = static_simulation.stress_elemental(component_ids=1)
+        stress_x = static_simulation.stress_elemental(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
@@ -202,7 +202,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_nodal(self, static_simulation):
-        stress_x = static_simulation.stress_nodal(component_ids=1)
+        stress_x = static_simulation.stress_nodal(components=1)
         assert len(stress_x._fc) == 1
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
@@ -214,7 +214,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_principal(self, static_simulation):
-        result = static_simulation.stress_principal(component_ids=1)
+        result = static_simulation.stress_principal(components=1)
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
@@ -226,7 +226,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_principal_nodal(self, static_simulation):
-        result = static_simulation.stress_principal_nodal(component_ids=2)
+        result = static_simulation.stress_principal_nodal(components=2)
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
@@ -238,7 +238,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_principal_elemental(self, static_simulation):
-        result = static_simulation.stress_principal_elemental(component_ids=3)
+        result = static_simulation.stress_principal_elemental(components=3)
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
@@ -431,7 +431,7 @@ class TestStaticMechanicalSimulation:
 class TestTransientMechanicalSimulation:
     def test_displacement(self, transient_simulation):
         result = transient_simulation.displacement(
-            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
+            components=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -451,7 +451,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         result = transient_simulation.displacement(
-            component_ids=1,
+            components=1,
             named_selections=transient_simulation.named_selections[:2],
             time_step_ids=[2],
         )
@@ -463,7 +463,7 @@ class TestTransientMechanicalSimulation:
 
     def test_velocity(self, transient_simulation):
         result = transient_simulation.velocity(
-            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
+            components=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -484,7 +484,7 @@ class TestTransientMechanicalSimulation:
 
     def test_acceleration(self, transient_simulation):
         result = transient_simulation.acceleration(
-            component_ids=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
+            components=["X"], node_ids=[2, 3, 4], time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -504,7 +504,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, transient_simulation):
-        result = transient_simulation.stress(component_ids=1, time_step_ids=[2])
+        result = transient_simulation.stress(components=1, time_step_ids=[2])
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
@@ -519,9 +519,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_elemental(self, transient_simulation):
-        result = transient_simulation.stress_elemental(
-            component_ids=1, time_step_ids=[2]
-        )
+        result = transient_simulation.stress_elemental(components=1, time_step_ids=[2])
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
@@ -536,7 +534,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_nodal(self, transient_simulation):
-        result = transient_simulation.stress_nodal(component_ids=1, time_step_ids=[2])
+        result = transient_simulation.stress_nodal(components=1, time_step_ids=[2])
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
@@ -551,9 +549,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_principal(self, transient_simulation):
-        result = transient_simulation.stress_principal(
-            component_ids=1, time_step_ids=[2]
-        )
+        result = transient_simulation.stress_principal(components=1, time_step_ids=[2])
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
@@ -569,7 +565,7 @@ class TestTransientMechanicalSimulation:
 
     def test_stress_principal_nodal(self, transient_simulation):
         result = transient_simulation.stress_principal_nodal(
-            component_ids=2, time_step_ids=[2]
+            components=2, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -586,7 +582,7 @@ class TestTransientMechanicalSimulation:
 
     def test_stress_principal_elemental(self, transient_simulation):
         result = transient_simulation.stress_principal_elemental(
-            component_ids=3, time_step_ids=[2]
+            components=3, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -647,7 +643,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain(self, transient_simulation):
-        result = transient_simulation.elastic_strain(component_ids=1, time_step_ids=[2])
+        result = transient_simulation.elastic_strain(components=1, time_step_ids=[2])
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
@@ -663,7 +659,7 @@ class TestTransientMechanicalSimulation:
 
     def test_elastic_strain_elemental(self, transient_simulation):
         result = transient_simulation.elastic_strain_elemental(
-            component_ids=1, time_step_ids=[2]
+            components=1, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -680,7 +676,7 @@ class TestTransientMechanicalSimulation:
 
     def test_elastic_strain_nodal(self, transient_simulation):
         result = transient_simulation.elastic_strain_nodal(
-            component_ids=1, time_step_ids=[2]
+            components=1, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -697,7 +693,7 @@ class TestTransientMechanicalSimulation:
 
     def test_elastic_strain_principal(self, transient_simulation):
         result = transient_simulation.elastic_strain_principal(
-            component_ids=1, time_step_ids=[2]
+            components=1, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -714,7 +710,7 @@ class TestTransientMechanicalSimulation:
 
     def test_elastic_strain_principal_nodal(self, transient_simulation):
         result = transient_simulation.elastic_strain_principal_nodal(
-            component_ids=2, time_step_ids=[2]
+            components=2, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
@@ -731,7 +727,7 @@ class TestTransientMechanicalSimulation:
 
     def test_elastic_strain_principal_elemental(self, transient_simulation):
         result = transient_simulation.elastic_strain_principal_elemental(
-            component_ids=3, time_step_ids=[2]
+            components=3, time_step_ids=[2]
         )
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]

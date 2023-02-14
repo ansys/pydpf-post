@@ -33,7 +33,7 @@ displacement._fc[0].plot()
 # Get and plot stresses
 # ---------------------
 # Request "XY" stress component averaged on nodes
-stress = simulation.stress_nodal(component_ids="XY")
+stress = simulation.stress_nodal(components="XY")
 
 ###############################################################################
 # Print information

@@ -200,7 +200,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def displacement(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -215,7 +215,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -244,7 +244,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="U",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -256,7 +256,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def velocity(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -271,7 +271,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -300,7 +300,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="V",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -312,7 +312,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def acceleration(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -327,7 +327,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -356,7 +356,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="A",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -368,7 +368,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -382,7 +382,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -409,7 +409,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -420,7 +420,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -434,7 +434,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -461,7 +461,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -472,7 +472,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -486,7 +486,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -513,7 +513,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -524,7 +524,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -537,7 +537,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -561,7 +561,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -572,7 +572,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_elemental(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -585,7 +585,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -609,7 +609,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -620,7 +620,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_nodal(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -634,7 +634,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -660,7 +660,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -809,7 +809,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -823,7 +823,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -850,7 +850,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -861,7 +861,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -875,7 +875,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -902,7 +902,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -913,7 +913,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -927,7 +927,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -954,7 +954,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -965,7 +965,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -978,7 +978,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1002,7 +1002,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1013,7 +1013,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1027,7 +1027,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1053,7 +1053,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1064,7 +1064,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1077,7 +1077,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1101,7 +1101,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1250,7 +1250,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1264,7 +1264,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1291,7 +1291,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1302,7 +1302,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1316,7 +1316,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1343,7 +1343,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1354,7 +1354,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1368,7 +1368,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1395,7 +1395,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1406,7 +1406,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1419,7 +1419,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1443,7 +1443,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1454,7 +1454,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1468,7 +1468,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1494,7 +1494,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1505,7 +1505,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         time_step_ids: Union[int, List[int], None] = None,
@@ -1518,7 +1518,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1542,7 +1542,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             time_step_ids=time_step_ids,
@@ -1691,7 +1691,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def reaction_force(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -1706,7 +1706,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -1735,7 +1735,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="RF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -2542,7 +2542,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2557,7 +2557,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2586,7 +2586,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.elemental_nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -2598,7 +2598,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2613,7 +2613,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2642,7 +2642,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -2654,7 +2654,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2668,7 +2668,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2695,7 +2695,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.elemental,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -2707,7 +2707,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def nodal_force(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2722,7 +2722,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2751,7 +2751,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="F",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -2763,7 +2763,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def nodal_moment(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2778,7 +2778,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         The `time_step_ids` argument then takes precedence over `times`.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2807,7 +2807,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             base_name="M",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,

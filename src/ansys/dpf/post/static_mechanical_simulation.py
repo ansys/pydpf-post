@@ -240,7 +240,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def displacement(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -254,7 +254,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract displacement results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -287,7 +287,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="U",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -301,7 +301,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -314,7 +314,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -345,7 +345,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -358,7 +358,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -371,7 +371,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -402,7 +402,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -415,7 +415,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -428,7 +428,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -459,7 +459,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -472,7 +472,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[List[int], None] = None,
@@ -484,7 +484,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal principal stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -512,7 +512,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -525,7 +525,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_elemental(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[List[int], None] = None,
@@ -537,7 +537,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental principal stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -565,7 +565,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -578,7 +578,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_nodal(
         self,
-        component_ids: Union[List[str], List[int], None] = None,
+        components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[List[int], None] = None,
@@ -591,7 +591,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -621,7 +621,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="S",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -787,7 +787,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -800,7 +800,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -831,7 +831,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -844,7 +844,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -857,7 +857,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -888,7 +888,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -901,7 +901,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -914,7 +914,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract stress results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -945,7 +945,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -958,7 +958,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -970,7 +970,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal principal elastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -998,7 +998,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1011,7 +1011,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1024,7 +1024,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal elastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1054,7 +1054,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1067,7 +1067,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1079,7 +1079,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental principal elastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1107,7 +1107,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPEL",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1273,7 +1273,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1286,7 +1286,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1317,7 +1317,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1330,7 +1330,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1343,7 +1343,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1374,7 +1374,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1387,7 +1387,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1400,7 +1400,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1431,7 +1431,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1444,7 +1444,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1456,7 +1456,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal principal plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1484,7 +1484,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1497,7 +1497,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1510,7 +1510,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1540,7 +1540,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1553,7 +1553,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1565,7 +1565,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental principal plastic strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1593,7 +1593,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="EPPL",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1759,7 +1759,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1772,7 +1772,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1803,7 +1803,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.elemental_nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1816,7 +1816,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1829,7 +1829,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1860,7 +1860,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.nodal,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1873,7 +1873,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1886,7 +1886,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
             selection:
@@ -1917,7 +1917,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.elemental,
             category=ResultCategory.matrix,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1930,7 +1930,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_principal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1942,7 +1942,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental nodal principal creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -1970,7 +1970,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.elemental_nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1983,7 +1983,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_principal_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1996,7 +1996,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal principal creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -2026,7 +2026,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.nodal,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -2039,7 +2039,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_principal_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2051,7 +2051,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract elemental principal creep strain results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are: 1, 2, and 3.
             selection:
                 Selection to get results for.
@@ -2079,7 +2079,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ECR",
             location=core.locations.elemental,
             category=ResultCategory.principal,
-            components=component_ids,
+            components=components,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -2245,7 +2245,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def reaction_force(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -2259,7 +2259,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract reaction force results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -2292,7 +2292,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="RF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -3239,7 +3239,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -3253,7 +3253,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -3286,7 +3286,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.elemental_nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -3300,7 +3300,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces_nodal(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -3314,7 +3314,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces nodal results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -3347,7 +3347,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -3361,7 +3361,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces_elemental(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -3374,7 +3374,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract element nodal forces elemental results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -3405,7 +3405,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="ENF",
             location=core.locations.elemental,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -3419,7 +3419,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def nodal_force(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -3433,7 +3433,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal force results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -3466,7 +3466,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="F",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
@@ -3480,7 +3480,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def nodal_moment(
         self,
-        component_ids: Union[str, List[str], int, List[int], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
@@ -3494,7 +3494,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """Extract nodal moment results from the simulation.
 
         Args:
-            component_ids:
+            components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
@@ -3527,7 +3527,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name="M",
             location=core.locations.nodal,
             category=ResultCategory.vector,
-            components=component_ids,
+            components=components,
             norm=norm,
             selection=selection,
             times=times,
