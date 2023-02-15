@@ -33,8 +33,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             base_name:
@@ -208,8 +211,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -277,8 +283,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -341,8 +350,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -405,8 +417,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -468,8 +483,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -528,8 +546,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -589,8 +610,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -650,8 +674,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -707,8 +734,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -765,8 +795,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -826,8 +859,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -890,8 +926,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -954,8 +993,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1017,8 +1059,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1078,8 +1123,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1140,8 +1188,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1199,8 +1250,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1256,8 +1310,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1314,8 +1371,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1375,8 +1435,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1439,8 +1502,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1503,8 +1569,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1566,8 +1635,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1627,8 +1699,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1689,8 +1764,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1748,8 +1826,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1806,8 +1887,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1865,8 +1949,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -1924,8 +2011,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -1988,8 +2078,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2052,8 +2145,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2115,8 +2211,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2176,8 +2275,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2238,8 +2340,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2297,8 +2402,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2355,8 +2463,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2414,8 +2525,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2474,8 +2588,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -2539,8 +2656,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2596,8 +2716,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2653,8 +2776,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2710,8 +2836,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2767,8 +2896,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2824,8 +2956,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2881,8 +3016,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2939,8 +3077,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -2999,8 +3140,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3059,8 +3203,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3119,8 +3266,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3179,8 +3329,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3239,8 +3392,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3299,8 +3455,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3359,8 +3518,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3419,8 +3581,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3479,8 +3644,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3539,8 +3707,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             selection:
@@ -3601,8 +3772,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -3669,8 +3843,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -3736,8 +3913,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -3802,8 +3982,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
@@ -3872,8 +4055,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
+        If none of the above is given, only the last result will be returned.
+
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             components:
