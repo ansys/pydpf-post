@@ -195,18 +195,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def displacement(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
@@ -219,17 +219,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                Times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -237,12 +237,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of element whose nodes to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -267,18 +266,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def velocity(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract velocity results from the simulation.
 
@@ -291,17 +290,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                Times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -309,12 +308,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of element whose nodes to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -339,18 +337,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def acceleration(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract acceleration results from the simulation.
 
@@ -363,17 +361,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                Times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -381,12 +379,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of element whose nodes to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -411,17 +408,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
@@ -429,20 +425,20 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -450,12 +446,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -472,24 +467,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def stress_elemental(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
@@ -497,20 +491,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -518,12 +510,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -540,24 +531,24 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def stress_nodal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
@@ -570,15 +561,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -586,12 +577,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -615,16 +605,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
-        components: Union[List[str], List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
+        components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
@@ -632,19 +622,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -652,10 +640,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -679,16 +668,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_elemental(
         self,
-        components: Union[List[str], List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
+        components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
@@ -696,19 +685,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -716,10 +703,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -743,17 +731,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal_nodal(
         self,
-        components: Union[List[str], List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
+        components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
@@ -766,14 +754,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs pf elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -781,12 +769,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -810,15 +797,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
@@ -826,17 +813,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -844,10 +829,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -871,15 +857,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
@@ -887,17 +873,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -905,10 +889,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -932,16 +917,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
@@ -954,12 +939,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -967,12 +952,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -996,17 +980,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -1014,20 +997,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1035,12 +1016,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1057,24 +1037,24 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def elastic_strain_nodal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -1087,15 +1067,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1103,12 +1083,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1132,17 +1111,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_elemental(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -1150,20 +1128,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1171,12 +1147,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1193,23 +1168,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def elastic_strain_principal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
@@ -1217,19 +1192,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1237,10 +1210,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1264,17 +1238,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_nodal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1287,14 +1261,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs pf elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1302,12 +1276,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1331,16 +1304,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal_elemental(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1348,19 +1321,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1368,10 +1339,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1395,15 +1367,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
@@ -1411,17 +1383,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1429,10 +1399,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1456,15 +1427,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1472,17 +1443,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1490,10 +1459,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1517,16 +1487,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1539,12 +1509,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1552,12 +1522,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1581,17 +1550,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
@@ -1599,20 +1567,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1620,12 +1586,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1642,24 +1607,24 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def plastic_strain_nodal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
@@ -1672,15 +1637,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1688,12 +1653,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1717,17 +1681,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_elemental(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
@@ -1735,20 +1698,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1756,12 +1717,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1778,23 +1738,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def plastic_strain_principal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
@@ -1802,19 +1762,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1822,10 +1780,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1849,17 +1808,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_nodal(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -1872,14 +1831,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs pf elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1887,12 +1846,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1916,16 +1874,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal_elemental(
         self,
-        components: Union[str, List[str], int, List[int], None] = None,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -1933,19 +1891,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1953,10 +1909,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -1980,15 +1937,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
@@ -1996,17 +1953,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2014,10 +1969,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2041,16 +1997,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -2063,12 +2019,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2076,12 +2032,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2105,15 +2060,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -2121,17 +2076,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2139,10 +2092,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2166,18 +2120,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def reaction_force(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
@@ -2190,17 +2144,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2208,12 +2162,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2238,15 +2191,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elemental_volume(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
@@ -2254,17 +2207,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2272,10 +2223,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2299,15 +2251,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elemental_mass(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
@@ -2315,17 +2267,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2333,10 +2283,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2360,15 +2311,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def elemental_heat_generation(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
@@ -2376,17 +2327,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2394,10 +2343,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2421,15 +2371,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_centroids(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
@@ -2437,17 +2387,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2455,10 +2403,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2482,15 +2431,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def thickness(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
@@ -2498,17 +2447,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2516,10 +2463,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2543,15 +2491,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -2559,17 +2507,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2577,10 +2523,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2604,15 +2551,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
@@ -2620,17 +2567,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2638,10 +2583,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2665,16 +2611,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
@@ -2687,12 +2633,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2700,12 +2646,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2729,16 +2674,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def artificial_hourglass_energy(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -2746,17 +2690,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2764,12 +2706,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2786,23 +2727,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def thermal_dissipation_energy(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -2810,17 +2750,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2828,12 +2766,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2850,23 +2787,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def kinetic_energy(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
@@ -2874,17 +2810,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2892,12 +2826,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2914,23 +2847,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def hydrostatic_pressure(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -2938,17 +2870,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2956,12 +2886,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -2978,23 +2907,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def hydrostatic_pressure_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -3007,12 +2936,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3020,12 +2949,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3049,16 +2977,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def hydrostatic_pressure_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -3066,17 +2993,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3084,12 +3009,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3106,23 +3030,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def structural_temperature(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3130,17 +3053,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3148,12 +3069,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3170,23 +3090,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def structural_temperature_nodal(
         self,
-        selection: Union[Selection, None] = None,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
@@ -3199,12 +3119,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3212,12 +3132,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3241,16 +3160,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def structural_temperature_elemental(
         self,
-        selection: Union[Selection, None] = None,
+        element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
@@ -3258,17 +3176,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
+            element_ids:
+                List of IDs of elements to get results for.
             times:
-                List of times to get results for.
+                List of time values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3276,12 +3192,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3298,25 +3213,24 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def element_nodal_forces(
         self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
@@ -3324,22 +3238,20 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3347,12 +3259,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3370,25 +3281,25 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=node_ids,
+            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
 
     def element_nodal_forces_nodal(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -3401,17 +3312,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3419,12 +3330,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3449,17 +3359,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces_elemental(
         self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -3467,22 +3377,20 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3490,10 +3398,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            elements:
-                List of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3518,18 +3427,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def nodal_force(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
@@ -3542,17 +3451,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            times:
+                List of time values to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3560,12 +3469,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of element whose nodes to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
@@ -3590,18 +3498,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
     def nodal_moment(
         self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
@@ -3614,17 +3522,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            times:
+                List of time values to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -3632,12 +3540,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of element whose nodes to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
