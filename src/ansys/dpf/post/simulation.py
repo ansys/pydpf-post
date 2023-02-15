@@ -610,14 +610,6 @@ class MechanicalSimulation(Simulation, ABC):
         )
 
 
-class ModalMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical modal simulations."""
-
-    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        pass
-
-
 class HarmonicMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical harmonic simulations."""
 
