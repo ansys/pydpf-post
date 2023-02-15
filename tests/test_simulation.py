@@ -83,7 +83,7 @@ class TestStaticMechanicalSimulation:
 
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
-            components=["X"], node_ids=[42, 43, 44], set_ids=[1]
+            components=["X"], node_ids=[42, 43, 44]
         )
         assert len(displacement_x._fc) == 1
         assert displacement_x._fc.get_time_scoping().ids == [1]
@@ -435,14 +435,19 @@ class TestStaticMechanicalSimulation:
 class TestTransientMechanicalSimulation:
     def test_displacement(self, transient_simulation):
         result = transient_simulation.displacement(
-            components=["X"], node_ids=[2, 3, 4], set_ids=[2]
+            components=["X"],
+            node_ids=[2, 3, 4],
+            all_sets=True,
         )
+        assert len(result._fc) == 20
+        assert len(result._fc.get_time_scoping().ids) == 20
+        result = transient_simulation.displacement(components=["X"], node_ids=[2, 3, 4])
         assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
+        assert result._fc.get_time_scoping().ids == [20]
         field = result._fc[0]
         op = transient_simulation._model.operator("UX")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
-            2, server=transient_simulation._model._server
+            20, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
         mesh_scoping = core.mesh_scoping_factory.nodal_scoping(

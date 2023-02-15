@@ -476,10 +476,12 @@ class MechanicalSimulation(Simulation, ABC):
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
+        all_sets: bool = False,
     ) -> core.time_freq_scoping_factory.Scoping:
         """Generate a time_freq_scoping from input arguments.
 
-        Only one input is used, by order of priority: selection, set_ids, times, load_steps.
+        Only one input is used, by order of priority:
+        all_sets, selection, set_ids, times, load_steps.
 
         Args:
             selection:
@@ -490,6 +492,8 @@ class MechanicalSimulation(Simulation, ABC):
                 Time values to use, if no selection nor set_ids are defined.
             load_steps:
                 Load step IDs (and sub-step if tuple) to use, if no other is defined.
+            all_sets:
+                Whether to force extraction of all sets.
 
         Returns
         -------
@@ -497,16 +501,19 @@ class MechanicalSimulation(Simulation, ABC):
         """
         tot = (
             (set_ids is not None)
+            + (all_sets is True)
             + (times is not None)
             + (load_steps is not None)
             + (selection is not None)
         )
         if tot > 1:
             raise ValueError(
-                "Arguments selection, named_selections, element_ids, "
-                "and node_ids are mutually exclusive"
+                "Arguments all_sets, selection, set_ids, times, "
+                "and load_steps are mutually exclusive."
             )
-        # create from selection in priority
+        if all_sets:
+            return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+        # create from selection
         if selection:
             return selection.time_freq_selection._evaluate_on(simulation=self)
         # else from set_ids
@@ -545,8 +552,10 @@ class MechanicalSimulation(Simulation, ABC):
             return core.time_freq_scoping_factory.scoping_by_load_steps(
                 load_steps=load_steps, server=self._model._server
             )
-        # Otherwise, no argument was given, create a time_freq_scoping of the whole results
-        return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+        # Otherwise, no argument was given, create a time_freq_scoping of the last set only
+        return core.time_freq_scoping_factory.scoping_by_set(
+            cumulative_set=self.time_freq_support.n_sets, server=self._model._server
+        )
 
 
 class ModalMechanicalSimulation(MechanicalSimulation):

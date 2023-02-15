@@ -21,6 +21,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -30,7 +31,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -53,6 +55,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids:
                 List of sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
                 List of load steps to get results for.
             node_ids:
@@ -73,6 +77,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             times=times,
             load_steps=load_steps,
+            all_sets=all_sets,
         )
 
         # Build the targeted mesh scoping
@@ -191,6 +196,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -200,7 +206,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -218,6 +225,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
             sub_steps:
@@ -243,6 +252,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -255,6 +265,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -264,7 +275,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -278,10 +290,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -302,6 +316,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -314,6 +329,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -323,7 +339,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -337,10 +354,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -361,6 +380,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -373,6 +393,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -382,7 +403,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -396,10 +418,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -420,6 +444,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -431,15 +456,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -452,10 +480,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -474,6 +504,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -485,15 +516,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -506,10 +540,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -528,6 +564,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -539,16 +576,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -561,10 +601,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -585,6 +627,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -595,15 +638,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -614,10 +660,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -636,6 +684,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -646,15 +695,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -665,10 +717,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -687,6 +741,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -697,16 +752,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         self,
         selection: Union[Selection, None] = None,
         times: Union[List[float], None] = None,
-        set_ids: Union[List[int], None] = None,
-        load_steps: Union[List[int], None] = None,
-        sub_steps: Union[List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -717,10 +775,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -741,6 +801,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -753,6 +814,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -762,7 +824,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -776,10 +839,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -800,6 +865,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -812,6 +878,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -821,7 +888,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -835,10 +903,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -859,6 +929,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -871,6 +942,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -880,7 +952,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -894,10 +967,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -918,6 +993,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -930,6 +1006,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -938,7 +1015,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -951,10 +1029,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -973,6 +1053,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -985,6 +1066,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -994,7 +1076,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1007,10 +1090,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1031,6 +1116,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1043,6 +1129,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1051,7 +1138,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1064,10 +1152,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1086,6 +1176,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1097,6 +1188,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1105,7 +1197,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1116,10 +1209,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1138,6 +1233,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1149,6 +1245,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1157,7 +1254,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1168,10 +1266,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1190,6 +1290,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1201,6 +1302,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1210,7 +1312,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1221,10 +1324,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1245,6 +1350,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1257,6 +1363,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1266,7 +1373,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1280,10 +1388,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1304,6 +1414,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1316,6 +1427,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1325,7 +1437,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1339,10 +1452,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1363,6 +1478,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1375,6 +1491,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1384,7 +1501,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1398,10 +1516,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1422,6 +1542,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1434,6 +1555,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1442,7 +1564,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1455,10 +1578,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1477,6 +1602,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1489,6 +1615,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1498,7 +1625,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1511,10 +1639,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1535,6 +1665,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1547,6 +1678,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1555,7 +1687,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1568,10 +1701,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1590,6 +1725,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1601,6 +1737,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1609,7 +1746,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1620,10 +1758,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1642,6 +1782,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1653,6 +1794,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1662,7 +1804,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1673,10 +1816,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1697,6 +1842,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1708,6 +1854,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1716,7 +1863,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1727,10 +1875,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1749,6 +1899,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1761,6 +1912,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1770,7 +1922,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1784,10 +1937,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1808,6 +1963,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1820,6 +1976,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1829,7 +1986,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1843,10 +2001,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1867,6 +2027,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1879,6 +2040,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1888,7 +2050,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1902,10 +2065,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -1926,6 +2091,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -1938,6 +2104,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -1946,7 +2113,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -1959,10 +2127,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -1981,6 +2151,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -1993,6 +2164,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2002,7 +2174,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2015,10 +2188,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2039,6 +2214,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2051,6 +2227,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2059,7 +2236,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2072,10 +2250,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2094,6 +2274,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2105,6 +2286,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2113,7 +2295,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2124,10 +2307,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2146,6 +2331,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2157,6 +2343,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2166,7 +2353,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2177,10 +2365,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2201,6 +2391,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2212,6 +2403,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2220,7 +2412,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2231,10 +2424,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2253,6 +2448,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2266,6 +2462,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2275,7 +2472,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2291,10 +2489,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2316,6 +2516,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2327,6 +2528,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2335,7 +2537,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2346,10 +2549,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2368,6 +2573,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2379,6 +2585,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2387,7 +2594,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2398,10 +2606,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2420,6 +2630,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2431,6 +2642,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2439,7 +2651,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2450,10 +2663,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2472,6 +2687,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2483,6 +2699,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2491,7 +2708,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2502,10 +2720,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2524,6 +2744,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2535,6 +2756,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2543,7 +2765,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2554,10 +2777,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2576,6 +2801,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2587,6 +2813,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2595,7 +2822,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2606,10 +2834,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2628,6 +2858,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2639,6 +2870,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2647,7 +2879,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2658,10 +2891,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -2680,6 +2915,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -2691,6 +2927,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2700,7 +2937,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2711,10 +2949,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2735,6 +2975,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2746,6 +2987,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2755,7 +2997,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract stiffness matrix energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2766,10 +3009,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2790,6 +3035,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2801,6 +3047,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2810,7 +3057,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2821,10 +3069,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2845,6 +3095,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2856,6 +3107,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2865,7 +3117,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2876,10 +3129,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2900,6 +3155,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2911,6 +3167,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2920,7 +3177,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2931,10 +3189,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2955,6 +3215,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -2966,6 +3227,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -2975,7 +3237,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -2986,10 +3249,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3010,6 +3275,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3021,6 +3287,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3030,7 +3297,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3041,10 +3309,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3065,6 +3335,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3076,6 +3347,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3085,7 +3357,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3096,10 +3369,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3120,6 +3395,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3131,6 +3407,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3140,7 +3417,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3151,10 +3429,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3175,6 +3455,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3186,6 +3467,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3195,7 +3477,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3206,10 +3489,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3230,6 +3515,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3241,6 +3527,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3250,7 +3537,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3261,10 +3549,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3285,6 +3575,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3298,6 +3589,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3307,7 +3599,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3323,10 +3616,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3348,6 +3643,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3361,6 +3657,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3370,7 +3667,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3386,10 +3684,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -3411,6 +3711,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3424,6 +3725,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3432,7 +3734,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3448,10 +3751,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             times:
                 List of times to get results for.
             set_ids:
-                List of sets to get results for.
+                Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load steps to get results for.
             elements:
                 List of elements to get results for.
             named_selection:
@@ -3471,6 +3776,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=None,
             element_ids=element_ids,
@@ -3484,6 +3790,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3493,7 +3800,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3511,6 +3819,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
             sub_steps:
@@ -3536,6 +3846,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -3549,6 +3860,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
         load_steps: Union[
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
@@ -3558,7 +3870,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
-        Arguments `selection`, `set_ids`, `times`, and `load_steps` are mutually exclusive.
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
 
@@ -3576,6 +3889,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
             load_steps:
                 Load steps to get results for.
             sub_steps:
@@ -3601,6 +3916,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             times=times,
             set_ids=set_ids,
+            all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
             element_ids=element_ids,
