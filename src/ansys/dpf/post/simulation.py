@@ -6,6 +6,7 @@ from typing import List, Tuple, Union
 
 from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
+import numpy as np
 
 from ansys.dpf import core
 from ansys.dpf.post.mesh import Mesh
@@ -53,6 +54,11 @@ class Simulation(ABC):
         self._active_selection = None
         self._named_selections = None
         self._mesh = None
+        self._units = {
+            "time/frequency": self.time_freq_support.time_frequencies.unit,
+            "distance": self._model.metadata.meshed_region.unit,
+        }
+        self._time_freq_precision = None
 
     @property
     def results(self) -> List[str]:
@@ -263,9 +269,24 @@ class Simulation(ABC):
         return self._model.metadata.time_freq_support
 
     @property
+    def _get_time_freq_precision(self):
+        """Computes a precision for times/frequencies requests based on the underlying support."""
+        if self._time_freq_precision is None:
+            available_values = self.time_freq_support.time_frequencies.data
+            diff = np.diff(available_values, prepend=available_values[0] - 1.0)
+            minimum = np.min(diff)
+            self._time_freq_precision = minimum / 20.0
+        return self._time_freq_precision
+
+    @property
     def time_freq_support(self):
         """Description of the temporal/frequency analysis of the model."""
         return self._time_frequencies
+
+    @property
+    def units(self):
+        """Returns the current time/frequency and distance units used."""
+        return self._units
 
     def __str__(self):
         """Get the string representation of this class."""
@@ -517,19 +538,50 @@ class MechanicalSimulation(Simulation, ABC):
         if selection:
             return selection.time_freq_selection._evaluate_on(simulation=self)
         # else from set_ids
-        if set_ids:
+        if set_ids is not None:
             if isinstance(set_ids, int):
                 set_ids = [set_ids]
             return core.time_freq_scoping_factory.scoping_by_sets(
                 cumulative_sets=set_ids, server=self._model._server
             )
         # else from times
-        if times:
-            if isinstance(times, float):
+        if times is not None:
+            # Check input
+            if isinstance(times, list):
+                if any([not (type(t) in [float, int]) for t in times]):
+                    raise ValueError("Argument times must contain numeric values only.")
+            elif isinstance(times, float) or isinstance(times, int):
                 times = [times]
-            raise NotImplementedError
+            else:
+                raise TypeError("Argument times must be a number or a list of numbers.")
+
+            # Get the set_ids for available time values matching the requested time values.
+            available_times = self.time_freq_support.time_frequencies.data
+            precision = self._get_time_freq_precision
+            available_times_to_extract_set_ids = []
+            last_extracted_index = -1
+            len_available = len(available_times)
+            for t in times:
+                found = False
+                i = last_extracted_index + 1
+                while not found and i < len_available:
+                    if abs(float(t) - available_times[i]) < precision:
+                        last_extracted_index = i
+                        available_times_to_extract_set_ids.append(i + 1)
+                        found = True
+                    i += 1
+                if not found:
+                    raise ValueError(
+                        f"Could not find time={t}{self.units['time/frequency']} "
+                        f"in the simulation."
+                    )
+            return core.time_freq_scoping_factory.scoping_by_sets(
+                cumulative_sets=available_times_to_extract_set_ids,
+                server=self._model._server,
+            )
+
         # else from load_steps
-        if load_steps:
+        if load_steps is not None:
             # If load_steps and sub_steps
             if len(load_steps) == 2:
                 # Translate to cumulative indices (set IDs)

@@ -69,6 +69,20 @@ def test_simulation_plot(static_simulation):
 
 
 class TestStaticMechanicalSimulation:
+    def test_times_argument(self, static_simulation):
+        _ = static_simulation.displacement(times=1)
+        _ = static_simulation.displacement(times=1.0)
+        _ = static_simulation.displacement(times=[1])
+        _ = static_simulation.displacement(times=[1.0])
+        with pytest.raises(
+            ValueError, match="Argument times must contain numeric values only."
+        ):
+            _ = static_simulation.displacement(times=[0.0, 1, "test"])
+        with pytest.raises(
+            TypeError, match="Argument times must be a number or a list of numbers."
+        ):
+            _ = static_simulation.displacement(times="test")
+
     def test_warning_empty(self, static_simulation):
         with pytest.warns(expected_warning=UserWarning, match="empty"):
             _ = static_simulation.displacement(
@@ -433,6 +447,33 @@ class TestStaticMechanicalSimulation:
 
 
 class TestTransientMechanicalSimulation:
+    def test_times_argument(self, transient_simulation, static_simulation):
+        with pytest.raises(
+            ValueError, match="Could not find time=0.0s in the simulation."
+        ):
+            _ = transient_simulation.displacement(times=0.0)
+
+        # Get reference field at t=0.15s
+        op = transient_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            15, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        field_ref = op.eval()[0]
+        # Test for times= exact float
+        result = transient_simulation.displacement(components=["X"], times=0.15)
+        field = result._fc[0]
+        assert np.allclose(field.data, field_ref.data)
+        # Test for times= near float
+        result = transient_simulation.displacement(components=["X"], times=0.1496)
+        field = result._fc[0]
+        assert np.allclose(field.data, field_ref.data)
+        # Test for times= just not near float
+        with pytest.raises(
+            ValueError, match="Could not find time=0.1495s in the simulation."
+        ):
+            _ = transient_simulation.displacement(components=["X"], times=0.1495)
+
     def test_displacement(self, transient_simulation):
         result = transient_simulation.displacement(
             components=["X"],
