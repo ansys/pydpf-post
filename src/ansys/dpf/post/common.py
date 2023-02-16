@@ -3,9 +3,9 @@
 from ansys.dpf.post.simulation import (
     HarmonicMechanicalSimulation,
     ModalMechanicalSimulation,
-    StaticMechanicalSimulation,
-    TransientMechanicalSimulation,
 )
+from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
