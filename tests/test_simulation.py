@@ -964,11 +964,63 @@ class TestModalMechanicalSimulation:
         assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)
 
-    def test_reaction_force(self, modal_simulation):
-        assert False
+    def test_reaction_force(self, allkindofcomplexity):
+        modal_simulation = dpf.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+        result = modal_simulation.reaction_force(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("RF")
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
 
-    def test_element_nodal_forces(self, modal_simulation):
-        assert False
+    def test_element_nodal_forces(self, allkindofcomplexity):
+        modal_simulation = dpf.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+        result = modal_simulation.element_nodal_forces(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("ENF")
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+        modal_simulation = dpf.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+        result = modal_simulation.element_nodal_forces_nodal(set_ids=[1])
+        assert len(result._fc) == 3
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("ENF")
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+        modal_simulation = dpf.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+        result = modal_simulation.element_nodal_forces_elemental(set_ids=[1])
+        assert len(result._fc) == 3
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("ENF")
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, modal_simulation):
         result = modal_simulation.stress(components=1, modes=[2])
@@ -1106,7 +1158,106 @@ class TestModalMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_elemental_volume(self, modal_simulation):
-        assert False
+        result = modal_simulation.elemental_volume(set_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("ENG_VOL")
+        field_ref = op.eval()[0]
+        print(field_ref)
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain(self, modal_simulation):
-        assert False
+        result = modal_simulation.elastic_strain(components=1, modes=2)
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_elemental(self, modal_simulation):
+        result = modal_simulation.elastic_strain_elemental(components=1, set_ids=[2])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_nodal(self, modal_simulation):
+        result = modal_simulation.elastic_strain_nodal(components=1, set_ids=[2])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal(self, modal_simulation):
+        result = modal_simulation.elastic_strain_principal(components=1, set_ids=[2])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL1")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal_nodal(self, modal_simulation):
+        result = modal_simulation.elastic_strain_principal_nodal(
+            components=2, set_ids=[2]
+        )
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL2")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal_elemental(self, modal_simulation):
+        result = modal_simulation.elastic_strain_principal_elemental(
+            components=3, set_ids=[2]
+        )
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [2]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL3")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            2, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, core.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
