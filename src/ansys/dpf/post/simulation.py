@@ -460,7 +460,7 @@ class MechanicalSimulation(Simulation, ABC):
             for t in times:
                 found = False
                 i = last_extracted_index + 1
-                while not found and i < len_available:
+                while i < len_available:
                     if abs(float(t) - available_times[i]) < precision:
                         last_extracted_index = i
                         available_times_to_extract_set_ids.append(i + 1)
