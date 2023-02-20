@@ -82,6 +82,37 @@ class TimeFreqSelection:
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
+    def select_load_steps(self, load_steps: List[int]) -> None:
+        """Select a list of load steps (1 based).
+
+        Parameters
+        ----------
+        load_steps:
+            IDs of the load steps to select.
+        """
+        sets = time_freq_scoping_factory.scoping_by_load_steps(load_steps=load_steps)
+        op = operators.utility.forward(sets, server=self._server)
+        self._selection.add_operator(op)
+        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+
+    def select_with_scoping(self, scoping: Scoping):
+        """Directly sets the scoping as the time/freq selection.
+
+        Parameters
+        ----------
+        scoping:
+            Scoping to use for time/freq selection.
+        """
+        if not isinstance(scoping, Scoping):
+            raise TypeError(
+                f"The input scoping is an instance of {str(type(scoping))} "
+                f"instead of an expected {str(Scoping)}."
+            )
+
+        op = operators.utility.forward(scoping, server=self._server)
+        self._selection.add_operator(op)
+        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+
     def select_time_freq_values(
         self, time_freq_values: Union[List[float], ndarray, Field]
     ) -> None:
