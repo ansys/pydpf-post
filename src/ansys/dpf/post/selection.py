@@ -463,9 +463,11 @@ class Selection:
         self._time_freq_selection.select_time_freq_values(time_freq_values)
 
     def select_named_selection(
-        self, named_selection: str, location: Union[str, locations, None] = None
+        self,
+        named_selection: Union[str, List[str]],
+        location: Union[str, locations, None] = None,
     ) -> None:
-        """Select a mesh scoping corresponding to a named selection.
+        """Select a mesh scoping corresponding to one or several named selections.
 
         Parameters
         ----------
@@ -499,3 +501,19 @@ class Selection:
             element IDs.
         """
         self._spatial_selection.select_elements(elements)
+
+    def select_nodes_of_elements(
+        self, elements: Union[List[int], Scoping], mesh: Mesh
+    ) -> None:
+        """Select nodes belonging to elements defined by their IDs.
+
+        Select a nodal mesh scoping corresponding to elements.
+
+        Parameters
+        ----------
+        elements:
+            element IDs.
+        mesh:
+            Mesh containing the connectivity.
+        """
+        self._spatial_selection.select_nodes_of_elements(elements, mesh)
