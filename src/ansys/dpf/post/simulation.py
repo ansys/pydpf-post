@@ -520,18 +520,6 @@ class MechanicalSimulation(Simulation, ABC):
         -------
             A Scoping corresponding to the requested input, with time location.
         """
-        tot = (
-            (set_ids is not None)
-            + (all_sets is True)
-            + (times is not None)
-            + (load_steps is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments all_sets, selection, set_ids, times, "
-                "and load_steps are mutually exclusive."
-            )
         if all_sets:
             return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
         # create from selection

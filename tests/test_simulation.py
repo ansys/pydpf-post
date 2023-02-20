@@ -15,14 +15,6 @@ def static_simulation(static_rst):
     )
 
 
-@fixture
-def transient_simulation(plate_msup):
-    return dpf.load_simulation(
-        data_sources=plate_msup,
-        simulation_type=AvailableSimulationTypes.transient_mechanical,
-    )
-
-
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
@@ -114,7 +106,8 @@ class TestStaticMechanicalSimulation:
 
         displacement_y = static_simulation.displacement(
             components=["2"],
-            named_selections=static_simulation.named_selections[0],
+            named_selections="Toto",
+            # named_selections=static_simulation.named_selections[0],
             load_steps=(1, 1),
         )
         assert len(displacement_y._fc) == 1
@@ -447,6 +440,13 @@ class TestStaticMechanicalSimulation:
 
 
 class TestTransientMechanicalSimulation:
+    @fixture
+    def transient_simulation(self, plate_msup):
+        return dpf.load_simulation(
+            data_sources=plate_msup,
+            simulation_type=AvailableSimulationTypes.transient_mechanical,
+        )
+
     def test_times_argument(self, transient_simulation, static_simulation):
         with pytest.raises(
             ValueError, match="Could not find time=0.0s in the simulation."
@@ -917,4 +917,41 @@ class TestTransientMechanicalSimulation:
         op.connect(9, core.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+
+class TestModalMechanicalSimulation:
+    @fixture
+    def modal_simulation(self, modalallkindofcomplexity):
+        return dpf.load_simulation(
+            data_sources=modalallkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+
+    def test_displacement(self, modal_simulation):
+        print(modal_simulation)
+        result = modal_simulation.displacement(
+            components=["X"],
+            node_ids=[2, 3, 4],
+            all_sets=True,
+        )
+        assert len(result._fc) == 45
+        assert len(result._fc.get_time_scoping().ids) == 45
+
+        result = modal_simulation.displacement(components=["X"], node_ids=[2, 3, 4])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=modal_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)

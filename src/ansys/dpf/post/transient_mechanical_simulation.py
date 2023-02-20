@@ -76,6 +76,18 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         """
         # Build the targeted time scoping
+        tot = (
+            (set_ids is not None)
+            + (all_sets is True)
+            + (times is not None)
+            + (load_steps is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments all_sets, selection, set_ids, times, "
+                "and load_steps are mutually exclusive."
+            )
         time_scoping = self._build_time_freq_scoping(
             selection=selection,
             set_ids=set_ids,

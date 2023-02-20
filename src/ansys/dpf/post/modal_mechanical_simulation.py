@@ -23,15 +23,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -53,15 +51,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 List of sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                List of load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -75,11 +73,25 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         """
         # Build the targeted time scoping
+        tot = (
+            (set_ids is not None)
+            + (all_sets is True)
+            + (frequencies is not None)
+            + (modes is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments all_sets, selection, set_ids, frequencies, "
+                "and modes are mutually exclusive."
+            )
+        elif tot == 0:
+            set_ids = 1
         time_scoping = self._build_time_freq_scoping(
             selection=selection,
             set_ids=set_ids,
-            times=times,
-            load_steps=load_steps,
+            times=frequencies,
+            load_steps=(1, modes),
             all_sets=all_sets,
         )
 
@@ -201,9 +213,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
@@ -223,7 +233,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements whose nodes to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -234,8 +244,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -257,7 +267,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
