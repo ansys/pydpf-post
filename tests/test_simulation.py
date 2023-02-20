@@ -1269,3 +1269,58 @@ class TestModalMechanicalSimulation:
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
+
+
+class TestHarmonicMechanicalSimulation:
+    @fixture
+    def harmonic_simulation(self, complex_model):
+        return dpf.load_simulation(
+            data_sources=complex_model,
+            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+        )
+
+    def test_displacement(self, harmonic_simulation):
+        print(harmonic_simulation)
+
+        result = harmonic_simulation.displacement(components=["X"], node_ids=[2, 3, 4])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=harmonic_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_amplitude(self, harmonic_simulation):
+        result = harmonic_simulation.displacement(
+            components=["X"], node_ids=[2, 3, 4], amplitude=True
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+
+        op = harmonic_simulation._model.operator("UX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=harmonic_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        amplitude_op = harmonic_simulation._model.operator("amplitude_fc")
+        amplitude_op.connect(0, op.outputs.fields_container)
+        field_ref = amplitude_op.eval()[0]
+
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
