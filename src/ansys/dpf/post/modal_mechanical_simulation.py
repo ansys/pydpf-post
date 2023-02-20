@@ -1,5 +1,5 @@
 """Module containing the ``ModalMechanicalSimulation`` class."""
-from typing import List, Tuple, Union
+from typing import List, Union
 import warnings
 
 from ansys.dpf import core
@@ -31,7 +31,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -219,9 +219,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -280,17 +280,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -300,7 +298,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -309,8 +307,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -331,7 +329,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -344,17 +342,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -364,7 +360,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -373,8 +369,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -395,7 +391,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -409,17 +405,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -431,7 +425,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -440,8 +434,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -462,7 +456,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -475,17 +469,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -495,7 +487,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -503,8 +495,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -525,7 +517,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -538,17 +530,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -558,7 +548,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -566,8 +556,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -588,7 +578,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -602,17 +592,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[List[str], List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -624,7 +612,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -632,8 +620,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -654,7 +642,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -666,17 +654,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -686,14 +672,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -714,7 +700,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -726,17 +712,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -746,14 +730,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -774,7 +758,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -787,17 +771,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -809,14 +791,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -837,7 +819,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -850,17 +832,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -870,7 +850,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -879,8 +859,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -901,7 +881,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -915,17 +895,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -937,7 +915,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -946,8 +924,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -968,7 +946,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -981,17 +959,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1001,7 +977,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -1010,8 +986,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1032,7 +1008,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1045,17 +1021,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1065,7 +1039,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1073,8 +1047,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1095,7 +1069,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1109,17 +1083,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1131,7 +1103,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1139,8 +1111,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1161,7 +1133,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1174,17 +1146,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1194,7 +1164,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1202,8 +1172,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1224,7 +1194,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1236,17 +1206,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1256,14 +1224,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1284,7 +1252,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1296,17 +1264,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1316,14 +1282,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1344,7 +1310,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1357,17 +1323,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1379,14 +1343,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1407,7 +1371,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1420,17 +1384,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1440,7 +1402,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -1449,8 +1411,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1471,7 +1433,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1485,17 +1447,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1507,7 +1467,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -1516,8 +1476,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1538,7 +1498,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1551,17 +1511,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1571,7 +1529,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -1580,8 +1538,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1602,7 +1560,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1615,17 +1573,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1635,7 +1591,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1643,8 +1599,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1665,7 +1621,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1679,17 +1635,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1701,7 +1655,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1709,8 +1663,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1731,7 +1685,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1744,17 +1698,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1764,7 +1716,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -1772,8 +1724,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1794,7 +1746,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1806,17 +1758,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1826,14 +1776,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1854,7 +1804,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1867,17 +1817,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1889,14 +1837,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1917,7 +1865,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1929,17 +1877,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1949,14 +1895,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -1977,7 +1923,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1990,17 +1936,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2010,7 +1954,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -2019,8 +1963,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2041,7 +1985,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2055,17 +1999,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -2077,7 +2019,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -2086,8 +2028,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2108,7 +2050,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2121,17 +2063,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2141,7 +2081,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
@@ -2150,8 +2090,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2172,7 +2112,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2185,17 +2125,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2205,7 +2143,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -2213,8 +2151,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2235,7 +2173,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2249,17 +2187,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -2278,8 +2214,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -2301,7 +2237,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2314,17 +2250,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental principal creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2334,7 +2268,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
             set_ids:
@@ -2342,8 +2276,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2364,7 +2298,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2376,17 +2310,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2396,14 +2328,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2424,7 +2356,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2437,17 +2369,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -2459,14 +2389,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2487,7 +2417,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2499,17 +2429,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental equivalent creep strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2519,14 +2447,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2547,7 +2475,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2562,17 +2490,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -2584,7 +2510,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -2595,8 +2521,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2618,7 +2544,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2630,17 +2556,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2650,14 +2574,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2678,7 +2602,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2690,17 +2614,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2710,14 +2632,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2738,7 +2660,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2750,17 +2672,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental heat generation results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2770,14 +2690,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2798,7 +2718,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2810,17 +2730,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2830,14 +2748,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2858,7 +2776,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2870,17 +2788,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2890,14 +2806,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2918,7 +2834,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2930,17 +2846,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -2950,14 +2864,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -2978,7 +2892,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2990,17 +2904,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3010,14 +2922,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -3038,7 +2950,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3051,17 +2963,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -3073,14 +2983,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3101,7 +3011,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3113,17 +3023,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stiffness matrix energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3133,14 +3041,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3161,7 +3069,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3173,17 +3081,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract artificial hourglass energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3193,14 +3099,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3221,7 +3127,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3233,17 +3139,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract thermal dissipation energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3253,14 +3157,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3281,7 +3185,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3293,17 +3197,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract kinetic energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3313,14 +3215,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3341,7 +3243,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3353,17 +3255,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3373,14 +3273,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3401,7 +3301,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3414,17 +3314,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -3436,14 +3334,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3464,7 +3362,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3476,17 +3374,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3496,14 +3392,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3524,7 +3420,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3536,17 +3432,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3556,14 +3450,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3584,7 +3478,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3597,17 +3491,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -3619,14 +3511,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3647,7 +3539,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3659,17 +3551,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         frequencies: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract structural temperature elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3679,14 +3569,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3707,7 +3597,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3721,17 +3611,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3741,7 +3629,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -3752,8 +3640,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3775,7 +3663,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3790,17 +3678,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -3812,7 +3698,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -3823,8 +3709,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3846,7 +3732,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3860,17 +3746,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -3880,7 +3764,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             elements:
                 List of elements to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -3891,8 +3775,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selection:
                 Named selection to get results for.
             selection:
@@ -3914,7 +3798,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3929,17 +3813,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -3951,7 +3833,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements whose nodes to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -3962,8 +3844,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3985,7 +3867,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -4000,17 +3882,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -4022,7 +3902,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids:
                 List of IDs of elements whose nodes to get results for.
             frequencies:
-                List of frequency values to get results for.
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
@@ -4033,8 +3913,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4056,7 +3936,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
