@@ -508,11 +508,3 @@ class MechanicalSimulation(Simulation, ABC):
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
         return selection
-
-
-class HarmonicMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical harmonic simulations."""
-
-    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        pass
