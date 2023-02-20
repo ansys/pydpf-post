@@ -212,6 +212,13 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
 
+        # Add an optional amplitude operation if requested
+        if amplitude:
+            amplitude_op = self._model.operator(name="amplitude_fc")
+            amplitude_op.connect(0, out)
+            wf.add_operator(operator=amplitude_op)
+            out = amplitude_op.outputs.fields_container
+
         # Add an optional norm operation if requested
         if norm:
             norm_op = self._model.operator(name="norm_fc")
