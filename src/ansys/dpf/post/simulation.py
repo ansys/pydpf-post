@@ -577,12 +577,16 @@ class MechanicalSimulation(Simulation, ABC):
                 sub_steps = load_steps[1]
                 if not isinstance(sub_steps, list):
                     sub_steps = [sub_steps]
-                set_id_0 = (
-                    self._model.metadata.time_freq_support.get_cumulative_index(
-                        step=load_steps[0] - 1, substep=sub_steps[0]
-                    )
-                    + 2
+                set_id_0 = self._model.metadata.time_freq_support.get_cumulative_index(
+                    step=load_steps[0] - 1, substep=sub_steps[0] - 1
                 )
+                if set_id_0 == -1:
+                    raise ValueError(
+                        f"Sub-step {sub_steps[0]} of load-step {load_steps[0]} "
+                        f"does not exist."
+                    )
+                else:
+                    set_id_0 += 1
                 set_ids.extend([set_id_0 + i for i in range(len(sub_steps))])
                 return core.time_freq_scoping_factory.scoping_by_sets(
                     cumulative_sets=set_ids, server=self._model._server
