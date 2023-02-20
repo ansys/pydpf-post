@@ -278,7 +278,7 @@ class SpatialSelection:
             )
 
         op = operators.scoping.transpose(
-            mesh_scoping=scoping, meshed_region=mesh, inclusive=0
+            mesh_scoping=scoping, meshed_region=mesh._meshed_region, inclusive=0
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(_WfNames.scoping, op.outputs.mesh_scoping)
