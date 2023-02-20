@@ -2,8 +2,8 @@ import pytest
 
 import ansys.dpf.post as dpf
 from ansys.dpf.post.common import AvailableSimulationTypes
+from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
-from ansys.dpf.post.simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
