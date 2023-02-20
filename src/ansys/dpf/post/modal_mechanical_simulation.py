@@ -89,9 +89,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids = 1
         time_scoping = self._build_time_freq_scoping(
             selection=selection,
-            set_ids=set_ids,
+            set_ids=set_ids if set_ids else modes,
             times=frequencies,
-            load_steps=(1, modes),
+            load_steps=None,
             all_sets=all_sets,
         )
 
