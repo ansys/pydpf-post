@@ -87,17 +87,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 "Arguments all_sets, selection, set_ids, times, "
                 "and load_steps are mutually exclusive."
             )
-        time_scoping = self._build_time_freq_scoping(
+
+        selection = self._build_selection(
             selection=selection,
             set_ids=set_ids,
             times=times,
-            load_steps=load_steps,
+            load_steps=None,
             all_sets=all_sets,
-        )
-
-        # Build the targeted mesh scoping
-        mesh_scoping = self._build_mesh_scoping(
-            selection=selection,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -129,12 +125,28 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Instantiate the main result operator
         result_op = self._build_result_operator(
             name=base_name,
-            time_scoping=time_scoping,
-            mesh_scoping=mesh_scoping,
             location=location,
         )
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
+        # Its inputs are selected as workflow inputs for merging with selection workflows
+        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
+        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
+
+        wf.connect_with(
+            selection.time_freq_selection._selection,
+            output_input_names=("scoping", "time_scoping"),
+        )
+        wf.connect_with(
+            selection.spatial_selection._selection,
+            output_input_names=("scoping", "mesh_scoping"),
+        )
+
+        # Connect data_sources and streams_container inputs of selection if necessary
+        if "streams" in wf.input_names:
+            wf.connect("streams", self._model.metadata.streams_provider)
+        if "data_sources" in wf.input_names:
+            wf.connect("data_sources", self._model.metadata.data_sources)
 
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
@@ -201,7 +213,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             fields_container=fc,
             columns=columns,
-            mesh_scoping=mesh_scoping,
+            mesh_scoping=None,
         )
 
     def displacement(
