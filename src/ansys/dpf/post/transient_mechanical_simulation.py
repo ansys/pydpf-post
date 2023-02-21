@@ -93,7 +93,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             set_ids=set_ids,
             times=times,
-            load_steps=None,
+            load_steps=load_steps,
             all_sets=all_sets,
             node_ids=node_ids,
             element_ids=element_ids,

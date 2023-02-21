@@ -406,17 +406,17 @@ class MechanicalSimulation(Simulation, ABC):
         node_ids: Union[List[int], None] = None,
         location: core.locations = core.locations.nodal,
     ) -> Selection:
-        # tot = (
-        #     (node_ids is not None)
-        #     + (element_ids is not None)
-        #     + (named_selections is not None)
-        #     + (selection is not None)
-        # )
-        # if tot > 1:
-        #     raise ValueError(
-        #         "Arguments selection, named_selections, element_ids, "
-        #         "and node_ids are mutually exclusive"
-        #     )
+        tot = (
+            (node_ids is not None)
+            + (element_ids is not None)
+            + (named_selections is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments selection, named_selections, element_ids, "
+                "and node_ids are mutually exclusive"
+            )
         if selection is not None:
             return selection
         else:
@@ -497,9 +497,10 @@ class MechanicalSimulation(Simulation, ABC):
                 set_ids.extend([set_id_0 + i for i in range(len(sub_steps))])
                 selection.select_time_freq_sets(time_freq_sets=set_ids)
 
-            if isinstance(load_steps, int):
-                load_steps = [load_steps]
-            selection.time_freq_selection.select_load_steps(load_steps=load_steps)
+            else:
+                if isinstance(load_steps, int):
+                    load_steps = [load_steps]
+                selection.time_freq_selection.select_load_steps(load_steps=load_steps)
             return selection
 
         else:

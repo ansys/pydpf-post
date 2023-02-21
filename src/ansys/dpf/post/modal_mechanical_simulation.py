@@ -88,18 +88,6 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         elif tot == 0:
             set_ids = 1
 
-        tot = (
-            (node_ids is not None)
-            + (element_ids is not None)
-            + (named_selections is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments selection, named_selections, element_ids, "
-                "and node_ids are mutually exclusive"
-            )
-
         selection = self._build_selection(
             selection=selection,
             set_ids=set_ids if set_ids else modes,

@@ -517,7 +517,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         assert field.component_count == 1
-        assert field.data.shape == (393,)
+        assert field.data.shape == (53,)
 
     def test_velocity(self, transient_simulation):
         result = transient_simulation.velocity(

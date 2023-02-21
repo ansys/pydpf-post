@@ -247,9 +247,11 @@ class SpatialSelection:
                     requested_location=location,
                     named_selection_name=ns,
                     server=self._server,
-                    data_sources=forward_ds.outputs.any,
-                    streams_container=forward_sc.outputs.any,
+                    # data_sources=forward_ds.outputs.any,
+                    # streams_container=forward_sc.outputs.any,
                 )
+                mesh_scoping_op.connect(3, forward_sc.outputs.any)
+                mesh_scoping_op.connect(4, forward_ds.outputs.any)
                 op.connect(pin, mesh_scoping_op.outputs.mesh_scoping)
             self._selection.set_output_name(_WfNames.scoping, op.outputs.merged_scoping)
 
@@ -312,7 +314,9 @@ class SpatialSelection:
             mesh_scoping=scoping, meshed_region=mesh._meshed_region, inclusive=0
         )
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.mesh_scoping)
+        self._selection.set_output_name(
+            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+        )
 
     def select_elements(self, elements: Union[List[int], Scoping]) -> None:
         """Select elements using their IDs or an elemental mesh scoping.
