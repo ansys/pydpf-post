@@ -22,6 +22,7 @@ from ansys.dpf.core import (
     time_freq_scoping_factory,
     types,
 )
+from ansys.dpf.core.common import natures
 from ansys.dpf.core.field import _get_size_of_list
 from ansys.dpf.core.server import get_or_create_server
 from ansys.dpf.core.server_types import BaseServer
@@ -126,7 +127,9 @@ class TimeFreqSelection:
         if isinstance(time_freq_values, Field):
             values = time_freq_values
         else:
-            time_freq_field = Field(location=locations.time_freq, server=self._server)
+            time_freq_field = Field(
+                location=locations.time_freq, server=self._server, nature=natures.scalar
+            )
             time_freq_field.data = time_freq_values
             time_freq_field.scoping.ids = range(1, _get_size_of_list(time_freq_values))
             values = time_freq_field
