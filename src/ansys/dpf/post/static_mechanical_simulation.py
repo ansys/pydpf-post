@@ -159,18 +159,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
-            # If a stress result, use one operator
-            if base_name[0] == "S":
-                equivalent_op = self._model.operator(name="segalmaneqv_fc")
-            # If a strain result, use another
-            elif base_name[0] == "E":
-                equivalent_op = self._model.operator(name="eqv_fc")
-            # Throw otherwise
-            else:
-                raise ValueError(
-                    f"Category {ResultCategory.equivalent} "
-                    "is only available for stress or strain results."
-                )
+            equivalent_op = self._model.operator(name="eqv_fc")
             equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
             # Set as future output of the workflow
