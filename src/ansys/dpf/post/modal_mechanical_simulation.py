@@ -151,11 +151,16 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
-            principal_op = self._model.operator(name="eig_values_fc")
+            principal_op = self._model.operator(name="invariants_fc")
+            # Corresponds to scripting name principal_invariants
             principal_op.connect(0, out)
             wf.add_operator(operator=principal_op)
             # Set as future output of the workflow
-            out = principal_op.outputs.fields_container
+            if len(to_extract) == 1:
+                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
+            else:
+                raise NotImplementedError("Cannot combine principal results yet.")
+                # We need to define the behavior for storing different results in a DataFrame
 
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
@@ -166,10 +171,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             out = equivalent_op.outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
-        if (
-            category
-            in [ResultCategory.vector, ResultCategory.matrix, ResultCategory.principal]
-        ) and (to_extract is not None):
+        if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
+            to_extract is not None
+        ):
             # Instantiate a component selector operator
             extract_op = self._model.operator(name="component_selector_fc")
             # Feed it the current workflow output
