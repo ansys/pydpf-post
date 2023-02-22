@@ -359,7 +359,7 @@ class Simulation(ABC):
                         "A principal component ID must be one of: "
                         f"{self._principal_names}."
                     )
-                out.append(comp - 1)
+                out.append(int(comp) - 1)
 
         # Take unique values
         if out is not None:
