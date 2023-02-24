@@ -212,7 +212,7 @@ def load_simulation(
     if simulation_type in [
         getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
     ]:
-        return simulation_type_str_to_class[simulation_type](data_sources, _model)
+        return simulation_type_str_to_class[simulation_type](data_sources)
     else:
         raise ValueError(
             f"Simulation type '{simulation_type}' is not a recognized simulation type."
