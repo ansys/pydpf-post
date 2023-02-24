@@ -1,5 +1,5 @@
-"""Module containing the ``TransientMechanicalSimulation`` class."""
-from typing import List, Tuple, Union
+"""Module containing the ``ModalMechanicalSimulation`` class."""
+from typing import List, Union
 import warnings
 
 from ansys.dpf import core
@@ -8,8 +8,8 @@ from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
-class TransientMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical transient simulations."""
+class ModalMechanicalSimulation(MechanicalSimulation):
+    """Provides methods for mechanical modal simulations."""
 
     def _get_result(
         self,
@@ -18,28 +18,26 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         category: ResultCategory,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
+        frequencies: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             base_name:
                 Base name for the requested result.
             location:
@@ -53,16 +51,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
-                It takes precedence over any other filter argument.
-            times:
-                List of times to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             set_ids:
                 List of sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                List of load steps to get results for.
+                Whether to get results for all sets/modes.
+            modes:
+                Mode number or list of mode numbers to get results for.
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -75,25 +72,27 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
 
         """
-        # Build the targeted time scoping
+        # Build the targeted spatial and time scoping
         tot = (
             (set_ids is not None)
             + (all_sets is True)
-            + (times is not None)
-            + (load_steps is not None)
+            + (frequencies is not None)
+            + (modes is not None)
             + (selection is not None)
         )
         if tot > 1:
             raise ValueError(
-                "Arguments all_sets, selection, set_ids, times, "
-                "and load_steps are mutually exclusive."
+                "Arguments all_sets, selection, set_ids, frequencies, "
+                "and modes are mutually exclusive."
             )
+        elif tot == 0:
+            set_ids = 1
 
         selection = self._build_selection(
             selection=selection,
-            set_ids=set_ids,
-            times=times,
-            load_steps=load_steps,
+            set_ids=set_ids if set_ids else modes,
+            times=frequencies,
+            load_steps=None,
             all_sets=all_sets,
             node_ids=node_ids,
             element_ids=element_ids,
@@ -190,13 +189,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                     out = average_op.outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
-        if (
-            category
-            in [
-                ResultCategory.vector,
-                ResultCategory.matrix,
-            ]
-        ) and (to_extract is not None):
+        if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
+            to_extract is not None
+        ):
             # Instantiate a component selector operator
             extract_op = self._model.operator(name="component_selector_fc")
             # Feed it the current workflow output
@@ -242,51 +237,49 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract displacement results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -300,152 +293,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def velocity(
-        self,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract velocity results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="V",
-            location=core.locations.nodal,
-            category=ResultCategory.vector,
-            components=components,
-            norm=norm,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def acceleration(
-        self,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract acceleration results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="A",
-            location=core.locations.nodal,
-            category=ResultCategory.vector,
-            components=components,
-            norm=norm,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -454,44 +305,35 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
-            node_ids:
-                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -502,6 +344,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -514,10 +361,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -526,46 +373,44 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -578,10 +423,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -591,21 +436,19 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -616,23 +459,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -645,10 +488,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -657,43 +500,36 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress_principal(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -702,6 +538,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -714,10 +555,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -726,45 +567,43 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress_principal_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -777,10 +616,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -790,47 +629,45 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal principal stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
-                List of IDs pf elements to get results for.
-            times:
-                List of time values to get results for.
+                List of IDs of elements to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -843,10 +680,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -855,40 +692,33 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress_eqv_von_mises(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -897,6 +727,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -909,10 +744,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -921,42 +756,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def stress_eqv_von_mises_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -969,10 +802,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -982,44 +815,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1032,10 +863,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1044,22 +875,20 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1068,18 +897,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1090,6 +914,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1102,10 +931,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1115,21 +944,19 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1140,23 +967,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1169,10 +996,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1181,46 +1008,44 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1233,10 +1058,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1245,43 +1070,36 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain_principal(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1290,6 +1108,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1302,10 +1125,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1315,47 +1138,45 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
-                List of IDs pf elements to get results for.
-            times:
-                List of time values to get results for.
+                List of IDs of elements to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1368,10 +1189,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1380,45 +1201,43 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain_principal_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental principal elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1431,10 +1250,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1443,40 +1262,33 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain_eqv_von_mises(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1485,6 +1297,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1497,10 +1314,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1509,42 +1326,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elastic_strain_eqv_von_mises_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental equivalent Von Mises elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1557,10 +1372,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1570,44 +1385,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal equivalent Von Mises elastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1620,10 +1433,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1632,40 +1445,33 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_state_variable(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -1674,6 +1480,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1686,10 +1497,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1698,42 +1509,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_state_variable_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1746,10 +1555,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1759,44 +1568,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal plastic state variable results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1809,10 +1616,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1821,22 +1628,20 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
@@ -1845,18 +1650,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1867,6 +1667,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1879,10 +1684,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1892,21 +1697,19 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
@@ -1917,23 +1720,23 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -1946,10 +1749,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -1958,46 +1761,44 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
                 "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2010,10 +1811,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2022,43 +1823,36 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain_principal(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2067,6 +1861,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2079,10 +1878,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2092,47 +1891,45 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
-                List of IDs pf elements to get results for.
-            times:
-                List of time values to get results for.
+                List of IDs of elements to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2145,10 +1942,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2157,45 +1954,43 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain_principal_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental principal plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2208,10 +2003,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.principal,
             components=components,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2220,40 +2015,33 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain_eqv(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2262,6 +2050,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2274,10 +2067,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2287,44 +2080,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2337,10 +2128,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2349,42 +2140,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def plastic_strain_eqv_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental equivalent plastic strain results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2397,10 +2186,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2410,51 +2199,49 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract reaction force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2468,10 +2255,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2480,42 +2267,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elemental_volume(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental volume results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2528,10 +2313,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2540,42 +2325,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def elemental_mass(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental mass results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2588,70 +2371,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def elemental_heat_generation(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract elemental heat generation results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="EHC",
-            location=core.locations.elemental,
-            category=ResultCategory.scalar,
-            components=None,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2660,42 +2383,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def element_centroids(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract element centroids results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2708,10 +2429,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2720,42 +2441,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def thickness(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract element thickness results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2768,10 +2487,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2780,40 +2499,33 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def element_orientations(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
@@ -2822,6 +2534,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2834,10 +2551,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2846,42 +2563,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def element_orientations_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract elemental element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2894,10 +2609,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -2907,44 +2622,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal element orientations results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -2957,191 +2670,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def artificial_hourglass_energy(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract artificial hourglass energy results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="ENG_AHO",
-            location=core.locations.elemental,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def thermal_dissipation_energy(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract thermal dissipation energy results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="ENG_TH",
-            location=core.locations.elemental,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def kinetic_energy(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract kinetic energy results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="ENG_KE",
-            location=core.locations.elemental,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3149,38 +2682,31 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def hydrostatic_pressure(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3191,6 +2717,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3203,10 +2734,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3216,44 +2747,42 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract hydrostatic pressure nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3266,10 +2795,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3278,42 +2807,40 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def hydrostatic_pressure_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        frequencies: Union[float, List[float], None] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract hydrostatic pressure elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3326,199 +2853,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def structural_temperature(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
-    ) -> DataObject:
-        """Extract structural temperature element nodal results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="BFE",
-            location=location,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=None,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def structural_temperature_nodal(
-        self,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract structural temperature nodal results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="BFE",
-            location=core.locations.nodal,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-        )
-
-    def structural_temperature_elemental(
-        self,
-        element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataObject:
-        """Extract structural temperature elemental results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
-
-        """
-        return self._get_result(
-            base_name="BFE",
-            location=core.locations.elemental,
-            category=ResultCategory.scalar,
-            components="",
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3527,45 +2865,38 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def element_nodal_forces(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3576,6 +2907,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3589,10 +2925,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3602,51 +2938,49 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract element nodal forces nodal results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3660,10 +2994,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3672,49 +3006,47 @@ class TransientMechanicalSimulation(MechanicalSimulation):
     def element_nodal_forces_elemental(
         self,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract element nodal forces elemental results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, and `element_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
+         Args:
+            elements:
+                List of elements to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
+            named_selection:
+                Named selection to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3728,10 +3060,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3741,51 +3073,49 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal force results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            times:
-                List of time values to get results for.
             element_ids:
-                List of IDs of elements to get results for.
+                List of IDs of elements whose nodes to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3799,10 +3129,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
@@ -3812,51 +3142,49 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         self,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
-        times: Union[float, List[float], None] = None,
+        frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
+        modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
     ) -> DataObject:
         """Extract nodal moment results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
-        If none of the above is given, only the last result will be returned.
+        If none of the above is given, only the first mode will be returned.
 
         Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            times:
-                List of time values to get results for.
             element_ids:
-                List of IDs of elements to get results for.
+                List of IDs of elements whose nodes to get results for.
+            frequencies:
+                Frequency value or list of frequency values to get results for.
             components:
                 Components to get results for. Available components are "X", "Y", "Z",
                 and their respective equivalents 1, 2, 3.
             norm:
                 Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load steps to get results for.
+            modes:
+                Mode number or list of mode numbers to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            set_ids:
+                Sets to get results for. Equivalent to modes.
+                Common to all simulation types for easier scripting.
+            all_sets:
+                Whether to get results for all sets/modes.
 
         Returns
         -------
@@ -3870,10 +3198,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
+            frequencies=frequencies,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
+            modes=modes,
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
