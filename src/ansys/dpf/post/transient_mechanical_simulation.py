@@ -196,6 +196,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
 
+        extract_scoping = self._model.operator(name="extract_scoping")
+        extract_scoping.connect(0, out)
+        wf.set_output_name("scoping", extract_scoping.outputs.mesh_scoping_as_scoping)
+
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
@@ -211,7 +215,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             fields_container=fc,
             columns=columns,
-            index=selection.spatial_selection.apply_to(self),
+            index=wf.get_output("scoping", core.types.scopings_container),
         )
 
     def displacement(
