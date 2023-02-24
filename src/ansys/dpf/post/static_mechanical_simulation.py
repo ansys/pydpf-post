@@ -307,6 +307,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -330,6 +331,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -370,7 +373,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -508,6 +511,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
@@ -526,11 +530,14 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -570,7 +577,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -706,6 +713,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -723,11 +731,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -765,7 +775,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -895,6 +905,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -913,11 +924,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -958,7 +971,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1096,6 +1109,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1114,11 +1128,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1158,7 +1174,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1294,6 +1310,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1311,11 +1328,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1353,7 +1372,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1483,6 +1502,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1500,11 +1520,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1542,7 +1564,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1672,6 +1694,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1690,11 +1713,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1735,7 +1760,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1873,6 +1898,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1891,11 +1917,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1935,7 +1963,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2071,6 +2099,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2088,11 +2117,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2130,7 +2161,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2260,6 +2291,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2278,11 +2310,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2323,7 +2357,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2461,6 +2495,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2479,11 +2514,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2523,7 +2560,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2659,6 +2696,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2676,11 +2714,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2718,7 +2758,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2919,6 +2959,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elemental_volume(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2940,6 +2981,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2972,7 +3015,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3219,6 +3262,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3236,11 +3280,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3278,7 +3324,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3648,6 +3694,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def hydrostatic_pressure(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3665,11 +3712,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3702,7 +3751,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3832,6 +3881,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def structural_temperature(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3849,11 +3899,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3891,7 +3943,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -4021,6 +4073,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -4040,11 +4093,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -4088,7 +4143,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
