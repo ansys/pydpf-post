@@ -1420,6 +1420,195 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             named_selections=named_selections,
         )
 
+    def elastic_strain_eqv_von_mises(
+        self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        location: Union[core.locations, str] = core.locations.elemental_nodal,
+    ) -> DataObject:
+        """Extract elemental nodal equivalent elastic strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load steps to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+            location:
+                Location to extract results at. Available locations are listed in `core.locations`
+                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
+                gives results with a value for every node at each element. "Elemental" gives results
+                with one value for each element. "Nodal" gives results with one value for each node.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=location,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
+        )
+
+    def elastic_strain_eqv_von_mises_elemental(
+        self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataObject:
+        """Extract elemental equivalent elastic strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load steps to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.elemental,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
+        )
+
+    def elastic_strain_eqv_von_mises_nodal(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataObject:
+        """Extract nodal equivalent elastic strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load steps to get results for.
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+
+        """
+        return self._get_result(
+            base_name="EPEL",
+            location=core.locations.nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+        )
+
     def plastic_state_variable(
         self,
         element_ids: Union[List[int], None] = None,
