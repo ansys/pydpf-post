@@ -211,7 +211,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         extract_scoping = self._model.operator(name="extract_scoping")
         extract_scoping.connect(0, out)
-        wf.set_output_name("scoping", extract_scoping.outputs.mesh_scoping_as_scoping)
+        merge_scopings = self._model.operator(name="merge::scoping")
+        merge_scopings.connect(0, extract_scoping.outputs.mesh_scoping_as_scoping)
+        wf.set_output_name("scoping", merge_scopings.outputs.merged_scoping)
 
         # Set the workflow output
         wf.set_output_name("out", out)
@@ -228,7 +230,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             fields_container=fc,
             columns=columns,
-            index=wf.get_output("scoping", core.types.scopings_container),
+            index=wf.get_output("scoping", core.types.scoping).ids,
         )
 
     def displacement(
