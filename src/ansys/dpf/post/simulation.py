@@ -438,6 +438,11 @@ class MechanicalSimulation(Simulation, ABC):
             else:
                 selection.select_elements(elements=element_ids)
         elif node_ids:
+            if location != locations.nodal:
+                raise ValueError(
+                    "Argument 'node_ids' can only be used if 'location' "
+                    "is equal to 'post.locations.nodal'."
+                )
             selection.select_nodes(nodes=node_ids)
         # Create the TimeFreqSelection
         if all_sets:

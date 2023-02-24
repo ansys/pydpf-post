@@ -102,6 +102,14 @@ class TestStaticMechanicalSimulation:
         with pytest.raises(ValueError, match="exclusive"):
             _ = static_simulation.displacement(load_steps=[1], set_ids=[1])
 
+    def test_raise_node_ids_elemental(self, static_simulation):
+        with pytest.raises(
+            ValueError, match="Argument 'node_ids' can only be used if 'location'"
+        ):
+            _ = static_simulation.stress(
+                node_ids=[42], location=post.locations.elemental
+            )
+
     def test_displacement(self, static_simulation):
         displacement_x = static_simulation.displacement(
             components=["X"], node_ids=[42, 43, 44]
