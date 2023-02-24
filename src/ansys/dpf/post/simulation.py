@@ -1,6 +1,7 @@
 """Module containing the ``Simulation`` class."""
 from abc import ABC
 from enum import Enum
+from os import PathLike
 import re
 from typing import List, Tuple, Union
 
@@ -393,9 +394,11 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, data_sources: dpf.DataSources, model: dpf.Model):
+    def __init__(self, result_file: PathLike):
         """Instantiate a mechanical type simulation."""
-        super().__init__(data_sources, model)
+        model = dpf.Model(result_file)
+        data_sources = model.metadata.data_sources
+        super().__init__(data_sources=data_sources, model=model)
 
     def _build_selection(
         self,

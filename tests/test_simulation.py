@@ -5,6 +5,10 @@ from pytest import fixture
 
 from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes
+from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
+from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
+from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 
 @fixture
@@ -13,6 +17,17 @@ def static_simulation(static_rst):
         data_sources=static_rst,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
+
+
+def test_simulation_init(static_rst):
+    simulation = StaticMechanicalSimulation(static_rst)
+    assert simulation is not None
+    simulation = TransientMechanicalSimulation(static_rst)
+    assert simulation is not None
+    simulation = ModalMechanicalSimulation(static_rst)
+    assert simulation is not None
+    simulation = HarmonicMechanicalSimulation(static_rst)
+    assert simulation is not None
 
 
 def test_simulation_results(static_simulation):
