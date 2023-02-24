@@ -1,5 +1,5 @@
 """Module containing the ``Simulation`` class."""
-from abc import ABC, abstractmethod
+from abc import ABC
 from enum import Enum
 import re
 from typing import List, Tuple, Union
@@ -359,7 +359,7 @@ class Simulation(ABC):
                         "A principal component ID must be one of: "
                         f"{self._principal_names}."
                     )
-                out.append(comp - 1)
+                out.append(int(comp) - 1)
 
         # Take unique values
         if out is not None:
@@ -371,28 +371,18 @@ class Simulation(ABC):
             columns = [base_name + self._principal_names[i] for i in out]
         return out, columns
 
-    @abstractmethod
-    def _build_mesh_scoping(self) -> Union[core.Scoping, core.outputs.Output, None]:
-        """Generate a mesh_scoping from input arguments."""
-        pass
-
     def _build_result_operator(
         self,
         name: str,
-        time_scoping: core.Scoping,
-        mesh_scoping: Union[core.Scoping, core.outputs.Output],
-        location: core.locations,
+        location: Union[core.locations, str],
+        force_elemental_nodal: bool,
     ) -> core.Operator:
         op = self._model.operator(name=name)
-        # Set the time_scoping if necessary
-        if time_scoping:
-            op.connect(0, time_scoping)
-        # Set the mesh_scoping if necessary
-        if mesh_scoping:
-            op.connect(1, mesh_scoping)
-
         op.connect(7, self.mesh._meshed_region)
-        op.connect(9, location)
+        if force_elemental_nodal:
+            op.connect(9, "ElementalNodal")
+        else:
+            op.connect(9, location)
         return op
 
 
@@ -406,35 +396,20 @@ class MechanicalSimulation(Simulation, ABC):
         """Instantiate a mechanical type simulation."""
         super().__init__(data_sources, model)
 
-    def _build_mesh_scoping(
+    def _build_selection(
         self,
-        selection=None,
-        named_selections=None,
-        element_ids=None,
-        node_ids=None,
-        location=core.locations.nodal,
-    ) -> Union[core.Scoping, core.outputs.Output, None]:
-        """Generate a mesh_scoping from input arguments.
-
-        Only one input is used, by order of priority: selection, named_selection,
-        element_ids, node_ids.
-
-        Args:
-            selection:
-                Selection object to use.
-            named_selections:
-                Named selection to use.
-            element_ids:
-                Element IDs to use.
-            node_ids:
-                Node IDs to use.
-            location:
-                Requested location for the returned Scoping.
-
-        Returns
-        -------
-            Returns a mesh Scoping or an operator Output giving a mesh Scoping.
-        """
+        selection: Union[Selection, None],
+        set_ids: Union[int, List[int], None],
+        times: Union[float, List[float], None],
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        all_sets: bool = False,
+        named_selections: Union[List[str], str, None] = None,
+        element_ids: Union[List[int], None] = None,
+        node_ids: Union[List[int], None] = None,
+        location: core.locations = core.locations.nodal,
+    ) -> Selection:
         tot = (
             (node_ids is not None)
             + (element_ids is not None)
@@ -446,106 +421,31 @@ class MechanicalSimulation(Simulation, ABC):
                 "Arguments selection, named_selections, element_ids, "
                 "and node_ids are mutually exclusive"
             )
-
-        # Build the mesh_scoping
-        mesh_scoping = None
-        if selection:
-            mesh_scoping = selection.mesh_scoping_output
-
+        if selection is not None:
+            return selection
+        else:
+            selection = Selection(server=self._model._server)
+        # Create the SpatialSelection
         if named_selections:
-            if type(named_selections) == str:
-                mesh_scoping_op = self._model.operator("scoping_provider_by_ns")
-                mesh_scoping_op.connect(1, named_selections)
-                mesh_scoping = mesh_scoping_op.outputs.mesh_scoping
-            elif type(named_selections) == list:
-                merge_scopings_op = self._model.operator(name="merge::scoping")
-                for pin, named_selection in enumerate(named_selections):
-                    mesh_scoping_on_ns_op = self._model.operator(
-                        name="scoping_provider_by_ns"
-                    )
-                    mesh_scoping_on_ns_op.connect(0, location)
-                    mesh_scoping_on_ns_op.connect(1, named_selection)
-                    merge_scopings_op.connect(
-                        pin, mesh_scoping_on_ns_op.outputs.mesh_scoping
-                    )
-                mesh_scoping = merge_scopings_op.outputs.merged_scoping
-
+            selection.select_named_selection(named_selection=named_selections)
         elif element_ids:
-            mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
-                element_ids=element_ids, server=self._model._server
-            )
-            # Transpose location if necessary
             if location == core.locations.nodal:
-                transpose_op = self._model.operator(name="transpose_scoping")
-                transpose_op.connect(0, mesh_scoping)
-                transpose_op.connect(1, self.mesh._meshed_region)
-                transpose_op.connect(2, 0)
-                mesh_scoping = transpose_op.outputs.mesh_scoping_as_scoping
-
+                selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
+            else:
+                selection.select_elements(elements=element_ids)
         elif node_ids:
-            mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-                node_ids, server=self._model._server
-            )
-
-        return mesh_scoping
-
-    def _build_time_freq_scoping(
-        self,
-        selection: Union[Selection, None],
-        set_ids: Union[int, List[int], None],
-        times: Union[float, List[float], None],
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        all_sets: bool = False,
-    ) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments.
-
-        Only one input is used, by order of priority:
-        all_sets, selection, set_ids, times, load_steps.
-
-        Args:
-            selection:
-                Selection to use (used in priority).
-            set_ids:
-                List of set IDs to use, if no selection is defined.
-            times:
-                Time values to use, if no selection nor set_ids are defined.
-            load_steps:
-                Load step IDs (and sub-step if tuple) to use, if no other is defined.
-            all_sets:
-                Whether to force extraction of all sets.
-
-        Returns
-        -------
-            A Scoping corresponding to the requested input, with time location.
-        """
-        tot = (
-            (set_ids is not None)
-            + (all_sets is True)
-            + (times is not None)
-            + (load_steps is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments all_sets, selection, set_ids, times, "
-                "and load_steps are mutually exclusive."
-            )
+            selection.select_nodes(nodes=node_ids)
+        # Create the TimeFreqSelection
         if all_sets:
-            return core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
-        # create from selection
-        if selection:
-            return selection.time_freq_selection._evaluate_on(simulation=self)
-        # else from set_ids
-        if set_ids is not None:
+            selection.time_freq_selection.select_with_scoping(
+                core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+            )
+        elif set_ids is not None:
             if isinstance(set_ids, int):
                 set_ids = [set_ids]
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=set_ids, server=self._model._server
-            )
-        # else from times
-        if times is not None:
+            selection.select_time_freq_sets(time_freq_sets=set_ids)
+
+        elif times is not None:
             # Check input
             if isinstance(times, list):
                 if any([not (type(t) in [float, int]) for t in times]):
@@ -564,7 +464,7 @@ class MechanicalSimulation(Simulation, ABC):
             for t in times:
                 found = False
                 i = last_extracted_index + 1
-                while not found and i < len_available:
+                while i < len_available:
                     if abs(float(t) - available_times[i]) < precision:
                         last_extracted_index = i
                         available_times_to_extract_set_ids.append(i + 1)
@@ -575,13 +475,12 @@ class MechanicalSimulation(Simulation, ABC):
                         f"Could not find time={t}{self.units['time/frequency']} "
                         f"in the simulation."
                     )
-            return core.time_freq_scoping_factory.scoping_by_sets(
-                cumulative_sets=available_times_to_extract_set_ids,
-                server=self._model._server,
+            selection.select_time_freq_sets(
+                time_freq_sets=available_times_to_extract_set_ids
             )
 
         # else from load_steps
-        if load_steps is not None:
+        elif load_steps is not None:
             # If load_steps and sub_steps
             if len(load_steps) == 2:
                 # Translate to cumulative indices (set IDs)
@@ -589,33 +488,31 @@ class MechanicalSimulation(Simulation, ABC):
                 sub_steps = load_steps[1]
                 if not isinstance(sub_steps, list):
                     sub_steps = [sub_steps]
-                set_id_0 = (
-                    self._model.metadata.time_freq_support.get_cumulative_index(
-                        step=load_steps[0] - 1, substep=sub_steps[0]
+                set_id_0 = self._model.metadata.time_freq_support.get_cumulative_index(
+                    step=load_steps[0] - 1, substep=sub_steps[0] - 1
+                )
+                if set_id_0 == -1:
+                    raise ValueError(
+                        f"Sub-step {sub_steps[0]} of load-step {load_steps[0]} "
+                        f"does not exist."
                     )
-                    + 2
-                )
+                else:
+                    set_id_0 += 1
                 set_ids.extend([set_id_0 + i for i in range(len(sub_steps))])
-                return core.time_freq_scoping_factory.scoping_by_sets(
-                    cumulative_sets=set_ids, server=self._model._server
-                )
-            if isinstance(load_steps, int):
-                load_steps = [load_steps]
-            return core.time_freq_scoping_factory.scoping_by_load_steps(
-                load_steps=load_steps, server=self._model._server
+                selection.select_time_freq_sets(time_freq_sets=set_ids)
+
+            else:
+                if isinstance(load_steps, int):
+                    load_steps = [load_steps]
+                selection.time_freq_selection.select_load_steps(load_steps=load_steps)
+            return selection
+
+        else:
+            # Otherwise, no argument was given, create a time_freq_scoping of the last set only
+            selection.select_time_freq_sets(
+                time_freq_sets=[self.time_freq_support.n_sets]
             )
-        # Otherwise, no argument was given, create a time_freq_scoping of the last set only
-        return core.time_freq_scoping_factory.scoping_by_set(
-            cumulative_set=self.time_freq_support.n_sets, server=self._model._server
-        )
-
-
-class ModalMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical modal simulations."""
-
-    def _build_time_freq_scoping(self) -> core.time_freq_scoping_factory.Scoping:
-        """Generate a time_freq_scoping from input arguments."""
-        pass
+        return selection
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
