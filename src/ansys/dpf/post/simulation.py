@@ -412,7 +412,7 @@ class MechanicalSimulation(Simulation, ABC):
         named_selections: Union[List[str], str, None] = None,
         element_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
-        location: locations = locations.nodal,
+        location: Union[locations, str] = locations.nodal,
     ) -> Selection:
         tot = (
             (node_ids is not None)
