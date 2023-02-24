@@ -4,11 +4,12 @@ from enum import Enum
 import re
 from typing import List, Tuple, Union
 
+import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
-from ansys.dpf import core
+from ansys.dpf.post import locations
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
 
@@ -374,9 +375,9 @@ class Simulation(ABC):
     def _build_result_operator(
         self,
         name: str,
-        location: Union[core.locations, str],
+        location: Union[locations, str],
         force_elemental_nodal: bool,
-    ) -> core.Operator:
+    ) -> dpf.Operator:
         op = self._model.operator(name=name)
         op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
@@ -392,7 +393,7 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, data_sources: core.DataSources, model: core.Model):
+    def __init__(self, data_sources: dpf.DataSources, model: dpf.Model):
         """Instantiate a mechanical type simulation."""
         super().__init__(data_sources, model)
 
@@ -408,7 +409,7 @@ class MechanicalSimulation(Simulation, ABC):
         named_selections: Union[List[str], str, None] = None,
         element_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
-        location: core.locations = core.locations.nodal,
+        location: locations = locations.nodal,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -429,7 +430,7 @@ class MechanicalSimulation(Simulation, ABC):
         if named_selections:
             selection.select_named_selection(named_selection=named_selections)
         elif element_ids:
-            if location == core.locations.nodal:
+            if location == locations.nodal:
                 selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
             else:
                 selection.select_elements(elements=element_ids)
@@ -438,7 +439,7 @@ class MechanicalSimulation(Simulation, ABC):
         # Create the TimeFreqSelection
         if all_sets:
             selection.time_freq_selection.select_with_scoping(
-                core.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
+                dpf.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
             )
         elif set_ids is not None:
             if isinstance(set_ids, int):

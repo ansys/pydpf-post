@@ -3,6 +3,7 @@ from typing import List, Tuple, Union
 import warnings
 
 from ansys.dpf import core
+from ansys.dpf.post import locations
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
@@ -178,9 +179,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             # If a strain result, change the location now
             if force_elemental_nodal:
                 average_op = None
-                if location == core.locations.nodal:
+                if location == locations.nodal:
                     average_op = self._model.operator(name="to_nodal_fc")
-                elif location == core.locations.elemental:
+                elif location == locations.elemental:
                     average_op = self._model.operator(name="to_elemental_fc")
                 if average_op is not None:
                     average_op.connect(0, out)
@@ -290,7 +291,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="U",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -316,7 +317,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
@@ -349,7 +350,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -425,7 +426,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -492,7 +493,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -517,7 +518,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
@@ -549,7 +550,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -624,7 +625,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -690,7 +691,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -714,7 +715,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
@@ -744,7 +745,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -816,7 +817,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -879,7 +880,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -904,7 +905,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -937,7 +938,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1016,7 +1017,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1080,7 +1081,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1105,7 +1106,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
@@ -1137,7 +1138,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1215,7 +1216,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1278,7 +1279,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1302,7 +1303,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
@@ -1332,7 +1333,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1404,7 +1405,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1467,7 +1468,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1491,7 +1492,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
@@ -1521,7 +1522,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1593,7 +1594,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1656,7 +1657,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1681,7 +1682,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
@@ -1714,7 +1715,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1793,7 +1794,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1857,7 +1858,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1882,7 +1883,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
@@ -1914,7 +1915,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -1992,7 +1993,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2055,7 +2056,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2079,7 +2080,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
@@ -2109,7 +2110,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -2184,7 +2185,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2244,7 +2245,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2269,7 +2270,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
 
@@ -2302,7 +2303,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -2381,7 +2382,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -2445,7 +2446,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -2470,7 +2471,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
@@ -2502,7 +2503,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -2580,7 +2581,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2643,7 +2644,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2667,7 +2668,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
@@ -2697,7 +2698,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -2772,7 +2773,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2832,7 +2833,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2902,7 +2903,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="RF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -2963,7 +2964,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_VOL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3023,7 +3024,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ElementalMass",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3083,7 +3084,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EHC",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3143,7 +3144,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="centroids",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3203,7 +3204,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="thickness",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3227,7 +3228,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -3257,7 +3258,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -3329,7 +3330,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3392,7 +3393,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3452,7 +3453,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_SE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3512,7 +3513,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_AHO",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3572,7 +3573,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_TH",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3632,7 +3633,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_KE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3656,7 +3657,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3756,7 +3757,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3816,7 +3817,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3840,7 +3841,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3870,7 +3871,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -3945,7 +3946,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="BFE",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -4005,7 +4006,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="BFE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -4031,7 +4032,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
@@ -4066,7 +4067,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
+                Location to extract results at. Available locations are listed in `locations`
                 and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
                 gives results with a value for every node at each element. "Elemental" gives results
                 with one value for each element. "Nodal" gives results with one value for each node.
@@ -4149,7 +4150,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4217,7 +4218,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4288,7 +4289,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="F",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4359,7 +4360,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="M",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,

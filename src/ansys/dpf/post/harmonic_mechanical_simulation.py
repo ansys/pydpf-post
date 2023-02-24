@@ -3,6 +3,7 @@ from typing import List, Tuple, Union
 import warnings
 
 from ansys.dpf import core
+from ansys.dpf.post import locations
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
@@ -308,7 +309,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="U",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -388,7 +389,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="V",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -468,7 +469,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="A",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,

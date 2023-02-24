@@ -3,13 +3,13 @@ import numpy as np
 import pytest
 from pytest import fixture
 
-import ansys.dpf.post as dpf
+from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes
 
 
 @fixture
 def static_simulation(static_rst):
-    return dpf.load_simulation(
+    return post.load_simulation(
         data_sources=static_rst,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
@@ -38,7 +38,7 @@ def test_simulation_loads(static_simulation):
 
 def test_simulation_mesh(static_simulation):
     mesh = static_simulation.mesh
-    assert isinstance(mesh, dpf.mesh.Mesh)
+    assert isinstance(mesh, post.mesh.Mesh)
 
 
 def test_simulation_named_selections(static_simulation):
@@ -49,7 +49,7 @@ def test_simulation_named_selections(static_simulation):
 
 def test_simulation_active_selection(static_simulation):
     assert static_simulation.active_selection is None
-    selection = dpf.selection.Selection()
+    selection = post.selection.Selection()
     static_simulation.activate_selection(selection=selection)
     assert static_simulation.active_selection == selection
     static_simulation.deactivate_selection()
@@ -202,7 +202,7 @@ class TestStaticMechanicalSimulation:
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (64,)
@@ -214,7 +214,7 @@ class TestStaticMechanicalSimulation:
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (8,)
@@ -226,7 +226,7 @@ class TestStaticMechanicalSimulation:
         assert stress_x._fc.get_time_scoping().ids == [1]
         field = stress_x._fc[0]
         op = static_simulation._model.operator("SX")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (81,)
@@ -238,7 +238,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S1")
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (64,)
@@ -250,7 +250,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S2")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (81,)
@@ -262,7 +262,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S3")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (8,)
@@ -274,7 +274,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("S_eqv")
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (64,)
@@ -286,7 +286,7 @@ class TestStaticMechanicalSimulation:
         assert stress_vm._fc.get_time_scoping().ids == [1]
         field = stress_vm._fc[0]
         op = static_simulation._model.operator("S_eqv")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (8,)
@@ -298,7 +298,7 @@ class TestStaticMechanicalSimulation:
         assert stress_vm._fc.get_time_scoping().ids == [1]
         field = stress_vm._fc[0]
         op = static_simulation._model.operator("S_eqv")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (81,)
@@ -388,7 +388,7 @@ class TestStaticMechanicalSimulation:
         assert structural_temperature_nodal._fc.get_time_scoping().ids == [1]
         field = structural_temperature_nodal._fc[0]
         op = static_simulation._model.operator("BFE")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (81,)
@@ -402,14 +402,14 @@ class TestStaticMechanicalSimulation:
         assert structural_temperature_elemental._fc.get_time_scoping().ids == [1]
         field = structural_temperature_elemental._fc[0]
         op = static_simulation._model.operator("BFE")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces(self, allkindofcomplexity):
-        static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
+        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces()
         assert len(element_nodal_forces._fc) == 1
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
@@ -421,26 +421,26 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
+        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_nodal()
         assert len(element_nodal_forces._fc) == 3
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert field.data.shape == (14982, 3)
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        static_simulation = dpf.load_simulation(data_sources=allkindofcomplexity)
+        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_elemental()
         assert len(element_nodal_forces._fc) == 3
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert field.data.shape == (9433, 3)
@@ -450,7 +450,7 @@ class TestStaticMechanicalSimulation:
 class TestTransientMechanicalSimulation:
     @fixture
     def transient_simulation(self, plate_msup):
-        return dpf.load_simulation(
+        return post.load_simulation(
             data_sources=plate_msup,
             simulation_type=AvailableSimulationTypes.transient_mechanical,
         )
@@ -571,7 +571,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -586,7 +586,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -601,7 +601,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -616,7 +616,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -631,7 +631,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -648,7 +648,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -663,7 +663,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -678,7 +678,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -693,7 +693,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -708,7 +708,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -725,7 +725,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -740,7 +740,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -757,7 +757,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         principal_op = transient_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_1()[0]
@@ -776,7 +776,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         principal_op = transient_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_2()[0]
@@ -795,7 +795,7 @@ class TestTransientMechanicalSimulation:
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         principal_op = transient_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_3()[0]
@@ -803,7 +803,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_reaction_force(self, allkindofcomplexity):
-        transient_simulation = dpf.load_simulation(
+        transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.transient_mechanical,
         )
@@ -873,7 +873,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("BFE")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -884,13 +884,13 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("BFE")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces(self, allkindofcomplexity):
-        transient_simulation = dpf.load_simulation(
+        transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.transient_mechanical,
         )
@@ -904,7 +904,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        transient_simulation = dpf.load_simulation(
+        transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.transient_mechanical,
         )
@@ -913,13 +913,13 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("ENF")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        transient_simulation = dpf.load_simulation(
+        transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.transient_mechanical,
         )
@@ -928,7 +928,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("ENF")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
@@ -937,7 +937,7 @@ class TestTransientMechanicalSimulation:
 class TestModalMechanicalSimulation:
     @fixture
     def modal_simulation(self, modalallkindofcomplexity):
-        return dpf.load_simulation(
+        return post.load_simulation(
             data_sources=modalallkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
@@ -971,7 +971,7 @@ class TestModalMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_reaction_force(self, allkindofcomplexity):
-        modal_simulation = dpf.load_simulation(
+        modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
@@ -985,7 +985,7 @@ class TestModalMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces(self, allkindofcomplexity):
-        modal_simulation = dpf.load_simulation(
+        modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
@@ -999,7 +999,7 @@ class TestModalMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        modal_simulation = dpf.load_simulation(
+        modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
@@ -1008,13 +1008,13 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("ENF")
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        modal_simulation = dpf.load_simulation(
+        modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
@@ -1023,7 +1023,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("ENF")
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
@@ -1038,7 +1038,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1053,7 +1053,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1068,7 +1068,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1083,7 +1083,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1098,7 +1098,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1113,7 +1113,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1128,7 +1128,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1143,7 +1143,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1158,7 +1158,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1184,7 +1184,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1199,7 +1199,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1214,7 +1214,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1229,7 +1229,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental_nodal)
+        op.connect(9, post.locations.elemental_nodal)
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_1()[0]
@@ -1248,7 +1248,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.nodal)
+        op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1265,7 +1265,7 @@ class TestModalMechanicalSimulation:
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        op.connect(9, core.locations.elemental)
+        op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -1274,7 +1274,7 @@ class TestModalMechanicalSimulation:
 class TestHarmonicMechanicalSimulation:
     @fixture
     def harmonic_simulation(self, complex_model):
-        return dpf.load_simulation(
+        return post.load_simulation(
             data_sources=complex_model,
             simulation_type=AvailableSimulationTypes.harmonic_mechanical,
         )
