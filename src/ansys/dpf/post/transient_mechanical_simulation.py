@@ -1433,7 +1433,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[core.locations, str] = core.locations.elemental_nodal,
     ) -> DataObject:
-        """Extract elemental nodal equivalent elastic strain results from the simulation.
+        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1498,7 +1498,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
-        """Extract elemental equivalent elastic strain results from the simulation.
+        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1559,7 +1559,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
-        """Extract nodal equivalent elastic strain results from the simulation.
+        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
