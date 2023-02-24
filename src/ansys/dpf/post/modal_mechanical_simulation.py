@@ -305,6 +305,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -321,11 +322,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -366,7 +369,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -500,6 +503,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
@@ -516,11 +520,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -560,7 +566,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -692,6 +698,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -707,11 +714,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -749,7 +758,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -875,6 +884,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -891,11 +901,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -936,7 +948,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1070,6 +1082,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1086,11 +1099,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1130,7 +1145,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1262,6 +1277,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -1277,11 +1293,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1319,7 +1337,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1445,6 +1463,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -1460,11 +1479,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1502,7 +1523,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1628,6 +1649,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1644,11 +1666,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1689,7 +1713,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1823,6 +1847,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1839,11 +1864,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1883,7 +1910,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2015,6 +2042,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -2030,11 +2058,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2072,7 +2102,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2499,6 +2529,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -2514,11 +2545,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2556,7 +2589,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2682,6 +2715,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def hydrostatic_pressure(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
@@ -2697,11 +2731,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2739,7 +2775,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2865,6 +2901,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2882,11 +2919,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2930,7 +2969,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
