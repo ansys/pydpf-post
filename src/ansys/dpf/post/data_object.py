@@ -20,10 +20,10 @@ class DataObject:
             Columns to use.
         """
         self._fc = fields_container
-        if columns:
+        if columns is not None:
             self._columns = columns
 
-        if index:
+        if index is not None:
             self._index = index
 
         # super().__init__(fields_container._internal_obj, server)
