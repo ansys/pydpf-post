@@ -752,13 +752,15 @@ class TestTransientMechanicalSimulation:
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
-        op = transient_simulation._model.operator("EPEL1")
+        op = transient_simulation._model.operator("EPEL")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
         op.connect(9, core.locations.elemental_nodal)
-        field_ref = op.eval()[0]
+        principal_op = transient_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_1()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -769,13 +771,15 @@ class TestTransientMechanicalSimulation:
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
-        op = transient_simulation._model.operator("EPEL2")
+        op = transient_simulation._model.operator("EPEL")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
         op.connect(9, core.locations.nodal)
-        field_ref = op.eval()[0]
+        principal_op = transient_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_2()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -786,13 +790,15 @@ class TestTransientMechanicalSimulation:
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
-        op = transient_simulation._model.operator("EPEL3")
+        op = transient_simulation._model.operator("EPEL")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
         op.connect(9, core.locations.elemental)
-        field_ref = op.eval()[0]
+        principal_op = transient_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_3()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -1218,13 +1224,15 @@ class TestModalMechanicalSimulation:
         assert len(result._fc) == 1
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
-        op = modal_simulation._model.operator("EPEL1")
+        op = modal_simulation._model.operator("EPEL")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
         op.connect(9, core.locations.elemental_nodal)
-        field_ref = op.eval()[0]
+        principal_op = modal_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_1()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
