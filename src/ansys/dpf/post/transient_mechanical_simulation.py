@@ -211,7 +211,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             fields_container=fc,
             columns=columns,
-            mesh_scoping=None,
+            mesh_scoping=selection.spatial_selection.apply_to(self),
         )
 
     def displacement(
