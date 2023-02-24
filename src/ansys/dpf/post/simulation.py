@@ -374,11 +374,15 @@ class Simulation(ABC):
     def _build_result_operator(
         self,
         name: str,
-        location: core.locations,
+        location: Union[core.locations, str],
+        force_elemental_nodal: bool,
     ) -> core.Operator:
         op = self._model.operator(name=name)
         op.connect(7, self.mesh._meshed_region)
-        op.connect(9, location)
+        if force_elemental_nodal:
+            op.connect(9, "ElementalNodal")
+        else:
+            op.connect(9, location)
         return op
 
 

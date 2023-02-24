@@ -122,10 +122,16 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
+        if category == ResultCategory.equivalent and base_name[0] == "E":
+            force_elemental_nodal = True
+        else:
+            force_elemental_nodal = False
+
         # Instantiate the main result operator
         result_op = self._build_result_operator(
             name=base_name,
             location=location,
+            force_elemental_nodal=force_elemental_nodal,
         )
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
@@ -169,6 +175,18 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=equivalent_op)
             # Set as future output of the workflow
             out = equivalent_op.outputs.fields_container
+            # If a strain result, change the location now
+            if force_elemental_nodal:
+                average_op = None
+                if location == core.locations.nodal:
+                    average_op = self._model.operator(name="to_nodal_fc")
+                elif location == core.locations.elemental:
+                    average_op = self._model.operator(name="to_elemental_fc")
+                if average_op is not None:
+                    average_op.connect(0, out)
+                    wf.add_operator(operator=average_op)
+                    # Set as future output of the workflow
+                    out = average_op.outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
