@@ -144,10 +144,16 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         wf = core.Workflow(server=self._model._server)
         wf.progress_bar = False
 
+        if category == ResultCategory.equivalent and base_name[0] == "E":
+            force_elemental_nodal = True
+        else:
+            force_elemental_nodal = False
+
         # Instantiate the main result operator
         result_op = self._build_result_operator(
             name=base_name,
             location=location,
+            force_elemental_nodal=force_elemental_nodal,
         )
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
@@ -173,35 +179,44 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
-            principal_op = self._model.operator(name="eig_values_fc")
+            principal_op = self._model.operator(name="invariants_fc")
+            # Corresponds to scripting name principal_invariants
             principal_op.connect(0, out)
             wf.add_operator(operator=principal_op)
             # Set as future output of the workflow
-            out = principal_op.outputs.fields_container
+            if len(to_extract) == 1:
+                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
+            else:
+                raise NotImplementedError("Cannot combine principal results yet.")
+                # We need to define the behavior for storing different results in a DataFrame
 
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
-            # If a stress result, use one operator
-            if base_name[0] == "S":
-                equivalent_op = self._model.operator(name="segalmaneqv_fc")
-            # If a strain result, use another
-            elif base_name[0] == "E":
-                equivalent_op = self._model.operator(name="eqv_fc")
-            # Throw otherwise
-            else:
-                raise ValueError(
-                    f"Category {ResultCategory.equivalent} "
-                    "is only available for stress or strain results."
-                )
+            equivalent_op = self._model.operator(name="eqv_fc")
             equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
             # Set as future output of the workflow
             out = equivalent_op.outputs.fields_container
+            # If a strain result, change the location now
+            if force_elemental_nodal:
+                average_op = None
+                if location == locations.nodal:
+                    average_op = self._model.operator(name="to_nodal_fc")
+                elif location == locations.elemental:
+                    average_op = self._model.operator(name="to_elemental_fc")
+                if average_op is not None:
+                    average_op.connect(0, out)
+                    wf.add_operator(operator=average_op)
+                    # Set as future output of the workflow
+                    out = average_op.outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (
             category
-            in [ResultCategory.vector, ResultCategory.matrix, ResultCategory.principal]
+            in [
+                ResultCategory.vector,
+                ResultCategory.matrix,
+            ]
         ) and (to_extract is not None):
             # Instantiate a component selector operator
             extract_op = self._model.operator(name="component_selector_fc")
@@ -227,6 +242,12 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
 
+        extract_scoping = self._model.operator(name="extract_scoping")
+        extract_scoping.connect(0, out)
+        merge_scopings = self._model.operator(name="merge::scoping")
+        merge_scopings.connect(0, extract_scoping.outputs.mesh_scoping_as_scoping)
+        wf.set_output_name("scoping", merge_scopings.outputs.merged_scoping)
+
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
@@ -242,7 +263,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         return DataObject(
             fields_container=fc,
             columns=columns,
-            mesh_scoping=None,
+            index=wf.get_output("scoping", core.types.scoping).ids,
         )
 
     def displacement(
