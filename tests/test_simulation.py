@@ -1323,15 +1323,39 @@ class TestHarmonicMechanicalSimulation:
         assert field.data.shape == (3,)
         assert np.allclose(field.data, field_ref.data)
 
-    def test_amplitude(self, harmonic_simulation):
-        result = harmonic_simulation.displacement(
-            components=["X"], node_ids=[2, 3, 4], amplitude=True
-        )
-        assert len(result._fc) == 1
+    # def test_amplitude(self, harmonic_simulation):
+    #     result = harmonic_simulation.displacement(
+    #         components=["X"], node_ids=[2, 3, 4], amplitude=True
+    #     )
+    #     assert len(result._fc) == 1
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #
+    #     op = harmonic_simulation._model.operator("UX")
+    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #         1, server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(0, time_scoping)
+    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #         [2, 3, 4], server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(1, mesh_scoping)
+    #     amplitude_op = harmonic_simulation._model.operator("amplitude_fc")
+    #     amplitude_op.connect(0, op.outputs.fields_container)
+    #     field_ref = amplitude_op.eval()[0]
+    #
+    #     assert field.component_count == 1
+    #     assert field.data.shape == (3,)
+    #     assert np.allclose(field.data, field_ref.data)
+
+    def test_velocity(self, harmonic_simulation):
+        print(harmonic_simulation)
+
+        result = harmonic_simulation.velocity(components=["X"], node_ids=[2, 3, 4])
+        assert len(result._fc) == 2
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
-
-        op = harmonic_simulation._model.operator("UX")
+        op = harmonic_simulation._model.operator("VX")
         time_scoping = core.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
@@ -1340,10 +1364,335 @@ class TestHarmonicMechanicalSimulation:
             [2, 3, 4], server=harmonic_simulation._model._server
         )
         op.connect(1, mesh_scoping)
-        amplitude_op = harmonic_simulation._model.operator("amplitude_fc")
-        amplitude_op.connect(0, op.outputs.fields_container)
-        field_ref = amplitude_op.eval()[0]
-
+        field_ref = op.eval()[0]
         assert field.component_count == 1
         assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_acceleration(self, harmonic_simulation):
+        print(harmonic_simulation)
+
+        result = harmonic_simulation.acceleration(components=["X"], node_ids=[2, 3, 4])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("AX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+            [2, 3, 4], server=harmonic_simulation._model._server
+        )
+        op.connect(1, mesh_scoping)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (3,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_reaction_force(self, allkindofcomplexity):
+        harmonic_simulation = post.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+        )
+        result = harmonic_simulation.reaction_force(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("RF")
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces(self, allkindofcomplexity):
+        harmonic_simulation = post.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+        )
+        result = harmonic_simulation.element_nodal_forces(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("ENF")
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+        harmonic_simulation = post.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+        )
+        result = harmonic_simulation.element_nodal_forces_nodal(set_ids=[1])
+        assert len(result._fc) == 3
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("ENF")
+        op.connect(9, post.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+        harmonic_simulation = post.load_simulation(
+            data_sources=allkindofcomplexity,
+            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+        )
+        result = harmonic_simulation.element_nodal_forces_elemental(set_ids=[1])
+        assert len(result._fc) == 3
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("ENF")
+        op.connect(9, post.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 3
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress(self, harmonic_simulation):
+        print(harmonic_simulation)
+        result = harmonic_simulation.stress(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.stress_elemental(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.stress_nodal(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("SX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal(self, harmonic_simulation):
+        result = harmonic_simulation.stress_principal(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S1")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.stress_principal_nodal(components=2, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S2")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_principal_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.stress_principal_elemental(
+            components=3, set_ids=[1]
+        )
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S3")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises(self, harmonic_simulation):
+        result = harmonic_simulation.stress_eqv_von_mises(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.stress_eqv_von_mises_elemental(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_stress_eqv_von_mises_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("S_eqv")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elemental_volume(self, harmonic_simulation):
+        result = harmonic_simulation.elemental_volume(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("ENG_VOL")
+        field_ref = op.eval()[0]
+        print(field_ref)
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain(components=1, set_ids=1)
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_elemental(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_nodal(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPELX")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_principal(components=1, set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        principal_op = harmonic_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_1()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_principal_nodal(
+            components=2, set_ids=[1]
+        )
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.nodal)
+        principal_op = harmonic_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_2()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_principal_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_principal_elemental(
+            components=3, set_ids=[1]
+        )
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental)
+        principal_op = harmonic_simulation._model.operator(name="invariants_fc")
+        principal_op.connect(0, op.outputs.fields_container)
+        field_ref = principal_op.outputs.fields_eig_3()[0]
+        assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)

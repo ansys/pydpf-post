@@ -210,7 +210,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
 
-        # Add an optional component selection step if result is vector, matrix, or principal
+        # Add an optional component selection step if result is vector, or matrix
         if (
             category
             in [
