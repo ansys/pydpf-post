@@ -343,25 +343,25 @@ class Simulation(ABC):
         # Create operator internal names based on principal components
         out = []
         if components is None:
-            out = None
-        else:
-            if isinstance(components, int) or isinstance(components, str):
-                components = [components]
-            if not isinstance(components, list):
+            components = [1]
+
+        if isinstance(components, int) or isinstance(components, str):
+            components = [components]
+        if not isinstance(components, list):
+            raise ValueError(
+                "Argument 'components' must be an int, a str, or a list of either."
+            )
+        for comp in components:
+            if not (isinstance(comp, str) or isinstance(comp, int)):
                 raise ValueError(
-                    "Argument 'components' must be an int, a str, or a list of either."
+                    "Argument 'components' can only contain integers and/or strings."
                 )
-            for comp in components:
-                if not (isinstance(comp, str) or isinstance(comp, int)):
-                    raise ValueError(
-                        "Argument 'components' can only contain integers and/or strings."
-                    )
-                if str(comp) not in self._principal_names:
-                    raise ValueError(
-                        "A principal component ID must be one of: "
-                        f"{self._principal_names}."
-                    )
-                out.append(int(comp) - 1)
+            if str(comp) not in self._principal_names:
+                raise ValueError(
+                    "A principal component ID must be one of: "
+                    f"{self._principal_names}."
+                )
+            out.append(int(comp) - 1)
 
         # Take unique values
         if out is not None:
