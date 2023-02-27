@@ -75,7 +75,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -332,7 +334,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -407,7 +411,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -482,7 +488,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -553,7 +561,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -627,7 +637,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -696,7 +708,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -765,7 +779,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -838,7 +854,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -906,7 +924,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -972,7 +992,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1042,7 +1064,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1107,7 +1131,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1177,7 +1203,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1254,7 +1282,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1320,7 +1350,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1389,7 +1421,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1465,7 +1499,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1530,7 +1566,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1596,7 +1634,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1666,7 +1706,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1731,7 +1773,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1803,7 +1847,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1866,7 +1912,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1928,7 +1976,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2001,7 +2051,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2082,7 +2134,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2152,7 +2206,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2225,7 +2281,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2298,7 +2356,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2361,7 +2421,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2423,7 +2485,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2489,7 +2553,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2559,7 +2625,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2624,7 +2692,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
