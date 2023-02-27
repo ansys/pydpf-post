@@ -19,4 +19,14 @@ class Mesh:
     @property
     def node_ids(self) -> List[int]:
         """Returns the list of node IDs in the mesh."""
-        return self._meshed_region.nodes.scoping.ids.tolist()
+        return self._meshed_region.nodes.scoping.ids
+
+    @property
+    def element_ids(self) -> List[int]:
+        """Returns the list of element IDs in the mesh."""
+        return self._meshed_region.elements.scoping.ids
+
+    @property
+    def _core_object(self):
+        """Returns the underlying PyDPF-Core ref:MeshedRegion."""
+        return self._meshed_region

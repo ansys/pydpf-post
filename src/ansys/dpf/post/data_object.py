@@ -38,6 +38,11 @@ class DataObject:
 
         # super().__init__(fields_container._internal_obj, server)
 
+    @property
+    def _core_object(self):
+        """Returns the underlying PyDPF-Core ref:FieldsContainer."""
+        return self._fc
+
     def __len__(self):
         """Return the length of the DataObject."""
         return len(self._fc)
