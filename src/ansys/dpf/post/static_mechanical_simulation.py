@@ -4,7 +4,7 @@ import warnings
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
-from ansys.dpf.post.data_object import DataObject
+from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -29,7 +29,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -80,7 +80,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         # Build the targeted time scoping
@@ -236,7 +236,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 category=UserWarning,
             )
         # Return the result wrapped in a DPF_Dataframe
-        return DataObject(
+        return DataFrame(
             fields_container=fc,
             parent_simulation=self,
             columns=columns,
@@ -257,7 +257,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract displacement results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -297,7 +297,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -330,7 +330,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -376,7 +376,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -406,7 +406,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -442,7 +442,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -473,7 +473,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -511,7 +511,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -543,7 +543,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -589,7 +589,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -619,7 +619,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -654,7 +654,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -685,7 +685,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -722,7 +722,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -753,7 +753,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -796,7 +796,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -825,7 +825,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -858,7 +858,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -888,7 +888,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -923,7 +923,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -955,7 +955,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1001,7 +1001,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1032,7 +1032,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1070,7 +1070,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1100,7 +1100,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1136,7 +1136,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1168,7 +1168,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1213,7 +1213,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1244,7 +1244,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1281,7 +1281,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1311,7 +1311,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1346,7 +1346,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1377,7 +1377,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1420,7 +1420,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1449,7 +1449,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1482,7 +1482,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1512,7 +1512,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1547,7 +1547,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1578,7 +1578,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1621,7 +1621,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1650,7 +1650,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1683,7 +1683,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1713,7 +1713,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1748,7 +1748,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1780,7 +1780,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1826,7 +1826,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1857,7 +1857,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1895,7 +1895,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1925,7 +1925,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -1961,7 +1961,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1993,7 +1993,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2038,7 +2038,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2069,7 +2069,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2106,7 +2106,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2136,7 +2136,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2171,7 +2171,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2202,7 +2202,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2245,7 +2245,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2275,7 +2275,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2310,7 +2310,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2339,7 +2339,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2372,7 +2372,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2404,7 +2404,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2450,7 +2450,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2481,7 +2481,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2519,7 +2519,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2549,7 +2549,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2585,7 +2585,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2617,7 +2617,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2662,7 +2662,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2693,7 +2693,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2730,7 +2730,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2760,7 +2760,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2795,7 +2795,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2826,7 +2826,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2869,7 +2869,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2899,7 +2899,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2934,7 +2934,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2963,7 +2963,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -2996,7 +2996,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3028,7 +3028,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3068,7 +3068,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3099,7 +3099,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3134,7 +3134,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3163,7 +3163,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3196,7 +3196,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3225,7 +3225,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental heat generation results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3258,7 +3258,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3287,7 +3287,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3320,7 +3320,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3349,7 +3349,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3382,7 +3382,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3413,7 +3413,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3456,7 +3456,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3485,7 +3485,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3518,7 +3518,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3548,7 +3548,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3583,7 +3583,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3612,7 +3612,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stiffness matrix energy results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3645,7 +3645,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3674,7 +3674,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract artificial hourglass energy results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3707,7 +3707,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3736,7 +3736,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract thermal dissipation energy results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3769,7 +3769,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3798,7 +3798,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract kinetic energy results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3831,7 +3831,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3862,7 +3862,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3897,7 +3897,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3927,7 +3927,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -3962,7 +3962,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3991,7 +3991,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4024,7 +4024,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4055,7 +4055,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract structural temperature element nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4098,7 +4098,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4128,7 +4128,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract structural temperature nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4163,7 +4163,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4192,7 +4192,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract structural temperature elemental results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4225,7 +4225,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4258,7 +4258,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4306,7 +4306,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4339,7 +4339,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4379,7 +4379,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4411,7 +4411,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4449,7 +4449,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4482,7 +4482,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4522,7 +4522,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4555,7 +4555,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
@@ -4595,7 +4595,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
