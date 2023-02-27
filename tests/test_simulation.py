@@ -1428,7 +1428,7 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_nodal(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
-        assert len(result._fc) == 1
+        assert len(result._fc) == 2
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -1447,7 +1447,7 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_elemental(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
-        assert len(result._fc) == 1
+        assert len(result._fc) == 2
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
