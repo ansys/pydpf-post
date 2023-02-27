@@ -42,7 +42,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             base_name:
                 Base name for the requested result.
             location:
-                Location requested.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             category:
                 Type of result requested. See the :class:`ResultCategory` class.
             components:
@@ -344,10 +350,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -541,10 +550,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -733,10 +745,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -923,10 +938,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1120,10 +1138,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1312,10 +1333,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1498,10 +1522,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1688,10 +1715,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1885,10 +1915,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2077,10 +2110,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2564,10 +2600,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2750,10 +2789,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2943,10 +2985,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
