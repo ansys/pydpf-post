@@ -285,6 +285,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Return the result wrapped in a DPF_Dataframe
         return DataObject(
             fields_container=fc,
+            parent_simulation=self,
             columns=columns,
             index=wf.get_output("scoping", core.types.scoping).ids,
         )
