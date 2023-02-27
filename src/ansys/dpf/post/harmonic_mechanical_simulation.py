@@ -95,8 +95,6 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 "Arguments all_sets, selection, set_ids, frequencies, "
                 "and load_steps are mutually exclusive."
             )
-        elif tot == 0:
-            set_ids = 1
 
         tot = (
             (node_ids is not None)
