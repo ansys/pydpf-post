@@ -432,12 +432,12 @@ class MechanicalSimulation(Simulation, ABC):
         # Create the SpatialSelection
         if named_selections:
             selection.select_named_selection(named_selection=named_selections)
-        elif element_ids:
+        elif element_ids is not None:
             if location == locations.nodal:
                 selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
             else:
                 selection.select_elements(elements=element_ids)
-        elif node_ids:
+        elif node_ids is not None:
             if location != locations.nodal:
                 raise ValueError(
                     "Argument 'node_ids' can only be used if 'location' "
