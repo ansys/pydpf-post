@@ -4,6 +4,9 @@ from typing import List, Union
 import warnings
 import weakref
 
+display_width = 80
+display_max_colwidth = 10
+
 
 class DataFrame:
     """A DataFrame style API to manipulate DPF data."""
@@ -38,6 +41,10 @@ class DataFrame:
         if parent_simulation is not None:
             self._parent_simulation = weakref.ref(parent_simulation)
 
+        self._str = None
+        self._last_display_width = display_width
+        self._last_display_max_colwidth = display_max_colwidth
+
         # super().__init__(fields_container._internal_obj, server)
 
     @property
@@ -51,23 +58,31 @@ class DataFrame:
 
     def __str__(self) -> str:
         """String representation of the DataFrame."""
-        return str(self._fc)
+        if (
+            (self._str is None)
+            or (self._last_display_width != display_width)
+            or (self._last_display_max_colwidth != display_max_colwidth)
+        ):
+            self._update_str(width=display_width, max_colwidth=display_max_colwidth)
+            self._last_display_width = display_width
+            self._last_display_max_colwidth = display_max_colwidth
+        return self._str
 
-    def __min__(self, **kwargs):
-        """Return the minimum of the data."""
-        return self.as_array().min()
+    def _update_str(self, width: int, max_colwidth: int):
+        """Updates the DataFrame string representation using given display options.
 
-    def __max__(self, **kwargs):
-        """Return the maximum of the data."""
-        return self.as_array().max()
-
-    def max(self, **kwargs):
-        """Return the maximum of the data."""
-        return float(self.as_array().max())
-
-    def min(self, **kwargs):
-        """Return the minimum of the data."""
-        return float(self.as_array().min())
+        Parameters
+        ----------
+        width:
+            Number of characters to use for the total width.
+        max_colwidth:
+            Maximum number of characters to use for each column.
+        """
+        txt = str(self._fc)
+        # txt = txt.replace("Fields Container", "DataFrame")
+        # txt = txt.replace("field", "result")
+        # txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
+        self._str = txt
 
     def plot(self, **kwargs):
         """Plot the result."""
