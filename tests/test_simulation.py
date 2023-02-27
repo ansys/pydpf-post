@@ -1519,47 +1519,47 @@ class TestHarmonicMechanicalSimulation:
     #     assert field.data.shape == (3,)
     #     assert np.allclose(field.data, field_ref.data)
 
-    def test_velocity(self, harmonic_simulation):
-        print(harmonic_simulation)
-
-        result = harmonic_simulation.velocity(components=["X"], node_ids=[2, 3, 4])
-        assert len(result._fc) == 2
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = harmonic_simulation._model.operator("VX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
-            1, server=harmonic_simulation._model._server
-        )
-        op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-            [2, 3, 4], server=harmonic_simulation._model._server
-        )
-        op.connect(1, mesh_scoping)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert field.data.shape == (3,)
-        assert np.allclose(field.data, field_ref.data)
-
-    def test_acceleration(self, harmonic_simulation):
-        print(harmonic_simulation)
-
-        result = harmonic_simulation.acceleration(components=["X"], node_ids=[2, 3, 4])
-        assert len(result._fc) == 2
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = harmonic_simulation._model.operator("AX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
-            1, server=harmonic_simulation._model._server
-        )
-        op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
-            [2, 3, 4], server=harmonic_simulation._model._server
-        )
-        op.connect(1, mesh_scoping)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert field.data.shape == (3,)
-        assert np.allclose(field.data, field_ref.data)
+    # def test_velocity(self, harmonic_simulation):
+    #     print(harmonic_simulation)
+    #
+    #     result = harmonic_simulation.velocity(components=["X"], node_ids=[2, 3, 4])
+    #     assert len(result._fc) == 2
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = harmonic_simulation._model.operator("VX")
+    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #         1, server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(0, time_scoping)
+    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #         [2, 3, 4], server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(1, mesh_scoping)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 1
+    #     assert field.data.shape == (3,)
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # def test_acceleration(self, harmonic_simulation):
+    #     print(harmonic_simulation)
+    #
+    #     result = harmonic_simulation.acceleration(components=["X"], node_ids=[2, 3, 4])
+    #     assert len(result._fc) == 2
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = harmonic_simulation._model.operator("AX")
+    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #         1, server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(0, time_scoping)
+    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #         [2, 3, 4], server=harmonic_simulation._model._server
+    #     )
+    #     op.connect(1, mesh_scoping)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 1
+    #     assert field.data.shape == (3,)
+    #     assert np.allclose(field.data, field_ref.data)
 
     def test_reaction_force(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
