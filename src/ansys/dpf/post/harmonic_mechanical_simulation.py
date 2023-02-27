@@ -32,7 +32,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.

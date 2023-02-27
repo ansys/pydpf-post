@@ -30,7 +30,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
