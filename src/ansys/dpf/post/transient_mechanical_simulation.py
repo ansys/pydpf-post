@@ -480,8 +480,6 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            node_ids:
-                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
