@@ -3,6 +3,7 @@ from typing import List, Union
 import warnings
 
 from ansys.dpf import core
+from ansys.dpf.post import locations
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
@@ -27,7 +28,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -41,7 +42,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             base_name:
                 Base name for the requested result.
             location:
-                Location requested.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             category:
                 Type of result requested. See the :class:`ResultCategory` class.
             components:
@@ -178,9 +185,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             # If a strain result, change the location now
             if force_elemental_nodal:
                 average_op = None
-                if location == core.locations.nodal:
+                if location == locations.nodal:
                     average_op = self._model.operator(name="to_nodal_fc")
-                elif location == core.locations.elemental:
+                elif location == locations.elemental:
                     average_op = self._model.operator(name="to_elemental_fc")
                 if average_op is not None:
                     average_op.connect(0, out)
@@ -288,7 +295,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="U",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -304,13 +311,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -320,11 +328,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -340,10 +350,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -365,7 +378,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -419,7 +432,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -484,7 +497,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -499,13 +512,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -515,11 +529,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -534,10 +550,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -559,7 +578,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -612,7 +631,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -676,7 +695,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -691,12 +710,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -706,11 +726,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -723,10 +745,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -748,7 +773,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -798,7 +823,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -859,7 +884,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -874,13 +899,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -890,11 +916,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -910,10 +938,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -935,7 +966,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -992,7 +1023,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1054,7 +1085,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1069,13 +1100,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -1085,11 +1117,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1104,10 +1138,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1129,7 +1166,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1185,7 +1222,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1246,7 +1283,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1261,12 +1298,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -1276,11 +1314,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1293,10 +1333,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1318,7 +1361,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1368,7 +1411,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1429,7 +1472,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1444,12 +1487,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -1459,11 +1503,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1476,10 +1522,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1501,7 +1550,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1551,7 +1600,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1612,7 +1661,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1627,13 +1676,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -1643,11 +1693,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
+         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1663,10 +1715,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1688,7 +1743,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1745,7 +1800,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1807,7 +1862,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1822,13 +1877,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -1838,11 +1894,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -1857,10 +1915,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -1882,7 +1943,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1938,7 +1999,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1999,7 +2060,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2014,12 +2075,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -2029,11 +2091,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2046,10 +2110,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2071,7 +2138,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2124,7 +2191,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2182,7 +2249,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2250,7 +2317,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="RF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -2309,7 +2376,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_VOL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2367,7 +2434,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ElementalMass",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2425,7 +2492,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="centroids",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2483,7 +2550,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="thickness",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2498,12 +2565,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -2513,11 +2581,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2530,10 +2600,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2555,7 +2628,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2605,7 +2678,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2666,7 +2739,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2681,12 +2754,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def hydrostatic_pressure(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -2696,11 +2770,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2713,10 +2789,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2738,7 +2817,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2791,7 +2870,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2849,7 +2928,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2864,6 +2943,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2871,7 +2951,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
     ) -> DataObject:
@@ -2881,11 +2961,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the first mode will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
          Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             frequencies:
@@ -2903,10 +2985,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             set_ids:
                 Sets to get results for. Equivalent to modes.
                 Common to all simulation types for easier scripting.
@@ -2929,7 +3014,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             modes=modes,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2989,7 +3074,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3055,7 +3140,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3124,7 +3209,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="F",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3193,7 +3278,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="M",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
