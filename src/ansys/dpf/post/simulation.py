@@ -286,6 +286,11 @@ class Simulation(ABC):
         return self._time_frequencies
 
     @property
+    def set_ids(self) -> List:
+        """Returns the list of set IDs available in the simulation."""
+        return list(range(1, self.time_freq_support.n_sets + 1))
+
+    @property
     def units(self):
         """Returns the current time/frequency and distance units used."""
         return self._units
