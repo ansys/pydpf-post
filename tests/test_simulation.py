@@ -469,6 +469,61 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (9433, 3)
         assert np.allclose(field.data, field_ref.data)
 
+    def test_elastic_strain_eqv_von_mises(self, static_simulation):
+        result = static_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=static_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = static_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        field_ref = equivalent_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_nodal(self, static_simulation):
+        result = static_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=static_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = static_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = static_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_elemental(self, static_simulation):
+        result = static_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=static_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = static_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = static_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
 
 class TestTransientMechanicalSimulation:
     @fixture
@@ -956,6 +1011,63 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    def test_elastic_strain_eqv_von_mises(self, transient_simulation):
+        result = transient_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = transient_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        field_ref = equivalent_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_nodal(self, transient_simulation):
+        result = transient_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = transient_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = transient_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_elemental(self, transient_simulation):
+        result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1]
+        )
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = transient_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=transient_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = transient_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = transient_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
 
 class TestModalMechanicalSimulation:
     @fixture
@@ -1294,6 +1406,61 @@ class TestModalMechanicalSimulation:
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_3()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises(self, modal_simulation):
+        result = modal_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = modal_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        field_ref = equivalent_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_nodal(self, modal_simulation):
+        result = modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = modal_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = modal_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_elemental(self, modal_simulation):
+        result = modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = modal_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=modal_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = modal_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = modal_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -1698,5 +1865,60 @@ class TestHarmonicMechanicalSimulation:
         principal_op = harmonic_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_3()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = harmonic_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        field_ref = equivalent_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_nodal(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = harmonic_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = harmonic_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
+        assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_elastic_strain_eqv_von_mises_elemental(self, harmonic_simulation):
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
+        assert len(result._fc) == 2
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = harmonic_simulation._model.operator("EPEL")
+        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+            1, server=harmonic_simulation._model._server
+        )
+        op.connect(0, time_scoping)
+        op.connect(9, post.locations.elemental_nodal)
+        equivalent_op = harmonic_simulation._model.operator(name="eqv_fc")
+        equivalent_op.connect(0, op.outputs.fields_container)
+        average_op = harmonic_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(0, equivalent_op.outputs.fields_container)
+        field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
