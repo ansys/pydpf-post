@@ -3,6 +3,7 @@ from typing import List, Tuple, Union
 import warnings
 
 from ansys.dpf import core
+from ansys.dpf.post import locations
 from ansys.dpf.post.data_object import DataObject
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
@@ -29,7 +30,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataObject:
-        """Extract stress results from the simulation.
+        """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -43,7 +44,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             base_name:
                 Base name for the requested result.
             location:
-                Location requested.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
             category:
                 Type of result requested. See the :class:`ResultCategory` class.
             components:
@@ -61,7 +68,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                List of load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -178,9 +187,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             # If a strain result, change the location now
             if force_elemental_nodal:
                 average_op = None
-                if location == core.locations.nodal:
+                if location == locations.nodal:
                     average_op = self._model.operator(name="to_nodal_fc")
-                elif location == core.locations.elemental:
+                elif location == locations.elemental:
                     average_op = self._model.operator(name="to_elemental_fc")
                 if average_op is not None:
                     average_op.connect(0, out)
@@ -276,7 +285,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -290,7 +301,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="U",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -306,6 +317,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -316,7 +328,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal stress results from the simulation.
 
@@ -329,6 +341,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -342,17 +356,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -369,7 +388,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -411,7 +430,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -425,7 +446,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -478,7 +499,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -492,7 +515,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -507,6 +530,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         components: Union[List[str], List[int], None] = None,
@@ -517,7 +541,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal stress results from the simulation.
 
@@ -525,11 +549,14 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
+
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -542,17 +569,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -569,7 +601,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -610,7 +642,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -624,7 +658,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -676,7 +710,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -690,7 +726,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -705,6 +741,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def stress_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -714,7 +751,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
@@ -722,11 +759,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -737,17 +776,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -764,7 +808,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -802,7 +846,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -816,7 +862,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -865,7 +911,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -879,7 +927,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="S",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -894,6 +942,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -904,7 +953,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract stress results from the simulation.
 
@@ -912,11 +961,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -930,17 +981,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -957,7 +1013,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1002,7 +1058,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1016,7 +1074,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1066,7 +1124,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1080,7 +1140,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1095,6 +1155,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1105,7 +1166,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
@@ -1113,11 +1174,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1130,17 +1193,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -1157,7 +1225,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1201,7 +1269,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1215,7 +1285,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1264,7 +1334,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1278,7 +1350,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -1293,6 +1365,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elastic_strain_eqv_von_mises(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1302,7 +1375,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
@@ -1310,11 +1383,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1325,17 +1400,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -1352,7 +1432,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1390,7 +1470,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1404,7 +1486,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1453,7 +1535,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1467,7 +1551,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPEL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -1482,6 +1566,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_state_variable(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -1491,7 +1576,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal plastic state variable results from the simulation.
 
@@ -1499,11 +1584,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1514,17 +1601,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -1541,7 +1633,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1579,7 +1671,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1593,7 +1687,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1642,7 +1736,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1656,7 +1752,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_PSV",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -1671,6 +1767,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1681,7 +1778,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal plastic strain results from the simulation.
 
@@ -1689,11 +1786,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1707,17 +1806,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -1734,7 +1838,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1779,7 +1883,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1793,7 +1899,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1843,7 +1949,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1857,7 +1965,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -1872,6 +1980,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -1882,7 +1991,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal plastic strain results from the simulation.
 
@@ -1890,11 +1999,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -1907,17 +2018,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -1934,7 +2050,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -1978,7 +2094,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1992,7 +2110,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2041,7 +2159,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2055,7 +2175,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2070,6 +2190,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def plastic_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2079,7 +2200,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent plastic strain results from the simulation.
 
@@ -2087,11 +2208,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2102,17 +2225,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -2129,7 +2257,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2170,7 +2298,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2184,7 +2314,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2230,7 +2360,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2244,7 +2376,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EPPL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2259,6 +2391,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2269,7 +2402,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal creep strain results from the simulation.
 
@@ -2277,11 +2410,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2295,17 +2430,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -2322,7 +2462,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2367,7 +2507,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2381,7 +2523,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -2431,7 +2573,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2445,7 +2589,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.matrix,
             components=components,
             selection=selection,
@@ -2460,6 +2604,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_principal(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -2470,7 +2615,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal principal creep strain results from the simulation.
 
@@ -2478,11 +2623,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2495,17 +2642,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -2522,7 +2674,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2566,7 +2718,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2580,7 +2734,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2629,7 +2783,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2643,7 +2799,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.principal,
             components=components,
             selection=selection,
@@ -2658,6 +2814,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def creep_strain_eqv(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2667,7 +2824,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal equivalent creep strain results from the simulation.
 
@@ -2675,11 +2832,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2690,17 +2849,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -2717,7 +2881,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -2758,7 +2922,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2772,7 +2938,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2818,7 +2984,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2832,7 +3000,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ECR",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.equivalent,
             components=None,
             selection=selection,
@@ -2888,7 +3056,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2902,7 +3072,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="RF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -2918,6 +3088,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def elemental_volume(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -2939,6 +3110,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -2949,7 +3122,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2963,7 +3138,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_VOL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -2971,7 +3146,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3009,7 +3184,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3023,7 +3200,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ElementalMass",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3069,7 +3246,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3083,7 +3262,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EHC",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3129,7 +3308,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3143,7 +3324,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="centroids",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3189,7 +3370,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3203,7 +3386,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="thickness",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3218,6 +3401,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_orientations(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3227,7 +3411,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -3235,11 +3419,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3250,17 +3436,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -3277,7 +3468,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3315,7 +3506,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3329,7 +3522,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3378,7 +3571,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3392,7 +3587,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="EUL",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3438,7 +3633,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3452,7 +3649,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_SE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3498,7 +3695,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3512,7 +3711,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_AHO",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3558,7 +3757,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3572,7 +3773,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_TH",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3618,7 +3819,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3632,7 +3835,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENG_KE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3647,6 +3850,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def hydrostatic_pressure(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3656,7 +3860,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3664,11 +3868,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3679,7 +3885,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3701,7 +3909,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3742,7 +3950,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3756,7 +3966,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3802,7 +4012,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3816,7 +4028,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENL_HPRES",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
             selection=selection,
@@ -3831,6 +4043,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def structural_temperature(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
@@ -3840,7 +4053,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3848,11 +4061,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -3863,17 +4078,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -3890,7 +4110,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -3931,7 +4151,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3945,7 +4167,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="BFE",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -3991,7 +4213,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4005,7 +4229,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="BFE",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.scalar,
             components="",
             selection=selection,
@@ -4020,6 +4244,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
     def element_nodal_forces(
         self,
+        node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
@@ -4031,7 +4256,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[core.locations, str] = core.locations.elemental_nodal,
+        location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataObject:
         """Extract element nodal forces results from the simulation.
 
@@ -4039,11 +4264,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
+            node_ids:
+                List of IDs of nodes to get results for.
             element_ids:
                 List of IDs of elements to get results for.
             times:
@@ -4059,17 +4286,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
             location:
-                Location to extract results at. Available locations are listed in `core.locations`
-                and are: "Nodal", "Elemental", and "ElementalNodal". The default "ElementalNodal"
-                gives results with a value for every node at each element. "Elemental" gives results
-                with one value for each element. "Nodal" gives results with one value for each node.
+                Location to extract results at. Available locations are listed in
+                class:`post.locations` and are: `post.locations.nodal`,
+                `post.locations.elemental`, and `post.locations.elemental_nodal`.
+                Using the default `post.locations.elemental_nodal` results in a value
+                for every node at each element. Similarly, using `post.locations.elemental`
+                gives results with one value for each element, while using `post.locations.nodal`
+                gives results with one value for each node.
 
         Returns
         -------
@@ -4087,7 +4319,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             set_ids=set_ids,
             all_sets=all_sets,
             load_steps=load_steps,
-            node_ids=None,
+            node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
         )
@@ -4135,7 +4367,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4149,7 +4383,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4203,7 +4437,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4217,7 +4453,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="ENF",
-            location=core.locations.elemental,
+            location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4274,7 +4510,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4288,7 +4526,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="F",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4345,7 +4583,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             all_sets:
                 Whether to get results for all sets.
             load_steps:
-                Load steps to get results for.
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4359,7 +4599,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         """
         return self._get_result(
             base_name="M",
-            location=core.locations.nodal,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,

@@ -10,10 +10,10 @@ The available results can be listed to see what results can be retrieved.
 ###############################################################################
 # Imports and loading simulation
 # ------------------------------
-import ansys.dpf.post as dpf
+from ansys.dpf import post
 from ansys.dpf.post import examples
 
-simulation = dpf.load_simulation(examples.static_rst)
+simulation = post.load_simulation(examples.static_rst)
 print(simulation)
 
 ###############################################################################
