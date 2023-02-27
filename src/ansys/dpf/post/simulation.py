@@ -62,6 +62,10 @@ class Simulation(ABC):
         }
         self._time_freq_precision = None
 
+    def release_streams(self):
+        """Release the streams to data files if any is active."""
+        self._model.metadata.release_streams()
+
     @property
     def results(self) -> List[str]:
         r"""Available results.
