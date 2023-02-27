@@ -20,7 +20,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         amplitude: bool = False,
-        sweeping_phase: Union[float, None] = None,
+        sweeping_phase: Union[float, None] = 0.0,
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         frequencies: Union[float, List[float], None] = None,
@@ -144,6 +144,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         if category == ResultCategory.equivalent and base_name[0] == "E":
             force_elemental_nodal = True
+        # elif sweeping_phase is not None:
+        #     force_elemental_nodal = True
         else:
             force_elemental_nodal = False
 
@@ -207,6 +209,20 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+
+        # Add an optional sweeping phase operation if requested
+        if sweeping_phase is not None:
+            if isinstance(sweeping_phase, int):
+                sweeping_phase = float(sweeping_phase)
+            if not isinstance(sweeping_phase, float):
+                raise ValueError("Argument sweeping_phase must be a float.")
+            sweeping_op = self._model.operator(name="sweeping_phase_fc")
+            sweeping_op.connect(0, out)
+            sweeping_op.connect(2, sweeping_phase)
+            sweeping_op.connect(3, "degree")
+            sweeping_op.connect(4, False)
+            wf.add_operator(operator=sweeping_op)
+            out = sweeping_op.outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (
@@ -272,7 +288,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         amplitude: bool = False,
-        sweeping_phase: Union[float, None] = None,
+        sweeping_phase: Union[float, None] = 0.0,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -352,7 +368,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         amplitude: bool = False,
-        sweeping_phase: Union[float, None] = None,
+        sweeping_phase: Union[float, None] = 0.0,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -432,7 +448,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         amplitude: bool = False,
-        sweeping_phase: Union[float, None] = None,
+        sweeping_phase: Union[float, None] = 0.0,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
