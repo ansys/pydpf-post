@@ -6,7 +6,7 @@ import re
 from typing import List, Tuple, Union
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
@@ -281,7 +281,7 @@ class Simulation(ABC):
         return self._time_freq_precision
 
     @property
-    def time_freq_support(self):
+    def time_freq_support(self) -> TimeFreqSupport:
         """Description of the temporal/frequency analysis of the model."""
         return self._time_frequencies
 
