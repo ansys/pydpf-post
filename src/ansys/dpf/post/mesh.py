@@ -28,5 +28,5 @@ class Mesh:
 
     @property
     def _core_object(self):
-        """Returns the underlying PyDPF-Core ref:MeshedRegion."""
+        """Returns the underlying PyDPF-Core class:`ansys.dpf.core.MeshedRegion` object."""
         return self._meshed_region

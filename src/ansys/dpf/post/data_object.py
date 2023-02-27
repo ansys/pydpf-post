@@ -40,7 +40,7 @@ class DataObject:
 
     @property
     def _core_object(self):
-        """Returns the underlying PyDPF-Core ref:FieldsContainer."""
+        """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
     def __len__(self):
