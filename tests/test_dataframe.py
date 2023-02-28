@@ -41,3 +41,15 @@ def test_dataframe_len(multishells, transient_rst):
     fc = model.results.displacement.on_all_time_freqs.eval()
     df = post.DataFrame(data=fc)
     assert len(df) == 35
+
+
+def test_dataframe_columns(df):
+    columns = df.columns
+    print(repr(columns))
+    print(columns)
+
+
+def test_dataframe_index(df):
+    index = df.index
+    print(repr(index))
+    print(index)

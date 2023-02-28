@@ -5,6 +5,7 @@ import warnings
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import Index, MultiIndex, location_to_label
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -218,12 +219,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
 
-        extract_scoping = self._model.operator(name="extract_scoping")
-        extract_scoping.connect(0, out)
-        merge_scopings = self._model.operator(name="merge::scoping")
-        merge_scopings.connect(0, extract_scoping.outputs.mesh_scoping_as_scoping)
-        wf.set_output_name("scoping", merge_scopings.outputs.merged_scoping)
-
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
@@ -235,12 +230,20 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
+
+        time_scoping = fc.get_time_scoping()
+        multi_index = MultiIndex(
+            indexes=[
+                Index(name="set_id", values=time_scoping.ids),
+                Index(name="result", values=columns),
+            ],
+        )
+
         # Return the result wrapped in a DPF_Dataframe
         return DataFrame(
             data=fc,
-            parent_simulation=self,
-            columns=columns,
-            index=wf.get_output("scoping", core.types.scoping).ids,
+            columns=multi_index,
+            index=Index(name=location_to_label[location], values=None),
         )
 
     def displacement(

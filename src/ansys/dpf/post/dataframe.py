@@ -6,6 +6,8 @@ import weakref
 
 import ansys.dpf.core as dpf
 
+from ansys.dpf.post.index import Index, MultiIndex
+
 display_width = 80
 display_max_colwidth = 10
 
@@ -17,8 +19,8 @@ class DataFrame:
         self,
         data: Union[dpf.FieldsContainer, None] = None,
         parent_simulation=None,
-        index: List[int] = None,
-        columns: dict = None,
+        index: Union[Index, List[int], None] = None,
+        columns: Union[MultiIndex, List[str], None] = None,
     ):
         """Creates a DPF DataFrame based on the given input data.
 
@@ -29,9 +31,9 @@ class DataFrame:
         parent_simulation:
             Parent simulation.
         index:
-            Index to use.
+            Index (row labels) to use.
         columns:
-            Columns labels to use.
+            Column labels or class:`ansys.dpf.post.index.MultiIndex` to use.
         """
         if isinstance(data, dpf.FieldsContainer):
             self._fc = data
@@ -41,9 +43,13 @@ class DataFrame:
             )
         if columns is not None:
             self._columns = columns
+        else:
+            self._columns = None
 
         if index is not None:
             self._index = index
+        else:
+            self._index = None
 
         if parent_simulation is not None:
             self._parent_simulation = weakref.ref(parent_simulation)
@@ -53,6 +59,25 @@ class DataFrame:
         self._last_display_max_colwidth = display_max_colwidth
 
         # super().__init__(fields_container._internal_obj, server)
+
+    @property
+    def columns(self):
+        """Returns the column labels of the DataFrame."""
+        if self._columns is None:
+            pass
+        return self._columns
+
+    @property
+    def index(self):
+        """Returns the Index for the rows of the DataFrame."""
+        if self._index is None:
+            pass
+        return self._index
+
+    @property
+    def axes(self):
+        """Returns a list of the axes of the DataFrame with the row Index and the column Index."""
+        return [self._index, self._columns]
 
     @property
     def _core_object(self):
