@@ -130,7 +130,6 @@ class DataFrame:
                         f"unable to animate on the deformed mesh:\n{e}"
                     )
                 )
-                pass
         return self._fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )

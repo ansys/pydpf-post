@@ -14,7 +14,7 @@ Examples
 """
 
 import ansys.dpf.core as core
-from ansys.dpf.core.common import locations
+from ansys.dpf.core.common import locations  # noqa: F401
 
 try:
     import importlib.metadata as importlib_metadata
@@ -23,7 +23,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 from ansys.dpf.post import mesh, selection, tools
 from ansys.dpf.post.common import Grouping as grouping
-from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.dataframe import DataFrame  # noqa: F401
 from ansys.dpf.post.dpf_path import create_path_on_coordinates
 from ansys.dpf.post.misc import Report
 from ansys.dpf.post.post_utility import (
