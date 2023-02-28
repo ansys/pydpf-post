@@ -17,7 +17,7 @@ class Mesh:
 
     @property
     def available_named_selections(self) -> List[str]:
-        """Returns the available named selection of the mesh."""
+        """Returns the available named selections of the mesh."""
         return self._meshed_region.available_named_selections
 
     @property
