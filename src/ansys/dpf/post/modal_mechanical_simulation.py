@@ -5,6 +5,7 @@ import warnings
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import Index, MultiIndex, ResultsIndex, location_to_label
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -233,12 +234,20 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
+
+        multi_index = MultiIndex(
+            label_indexes=[
+                Index(name=label, values=fc.get_available_ids_for_label(label))
+                for label in fc.labels
+            ],
+            results_index=ResultsIndex(values=columns),
+        )
+
         # Return the result wrapped in a DPF_Dataframe
         return DataFrame(
             data=fc,
-            parent_simulation=self,
-            columns=columns,
-            index=wf.get_output("scoping", core.types.scoping).ids,
+            columns=multi_index,
+            index=Index(name=location_to_label[location], values=None),
         )
 
     def displacement(

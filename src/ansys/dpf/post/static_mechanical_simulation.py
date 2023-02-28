@@ -5,7 +5,7 @@ import warnings
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.index import Index, MultiIndex, location_to_label
+from ansys.dpf.post.index import Index, MultiIndex, ResultsIndex, location_to_label
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -231,12 +231,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 category=UserWarning,
             )
 
-        time_scoping = fc.get_time_scoping()
         multi_index = MultiIndex(
-            indexes=[
-                Index(name="set_id", values=time_scoping.ids),
-                Index(name="result", values=columns),
+            label_indexes=[
+                Index(name=label, values=fc.get_available_ids_for_label(label))
+                for label in fc.labels
             ],
+            results_index=ResultsIndex(values=columns),
         )
 
         # Return the result wrapped in a DPF_Dataframe

@@ -6,7 +6,7 @@ import weakref
 
 import ansys.dpf.core as dpf
 
-from ansys.dpf.post.index import Index, MultiIndex
+from ansys.dpf.post.index import Index, MultiIndex, location_to_label
 
 display_width = 80
 display_max_colwidth = 10
@@ -35,8 +35,14 @@ class DataFrame:
         columns:
             Column labels or class:`ansys.dpf.post.index.MultiIndex` to use.
         """
+        self._index = None
         if isinstance(data, dpf.FieldsContainer):
             self._fc = data
+            if index is None:
+                self._index = Index(
+                    name=location_to_label[data[0].location], values=None
+                )
+
         else:
             raise ValueError(
                 f"Input data type '{type(data)}' is not a valid data type for DataFrame creation."
@@ -48,8 +54,6 @@ class DataFrame:
 
         if index is not None:
             self._index = index
-        else:
-            self._index = None
 
         if parent_simulation is not None:
             self._parent_simulation = weakref.ref(parent_simulation)
@@ -75,9 +79,12 @@ class DataFrame:
         return self._index
 
     @property
-    def axes(self):
+    def axes(self) -> List[str]:
         """Returns a list of the axes of the DataFrame with the row Index and the column Index."""
-        return [self._index, self._columns]
+        names = [self.index.name]
+        names.extend(self.columns.label_names)
+        names.extend([self.columns.results.name])
+        return names
 
     @property
     def _core_object(self):
@@ -86,7 +93,7 @@ class DataFrame:
 
     def __len__(self):
         """Return the length of the DataFrame."""
-        return len(self._fc)
+        return len(self.index)
 
     def __str__(self) -> str:
         """String representation of the DataFrame."""
