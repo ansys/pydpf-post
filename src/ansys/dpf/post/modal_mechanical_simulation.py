@@ -235,7 +235,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             )
         # Return the result wrapped in a DPF_Dataframe
         return DataFrame(
-            fields_container=fc,
+            data=fc,
             parent_simulation=self,
             columns=columns,
             index=wf.get_output("scoping", core.types.scoping).ids,

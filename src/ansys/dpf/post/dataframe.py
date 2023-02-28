@@ -4,6 +4,8 @@ from typing import List, Union
 import warnings
 import weakref
 
+import ansys.dpf.core as dpf
+
 display_width = 80
 display_max_colwidth = 10
 
@@ -13,17 +15,17 @@ class DataFrame:
 
     def __init__(
         self,
-        fields_container=None,
+        data: Union[dpf.FieldsContainer, None] = None,
         parent_simulation=None,
-        index=None,
-        columns=None,
+        index: List[int] = None,
+        columns: dict = None,
     ):
         """Creates a DPF DataFrame based on the given input data.
 
         Parameters
         ----------
-        fields_container:
-            :class:`ansys.dpf.core.fields_container.FieldsContainer`to wrap.
+        data:
+            Data to use.
         parent_simulation:
             Parent simulation.
         index:
@@ -31,7 +33,12 @@ class DataFrame:
         columns:
             Columns labels to use.
         """
-        self._fc = fields_container
+        if isinstance(data, dpf.FieldsContainer):
+            self._fc = data
+        else:
+            raise ValueError(
+                f"Input data type '{type(data)}' is not a valid data type for DataFrame creation."
+            )
         if columns is not None:
             self._columns = columns
 
@@ -79,9 +86,7 @@ class DataFrame:
             Maximum number of characters to use for each column.
         """
         txt = str(self._fc)
-        # txt = txt.replace("Fields Container", "DataFrame")
-        # txt = txt.replace("field", "result")
-        # txt = "Field: " + txt[4 : txt.find(")") + 1] + "\n  " + txt[txt.find(")") + 1 :]
+
         self._str = txt
 
     def plot(self, **kwargs):
