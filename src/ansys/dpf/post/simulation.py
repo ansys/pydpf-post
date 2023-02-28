@@ -100,37 +100,37 @@ class Simulation(ABC):
         """
         return self._geometries
 
-    @property
-    def boundary_conditions(self):
-        """List of boundary conditions in the simulation.
+    # @property
+    # def boundary_conditions(self):
+    #     """List of boundary conditions in the simulation.
+    #
+    #     Returns a list of boundary_condition objects.
+    #
+    #     Examples
+    #     --------
+    #     >>> from ansys.dpf import post
+    #     >>> from ansys.dpf.post import examples
+    #     >>> simulation = post.load_simulation(examples.static_rst)
+    #     >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    #     []
+    #     """
+    #     return self._boundary_conditions
 
-        Returns a list of boundary_condition objects.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        []
-        """
-        return self._boundary_conditions
-
-    @property
-    def loads(self):
-        """List of loads in the simulation.
-
-        Returns a list of load objects.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        []
-        """
-        return self._loads
+    # @property
+    # def loads(self):
+    #     """List of loads in the simulation.
+    #
+    #     Returns a list of load objects.
+    #
+    #     Examples
+    #     --------
+    #     >>> from ansys.dpf import post
+    #     >>> from ansys.dpf.post import examples
+    #     >>> simulation = post.load_simulation(examples.static_rst)
+    #     >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    #     []
+    #     """
+    #     return self._loads
 
     @property
     def mesh(self) -> Mesh:
@@ -144,7 +144,11 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        <ansys.dpf.post.mesh.Mesh object at ...>
+            DPF  Mesh:
+              81 nodes
+              8 elements
+              Unit: m
+              With solid (3D) elements
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)

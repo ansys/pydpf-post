@@ -13,7 +13,7 @@ class Mesh:
 
     def __str__(self):
         """String representation of this class."""
-        return str(self._meshed_region)
+        return str(self._meshed_region).replace("Meshed Region", "Mesh")
 
     @property
     def available_named_selections(self) -> List[str]:
