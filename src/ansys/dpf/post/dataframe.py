@@ -9,7 +9,7 @@ import ansys.dpf.core as dpf
 from ansys.dpf.post.index import Index, MultiIndex, location_to_label
 
 display_width = 80
-display_max_colwidth = 10
+display_max_colwidth = 16
 
 
 class DataFrame:
@@ -110,6 +110,9 @@ class DataFrame:
     def _update_str(self, width: int, max_colwidth: int):
         """Updates the DataFrame string representation using given display options.
 
+        The string representation is limited to five lines, meaning any DataFrame with more than
+        five rows will be truncated and only the five first rows are displayed.
+
         Parameters
         ----------
         width:
@@ -117,7 +120,27 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
-        txt = str(self._fc)
+        trunc_str = "..."
+        # Get the number of rows
+        nb_rows = len(self)
+        # Get the number of columns
+        max_nb_col = width // max_colwidth - 2
+        nb_col = len(self.columns)
+        if nb_col > max_nb_col:
+            max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
+            truncate_col = True
+        else:
+            truncate_col = False
+
+        txt = ""
+        # for index_name in self.columns.names:
+        #     current_values = getattr(self.columns, index_name).values
+        #     mult = nb_col // current_values
+        #     txt += index_name.rjust(max_colwidth).join([])
+
+        txt = str(self._fc) + "\n"
+        txt += f"DataFrame with columns {self._columns} and index {self._index}"
+        txt += "\n"
 
         self._str = txt
 
