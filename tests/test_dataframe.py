@@ -77,3 +77,7 @@ def test_dataframe_select(df):
     df2 = df.select(node=[1, 2], time=1)
     assert all(df2.index.values == [1, 2])
     print(df2)
+
+
+def test_dataframe_plot(df):
+    df.plot(time=1, node=[1, 2, 3, 4, 5, 6, 7, 8, 9])

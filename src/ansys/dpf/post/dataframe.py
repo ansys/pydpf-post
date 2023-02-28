@@ -242,8 +242,52 @@ class DataFrame:
         self._str = txt
 
     def plot(self, **kwargs):
-        """Plot the result."""
-        self._fc[-1].plot(**kwargs)
+        """Plot the result.
+
+        Parameters
+        ----------
+        **kwargs:
+            This function accepts as argument any of the Index names available associated with a
+            single value.
+            For example, if 'set_ids' is an available class:`Index <ansys.dpf.post.index.Index>`
+            of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can plot the data at
+            `set_id` 1 by using `df.plot(set_ids=1)`.
+            One can get the list of available axes using
+            :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+
+        Returns
+        -------
+            The interactive plotter object used for plotting.
+
+        """
+        if kwargs != {}:
+            # Check for invalid arguments
+            axes = self.axes
+            for argument in kwargs.keys():
+                if argument not in axes:
+                    raise ValueError(
+                        f"The DataFrame has no axis {argument}, cannot plot it. "
+                        f"Available axes are: {axes}."
+                    )
+            # Construct the associated label_space
+            fc = self.select(**kwargs)._fc
+        else:
+            # If no kwarg was given, construct a default label_space
+            fc = self._fc
+        labels = fc.labels
+        if "time" in labels:
+            label = "time"
+            value = fc.get_available_ids_for_label(label)[-1]
+            label_space = {label: value}
+        elif "frequencies" in labels:
+            label = "frequencies"
+            value = fc.get_available_ids_for_label(label)[0]
+            label_space = {label: value}
+        else:
+            label_space = fc.get_label_space(0)
+        label_space = label_space
+        field = fc.get_field(label_space_or_index=label_space)
+        return field.plot(text=str(label_space), **kwargs)
 
     def animate(
         self,
