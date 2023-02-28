@@ -55,6 +55,21 @@ class Index:
         return self._name
 
 
+class ResultsIndex(Index):
+    """Index class specific to results."""
+
+    def __init__(
+        self,
+        values: List[str],
+    ):
+        """Initiate this class."""
+        super().__init__(name="results", values=values, scoping=None)
+
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"ResultIndex<{self.values}>"
+
+
 class MultiIndex:
     """A Pandas style API to manipulate multi-indexes."""
 
