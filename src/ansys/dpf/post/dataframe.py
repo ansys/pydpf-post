@@ -91,6 +91,103 @@ class DataFrame:
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
+    def select(self, **kwargs):
+        """Returns a new DataFrame based on selection criteria.
+
+        Parameters
+        ----------
+        **kwargs:
+            This function accepts as argument any of the Index names available associated with a
+            value or a list of values.
+            For example, if 'set_ids' is an available class:`Index <ansys.dpf.post.index.Index>`
+            of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can select `set_id` 1
+            by using `df.select(set_ids=1)`.
+            One can get the list of available axes using
+            :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+
+        Returns
+        -------
+            A DataFrame of the selected values.
+
+        """
+        # Check for invalid arguments
+        axes = self.axes
+        for argument in kwargs.keys():
+            if argument not in axes:
+                raise ValueError(
+                    f"The DataFrame has no axis {argument}, cannot select it. "
+                    f"Available axes are: {axes}."
+                )
+        # Initiate a workflow
+        server = self._fc._server
+        wf = dpf.Workflow(server=server)
+        wf.progress_bar = False
+        input_fc = self._fc
+        out = None
+        new_results = self.columns.results
+        new_labels = self.columns.labels
+        index_values = self.index.values
+
+        # Treat selection on a label
+        if any([label in kwargs.keys() for label in self._fc.labels]):
+            fc = dpf.FieldsContainer()
+            fc.labels = self._fc.labels
+            for i, field in enumerate(self._fc):
+                label_space = self._fc.get_label_space(i)
+                for key in label_space.keys():
+                    if not isinstance(kwargs[key], list):
+                        kwargs[key] = [kwargs[key]]
+                    if label_space[key] in kwargs[key]:
+                        print(label_space)
+                        fc.add_field(label_space=label_space, field=field)
+            input_fc = fc
+
+        # Treat selection on DataFrame.index (rescope)
+        index_name = self.index.name
+        if index_name in kwargs.keys():
+            if "node" in index_name:
+                node_ids = kwargs[index_name]
+                if not isinstance(node_ids, list):
+                    node_ids = [node_ids]
+                mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
+                    node_ids=node_ids,
+                    server=server,
+                )
+            elif "element" in index_name:
+                element_ids = kwargs[index_name]
+                if not isinstance(element_ids, list):
+                    element_ids = [element_ids]
+                mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
+                    element_ids=element_ids,
+                    server=server,
+                )
+            else:
+                raise NotImplementedError(
+                    f"Selection on a DataFrame with index "
+                    f"'{index_name}' is not yet supported"
+                )
+            rescope_fc = dpf.operators.scoping.rescope_fc(
+                fields_container=input_fc,
+                mesh_scoping=mesh_scoping,
+                server=server,
+            )
+            out = rescope_fc.outputs.fields_container
+            index_values = mesh_scoping.ids
+
+        if out is not None:
+            wf.set_output_name("out", out)
+            fc = wf.get_output("out", dpf.FieldsContainer)
+
+        multi_index = MultiIndex(
+            label_indexes=new_labels,
+            results_index=new_results,
+        )
+        return DataFrame(
+            data=fc,
+            columns=multi_index,
+            index=Index(name=self.index.name, values=index_values),
+        )
+
     def __len__(self):
         """Return the length of the DataFrame."""
         return len(self.index)

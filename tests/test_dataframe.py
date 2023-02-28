@@ -66,3 +66,14 @@ def test_dataframe_index(df):
     index = df.index
     print(repr(index))
     print(index)
+
+
+def test_dataframe_select_raise(df):
+    with pytest.raises(ValueError, match="has no axis"):
+        df.select(set_id=1)
+
+
+def test_dataframe_select(df):
+    df2 = df.select(node=[1, 2], time=1)
+    assert all(df2.index.values == [1, 2])
+    print(df2)
