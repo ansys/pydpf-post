@@ -212,7 +212,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
-        return self._create_dataframe(fc, location, columns, comp)
+        return self._create_dataframe(fc, location, columns, comp, base_name)
 
     def displacement(
         self,

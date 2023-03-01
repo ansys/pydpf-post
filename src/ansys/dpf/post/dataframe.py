@@ -1,6 +1,7 @@
 """Module containing the ``DataFrame`` class."""
 from __future__ import annotations
 
+import itertools
 from os import PathLike
 from typing import List, Union
 import warnings
@@ -18,7 +19,7 @@ from ansys.dpf.post.index import (
 )
 
 display_width = 80
-display_max_colwidth = 16
+display_max_colwidth = 10
 
 
 class DataFrame:
@@ -322,30 +323,107 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
-        # trunc_str = "..."
-        # # Get the number of rows
-        # nb_rows = len(self)
-        # # Get the number of columns
-        # max_nb_col = width // max_colwidth - 2
-        # nb_col = len(self.columns)
-        # if nb_col > max_nb_col:
-        #     max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
-        #     truncate_col = True
-        # else:
-        #     truncate_col = False
+        empty = " " * max_colwidth
+        truncated = "...".rjust(max_colwidth)
+        max_n_col = width // max_colwidth
+        max_n_rows = 5
+        # Create lines with row labels and values
+        num_column_indexes = len(self.columns)
+        num_rows_indexes = len(self.index)
+        n_max_value_col = max_n_col - num_rows_indexes
+        column_headers = []
+        for column_index in self.columns:
+            column_headers.append(
+                empty * (num_rows_indexes - 1) + column_index.name.rjust(max_colwidth)
+            )
 
-        txt = ""
-        # for index_name in self.columns.names:
-        #     current_values = getattr(self.columns, index_name).values
-        #     mult = nb_col // current_values
-        #     txt += index_name.rjust(max_colwidth).join([])
+        lines = column_headers
 
-        txt = str(self._fc) + "\n"
-        txt += str(self._fc[0].scoping.ids) + "\n"
-        txt += f"DataFrame with columns {self._columns} and index {self._index}"
-        txt += "\n"
+        row_headers = "".join(
+            [row_index.name.rjust(max_colwidth) for row_index in self.index]
+        )
+        lines.append(row_headers)
+        entity_ids = []
+        # Create combinations for rows
+        num_mesh_entities_to_ask = 5
+        lists = []
+        for index in self.index:
+            if isinstance(index, MeshIndex):
+                values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+            elif isinstance(index, CompIndex):
+                values = index.values
+                n_comp = len(values)
+            else:
+                values = index.values
+            lists.append(values)
+        row_combinations = [p for p in itertools.product(*lists)]
 
+        # Add row headers for the first combinations (max_n_rows)
+        previous_combination = [None] * len(lists)
+        for combination in row_combinations[:max_n_rows]:
+            line = "".join(
+                [
+                    str(combination[i]).rjust(max_colwidth)
+                    if combination[i] != previous_combination[i]
+                    else empty
+                    for i in range(len(combination))
+                ]
+            )
+            previous_combination = combination
+            lines.append(line)
+
+        # Create combinations for columns
+        num_mesh_entities_to_ask = 5
+        lists = []
+        for index in self.columns:
+            if isinstance(index, MeshIndex):
+                values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+            elif isinstance(index, CompIndex):
+                values = index.values
+                n_comp = len(values)
+            else:
+                values = index.values
+            lists.append(values)
+        combinations = [p for p in itertools.product(*lists)]
+
+        # Query data on entity_ids
+
+        # Add text for the first n_max_value_col columns
+        previous_combination = [None] * len(lists)
+        for combination in combinations[:n_max_value_col]:
+            to_append = [
+                str(combination[i]).rjust(max_colwidth)
+                if combination[i] != previous_combination[i]
+                else empty
+                for i in range(len(combination))
+            ]
+            # Get data in the FieldsContainer for those positions
+            field = self._fc.get_field_by_time_id(combination[1])
+            values = [
+                field.get_entity_data(k).tolist()
+                for k in list(range(num_mesh_entities_to_ask))
+            ]
+            values = [item for sublist in values for item in sublist]
+            values = [item for sublist in values for item in sublist]
+            value_strings = [
+                f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
+                for value in values[: len(lines) - num_column_indexes]
+            ]
+            to_append.extend(value_strings)
+            previous_combination = combination
+            for i in range(len(lines)):
+                lines[i] = lines[i] + to_append[i]
+
+        txt = "\n" + "".join([line + "\n" for line in lines])
         self._str = txt
+
+    def _first_n_ids_first_field(self, n: int):
+        """Return the n first entity IDs of the first field in the underlying FieldsContainer."""
+        return self._fc[0].scoping.ids[:n]
+
+    def __repr__(self):
+        """Representation of the DataFrame."""
+        return f"DataFrame<index={self.index}, columns={self.columns}>"
 
     def plot(self, **kwargs):
         """Plot the result.

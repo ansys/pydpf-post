@@ -11,6 +11,7 @@ from ansys.dpf.post.index import (
     ResultsIndex,
 )
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 
 @fixture
@@ -102,3 +103,20 @@ def test_dataframe_iselect(df):
 
 def test_dataframe_plot(df):
     df.plot(time=1, node=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+
+def test_dataframe_repr(df):
+    ref = (
+        "DataFrame<index=MultiIndex<[MeshIndex<name=\"node\", dtype=<class 'int'>>, "
+        "Index<name=\"comp\", dtype=<class 'str'>>]>, columns=MultiIndex<["
+        "Index<name=\"time\", dtype=<class 'int'>>, ResultIndex<['UX', 'UY', 'UZ']>]>>"
+    )
+    assert repr(df) == ref
+
+
+def test_dataframe_str(transient_rst):
+    simulation = TransientMechanicalSimulation(transient_rst)
+    df = simulation.displacement(all_sets=True)
+    print(df)
+    ref = ""
+    # assert str(df) == ref

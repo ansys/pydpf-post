@@ -52,7 +52,7 @@ class Index(ABC):
 
     def __repr__(self):
         """Representation of the Index."""
-        return f'Index<"{self._name}", dtype={self._dtype}>'
+        return f'Index<name="{self._name}", dtype={self._dtype}>'
 
     def __str__(self):
         """String representation of the Index."""
@@ -111,6 +111,10 @@ class MeshIndex(Index):
         if fc is not None:
             self._fc = weakref.ref(fc)
         super().__init__(name=name, values=values, scoping=scoping)
+
+    def __repr__(self):
+        """Representation of the MeshIndex."""
+        return f'MeshIndex<name="{self._name}", dtype={int}>'
 
     def _evaluate_values(self):
         """Evaluates the values of the MeshIndex."""
@@ -204,15 +208,15 @@ class MultiIndex:
 
     def __repr__(self):
         """Representation of the Index."""
-        return "MultiIndex<".join([repr(index) + ", " for index in self._indexes]) + ">"
+        return f"MultiIndex<{self._indexes}>"
 
-    def __str__(self):
-        """String representation of the Index."""
-        txt = f"MultiIndex with {len(self)} Label Index objects:\n"
-        for index in self._indexes:
-            txt += str(index) + "\n"
-        # txt += f"and a ResultsIndex of size {len(self.results)}"
-        return txt
+    # def __str__(self):
+    #     """String representation of the Index."""
+    #     txt = f"MultiIndex with {len(self)} Label Index objects:\n"
+    #     for index in self._indexes:
+    #         txt += str(index) + "\n"
+    #     # txt += f"and a ResultsIndex of size {len(self.results)}"
+    #     return txt
 
     def __len__(self):
         """Returns the number of Index objects in the MultiIndex."""

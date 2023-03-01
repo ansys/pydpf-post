@@ -461,7 +461,7 @@ class Simulation(ABC):
             raise ValueError(f"'{category}' is not a valid category value.")
         return comp, to_extract, columns
 
-    def _create_dataframe(self, fc, location, columns, comp):
+    def _create_dataframe(self, fc, location, columns, comp, base_name):
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
@@ -474,11 +474,13 @@ class Simulation(ABC):
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
-        column_indexes = [
-            LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-            for label in fc.labels
-        ]
-        column_indexes.append(ResultsIndex(values=columns))
+        column_indexes = [ResultsIndex(values=[base_name])]
+        column_indexes.extend(
+            [
+                LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                for label in fc.labels
+            ]
+        )
         column_index = MultiIndex(indexes=column_indexes)
 
         row_index = MultiIndex(
