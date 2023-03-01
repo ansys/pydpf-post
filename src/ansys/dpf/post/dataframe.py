@@ -92,16 +92,16 @@ class DataFrame:
         return self._fc
 
     def select(self, **kwargs):
-        """Returns a new DataFrame based on selection criteria.
+        """Returns a new DataFrame based on selection criteria (value-based).
 
         Parameters
         ----------
         **kwargs:
             This function accepts as argument any of the Index names available associated with a
             value or a list of values.
-            For example, if 'set_ids' is an available class:`Index <ansys.dpf.post.index.Index>`
-            of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can select `set_id` 1
-            by using `df.select(set_ids=1)`.
+            For example, if 'time' is an available class:`Index <ansys.dpf.post.index.Index>`
+            of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can select the time 1
+             by using `df.select(time=1)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
 
@@ -188,6 +188,42 @@ class DataFrame:
             index=Index(name=self.index.name, values=index_values),
         )
 
+    def iselect(self, **kwargs):
+        """Returns a new DataFrame based on selection criteria (index-based).
+
+        Parameters
+        ----------
+        **kwargs:
+            This function accepts as argument any of the Index names available associated with a
+            value or a list of values.
+            For example, if 'time' is an available class:`Index <ansys.dpf.post.index.Index>`
+            of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can select the first
+            `time` value by using `df.select(time=0)`.
+            One can get the list of available axes using
+            :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+
+        Returns
+        -------
+            A DataFrame of the selected values.
+
+        """
+        # Check for invalid arguments
+        axes = self.axes
+        for argument in kwargs.keys():
+            if argument not in axes:
+                raise ValueError(
+                    f"The DataFrame has no axis {argument}, cannot select it. "
+                    f"Available axes are: {axes}."
+                )
+        for label in kwargs.keys():
+            indices = kwargs[label]
+            if label == self.index.name:
+                ids = self.index.values[indices]
+            else:
+                ids = getattr(self.columns, label).values[indices]
+            kwargs[label] = ids
+        self.select()
+
     def __len__(self):
         """Return the length of the DataFrame."""
         return len(self.index)
@@ -217,17 +253,17 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
-        trunc_str = "..."
-        # Get the number of rows
-        nb_rows = len(self)
-        # Get the number of columns
-        max_nb_col = width // max_colwidth - 2
-        nb_col = len(self.columns)
-        if nb_col > max_nb_col:
-            max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
-            truncate_col = True
-        else:
-            truncate_col = False
+        # trunc_str = "..."
+        # # Get the number of rows
+        # nb_rows = len(self)
+        # # Get the number of columns
+        # max_nb_col = width // max_colwidth - 2
+        # nb_col = len(self.columns)
+        # if nb_col > max_nb_col:
+        #     max_nb_col = ((width - len(trunc_str)) // max_colwidth - 2) // 2 * 2
+        #     truncate_col = True
+        # else:
+        #     truncate_col = False
 
         txt = ""
         # for index_name in self.columns.names:
