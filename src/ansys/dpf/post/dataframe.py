@@ -179,7 +179,6 @@ class DataFrame:
                     if not isinstance(kwargs[key], list):
                         kwargs[key] = [kwargs[key]]
                     if label_space[key] in kwargs[key]:
-                        print(label_space)
                         fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
@@ -245,11 +244,13 @@ class DataFrame:
             indexes=row_indexes,
         )
 
-        column_indexes = [
-            LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-            for label in fc.labels
-        ]
-        column_indexes.append(results_index)
+        column_indexes = [results_index]
+        column_indexes.extend(
+            [
+                LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                for label in fc.labels
+            ]
+        )
         column_index = MultiIndex(indexes=column_indexes)
 
         return DataFrame(
@@ -347,12 +348,16 @@ class DataFrame:
         # Create combinations for rows
         num_mesh_entities_to_ask = 5
         lists = []
+        entity_ids = None
         for index in self.index:
             if isinstance(index, MeshIndex):
-                values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+                if index._values is not None:
+                    values = index.values
+                    entity_ids = values
+                else:
+                    values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
             elif isinstance(index, CompIndex):
                 values = index.values
-                n_comp = len(values)
             else:
                 values = index.values
             lists.append(values)
@@ -374,13 +379,17 @@ class DataFrame:
 
         # Create combinations for columns
         num_mesh_entities_to_ask = 5
+        entity_ids = None
         lists = []
         for index in self.columns:
             if isinstance(index, MeshIndex):
-                values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+                if index._values is not None:
+                    values = index.values
+                    entity_ids = values
+                else:
+                    values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
             elif isinstance(index, CompIndex):
                 values = index.values
-                n_comp = len(values)
             else:
                 values = index.values
             lists.append(values)
@@ -397,20 +406,48 @@ class DataFrame:
                 else empty
                 for i in range(len(combination))
             ]
+            to_append.append(empty)
             # Get data in the FieldsContainer for those positions
-            field = self._fc.get_field_by_time_id(combination[1])
-            values = [
-                field.get_entity_data(k).tolist()
-                for k in list(range(num_mesh_entities_to_ask))
-            ]
-            values = [item for sublist in values for item in sublist]
-            values = [item for sublist in values for item in sublist]
+            fields = self._fc.get_fields_by_time_complex_ids(timeid=combination[1])
+            values = []
+            if entity_ids is None:
+                for field in fields:
+                    array_values = []
+                    for k in list(range(num_mesh_entities_to_ask)):
+                        try:
+                            values_list = field.get_entity_data(k).tolist()
+                            array_values.append(values_list)
+                        except Exception as e:
+                            pass
+                    array_values = [
+                        item for sublist in array_values for item in sublist
+                    ]
+                    array_values = [
+                        item for sublist in array_values for item in sublist
+                    ]
+                    values.extend(array_values)
+            else:
+                for entity_id in entity_ids:
+                    for field in fields:
+                        array_values = field.get_entity_data_by_id(entity_id).tolist()
+                        if array_values != []:
+                            array_values = [
+                                item for sublist in array_values for item in sublist
+                            ]
+                            array_values = [
+                                item for sublist in array_values for item in sublist
+                            ]
+                            values.extend(array_values)
+
             value_strings = [
                 f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
-                for value in values[: len(lines) - num_column_indexes]
+                for value in values[: len(lines) - (num_column_indexes + 1)]
             ]
             to_append.extend(value_strings)
             previous_combination = combination
+            # print(to_append)
+            # print(len(to_append))
+            # print(len(lines))
             for i in range(len(lines)):
                 lines[i] = lines[i] + to_append[i]
 
