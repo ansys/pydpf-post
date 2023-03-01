@@ -11,11 +11,14 @@ from ansys.dpf.core.dpf_array import DPFArray
 
 from ansys.dpf.post.index import (
     CompIndex,
+    FrequencyIndex,
     Index,
     LabelIndex,
     MeshIndex,
     MultiIndex,
     ResultsIndex,
+    SetIndex,
+    TimeIndex,
 )
 
 display_width = 80
@@ -150,6 +153,8 @@ class DataFrame:
                     f"The DataFrame has no axis {argument}, cannot select it. "
                     f"Available axes are: {axes}."
                 )
+        if "set_id" in kwargs.keys():
+            kwargs["time"] = kwargs["set_id"]
         # Initiate a workflow
         server = self._fc._server
         wf = dpf.Workflow(server=server)
@@ -244,13 +249,17 @@ class DataFrame:
             indexes=row_indexes,
         )
 
-        column_indexes = [results_index]
-        column_indexes.extend(
-            [
-                LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                for label in fc.labels
-            ]
-        )
+        column_indexes = [
+            results_index,
+            SetIndex(values=fc.get_available_ids_for_label("time")),
+        ]
+        label_indexes = []
+        for label in fc.labels:
+            if label not in ["time"]:
+                column_indexes.append(
+                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                )
+        column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
 
         return DataFrame(
@@ -381,7 +390,9 @@ class DataFrame:
         num_mesh_entities_to_ask = 5
         entity_ids = None
         lists = []
-        for index in self.columns:
+        time_position = 1
+        complex_position = None
+        for position, index in enumerate(self.columns):
             if isinstance(index, MeshIndex):
                 if index._values is not None:
                     values = index.values
@@ -390,8 +401,13 @@ class DataFrame:
                     values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
             elif isinstance(index, CompIndex):
                 values = index.values
+            elif isinstance(index, (FrequencyIndex, TimeIndex)):
+                values = index.values
+                time_position = position
             else:
                 values = index.values
+                if index.name == "complex":
+                    complex_position = position
             lists.append(values)
         combinations = [p for p in itertools.product(*lists)]
 
@@ -408,7 +424,11 @@ class DataFrame:
             ]
             to_append.append(empty)
             # Get data in the FieldsContainer for those positions
-            fields = self._fc.get_fields_by_time_complex_ids(timeid=combination[1])
+            # Create label_space from combination
+            label_space = {"time": combination[time_position]}
+            if complex_position is not None:
+                label_space["complex"] = combination[complex_position]
+            fields = self._fc.get_fields(label_space=label_space)
             values = []
             if entity_ids is None:
                 for field in fields:
@@ -442,6 +462,7 @@ class DataFrame:
             value_strings = [
                 f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
                 for value in values[: len(lines) - (num_column_indexes + 1)]
+                # TODO: error here, must choose the correct components
             ]
             to_append.extend(value_strings)
             previous_combination = combination

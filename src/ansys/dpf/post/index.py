@@ -164,6 +164,54 @@ class LabelIndex(Index):
         super().__init__(name=name, values=values, scoping=scoping)
 
 
+class TimeIndex(Index):
+    """Index class specific to time."""
+
+    def __init__(
+        self,
+        values: Union[List, None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name="time", values=values, scoping=scoping)
+
+
+class ModeIndex(Index):
+    """Index class specific to modes."""
+
+    def __init__(
+        self,
+        values: Union[List, None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name="mode", values=values, scoping=scoping)
+
+
+class FrequencyIndex(Index):
+    """Index class specific to frequency."""
+
+    def __init__(
+        self,
+        values: Union[List, None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name="frequency", values=values, scoping=scoping)
+
+
+class SetIndex(Index):
+    """Index class specific to set_id."""
+
+    def __init__(
+        self,
+        values: Union[List, None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name="set_id", values=values, scoping=scoping)
+
+
 class CompIndex(Index):
     """Index class specific to components."""
 
