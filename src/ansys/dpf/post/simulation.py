@@ -499,7 +499,7 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, result_file: PathLike):
+    def __init__(self, result_file: Union[PathLike,str]):
         """Instantiate a mechanical type simulation."""
         model = dpf.Model(result_file)
         data_sources = model.metadata.data_sources
