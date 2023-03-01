@@ -92,5 +92,13 @@ def test_dataframe_select(df):
     print(df2)
 
 
+def test_dataframe_iselect(df):
+    df2 = df.iselect(node=[0, 1], time=0, comp=0)
+    assert all(df2.mesh_index.values == [1, 26])
+    assert df2.index.comp.values == ["X"]
+    assert df2.columns.time.values == [1]
+    print(df2)
+
+
 def test_dataframe_plot(df):
     df.plot(time=1, node=[1, 2, 3, 4, 5, 6, 7, 8, 9])

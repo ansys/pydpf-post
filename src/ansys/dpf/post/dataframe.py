@@ -6,6 +6,7 @@ from typing import List, Union
 import warnings
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.dpf_array import DPFArray
 
 from ansys.dpf.post.index import (
     CompIndex,
@@ -205,7 +206,7 @@ class DataFrame:
         if mesh_index_name in kwargs.keys():
             if "node" in mesh_index_name:
                 node_ids = kwargs[mesh_index_name]
-                if not isinstance(node_ids, list):
+                if not isinstance(node_ids, (DPFArray, list)):
                     node_ids = [node_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
                     node_ids=node_ids,
