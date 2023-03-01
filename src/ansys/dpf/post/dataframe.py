@@ -181,13 +181,21 @@ class DataFrame:
                         fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
-        # # Treat selection on results
-        # if "results" in kwargs.keys():
-        #      selector_fc = dpf.operators.logic.component_selector_fc(
-        #         fields_container=input_fc,
-        #         component_number=component_indexes,
-        #         server=server,
-        #     )
+        # # Treat selection on components
+        if "comp" in kwargs.keys():
+            from ansys.dpf.post.simulation import component_label_to_index
+
+            comp_to_extract = kwargs["comp"]
+            if not isinstance(comp_to_extract, list):
+                comp_to_extract = [comp_to_extract]
+            component_indexes = [component_label_to_index[c] for c in comp_to_extract]
+            selector_fc = dpf.operators.logic.component_selector_fc(
+                fields_container=input_fc,
+                component_number=component_indexes,
+                server=server,
+            )
+            out = selector_fc.outputs.fields_container
+            comp_index = CompIndex(values=comp_to_extract)
 
         # Treat selection on DataFrame.index (rescope)
         if isinstance(self.index, MeshIndex):

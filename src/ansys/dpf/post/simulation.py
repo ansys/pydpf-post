@@ -23,6 +23,28 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
 
+component_label_to_index = {
+    "1": 0,
+    "2": 1,
+    "3": 2,
+    "4": 3,
+    "5": 4,
+    "6": 5,
+    "X": 0,
+    "Y": 1,
+    "Z": 2,
+    "XX": 0,
+    "YY": 1,
+    "ZZ": 2,
+    "XY": 3,
+    "YZ": 4,
+    "XZ": 5,
+}
+
+vector_component_names = ["X", "Y", "Z"]
+matrix_component_names = ["XX", "YY", "ZZ", "XX", "XY", "YZ"]
+principal_names = ["1", "2", "3"]
+
 
 class ResultCategory(Enum):
     """Enum for available result categories."""
@@ -37,27 +59,9 @@ class ResultCategory(Enum):
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
 
-    _component_to_id = {
-        "1": 0,
-        "2": 1,
-        "3": 2,
-        "4": 3,
-        "5": 4,
-        "6": 5,
-        "X": 0,
-        "Y": 1,
-        "Z": 2,
-        "XX": 0,
-        "YY": 1,
-        "ZZ": 2,
-        "XY": 3,
-        "YZ": 4,
-        "XZ": 5,
-    }
-
-    _vector_component_names = ["X", "Y", "Z"]
-    _matrix_component_names = ["XX", "YY", "ZZ", "XX", "XY", "YZ"]
-    _principal_names = ["1", "2", "3"]
+    _vector_component_names = vector_component_names
+    _matrix_component_names = matrix_component_names
+    _principal_names = principal_names
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -359,12 +363,12 @@ class Simulation(ABC):
                     )
                 if isinstance(comp, int):
                     comp = str(comp)
-                if comp not in self._component_to_id.keys():
+                if comp not in component_label_to_index.keys():
                     raise ValueError(
                         f"Component {comp} is not valid. Please use one of: "
-                        f"{list(self._component_to_id.keys())}."
+                        f"{list(component_label_to_index.keys())}."
                     )
-                out.append(self._component_to_id[comp])
+                out.append(component_label_to_index[comp])
 
         # Take unique values and build names list
         if out is None:

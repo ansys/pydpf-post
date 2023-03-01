@@ -85,8 +85,10 @@ def test_dataframe_select_raise(df):
 
 
 def test_dataframe_select(df):
-    df2 = df.select(node=[1, 2], time=1)
+    df2 = df.select(node=[1, 2], time=1, comp="X")
     assert all(df2.mesh_index.values == [1, 2])
+    assert df2.index.comp.values == ["X"]
+    assert df2.columns.time.values == [1]
     print(df2)
 
 
