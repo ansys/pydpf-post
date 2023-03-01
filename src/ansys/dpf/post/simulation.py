@@ -4,6 +4,7 @@ from enum import Enum
 from os import PathLike
 import re
 from typing import List, Tuple, Union
+import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport
@@ -11,6 +12,14 @@ from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations
+from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import (
+    CompIndex,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+)
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
 
@@ -38,12 +47,16 @@ class Simulation(ABC):
         "X": 0,
         "Y": 1,
         "Z": 2,
+        "XX": 0,
+        "YY": 1,
+        "ZZ": 2,
         "XY": 3,
         "YZ": 4,
         "XZ": 5,
     }
 
-    _component_names = ["X", "Y", "Z", "XX", "XY", "YZ"]
+    _vector_component_names = ["X", "Y", "Z"]
+    _matrix_component_names = ["XX", "YY", "ZZ", "XX", "XY", "YZ"]
     _principal_names = ["1", "2", "3"]
 
     def __init__(self, data_sources: DataSources, model: Model):
@@ -315,7 +328,19 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_components_from_components(self, base_name, category, components):
+    def _build_components_for_vector(self, base_name, components):
+        out, columns = self._build_components(
+            base_name, components, self._vector_component_names
+        )
+        return out, columns
+
+    def _build_components_for_matrix(self, base_name, components):
+        out, columns = self._build_components(
+            base_name, components, self._matrix_component_names
+        )
+        return out, columns
+
+    def _build_components(self, base_name, components, component_names):
         # Create operator internal names based on components
         out = []
         if components is None:
@@ -342,17 +367,14 @@ class Simulation(ABC):
                 out.append(self._component_to_id[comp])
 
         # Take unique values and build names list
-        if out is not None:
-            out = list(set(out))
-        if out is None and category == ResultCategory.vector:
-            columns = [base_name + comp for comp in self._component_names[:3]]
-        elif out is None and category == ResultCategory.matrix:
-            columns = [base_name + comp for comp in self._component_names]
+        if out is None:
+            columns = [base_name + comp for comp in component_names]
         else:
-            columns = [base_name + self._component_names[i] for i in out]
+            out = list(set(out))
+            columns = [base_name + component_names[i] for i in out]
         return out, columns
 
-    def _build_components_from_principal(self, base_name, components):
+    def _build_components_for_principal(self, base_name, components):
         # Create operator internal names based on principal components
         out = []
         if components is None:
@@ -399,6 +421,72 @@ class Simulation(ABC):
         else:
             op.connect(9, location)
         return op
+
+    def _create_components(self, base_name, category, components):
+        comp = None
+        # Build the list of requested results
+        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
+            # A scalar or equivalent result has no components
+            to_extract = None
+            columns = [base_name]
+        elif category == ResultCategory.vector:
+            # A vector result can have components selected
+            to_extract, columns = self._build_components_for_vector(
+                base_name=base_name, components=components
+            )
+            if to_extract is not None:
+                comp = [self._vector_component_names[i] for i in to_extract]
+            else:
+                comp = self._vector_component_names
+        elif category == ResultCategory.matrix:
+            # A vector result can have components selected
+            to_extract, columns = self._build_components_for_matrix(
+                base_name=base_name, components=components
+            )
+            if to_extract is not None:
+                comp = [self._matrix_component_names[i] for i in to_extract]
+            else:
+                comp = self._matrix_component_names
+        elif category == ResultCategory.principal:
+            # A principal type of result can have components selected
+            to_extract, columns = self._build_components_for_principal(
+                base_name=base_name, components=components
+            )
+            comp = [self._principal_names[i] for i in to_extract]
+        else:
+            raise ValueError(f"'{category}' is not a valid category value.")
+        return comp, to_extract, columns
+
+    def _create_dataframe(self, fc, location, columns, comp):
+        # Test for empty results
+        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
+            warnings.warn(
+                message=f"Returned Dataframe with columns {columns} is empty.",
+                category=UserWarning,
+            )
+        comp_index = None
+        if comp is not None:
+            comp_index = CompIndex(values=comp)
+        row_indexes = [MeshIndex(location=location, fc=fc)]
+        if comp_index is not None:
+            row_indexes.append(comp_index)
+        column_indexes = [
+            LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+            for label in fc.labels
+        ]
+        column_indexes.append(ResultsIndex(values=columns))
+        column_index = MultiIndex(indexes=column_indexes)
+
+        row_index = MultiIndex(
+            indexes=row_indexes,
+        )
+
+        # Return the result wrapped in a DPF_Dataframe
+        return DataFrame(
+            data=fc,
+            columns=column_index,
+            index=row_index,
+        )
 
 
 class MechanicalSimulation(Simulation, ABC):

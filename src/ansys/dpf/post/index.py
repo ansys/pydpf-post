@@ -1,8 +1,11 @@
 """Module containing the ``Index`` class."""
+from abc import ABC
 from typing import List, Union
 import weakref
 
 import ansys.dpf.core as dpf
+
+from ansys.dpf import post
 
 location_to_label = {
     dpf.locations.nodal: "node",
@@ -14,7 +17,7 @@ location_to_label = {
 }
 
 
-class Index:
+class Index(ABC):
     """A Pandas style API to manipulate indexes."""
 
     def __init__(
@@ -89,6 +92,46 @@ class Index:
             self._values = self._scoping_ref().ids
 
 
+class MeshIndex(Index):
+    """Index class specific to mesh entities."""
+
+    def __init__(
+        self,
+        location: Union[post.locations, str],
+        values: Union[List[int], None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+        fc: Union[dpf.FieldsContainer, None] = None,
+    ):
+        """Initiate this class."""
+        name = location_to_label[location]
+        if fc is None and values is None and scoping is None:
+            raise ValueError(
+                "Arguments 'values', 'scoping' and 'fc' cannot all be None."
+            )
+        if fc is not None:
+            self._fc = weakref.ref(fc)
+        super().__init__(name=name, values=values, scoping=scoping)
+
+    def _evaluate_values(self):
+        """Evaluates the values of the MeshIndex."""
+        if self._scoping_ref is not None:
+            self._values = self._scoping_ref().ids
+        else:
+            # Merge the fields container scoping
+            fc = self._fc()
+            if fc is not None:
+                scopings = dpf.operators.utility.extract_scoping(
+                    field_or_fields_container=fc
+                ).outputs.mesh_scoping_as_scopings_container
+                merge_op = dpf.operators.utility.merge_scopings(scopings=scopings)
+                self._values = merge_op.eval().ids
+            else:
+                raise AttributeError(
+                    "The FieldsContainer affiliated to the MeshIndex is no longer "
+                    "available. Cannot evaluate Index.values."
+                )
+
+
 class ResultsIndex(Index):
     """Index class specific to results."""
 
@@ -104,67 +147,110 @@ class ResultsIndex(Index):
         return f"ResultIndex<{self.values}>"
 
 
+class LabelIndex(Index):
+    """Index class specific to labels."""
+
+    def __init__(
+        self,
+        name: str,
+        values: Union[List, None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name=name, values=values, scoping=scoping)
+
+
+class CompIndex(Index):
+    """Index class specific to components."""
+
+    def __init__(
+        self,
+        values: Union[List, None] = None,
+    ):
+        """Initiate this class."""
+        super().__init__(name="comp", values=values)
+
+
 class MultiIndex:
     """A Pandas style API to manipulate multi-indexes."""
 
     def __init__(
         self,
-        label_indexes: List[Index],
-        results_index: Index,
+        indexes: List[Index],
     ):
         """Creates a MultiIndex from several Index objects.
 
         Parameters
         ----------
-        label_indexes:
-            List of class:`ansys.dpf.post.index.Index` objects relative to labels.
-        results_index:
-            Index relative to available results.
+        indexes:
+            Ordered list of class:`ansys.dpf.post.index.Index` objects.
         """
-        self._labels = label_indexes
-        self._results = results_index
-        for i, index in enumerate(self._labels):
+        self._indexes = indexes
+        # self._labels = []
+        # self._label_names = None
+        # self._result_names = None
+        for i, index in enumerate(self._indexes):
             setattr(self, index.name, index)
 
-    @property
-    def labels(self):
-        """Returns the list of Index objects for available labels."""
-        return self._labels
-
-    @property
-    def results(self):
-        """Returns the Index of available results."""
-        return self._results
+    # @property
+    # def labels(self):
+    #     """Returns the list of label Index objects."""
+    #     return self._labels
+    #
+    # @property
+    # def results(self):
+    #     """Returns the Index of available results."""
+    #     return self._results
 
     def __repr__(self):
         """Representation of the Index."""
-        return (
-            "MultiIndex<".join([repr(index) + ", " for index in self.labels])
-            + f"{repr(self.results)}>"
-        )
+        return "MultiIndex<".join([repr(index) + ", " for index in self._indexes]) + ">"
 
     def __str__(self):
         """String representation of the Index."""
-        txt = f"MultiIndex with {len(self.labels)} Label Index objects:\n"
-        for index in self.labels:
+        txt = f"MultiIndex with {len(self)} Label Index objects:\n"
+        for index in self._indexes:
             txt += str(index) + "\n"
-        txt += f"and a ResultsIndex of size {len(self.results)}"
+        # txt += f"and a ResultsIndex of size {len(self.results)}"
         return txt
 
     def __len__(self):
-        """Returns the length of the MultiIndex (number of combinations)."""
-        length = 1
-        for index in self.labels:
-            length = length * len(index)
-        length = length * len(self.results)
-        return length
+        """Returns the number of Index objects in the MultiIndex."""
+        return len(self._indexes)
+
+    def __getitem__(self, item):
+        """Get an Index in the MultiIndex."""
+        return self._indexes[item]
 
     @property
-    def label_names(self):
-        """Returns a list with the name of each label Index."""
-        return [index.name for index in self.labels]
+    def names(self):
+        """Returns a list with the name of each Index."""
+        return [index.name for index in self._indexes]
 
     @property
-    def result_names(self):
-        """Returns a list with the available results."""
-        return self.results.values
+    def results_index(self) -> Union[ResultsIndex, None]:
+        """Returns the available ResultsIndex is present."""
+        for index in self._indexes:
+            if isinstance(index, ResultsIndex):
+                return index
+        return None
+
+    @property
+    def mesh_index(self) -> Union[MeshIndex, None]:
+        """Returns the available ResultsIndex is present."""
+        for index in self._indexes:
+            if isinstance(index, MeshIndex):
+                return index
+        return None
+
+    # @property
+    # def label_names(self):
+    #     """Returns a list with the name of each label Index."""
+    #     if self._label_names is None:
+    #         self._label_names = [index.name for index in self._indexes]
+    #     return
+    #
+    # @property
+    # def result_names(self):
+    #     """Returns a list with the available results."""
+    #     return self.results.values

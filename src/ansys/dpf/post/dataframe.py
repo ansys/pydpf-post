@@ -1,12 +1,20 @@
 """Module containing the ``DataFrame`` class."""
+from __future__ import annotations
+
 from os import PathLike
 from typing import List, Union
 import warnings
-import weakref
 
 import ansys.dpf.core as dpf
 
-from ansys.dpf.post.index import Index, MultiIndex, location_to_label
+from ansys.dpf.post.index import (
+    CompIndex,
+    Index,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+)
 
 display_width = 80
 display_max_colwidth = 16
@@ -17,10 +25,9 @@ class DataFrame:
 
     def __init__(
         self,
-        data: Union[dpf.FieldsContainer, None] = None,
-        parent_simulation=None,
-        index: Union[Index, List[int], None] = None,
-        columns: Union[MultiIndex, List[str], None] = None,
+        data: dpf.FieldsContainer,
+        index: Union[MultiIndex, Index, List[int]],
+        columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
         """Creates a DPF DataFrame based on the given input data.
 
@@ -28,21 +35,20 @@ class DataFrame:
         ----------
         data:
             Data to use.
-        parent_simulation:
-            Parent simulation.
         index:
-            Index (row labels) to use.
+            Row indexing (labels) to use.
         columns:
-            Column labels or class:`ansys.dpf.post.index.MultiIndex` to use.
+            Column indexing (labels) to use.
         """
-        self._index = None
+        self._index = index
         if isinstance(data, dpf.FieldsContainer):
             self._fc = data
-            if index is None:
-                self._index = Index(
-                    name=location_to_label[data[0].location], values=None
-                )
-
+            # if index is None:
+            #     raise NotImplementedError("Creation from FieldsContainer without index "
+            #                               "is not yet supported")
+            #     # self._index = Index(
+            #     #     name=location_to_label[data[0].location], values=None
+            #     # )
         else:
             raise ValueError(
                 f"Input data type '{type(data)}' is not a valid data type for DataFrame creation."
@@ -52,38 +58,62 @@ class DataFrame:
         else:
             self._columns = None
 
-        if index is not None:
-            self._index = index
-
-        if parent_simulation is not None:
-            self._parent_simulation = weakref.ref(parent_simulation)
+        # if parent_simulation is not None:
+        #     self._parent_simulation = weakref.ref(parent_simulation)
 
         self._str = None
         self._last_display_width = display_width
         self._last_display_max_colwidth = display_max_colwidth
 
-        # super().__init__(fields_container._internal_obj, server)
-
     @property
     def columns(self):
         """Returns the column labels of the DataFrame."""
         if self._columns is None:
-            pass
+            indexes = [ResultsIndex(values=[self._fc[0].name.split("_")])]
+            indexes.extend(
+                [
+                    LabelIndex(name=label, values=self._fc.get_label_scoping(label).ids)
+                    for label in self._fc.labels
+                ]
+            )
+            self._columns = MultiIndex(indexes=indexes)
         return self._columns
 
     @property
-    def index(self):
-        """Returns the Index for the rows of the DataFrame."""
-        if self._index is None:
-            pass
+    def index(self) -> Union[MultiIndex, Index]:
+        """Returns the Index or MultiIndex for the rows of the DataFrame."""
         return self._index
 
     @property
     def axes(self) -> List[str]:
         """Returns a list of the axes of the DataFrame with the row Index and the column Index."""
-        names = [self.index.name]
-        names.extend(self.columns.label_names)
-        names.extend([self.columns.results.name])
+        names = self.index.names
+        names.extend(self.columns.names)
+        return names
+
+    @property
+    def results_index(self) -> Union[ResultsIndex, None]:
+        """Returns the available ResultsIndex is present."""
+        results_index = self.columns.results_index
+        if results_index is None:
+            results_index = self.index.results_index
+        return results_index
+
+    @property
+    def mesh_index(self) -> Union[MeshIndex, None]:
+        """Returns the available MeshIndex is present."""
+        mesh_index = self.columns.mesh_index
+        if mesh_index is None:
+            mesh_index = self.index.mesh_index
+        return mesh_index
+
+    @property
+    def labels(self) -> List[str]:
+        """Returns a list of the names of available ResultsIndex indexes."""
+        names = [index.name for index in self.index if isinstance(index, LabelIndex)]
+        names.extend(
+            [index.name for index in self.columns if isinstance(index, LabelIndex)]
+        )
         return names
 
     @property
@@ -91,7 +121,7 @@ class DataFrame:
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
-    def select(self, **kwargs):
+    def select(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (value-based).
 
         Parameters
@@ -123,10 +153,19 @@ class DataFrame:
         wf = dpf.Workflow(server=server)
         wf.progress_bar = False
         input_fc = self._fc
+        fc = self._fc
         out = None
-        new_results = self.columns.results
-        new_labels = self.columns.labels
-        index_values = self.index.values
+
+        # Initiate future DataFrame indexes with those from initial DataFrame
+        mesh_index = None
+        comp_index = None
+        for index in self.index:
+            if isinstance(index, MeshIndex):
+                mesh_index = index
+            if isinstance(index, CompIndex):
+                comp_index = index
+        location = self._fc[0].location
+        results_index = self.results_index
 
         # Treat selection on a label
         if any([label in kwargs.keys() for label in self._fc.labels]):
@@ -142,19 +181,30 @@ class DataFrame:
                         fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
+        # # Treat selection on results
+        # if "results" in kwargs.keys():
+        #      selector_fc = dpf.operators.logic.component_selector_fc(
+        #         fields_container=input_fc,
+        #         component_number=component_indexes,
+        #         server=server,
+        #     )
+
         # Treat selection on DataFrame.index (rescope)
-        index_name = self.index.name
-        if index_name in kwargs.keys():
-            if "node" in index_name:
-                node_ids = kwargs[index_name]
+        if isinstance(self.index, MeshIndex):
+            mesh_index_name = self.index.name
+        else:
+            mesh_index_name = self.index.mesh_index.name
+        if mesh_index_name in kwargs.keys():
+            if "node" in mesh_index_name:
+                node_ids = kwargs[mesh_index_name]
                 if not isinstance(node_ids, list):
                     node_ids = [node_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
                     node_ids=node_ids,
                     server=server,
                 )
-            elif "element" in index_name:
-                element_ids = kwargs[index_name]
+            elif "element" in mesh_index_name:
+                element_ids = kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
@@ -164,7 +214,7 @@ class DataFrame:
             else:
                 raise NotImplementedError(
                     f"Selection on a DataFrame with index "
-                    f"'{index_name}' is not yet supported"
+                    f"'{mesh_index_name}' is not yet supported"
                 )
             rescope_fc = dpf.operators.scoping.rescope_fc(
                 fields_container=input_fc,
@@ -172,23 +222,33 @@ class DataFrame:
                 server=server,
             )
             out = rescope_fc.outputs.fields_container
-            index_values = mesh_scoping.ids
+            mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
 
         if out is not None:
             wf.set_output_name("out", out)
             fc = wf.get_output("out", dpf.FieldsContainer)
 
-        multi_index = MultiIndex(
-            label_indexes=new_labels,
-            results_index=new_results,
-        )
-        return DataFrame(
-            data=fc,
-            columns=multi_index,
-            index=Index(name=self.index.name, values=index_values),
+        row_indexes = [mesh_index]
+        if comp_index is not None:
+            row_indexes.append(comp_index)
+        row_index = MultiIndex(
+            indexes=row_indexes,
         )
 
-    def iselect(self, **kwargs):
+        column_indexes = [
+            LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+            for label in fc.labels
+        ]
+        column_indexes.append(results_index)
+        column_index = MultiIndex(indexes=column_indexes)
+
+        return DataFrame(
+            data=fc,
+            columns=column_index,
+            index=row_index,
+        )
+
+    def iselect(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (index-based).
 
         Parameters
@@ -217,12 +277,12 @@ class DataFrame:
                 )
         for label in kwargs.keys():
             indices = kwargs[label]
-            if label == self.index.name:
-                ids = self.index.values[indices]
+            if label in self.index.names:
+                ids = getattr(self.index, label).values[indices]
             else:
                 ids = getattr(self.columns, label).values[indices]
             kwargs[label] = ids
-        self.select()
+        return self.select(**kwargs)
 
     def __len__(self):
         """Return the length of the DataFrame."""
@@ -272,6 +332,7 @@ class DataFrame:
         #     txt += index_name.rjust(max_colwidth).join([])
 
         txt = str(self._fc) + "\n"
+        txt += str(self._fc[0].scoping.ids) + "\n"
         txt += f"DataFrame with columns {self._columns} and index {self._index}"
         txt += "\n"
 

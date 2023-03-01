@@ -1,11 +1,9 @@
 """Module containing the ``StaticMechanicalSimulation`` class."""
 from typing import List, Tuple, Union
-import warnings
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.index import Index, MultiIndex, ResultsIndex, location_to_label
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -110,23 +108,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=location,
         )
 
-        # Build the list of requested results
-        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
-            # A scalar or equivalent result has no components
-            to_extract = None
-            columns = [base_name]
-        elif category in [ResultCategory.vector, ResultCategory.matrix]:
-            # A matrix or vector result can have components selected
-            to_extract, columns = self._build_components_from_components(
-                base_name=base_name, category=category, components=components
-            )
-        elif category == ResultCategory.principal:
-            # A principal type of result can have components selected
-            to_extract, columns = self._build_components_from_principal(
-                base_name=base_name, components=components
-            )
-        else:
-            raise ValueError(f"'{category}' is not a valid category value.")
+        comp, to_extract, columns = self._create_components(
+            base_name, category, components
+        )
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
@@ -224,27 +208,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
-        # Test for empty results
-        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
-            warnings.warn(
-                message=f"Returned Dataframe with columns {columns} is empty.",
-                category=UserWarning,
-            )
-
-        multi_index = MultiIndex(
-            label_indexes=[
-                Index(name=label, values=fc.get_available_ids_for_label(label))
-                for label in fc.labels
-            ],
-            results_index=ResultsIndex(values=columns),
-        )
-
-        # Return the result wrapped in a DPF_Dataframe
-        return DataFrame(
-            data=fc,
-            columns=multi_index,
-            index=Index(name=location_to_label[location], values=None),
-        )
+        return self._create_dataframe(fc, location, columns, comp)
 
     def displacement(
         self,

@@ -3,7 +3,13 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post.index import Index, MultiIndex, ResultsIndex, location_to_label
+from ansys.dpf.post.index import (
+    CompIndex,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+)
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 
 
@@ -21,26 +27,31 @@ def test_dataframe_core_object(df):
 def test_dataframe_from_fields_container(simple_bar):
     model = core.Model(simple_bar)
     fc = model.results.displacement().eval()
+    column_indexes = [
+        LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+        for label in fc.labels
+    ]
+    column_indexes.append(ResultsIndex(values=["U"]))
+    column_index = MultiIndex(indexes=column_indexes)
 
-    multi_index = MultiIndex(
-        label_indexes=[
-            Index(name=label, values=fc.get_available_ids_for_label(label))
-            for label in fc.labels
-        ],
-        results_index=ResultsIndex(values=["UX", "UY", "UZ"]),
-    )
+    row_indexes = [
+        MeshIndex(location=post.locations.nodal, fc=fc),
+        CompIndex(values=["X", "Y", "Z"]),
+    ]
+    row_index = MultiIndex(indexes=row_indexes)
+
     df = post.DataFrame(
         data=fc,
-        columns=multi_index,
-        index=Index(name=location_to_label[fc[0].location], values=None),
+        columns=column_index,
+        index=row_index,
     )
-    assert df.axes == ["node", "time", "results"]
+    assert df.axes == ["node", "comp", "time", "results"]
 
 
 def test_dataframe_from_error():
     fc = [1, 2, 3]
     with pytest.raises(ValueError, match="not a valid data type"):
-        _ = post.DataFrame(data=fc)
+        _ = post.DataFrame(data=fc, index=[1, 2])
 
 
 # def test_dataframe_len(multishells, transient_rst):
@@ -75,7 +86,7 @@ def test_dataframe_select_raise(df):
 
 def test_dataframe_select(df):
     df2 = df.select(node=[1, 2], time=1)
-    assert all(df2.index.values == [1, 2])
+    assert all(df2.mesh_index.values == [1, 2])
     print(df2)
 
 
