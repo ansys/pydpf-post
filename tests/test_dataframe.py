@@ -11,6 +11,7 @@ from ansys.dpf.post.index import (
     ResultsIndex,
 )
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 
 @fixture
@@ -85,11 +86,12 @@ def test_dataframe_select_raise(df):
 
 
 def test_dataframe_select(df):
+    # print(df)
     df2 = df.select(node=[1, 2], time=1, comp="X")
     assert all(df2.mesh_index.values == [1, 2])
     assert df2.index.comp.values == ["X"]
     assert df2.columns.time.values == [1]
-    print(df2)
+    # print(df2)
 
 
 def test_dataframe_iselect(df):
@@ -97,8 +99,34 @@ def test_dataframe_iselect(df):
     assert all(df2.mesh_index.values == [1, 26])
     assert df2.index.comp.values == ["X"]
     assert df2.columns.time.values == [1]
-    print(df2)
+    # print(df2)
 
 
 def test_dataframe_plot(df):
     df.plot(time=1, node=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+
+def test_dataframe_repr(df):
+    ref = (
+        "DataFrame<index=MultiIndex<[MeshIndex<name=\"node\", dtype=<class 'int'>>, "
+        "Index<name=\"comp\", dtype=<class 'str'>>]>, columns=MultiIndex<[ResultIndex<['U']>, "
+        "Index<name=\"time\", dtype=<class 'int'>>]>>"
+    )
+    assert repr(df) == ref
+
+
+def test_dataframe_str(transient_rst):
+    simulation = TransientMechanicalSimulation(transient_rst)
+    df = simulation.displacement(all_sets=True)
+    # print(df)
+    ref = """  
+             results         U                                                  
+                time         1         2         3         4         5         6
+      node      comp                                                            
+       525         X  0.00e+00  4.85e-05  2.30e-04  6.51e-04  1.48e-03  2.93e-03
+                   Y  0.00e+00  2.87e-04  1.14e-03  2.54e-03  4.41e-03  6.59e-03
+                   Z  0.00e+00 -1.26e-10 -4.34e-10 -8.29e-10 -1.15e-09 -1.39e-09
+       534         X  0.00e+00  6.55e-06  1.05e-04  5.30e-04  1.67e-03  4.02e-03
+                   Y  0.00e+00  6.27e-04  2.51e-03  5.62e-03  9.86e-03  1.50e-02
+"""  # noqa: W291
+    assert str(df) == ref
