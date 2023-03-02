@@ -133,15 +133,32 @@ def test_dataframe_str(transient_rst):
     assert str(df) == ref
     df = simulation.stress()
     print(df)
+    print(df._fc[0].get_entity_data_by_id(391))
     ref = """
              results         S
               set_id        35
-    elem-n      comp          
-     391-1        XX -3.28e+05
-                  YY  1.36e+06
-                  ZZ  1.49e+08
-                  XY -4.89e+06
-                  YZ  1.43e+07
-                  XZ  1.65e+07
+   element      comp          
+       391    XX (1) -3.28e+05
+              YY (1)  1.36e+06
+              ZZ (1)  1.49e+08
+              XY (1) -4.89e+06
+              YZ (1)  1.43e+07
+              XZ (1)  1.65e+07
 """  # noqa: W291
     assert str(df) == ref
+    df2 = df.select(comp="YY")
+    print(df2)
+    ref = """
+             results         S
+              set_id        35
+   element      comp          
+       391    YY (1)  1.36e+06
+       391    YY (2)  1.29e+06
+       391    YY (3) -3.53e+07
+       391    YY (4) -2.72e+07
+       391    YY (5)  2.83e+07
+       391    YY (6)  5.26e+06
+"""  # noqa: W291
+    assert str(df2) == ref
+    df3 = df2.select(element=391)
+    print(df3)

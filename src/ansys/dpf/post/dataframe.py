@@ -415,6 +415,31 @@ class DataFrame:
             lists.append(values)
         combinations = [p for p in itertools.product(*lists)]
 
+        def flatten(arr):
+            new_arr = []
+            for item in arr:
+                if isinstance(item, list):
+                    new_arr.extend(flatten(item))
+                else:
+                    new_arr.append(item)
+            return new_arr
+
+        def treat_elemental_nodal(treat_lines, pos, n_comp, n_ent, n_lines):
+            # Update row headers
+            elem_headers = treat_lines[pos : pos + n_comp]
+            new_elem_headers = []
+            for i_ent in range(1, n_ent + 1):
+                for header in elem_headers:
+                    new_elem_header = [
+                        header[:max_colwidth]
+                        + header[max_colwidth + 4 :]
+                        + f" ({i_ent})"
+                    ]
+                    # elem_header_i.extend(elem_headers[1:])
+                    new_elem_headers.extend(new_elem_header)
+                treat_lines = treat_lines[:pos] + new_elem_headers + treat_lines[pos:]
+            return treat_lines[:n_lines]
+
         # Query data by selecting a sub-dataframe
 
         # Add text for the first n_max_value_col columns
@@ -442,8 +467,46 @@ class DataFrame:
                         try:
                             values_list = field.get_entity_data(k).tolist()
                         except Exception as e:
-                            values_list = []
-                        num_nodes = len(values_list)
+                            values_list = [[None] * len(comp_values)]
+                        num_entities = len(values_list)
+                        if isinstance(values_list[0], list):
+                            num_components = len(values_list[0])
+                        else:
+                            num_components = 1
+                        current_number_lines = len(lines)
+                        # Detect number of nodes when elemental nodal and update headers to
+                        # repeat for each node (do not print their ID for now)
+                        if (
+                            i_c == 0
+                            and field.location == locations.elemental_nodal
+                            and len(values_list) != 0
+                        ):
+                            lines = treat_elemental_nodal(
+                                lines,
+                                position,
+                                num_components,
+                                num_entities,
+                                current_number_lines,
+                            )
+                        position += num_entities * num_components
+                        array_values.append(values_list)
+                        if position >= current_number_lines:
+                            break
+                    if array_values:
+                        array_values = flatten(array_values)
+                        values.extend(array_values)
+            else:
+                array_values = []
+                position = len(column_headers) + 1
+                for entity_id in entity_ids:
+                    for field in fields:
+                        try:
+                            values_list = field.get_entity_data_by_id(
+                                entity_id
+                            ).tolist()
+                        except Exception as e:
+                            values_list = [[None] * len(comp_values)]
+                        num_entities = len(values_list)
                         num_components = len(values_list[0])
                         current_number_lines = len(lines)
                         # Detect number of nodes when elemental nodal and update headers to
@@ -453,54 +516,31 @@ class DataFrame:
                             and field.location == locations.elemental_nodal
                             and len(values_list) != 0
                         ):
-                            # Update row headers
-                            elem_headers = lines[position : position + num_components]
-                            new_elem_headers = []
-                            for i_node in range(1, num_nodes + 1):
-                                elem_header_i = [
-                                    elem_headers[0][2:max_colwidth]
-                                    + f"-{i_node}"
-                                    + elem_headers[0][max_colwidth:]
-                                ]
-                                elem_header_i.extend(elem_headers[1:])
-                                new_elem_headers.extend(elem_header_i)
-                            lines = (
-                                lines[:position] + new_elem_headers + lines[position:]
+                            lines = treat_elemental_nodal(
+                                lines,
+                                position,
+                                num_components,
+                                num_entities,
+                                current_number_lines,
                             )
-                            lines = lines[:current_number_lines]
-                            # print(f"{elem_headers=}")
-                        position += num_nodes * num_components
-                        array_values.append(values_list)
+                        position += num_entities * num_components
+                        array_values.append(array_values)
                         if position >= current_number_lines:
                             break
-                    array_values = [
-                        item for sublist in array_values for item in sublist
-                    ]
-                    array_values = [
-                        item for sublist in array_values for item in sublist
-                    ]
-                    values.extend(array_values)
-            else:
-                for entity_id in entity_ids:
-                    for field in fields:
-                        array_values = field.get_entity_data_by_id(entity_id).tolist()
-                        if array_values != []:
-                            array_values = [
-                                item for sublist in array_values for item in sublist
-                            ]
-                            array_values = [
-                                item for sublist in array_values for item in sublist
-                            ]
+                        if array_values:
+                            array_values = flatten(array_values)
                             values.extend(array_values)
 
             # take_comp_map = [True] * len(values)
             # if comp_values is not None:
 
-            value_strings = [
-                f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
-                for value in values[: len(lines) - (num_column_indexes + 1)]
-                # TODO: error here, must choose the correct components
-            ]
+            value_strings = []
+            for value in values[: len(lines) - (num_column_indexes + 1)]:
+                if value is not None:
+                    value_string = f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
+                else:
+                    value_string = empty
+                value_strings.append(value_string)
             to_append.extend(value_strings)
             previous_combination = combination
             # print(to_append)
