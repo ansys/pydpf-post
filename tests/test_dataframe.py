@@ -20,6 +20,12 @@ def df(static_rst):
     return simulation.displacement()
 
 
+@fixture
+def elastic_strain_df(static_rst):
+    simulation = StaticMechanicalSimulation(static_rst)
+    return simulation.elastic_strain_nodal()
+
+
 def test_dataframe_core_object(df):
     assert isinstance(df._core_object, core.FieldsContainer)
     assert len(df._core_object) == 1
@@ -130,3 +136,31 @@ def test_dataframe_str(transient_rst):
                    Y  0.00e+00  6.27e-04  2.51e-03  5.62e-03  9.86e-03  1.50e-02
 """  # noqa: W291
     assert str(df) == ref
+
+
+def test_dataframe_str_comp(df):
+    # 3D str
+    stri = str(df)
+    expected_strs = ["X", "Y", "Z", "results", "U", "node"]
+    for expected_str in expected_strs:
+        assert expected_str in stri
+    # 1D str
+    stri = str(df.select(comp="X"))
+    expected_strs = ["X", "results", "U", "node"]
+    for expected_str in expected_strs:
+        assert expected_str in stri
+    assert "Y" not in stri
+
+
+def test_dataframe_str_tensor(elastic_strain_df):
+    # 3D str
+    stri = str(elastic_strain_df)
+    expected_strs = ["XX", "XY", "XZ", "results", "EPEL", "node"]
+    for expected_str in expected_strs:
+        assert expected_str in stri
+    # 1D str
+    stri = str(elastic_strain_df.select(comp=["XX", "XY"]))
+    expected_strs = ["XX", "XY", "results", "U", "node"]
+    for expected_str in expected_strs:
+        assert expected_str in stri
+    assert "ZZ" not in stri

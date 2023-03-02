@@ -442,9 +442,10 @@ class DataFrame:
                     array_values = [
                         item for sublist in array_values for item in sublist
                     ]
-                    array_values = [
-                        item for sublist in array_values for item in sublist
-                    ]
+                    if len(array_values)>0 and hasattr(array_values[0], "__iter__"):
+                        array_values = [
+                            item for sublist in array_values for item in sublist
+                        ]
                     values.extend(array_values)
             else:
                 for entity_id in entity_ids:
