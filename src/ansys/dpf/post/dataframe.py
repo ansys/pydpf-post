@@ -474,7 +474,7 @@ class DataFrame:
         entity_ids = None
         lists = []
         label_positions_in_combinations = {}
-        comp_values = None
+        comp_values = [1]
         for position, index in enumerate(self.columns):
             if isinstance(index, MeshIndex):
                 if index._values is not None:
