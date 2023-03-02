@@ -30,6 +30,8 @@ simulation = post.load_simulation(example_path)
 # for no autocompletion, this line is equivalent to:
 simulation = post.ModalMechanicalSimulation(example_path)
 
+displacement = simulation.displacement(modes=[1, 2])
+str(displacement)
 # print the simulation to get an overview of what's available
 print(simulation)
 
