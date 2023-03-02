@@ -289,6 +289,10 @@ class SpatialSelection:
         if isinstance(nodes, Scoping):
             scoping = nodes
         else:
+            from ansys.dpf.core.dpf_array import DPFArray
+
+            if isinstance(nodes, DPFArray):
+                nodes = nodes.tolist()
             scoping = Scoping(location=locations.nodal, ids=nodes, server=self._server)
         self.select_with_scoping(scoping)
 
