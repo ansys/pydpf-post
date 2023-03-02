@@ -715,7 +715,7 @@ class DataFrame:
         plotter = Plotter(**kwargs)
         for field in fields:
             plotter.add_field(field=field, **kwargs)
-            field.plot(text="debug")
+            # field.plot(text="debug")
         return plotter.show_figure(text=str(label_space), **kwargs)
 
     def animate(
