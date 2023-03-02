@@ -341,68 +341,6 @@ class DataFrame:
             self._last_display_max_colwidth = display_max_colwidth
         return self._str
 
-    class _StringifyDataFrame:
-        def __init__(self, df, width: int, max_colwidth: int, max_row: int):
-            self._df = df
-            self._width = width
-            self._max_colwidth = max_colwidth
-            self._max_row = max_row
-            self.compute_sizes()
-
-        def compute_sizes(self):
-            self._num_column_indexes = len(self._df.columns)
-            self._num_rows_indexes = len(self._df.index)
-            max_n_col = self._width // self._max_colwidth
-            self._n_max_value_col = max_n_col - self._num_rows_indexes
-
-        def get_str(self) -> str:
-            lines = self.make_columns_headers()
-            lines.extend(self.make_row_headers())
-            lines.extend(self.make_raw_titles())
-
-        @property
-        def empty(self):
-            return " " * self._max_colwidth
-
-        def make_columns_headers(self):
-            column_headers = []
-            for column_index in self._df.columns:
-                column_headers.append(
-                    self.empty * (self._num_rows_indexes - 1)
-                    + column_index.name.rjust(self._max_colwidth)
-                )
-            return column_headers
-
-        def make_row_headers(self):
-            return "".join(
-                [
-                    row_index.name.rjust(self._max_colwidth)
-                    for row_index in self._df.index
-                ]
-            )
-
-        def make_columns_combinations(self):
-            columns_values = [index.values for index in self._df.columns]
-            return [p for p in itertools.product(*columns_values)]
-
-        def make_row_combinations(self):
-            row_values = [index.values for index in self._df.index]
-            return [p for p in itertools.product(*row_values)]
-
-        def make_row_titles(self):
-            combinations = self.make_row_combinations()
-            row = [""] * len(combinations)
-            last = ""
-            for raw_t in range(0, len(combinations[0])):
-                for raw_tt in range(0, len(combinations)):
-                    to_add = str(combinations[raw_tt][raw_t])
-                    if to_add == last:
-                        row[raw_tt] += self.empty + self.empty[len(self.empty) :]
-                    else:
-                        row[raw_tt] += to_add + self.empty[len(to_add) :]
-                    last = to_add
-            return row
-
     def _update_str(self, width: int, max_colwidth: int):
         """Updates the DataFrame string representation using given display options.
 
