@@ -7,22 +7,23 @@ from typing import List, Union
 import warnings
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.common import shell_layers
 from ansys.dpf.core.dpf_array import DPFArray
 
+from ansys.dpf.post import locations
 from ansys.dpf.post.index import (
     CompIndex,
-    FrequencyIndex,
     Index,
     LabelIndex,
     MeshIndex,
     MultiIndex,
     ResultsIndex,
     SetIndex,
-    TimeIndex,
 )
 
 display_width = 80
 display_max_colwidth = 10
+display_max_lines = 6
 
 
 class DataFrame:
@@ -114,7 +115,7 @@ class DataFrame:
 
     @property
     def labels(self) -> List[str]:
-        """Returns a list of the names of available ResultsIndex indexes."""
+        """Returns a list of the names of available LabelIndex indexes."""
         names = [index.name for index in self.index if isinstance(index, LabelIndex)]
         names.extend(
             [index.name for index in self.columns if isinstance(index, LabelIndex)]
@@ -180,11 +181,18 @@ class DataFrame:
             fc.labels = self._fc.labels
             for i, field in enumerate(self._fc):
                 label_space = self._fc.get_label_space(i)
-                for key in label_space.keys():
-                    if not isinstance(kwargs[key], list):
-                        kwargs[key] = [kwargs[key]]
-                    if label_space[key] in kwargs[key]:
-                        fc.add_field(label_space=label_space, field=field)
+                for fc_key in label_space.keys():
+                    if fc_key in kwargs.keys() or (
+                        fc_key == "time" and "set_id" in kwargs.keys()
+                    ):
+                        key = fc_key
+                        if fc_key == "time" and "set_id" in kwargs.keys():
+                            key = "set_id"
+                        if not isinstance(kwargs[key], list):
+                            kwargs[key] = [kwargs[key]]
+                        if label_space[fc_key] not in kwargs[key]:
+                            continue
+                    fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
         # # Treat selection on components
@@ -208,7 +216,10 @@ class DataFrame:
             mesh_index_name = self.index.name
         else:
             mesh_index_name = self.index.mesh_index.name
-        if mesh_index_name in kwargs.keys():
+        if (
+            mesh_index_name in kwargs.keys()
+            and mesh_index.location != locations.elemental_nodal
+        ):
             if "node" in mesh_index_name:
                 node_ids = kwargs[mesh_index_name]
                 if not isinstance(node_ids, (DPFArray, list)):
@@ -237,6 +248,14 @@ class DataFrame:
             )
             out = rescope_fc.outputs.fields_container
             mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
+        elif (
+            mesh_index_name in kwargs.keys()
+            and mesh_index.location == locations.elemental_nodal
+        ):
+            raise NotImplementedError(
+                f"Element selection on a DataFrame with elemental nodal results "
+                f"is not yet supported"
+            )
 
         if out is not None:
             wf.set_output_name("out", out)
@@ -301,6 +320,8 @@ class DataFrame:
                 ids = getattr(self.index, label).values[indices]
             else:
                 ids = getattr(self.columns, label).values[indices]
+            if isinstance(ids, DPFArray):
+                ids = ids.tolist()
             kwargs[label] = ids
         return self.select(**kwargs)
 
@@ -320,6 +341,68 @@ class DataFrame:
             self._last_display_max_colwidth = display_max_colwidth
         return self._str
 
+    class _StringifyDataFrame:
+        def __init__(self, df, width: int, max_colwidth: int, max_row: int):
+            self._df = df
+            self._width = width
+            self._max_colwidth = max_colwidth
+            self._max_row = max_row
+            self.compute_sizes()
+
+        def compute_sizes(self):
+            self._num_column_indexes = len(self._df.columns)
+            self._num_rows_indexes = len(self._df.index)
+            max_n_col = self._width // self._max_colwidth
+            self._n_max_value_col = max_n_col - self._num_rows_indexes
+
+        def get_str(self) -> str:
+            lines = self.make_columns_headers()
+            lines.extend(self.make_row_headers())
+            lines.extend(self.make_raw_titles())
+
+        @property
+        def empty(self):
+            return " " * self._max_colwidth
+
+        def make_columns_headers(self):
+            column_headers = []
+            for column_index in self._df.columns:
+                column_headers.append(
+                    self.empty * (self._num_rows_indexes - 1)
+                    + column_index.name.rjust(self._max_colwidth)
+                )
+            return column_headers
+
+        def make_row_headers(self):
+            return "".join(
+                [
+                    row_index.name.rjust(self._max_colwidth)
+                    for row_index in self._df.index
+                ]
+            )
+
+        def make_columns_combinations(self):
+            columns_values = [index.values for index in self._df.columns]
+            return [p for p in itertools.product(*columns_values)]
+
+        def make_row_combinations(self):
+            row_values = [index.values for index in self._df.index]
+            return [p for p in itertools.product(*row_values)]
+
+        def make_row_titles(self):
+            combinations = self.make_row_combinations()
+            row = [""] * len(combinations)
+            last = ""
+            for raw_t in range(0, len(combinations[0])):
+                for raw_tt in range(0, len(combinations)):
+                    to_add = str(combinations[raw_tt][raw_t])
+                    if to_add == last:
+                        row[raw_tt] += self.empty + self.empty[len(self.empty) :]
+                    else:
+                        row[raw_tt] += to_add + self.empty[len(to_add) :]
+                    last = to_add
+            return row
+
     def _update_str(self, width: int, max_colwidth: int):
         """Updates the DataFrame string representation using given display options.
 
@@ -333,10 +416,11 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
+        lines = []
         empty = " " * max_colwidth
         truncated = "...".rjust(max_colwidth)
         max_n_col = width // max_colwidth
-        max_n_rows = 5
+        max_n_rows = display_max_lines
         # Create lines with row labels and values
         num_column_indexes = len(self.columns)
         num_rows_indexes = len(self.index)
@@ -346,8 +430,7 @@ class DataFrame:
             column_headers.append(
                 empty * (num_rows_indexes - 1) + column_index.name.rjust(max_colwidth)
             )
-
-        lines = column_headers
+        lines.extend(column_headers)
 
         row_headers = "".join(
             [row_index.name.rjust(max_colwidth) for row_index in self.index]
@@ -355,26 +438,26 @@ class DataFrame:
         lines.append(row_headers)
         entity_ids = []
         # Create combinations for rows
-        num_mesh_entities_to_ask = 5
+        num_mesh_entities_to_ask = max_n_rows
         lists = []
         entity_ids = None
         for index in self.index:
             if isinstance(index, MeshIndex):
                 if index._values is not None:
                     values = index.values
-                    entity_ids = values
                 else:
                     values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+                entity_ids = values
             elif isinstance(index, CompIndex):
                 values = index.values
             else:
                 values = index.values
             lists.append(values)
-        row_combinations = [p for p in itertools.product(*lists)]
+        row_combinations = [p for p in itertools.product(*lists)][:max_n_rows]
 
         # Add row headers for the first combinations (max_n_rows)
         previous_combination = [None] * len(lists)
-        for combination in row_combinations[:max_n_rows]:
+        for combination in row_combinations:
             line = "".join(
                 [
                     str(combination[i]).rjust(max_colwidth)
@@ -387,11 +470,11 @@ class DataFrame:
             lines.append(line)
 
         # Create combinations for columns
-        num_mesh_entities_to_ask = 5
+        num_mesh_entities_to_ask = max_n_rows
         entity_ids = None
         lists = []
-        time_position = 1
-        complex_position = None
+        label_positions_in_combinations = {}
+        comp_values = None
         for position, index in enumerate(self.columns):
             if isinstance(index, MeshIndex):
                 if index._values is not None:
@@ -399,23 +482,44 @@ class DataFrame:
                     entity_ids = values
                 else:
                     values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
+                    entity_ids = values
             elif isinstance(index, CompIndex):
                 values = index.values
-            elif isinstance(index, (FrequencyIndex, TimeIndex)):
-                values = index.values
-                time_position = position
+                comp_values = values
             else:
                 values = index.values
-                if index.name == "complex":
-                    complex_position = position
+            label_positions_in_combinations[index.name] = position
             lists.append(values)
         combinations = [p for p in itertools.product(*lists)]
 
-        # Query data on entity_ids
+        def flatten(arr):
+            new_arr = []
+            for item in arr:
+                if isinstance(item, list):
+                    new_arr.extend(flatten(item))
+                else:
+                    new_arr.append(item)
+            return new_arr
+
+        def treat_elemental_nodal(treat_lines, pos, n_comp, n_ent, n_lines):
+            # Update row headers
+            elem_headers = treat_lines[pos : pos + n_comp]
+            new_elem_headers = []
+            for i_ent in range(1, n_ent + 1):
+                for header in elem_headers:
+                    new_elem_header = [
+                        header[:max_colwidth]
+                        + header[max_colwidth + 4 :]
+                        + f" ({i_ent})"
+                    ]
+                    # elem_header_i.extend(elem_headers[1:])
+                    new_elem_headers.extend(new_elem_header)
+                treat_lines = treat_lines[:pos] + new_elem_headers + treat_lines[pos:]
+            return treat_lines[:n_lines]
 
         # Add text for the first n_max_value_col columns
         previous_combination = [None] * len(lists)
-        for combination in combinations[:n_max_value_col]:
+        for i_c, combination in enumerate(combinations[:n_max_value_col]):
             to_append = [
                 str(combination[i]).rjust(max_colwidth)
                 if combination[i] != previous_combination[i]
@@ -425,46 +529,96 @@ class DataFrame:
             to_append.append(empty)
             # Get data in the FieldsContainer for those positions
             # Create label_space from combination
-            label_space = {"time": combination[time_position]}
-            if complex_position is not None:
-                label_space["complex"] = combination[complex_position]
+            label_space = {}
+            for label_name in self.labels:
+                value = combination[label_positions_in_combinations[label_name]]
+                if label_name == "set_id":
+                    label_name = "time"
+                label_space[label_name] = value
             fields = self._fc.get_fields(label_space=label_space)
             values = []
             if entity_ids is None:
                 for field in fields:
                     array_values = []
+                    position = len(column_headers) + 1
                     for k in list(range(num_mesh_entities_to_ask)):
                         try:
                             values_list = field.get_entity_data(k).tolist()
-                            array_values.append(values_list)
                         except Exception as e:
-                            pass
-                    array_values = [
-                        item for sublist in array_values for item in sublist
-                    ]
-                    if len(array_values)>0 and hasattr(array_values[0], "__iter__"):
-                        array_values = [
-                            item for sublist in array_values for item in sublist
-                        ]
-                    values.extend(array_values)
+                            values_list = [[None] * len(comp_values)]
+                        num_entities = len(values_list)
+                        if isinstance(values_list[0], list):
+                            num_components = len(values_list[0])
+                        else:
+                            num_components = 1
+                        current_number_lines = len(lines)
+                        # Detect number of nodes when elemental nodal and update headers to
+                        # repeat for each node (do not print their ID for now)
+                        if (
+                            i_c == 0
+                            and field.location == locations.elemental_nodal
+                            and len(values_list) != 0
+                        ):
+                            lines = treat_elemental_nodal(
+                                lines,
+                                position,
+                                num_components,
+                                num_entities,
+                                current_number_lines,
+                            )
+                        position += num_entities * num_components
+                        array_values.append(values_list)
+                        if position >= current_number_lines:
+                            break
+                    if array_values:
+                        array_values = flatten(array_values)
+                        values.extend(array_values)
             else:
+                array_values = []
+                position = len(column_headers) + 1
                 for entity_id in entity_ids:
                     for field in fields:
-                        array_values = field.get_entity_data_by_id(entity_id).tolist()
-                        if array_values != []:
-                            array_values = [
-                                item for sublist in array_values for item in sublist
-                            ]
-                            array_values = [
-                                item for sublist in array_values for item in sublist
-                            ]
+                        try:
+                            values_list = field.get_entity_data_by_id(
+                                entity_id
+                            ).tolist()
+                        except Exception as e:
+                            values_list = [[None] * len(comp_values)]
+                        num_entities = len(values_list)
+                        num_components = len(values_list[0])
+                        current_number_lines = len(lines)
+                        # Detect number of nodes when elemental nodal and update headers to
+                        # repeat for each node (do not print their ID for now)
+                        if (
+                            i_c == 0
+                            and field.location == locations.elemental_nodal
+                            and len(values_list) != 0
+                        ):
+                            lines = treat_elemental_nodal(
+                                lines,
+                                position,
+                                num_components,
+                                num_entities,
+                                current_number_lines,
+                            )
+                        position += num_entities * num_components
+                        array_values.append(array_values)
+                        if position >= current_number_lines:
+                            break
+                        if array_values:
+                            array_values = flatten(array_values)
                             values.extend(array_values)
 
-            value_strings = [
-                f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
-                for value in values[: len(lines) - (num_column_indexes + 1)]
-                # TODO: error here, must choose the correct components
-            ]
+            # take_comp_map = [True] * len(values)
+            # if comp_values is not None:
+
+            value_strings = []
+            for value in values[: len(lines) - (num_column_indexes + 1)]:
+                if value is not None:
+                    value_string = f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
+                else:
+                    value_string = empty
+                value_strings.append(value_string)
             to_append.extend(value_strings)
             previous_combination = combination
             # print(to_append)
@@ -484,11 +638,13 @@ class DataFrame:
         """Representation of the DataFrame."""
         return f"DataFrame<index={self.index}, columns={self.columns}>"
 
-    def plot(self, **kwargs):
+    def plot(self, shell_layer=shell_layers.top, **kwargs):
         """Plot the result.
 
         Parameters
         ----------
+        shell_layer:
+            Shell layer to show if multi-layered shell data present. Defaults to top.
         **kwargs:
             This function accepts as argument any of the Index names available associated with a
             single value.
@@ -503,6 +659,8 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        from ansys.dpf.core.plotter import DpfPlotter as Plotter
+
         if kwargs != {}:
             # Check for invalid arguments
             axes = self.axes
@@ -529,8 +687,36 @@ class DataFrame:
         else:
             label_space = fc.get_label_space(0)
         label_space = label_space
-        field = fc.get_field(label_space_or_index=label_space)
-        return field.plot(text=str(label_space), **kwargs)
+        # if "elshape" in self._fc.labels:
+        #     merge_solids_shell_op = dpf.operators.logic.solid_shell_fields(fc)
+        #     fc = merge_solids_shell_op.eval()
+
+        for field in fc:
+            # Treat multi-layer field
+            shell_layer_check = field.shell_layers
+            if shell_layer_check in [
+                shell_layers.topbottom,
+                shell_layers.topbottommid,
+            ]:
+                changeOp = dpf.Operator("change_shellLayers")
+                changeOp.inputs.fields_container.connect(fc)
+                sl = shell_layers.top
+                if shell_layer is not None:
+                    if not isinstance(shell_layer, shell_layers):
+                        raise TypeError(
+                            "shell_layer attribute must be a core.shell_layers instance."
+                        )
+                    sl = shell_layer
+                changeOp.inputs.e_shell_layer.connect(sl.value)  # top layers taken
+                fc = changeOp.get_output(0, dpf.types.fields_container)
+                break
+
+        fields = fc.get_fields(label_space=label_space)
+        plotter = Plotter(**kwargs)
+        for field in fields:
+            plotter.add_field(field=field, **kwargs)
+            field.plot(text="debug")
+        return plotter.show_figure(text=str(label_space), **kwargs)
 
     def animate(
         self,
