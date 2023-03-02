@@ -23,7 +23,7 @@ from ansys.dpf.post import examples
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
 
-example_path = r'D:\ANSYSDev\DPFUnitTestDataFiles\harmonic\RstFile_ENGHRM_WB2_002.rst'
+example_path = examples.download_harmonic_clamped_pipe()
 simulation = post.load_simulation(example_path)
 
 # for no autocompletion, this line is equivalent to:
