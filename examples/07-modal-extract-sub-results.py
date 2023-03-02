@@ -49,7 +49,7 @@ x_displacement = simulation.displacement(modes=[1, 2], components=["X"])
 x_displacement = simulation.displacement(set_ids=[1, 2], components=["X"])
 print(x_displacement)
 
-x_displacement.plot(time=1)
+x_displacement.plot(set_id=1)
 
 ###############################################################################
 # Extract XX and XY elastic strain over a list modes
@@ -58,4 +58,4 @@ x_displacement.plot(time=1)
 XX_XY_elastic_strain = simulation.elastic_strain_nodal(modes=[3], components=["XX", "XY"])
 print(XX_XY_elastic_strain)
 
-XX_XY_elastic_strain.plot(time=3, comp="XX")
+#XX_XY_elastic_strain.plot(set_id=3, comp="XX")

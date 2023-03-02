@@ -195,7 +195,7 @@ def test_dataframe_str_tensor(elastic_strain_df):
         assert expected_str in stri
     # 1D str
     stri = str(elastic_strain_df.select(comp=["XX", "XY"]))
-    expected_strs = ["XX", "XY", "results", "U", "node"]
+    expected_strs = ["XX", "XY", "results", "EPEL", "node"]
     for expected_str in expected_strs:
         assert expected_str in stri
     assert "ZZ" not in stri
