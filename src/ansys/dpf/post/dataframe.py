@@ -392,6 +392,7 @@ class DataFrame:
         lists = []
         time_position = 1
         complex_position = None
+        comp_values = None
         for position, index in enumerate(self.columns):
             if isinstance(index, MeshIndex):
                 if index._values is not None:
@@ -401,6 +402,7 @@ class DataFrame:
                     values = self._first_n_ids_first_field(num_mesh_entities_to_ask)
             elif isinstance(index, CompIndex):
                 values = index.values
+                comp_values = values
             elif isinstance(index, (FrequencyIndex, TimeIndex)):
                 values = index.values
                 time_position = position
@@ -411,7 +413,7 @@ class DataFrame:
             lists.append(values)
         combinations = [p for p in itertools.product(*lists)]
 
-        # Query data on entity_ids
+        # Query data by selecting a sub-dataframe
 
         # Add text for the first n_max_value_col columns
         previous_combination = [None] * len(lists)
@@ -458,6 +460,9 @@ class DataFrame:
                                 item for sublist in array_values for item in sublist
                             ]
                             values.extend(array_values)
+
+            # take_comp_map = [True] * len(values)
+            # if comp_values is not None:
 
             value_strings = [
                 f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)

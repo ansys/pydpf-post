@@ -19,6 +19,7 @@ from ansys.dpf.post.index import (
     MeshIndex,
     MultiIndex,
     ResultsIndex,
+    SetIndex,
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
@@ -474,13 +475,18 @@ class Simulation(ABC):
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
-        column_indexes = [ResultsIndex(values=[base_name])]
-        column_indexes.extend(
-            [
-                LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                for label in fc.labels
-            ]
-        )
+        column_indexes = [
+            ResultsIndex(values=[base_name]),
+            SetIndex(values=fc.get_available_ids_for_label("time")),
+        ]
+        label_indexes = []
+        for label in fc.labels:
+            if label not in ["time"]:
+                label_indexes.append(
+                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                )
+
+        column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
 
         row_index = MultiIndex(
