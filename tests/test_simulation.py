@@ -41,14 +41,14 @@ def test_simulation_geometries(static_simulation):
     assert geometries == []
 
 
-def test_simulation_boundary_conditions(static_simulation):
-    boundary_conditions = static_simulation.boundary_conditions
-    assert boundary_conditions == []
-
-
-def test_simulation_loads(static_simulation):
-    loads = static_simulation.loads
-    assert loads == []
+# def test_simulation_boundary_conditions(static_simulation):
+#     boundary_conditions = static_simulation.boundary_conditions
+#     assert boundary_conditions == []
+#
+#
+# def test_simulation_loads(static_simulation):
+#     loads = static_simulation.loads
+#     assert loads == []
 
 
 def test_simulation_mesh(static_simulation):

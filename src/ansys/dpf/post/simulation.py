@@ -4,15 +4,47 @@ from enum import Enum
 from os import PathLike
 import re
 from typing import List, Tuple, Union
+import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations
+from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import (
+    CompIndex,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+    SetIndex,
+)
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
+
+component_label_to_index = {
+    "1": 0,
+    "2": 1,
+    "3": 2,
+    "4": 3,
+    "5": 4,
+    "6": 5,
+    "X": 0,
+    "Y": 1,
+    "Z": 2,
+    "XX": 0,
+    "YY": 1,
+    "ZZ": 2,
+    "XY": 3,
+    "YZ": 4,
+    "XZ": 5,
+}
+
+vector_component_names = ["X", "Y", "Z"]
+matrix_component_names = ["XX", "YY", "ZZ", "XY", "YZ", "XZ"]
+principal_names = ["1", "2", "3"]
 
 
 class ResultCategory(Enum):
@@ -28,23 +60,9 @@ class ResultCategory(Enum):
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
 
-    _component_to_id = {
-        "1": 0,
-        "2": 1,
-        "3": 2,
-        "4": 3,
-        "5": 4,
-        "6": 5,
-        "X": 0,
-        "Y": 1,
-        "Z": 2,
-        "XY": 3,
-        "YZ": 4,
-        "XZ": 5,
-    }
-
-    _component_names = ["X", "Y", "Z", "XX", "XY", "YZ"]
-    _principal_names = ["1", "2", "3"]
+    _vector_component_names = vector_component_names
+    _matrix_component_names = matrix_component_names
+    _principal_names = principal_names
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -61,6 +79,10 @@ class Simulation(ABC):
             "distance": self._model.metadata.meshed_region.unit,
         }
         self._time_freq_precision = None
+
+    def release_streams(self):
+        """Release the streams to data files if any is active."""
+        self._model.metadata.release_streams()
 
     @property
     def results(self) -> List[str]:
@@ -96,37 +118,37 @@ class Simulation(ABC):
         """
         return self._geometries
 
-    @property
-    def boundary_conditions(self):
-        """List of boundary conditions in the simulation.
+    # @property
+    # def boundary_conditions(self):
+    #     """List of boundary conditions in the simulation.
+    #
+    #     Returns a list of boundary_condition objects.
+    #
+    #     Examples
+    #     --------
+    #     >>> from ansys.dpf import post
+    #     >>> from ansys.dpf.post import examples
+    #     >>> simulation = post.load_simulation(examples.static_rst)
+    #     >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    #     []
+    #     """
+    #     return self._boundary_conditions
 
-        Returns a list of boundary_condition objects.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.boundary_conditions) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        []
-        """
-        return self._boundary_conditions
-
-    @property
-    def loads(self):
-        """List of loads in the simulation.
-
-        Returns a list of load objects.
-
-        Examples
-        --------
-        >>> from ansys.dpf import post
-        >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        []
-        """
-        return self._loads
+    # @property
+    # def loads(self):
+    #     """List of loads in the simulation.
+    #
+    #     Returns a list of load objects.
+    #
+    #     Examples
+    #     --------
+    #     >>> from ansys.dpf import post
+    #     >>> from ansys.dpf.post import examples
+    #     >>> simulation = post.load_simulation(examples.static_rst)
+    #     >>> print(simulation.loads) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    #     []
+    #     """
+    #     return self._loads
 
     @property
     def mesh(self) -> Mesh:
@@ -140,7 +162,11 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        <ansys.dpf.post.mesh.Mesh object at ...>
+            DPF  Mesh:
+              81 nodes
+              8 elements
+              Unit: m
+              With solid (3D) elements
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)
@@ -281,9 +307,14 @@ class Simulation(ABC):
         return self._time_freq_precision
 
     @property
-    def time_freq_support(self):
+    def time_freq_support(self) -> TimeFreqSupport:
         """Description of the temporal/frequency analysis of the model."""
         return self._time_frequencies
+
+    @property
+    def set_ids(self) -> List:
+        """Returns the list of set IDs available in the simulation."""
+        return list(range(1, self.time_freq_support.n_sets + 1))
 
     @property
     def units(self):
@@ -302,7 +333,19 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_components_from_components(self, base_name, category, components):
+    def _build_components_for_vector(self, base_name, components):
+        out, columns = self._build_components(
+            base_name, components, self._vector_component_names
+        )
+        return out, columns
+
+    def _build_components_for_matrix(self, base_name, components):
+        out, columns = self._build_components(
+            base_name, components, self._matrix_component_names
+        )
+        return out, columns
+
+    def _build_components(self, base_name, components, component_names):
         # Create operator internal names based on components
         out = []
         if components is None:
@@ -321,47 +364,44 @@ class Simulation(ABC):
                     )
                 if isinstance(comp, int):
                     comp = str(comp)
-                if comp not in self._component_to_id.keys():
+                if comp not in component_label_to_index.keys():
                     raise ValueError(
                         f"Component {comp} is not valid. Please use one of: "
-                        f"{list(self._component_to_id.keys())}."
+                        f"{list(component_label_to_index.keys())}."
                     )
-                out.append(self._component_to_id[comp])
+                out.append(component_label_to_index[comp])
 
         # Take unique values and build names list
-        if out is not None:
-            out = list(set(out))
-        if out is None and category == ResultCategory.vector:
-            columns = [base_name + comp for comp in self._component_names[:3]]
-        elif out is None and category == ResultCategory.matrix:
-            columns = [base_name + comp for comp in self._component_names]
+        if out is None:
+            columns = [base_name + comp for comp in component_names]
         else:
-            columns = [base_name + self._component_names[i] for i in out]
+            out = list(set(out))
+            columns = [base_name + component_names[i] for i in out]
         return out, columns
 
-    def _build_components_from_principal(self, base_name, components):
+    def _build_components_for_principal(self, base_name, components):
         # Create operator internal names based on principal components
         out = []
         if components is None:
-            out = None
-        else:
-            if isinstance(components, int) or isinstance(components, str):
-                components = [components]
-            if not isinstance(components, list):
+            components = [1]
+
+        if isinstance(components, int) or isinstance(components, str):
+            components = [components]
+        if not isinstance(components, list):
+            raise ValueError(
+                "Argument 'components' must be an int, a str, or a list of either."
+            )
+        for comp in components:
+            if not (isinstance(comp, str) or isinstance(comp, int)):
                 raise ValueError(
-                    "Argument 'components' must be an int, a str, or a list of either."
+                    "Argument 'components' can only contain integers and/or strings."
                 )
-            for comp in components:
-                if not (isinstance(comp, str) or isinstance(comp, int)):
-                    raise ValueError(
-                        "Argument 'components' can only contain integers and/or strings."
-                    )
-                if str(comp) not in self._principal_names:
-                    raise ValueError(
-                        "A principal component ID must be one of: "
-                        f"{self._principal_names}."
-                    )
-                out.append(int(comp) - 1)
+            if str(comp) not in self._principal_names:
+                raise ValueError(
+                    "A principal component ID must be one of: "
+                    f"{self._principal_names}."
+                )
+            out.append(int(comp) - 1)
 
         # Take unique values
         if out is not None:
@@ -386,6 +426,79 @@ class Simulation(ABC):
         else:
             op.connect(9, location)
         return op
+
+    def _create_components(self, base_name, category, components):
+        comp = None
+        # Build the list of requested results
+        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
+            # A scalar or equivalent result has no components
+            to_extract = None
+            columns = [base_name]
+        elif category == ResultCategory.vector:
+            # A vector result can have components selected
+            to_extract, columns = self._build_components_for_vector(
+                base_name=base_name, components=components
+            )
+            if to_extract is not None:
+                comp = [self._vector_component_names[i] for i in to_extract]
+            else:
+                comp = self._vector_component_names
+        elif category == ResultCategory.matrix:
+            # A vector result can have components selected
+            to_extract, columns = self._build_components_for_matrix(
+                base_name=base_name, components=components
+            )
+            if to_extract is not None:
+                comp = [self._matrix_component_names[i] for i in to_extract]
+            else:
+                comp = self._matrix_component_names
+        elif category == ResultCategory.principal:
+            # A principal type of result can have components selected
+            to_extract, columns = self._build_components_for_principal(
+                base_name=base_name, components=components
+            )
+            comp = [self._principal_names[i] for i in to_extract]
+        else:
+            raise ValueError(f"'{category}' is not a valid category value.")
+        return comp, to_extract, columns
+
+    def _create_dataframe(self, fc, location, columns, comp, base_name):
+        # Test for empty results
+        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
+            warnings.warn(
+                message=f"Returned Dataframe with columns {columns} is empty.",
+                category=UserWarning,
+            )
+        comp_index = None
+        if comp is not None:
+            comp_index = CompIndex(values=comp)
+        row_indexes = [MeshIndex(location=location, fc=fc)]
+        if comp_index is not None:
+            row_indexes.append(comp_index)
+        column_indexes = [
+            ResultsIndex(values=[base_name]),
+            SetIndex(values=fc.get_available_ids_for_label("time")),
+        ]
+        label_indexes = []
+        for label in fc.labels:
+            if label not in ["time"]:
+                label_indexes.append(
+                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                )
+
+        column_indexes.extend(label_indexes)
+        column_index = MultiIndex(indexes=column_indexes)
+
+        row_index = MultiIndex(
+            indexes=row_indexes,
+        )
+
+        # Return the result wrapped in a DPF_Dataframe
+        return DataFrame(
+            data=fc,
+            columns=column_index,
+            index=row_index,
+        )
 
 
 class MechanicalSimulation(Simulation, ABC):
@@ -432,12 +545,12 @@ class MechanicalSimulation(Simulation, ABC):
         # Create the SpatialSelection
         if named_selections:
             selection.select_named_selection(named_selection=named_selections)
-        elif element_ids:
+        elif element_ids is not None:
             if location == locations.nodal:
                 selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
             else:
                 selection.select_elements(elements=element_ids)
-        elif node_ids:
+        elif node_ids is not None:
             if location != locations.nodal:
                 raise ValueError(
                     "Argument 'node_ids' can only be used if 'location' "
