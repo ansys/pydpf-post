@@ -80,25 +80,30 @@ def test_dataframe_index(df):
     print(index)
 
 
-def test_dataframe_select_raise(df):
+def test_dataframe_select_raise(df, transient_rst):
     with pytest.raises(ValueError, match="has no axis"):
         df.select(toto=1)
+
+    with pytest.raises(NotImplementedError, match="Element selection"):
+        simulation = TransientMechanicalSimulation(transient_rst)
+        df = simulation.stress()
+        _ = df.select(element=391)
 
 
 def test_dataframe_select(df):
     # print(df)
     df2 = df.select(node=[1, 2], set_id=1, comp="X")
     assert all(df2.mesh_index.values == [1, 2])
-    assert all(df2.index.comp.values == ["X"])
-    assert all(df2.columns.set_id.values == [1])
+    assert df2.index.comp.values == ["X"]
+    assert df2.columns.set_id.values == [1]
     # print(df2)
 
 
 def test_dataframe_iselect(df):
     df2 = df.iselect(node=[0, 1], set_id=0, comp=0)
     assert all(df2.mesh_index.values == [1, 26])
-    assert all(df2.index.comp.values == ["X"])
-    assert all(df2.columns.set_id.values == [1])
+    assert df2.index.comp.values == ["X"]
+    assert df2.columns.set_id.values == [1]
     # print(df2)
 
 
@@ -160,5 +165,3 @@ def test_dataframe_str(transient_rst):
        391    YY (6)  5.26e+06
 """  # noqa: W291
     assert str(df2) == ref
-    df3 = df2.select(element=391)
-    print(df3)

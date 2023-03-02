@@ -210,7 +210,10 @@ class DataFrame:
             mesh_index_name = self.index.name
         else:
             mesh_index_name = self.index.mesh_index.name
-        if mesh_index_name in kwargs.keys():
+        if (
+            mesh_index_name in kwargs.keys()
+            and mesh_index.location != locations.elemental_nodal
+        ):
             if "node" in mesh_index_name:
                 node_ids = kwargs[mesh_index_name]
                 if not isinstance(node_ids, (DPFArray, list)):
@@ -239,6 +242,14 @@ class DataFrame:
             )
             out = rescope_fc.outputs.fields_container
             mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
+        elif (
+            mesh_index_name in kwargs.keys()
+            and mesh_index.location == locations.elemental_nodal
+        ):
+            raise NotImplementedError(
+                f"Element selection on a DataFrame with elemental nodal results "
+                f"is not yet supported"
+            )
 
         if out is not None:
             wf.set_output_name("out", out)
