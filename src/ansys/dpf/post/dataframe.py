@@ -747,7 +747,7 @@ class DataFrame:
         self,
         save_as: Union[PathLike, None] = None,
         deform: bool = False,
-        scale_factor: Union[List[float], float, None] = None,
+        scale_factor: Union[List[float], float] = 1.0,
         **kwargs,
     ):
         """Animate the result.
