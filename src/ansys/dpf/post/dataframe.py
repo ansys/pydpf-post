@@ -314,6 +314,8 @@ class DataFrame:
                 ids = getattr(self.index, label).values[indices]
             else:
                 ids = getattr(self.columns, label).values[indices]
+            if isinstance(ids, DPFArray):
+                ids = ids.tolist()
             kwargs[label] = ids
         return self.select(**kwargs)
 
