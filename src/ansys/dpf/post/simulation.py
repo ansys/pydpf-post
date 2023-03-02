@@ -43,7 +43,7 @@ component_label_to_index = {
 }
 
 vector_component_names = ["X", "Y", "Z"]
-matrix_component_names = ["XX", "YY", "ZZ", "XX", "XY", "YZ"]
+matrix_component_names = ["XX", "YY", "ZZ", "XY", "YZ", "XZ"]
 principal_names = ["1", "2", "3"]
 
 
