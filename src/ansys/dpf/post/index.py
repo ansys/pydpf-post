@@ -10,7 +10,7 @@ from ansys.dpf import post
 location_to_label = {
     dpf.locations.nodal: "node",
     dpf.locations.elemental: "element",
-    dpf.locations.elemental_nodal: "(element, node)",
+    dpf.locations.elemental_nodal: "element",
     dpf.locations.overall: "overall",
     dpf.locations.time_freq_step: "step",
     dpf.locations.time_freq: "set",
@@ -104,6 +104,7 @@ class MeshIndex(Index):
     ):
         """Initiate this class."""
         name = location_to_label[location]
+        self.location = location
         if fc is None and values is None and scoping is None:
             raise ValueError(
                 "Arguments 'values', 'scoping' and 'fc' cannot all be None."
