@@ -1,9 +1,18 @@
 """Module containing the ``HarmonicMechanicalSimulation`` class."""
 from typing import List, Tuple, Union
+import warnings
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import (
+    CompIndex,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+    SetIndex,
+)
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -261,7 +270,42 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
-        return self._create_dataframe(fc, location, columns, comp, base_name)
+        # Test for empty results
+        if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
+            warnings.warn(
+                message=f"Returned Dataframe with columns {columns} is empty.",
+                category=UserWarning,
+            )
+        comp_index = None
+        if comp is not None:
+            comp_index = CompIndex(values=comp)
+        row_indexes = [MeshIndex(location=location, fc=fc)]
+        if comp_index is not None:
+            row_indexes.append(comp_index)
+        column_indexes = [
+            ResultsIndex(values=[base_name]),
+            SetIndex(values=fc.get_available_ids_for_label("time")),
+        ]
+        label_indexes = []
+        for label in fc.labels:
+            if label not in ["time"]:
+                label_indexes.append(
+                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                )
+
+        column_indexes.extend(label_indexes)
+        column_index = MultiIndex(indexes=column_indexes)
+
+        row_index = MultiIndex(
+            indexes=row_indexes,
+        )
+
+        # Return the result wrapped in a DPF_Dataframe
+        return DataFrame(
+            data=fc,
+            columns=column_index,
+            index=row_index,
+        )
 
     def displacement(
         self,
