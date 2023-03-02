@@ -83,6 +83,12 @@ def simple_bar():
 
 
 @pytest.fixture()
+def multishells():
+    """Resolve the path of the "multishells.rst" result file."""
+    return examples.find_multishells_rst()
+
+
+@pytest.fixture()
 def transient_rst():
     """Resolve the path of the "transient.rst" result file."""
     return examples.download_transient_result()

@@ -4,7 +4,15 @@ import warnings
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
-from ansys.dpf.post.data_object import DataObject
+from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.index import (
+    CompIndex,
+    LabelIndex,
+    MeshIndex,
+    MultiIndex,
+    ResultsIndex,
+    SetIndex,
+)
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
@@ -31,7 +39,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
@@ -87,7 +95,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         # Build the targeted spatial and time scoping
@@ -128,23 +136,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             location=location,
         )
 
-        # Build the list of requested results
-        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
-            # A scalar or equivalent result has no components
-            to_extract = None
-            columns = [base_name]
-        elif category in [ResultCategory.vector, ResultCategory.matrix]:
-            # A matrix or vector result can have components selected
-            to_extract, columns = self._build_components_from_components(
-                base_name=base_name, category=category, components=components
-            )
-        elif category == ResultCategory.principal:
-            # A principal type of result can have components selected
-            to_extract, columns = self._build_components_from_principal(
-                base_name=base_name, components=components
-            )
-        else:
-            raise ValueError(f"'{category}' is not a valid category value.")
+        comp, to_extract, columns = self._create_components(
+            base_name, category, components
+        )
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
@@ -282,11 +276,35 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
+        comp_index = None
+        if comp is not None:
+            comp_index = CompIndex(values=comp)
+        row_indexes = [MeshIndex(location=location, fc=fc)]
+        if comp_index is not None:
+            row_indexes.append(comp_index)
+        column_indexes = [
+            ResultsIndex(values=[base_name]),
+            SetIndex(values=fc.get_available_ids_for_label("time")),
+        ]
+        label_indexes = []
+        for label in fc.labels:
+            if label not in ["time"]:
+                label_indexes.append(
+                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
+                )
+
+        column_indexes.extend(label_indexes)
+        column_index = MultiIndex(indexes=column_indexes)
+
+        row_index = MultiIndex(
+            indexes=row_indexes,
+        )
+
         # Return the result wrapped in a DPF_Dataframe
-        return DataObject(
-            fields_container=fc,
-            columns=columns,
-            index=wf.get_output("scoping", core.types.scoping).ids,
+        return DataFrame(
+            data=fc,
+            columns=column_index,
+            index=row_index,
         )
 
     def displacement(
@@ -305,7 +323,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract displacement results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -345,7 +363,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -382,7 +400,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract velocity results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -422,7 +440,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -459,7 +477,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract acceleration results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -499,7 +517,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -534,7 +552,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -580,7 +598,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -612,7 +630,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -648,7 +666,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -681,7 +699,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -719,7 +737,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -753,7 +771,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -798,7 +816,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -830,7 +848,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -865,7 +883,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -898,7 +916,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -935,7 +953,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -968,7 +986,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1011,7 +1029,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1042,7 +1060,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1075,7 +1093,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1107,7 +1125,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1142,7 +1160,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1176,7 +1194,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1222,7 +1240,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1255,7 +1273,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1293,7 +1311,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1325,7 +1343,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1361,7 +1379,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1395,7 +1413,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1440,7 +1458,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1473,7 +1491,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1510,7 +1528,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1542,7 +1560,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1577,7 +1595,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1610,7 +1628,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1653,7 +1671,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1684,7 +1702,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1717,7 +1735,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1749,7 +1767,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1784,7 +1802,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1818,7 +1836,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1858,7 +1876,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1890,7 +1908,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1923,7 +1941,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1954,7 +1972,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -1987,7 +2005,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2022,7 +2040,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2070,7 +2088,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2105,7 +2123,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2145,7 +2163,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2179,7 +2197,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2217,7 +2235,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2252,7 +2270,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2292,7 +2310,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2327,7 +2345,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2367,7 +2385,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2399,7 +2417,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2432,7 +2450,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2463,7 +2481,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2496,7 +2514,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2529,7 +2547,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental nodal element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2572,7 +2590,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2603,7 +2621,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2636,7 +2654,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2668,7 +2686,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-    ) -> DataObject:
+    ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
@@ -2703,7 +2721,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataObject` instance.
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
