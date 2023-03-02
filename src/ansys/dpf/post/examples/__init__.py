@@ -8,6 +8,7 @@ from ansys.dpf.core.examples import (
     download_all_kinds_of_complexity_modal,
     download_transient_result,
     electric_therm,
+    find_multishells_rst,
     msup_transient,
     multishells_rst,
     simple_bar,
