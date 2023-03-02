@@ -437,9 +437,13 @@ class DataFrame:
         )
         lines.append(row_headers)
         entity_ids = []
-        # Create combinations for rows
-        num_mesh_entities_to_ask = max_n_rows
+        truncated = False
+        num_mesh_entities_to_ask = self._fc[0].size
+        if num_mesh_entities_to_ask > max_n_rows:
+            num_mesh_entities_to_ask = max_n_rows
+            truncated = True
         lists = []
+        # Create combinations for rows
         entity_ids = None
         for index in self.index:
             if isinstance(index, MeshIndex):
@@ -470,7 +474,6 @@ class DataFrame:
             lines.append(line)
 
         # Create combinations for columns
-        num_mesh_entities_to_ask = max_n_rows
         entity_ids = None
         lists = []
         label_positions_in_combinations = {}
@@ -521,7 +524,6 @@ class DataFrame:
                 treat_lines = treat_lines[:pos] + new_elem_headers + treat_lines[pos:]
             return treat_lines[:n_lines]
 
-        truncated = False
         # Add text for the first n_max_value_col columns
         previous_combination = [None] * len(lists)
         for i_c, combination in enumerate(combinations[:n_max_value_col]):
@@ -571,11 +573,16 @@ class DataFrame:
                                 num_entities,
                                 current_number_lines,
                             )
-                        position += num_entities * num_components
                         array_values.append(values_list)
+                        if (
+                            position + num_entities * num_components
+                            >= current_number_lines + len(column_headers) + 1
+                        ):
+                            if k < num_mesh_entities_to_ask:
+                                truncated = True
                         if position >= current_number_lines:
-                            truncated = True
                             break
+                        position += num_entities * num_components
                     if array_values:
                         array_values = flatten(array_values)
                         values.extend(array_values)
@@ -607,11 +614,16 @@ class DataFrame:
                                 num_entities,
                                 current_number_lines,
                             )
-                        position += num_entities * num_components
-                        array_values.append(array_values)
+                        array_values.append(values_list)
+                        if (
+                            position + num_entities * num_components
+                            >= current_number_lines + len(column_headers) + 1
+                        ):
+                            if k < num_mesh_entities_to_ask:
+                                truncated = True
                         if position >= current_number_lines:
-                            truncated = True
                             break
+                        position += num_entities * num_components
                         if array_values:
                             array_values = flatten(array_values)
                             values.extend(array_values)
