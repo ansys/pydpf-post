@@ -418,7 +418,7 @@ class DataFrame:
         """
         lines = []
         empty = " " * max_colwidth
-        truncated = "...".rjust(max_colwidth)
+        truncated_str = "...".rjust(max_colwidth)
         max_n_col = width // max_colwidth
         max_n_rows = display_max_lines
         # Create lines with row labels and values
@@ -491,6 +491,10 @@ class DataFrame:
             label_positions_in_combinations[index.name] = position
             lists.append(values)
         combinations = [p for p in itertools.product(*lists)]
+        truncated_columns = False
+        if len(combinations) > n_max_value_col:
+            truncated_columns = True
+            combinations = combinations[:n_max_value_col]
 
         def flatten(arr):
             new_arr = []
@@ -517,6 +521,7 @@ class DataFrame:
                 treat_lines = treat_lines[:pos] + new_elem_headers + treat_lines[pos:]
             return treat_lines[:n_lines]
 
+        truncated = False
         # Add text for the first n_max_value_col columns
         previous_combination = [None] * len(lists)
         for i_c, combination in enumerate(combinations[:n_max_value_col]):
@@ -569,6 +574,7 @@ class DataFrame:
                         position += num_entities * num_components
                         array_values.append(values_list)
                         if position >= current_number_lines:
+                            truncated = True
                             break
                     if array_values:
                         array_values = flatten(array_values)
@@ -604,6 +610,7 @@ class DataFrame:
                         position += num_entities * num_components
                         array_values.append(array_values)
                         if position >= current_number_lines:
+                            truncated = True
                             break
                         if array_values:
                             array_values = flatten(array_values)
@@ -627,6 +634,12 @@ class DataFrame:
             for i in range(len(lines)):
                 lines[i] = lines[i] + to_append[i]
 
+        if truncated_columns:
+            for i in range(len(lines)):
+                lines[i] = lines[i] + truncated_str
+
+        if truncated:
+            lines.append(truncated_str)
         txt = "\n" + "".join([line + "\n" for line in lines])
         self._str = txt
 
