@@ -10,7 +10,7 @@ from ansys.dpf import post
 location_to_label = {
     dpf.locations.nodal: "node",
     dpf.locations.elemental: "element",
-    dpf.locations.elemental_nodal: "(element, node)",
+    dpf.locations.elemental_nodal: "elem-n",
     dpf.locations.overall: "overall",
     dpf.locations.time_freq_step: "step",
     dpf.locations.time_freq: "set",

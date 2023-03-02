@@ -9,6 +9,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 
+from ansys.dpf.post import locations
 from ansys.dpf.post.index import (
     CompIndex,
     FrequencyIndex,
@@ -23,6 +24,7 @@ from ansys.dpf.post.index import (
 
 display_width = 80
 display_max_colwidth = 10
+display_max_lines = 6
 
 
 class DataFrame:
@@ -333,10 +335,11 @@ class DataFrame:
         max_colwidth:
             Maximum number of characters to use for each column.
         """
+        lines = []
         empty = " " * max_colwidth
         truncated = "...".rjust(max_colwidth)
         max_n_col = width // max_colwidth
-        max_n_rows = 5
+        max_n_rows = display_max_lines
         # Create lines with row labels and values
         num_column_indexes = len(self.columns)
         num_rows_indexes = len(self.index)
@@ -346,8 +349,7 @@ class DataFrame:
             column_headers.append(
                 empty * (num_rows_indexes - 1) + column_index.name.rjust(max_colwidth)
             )
-
-        lines = column_headers
+        lines.extend(column_headers)
 
         row_headers = "".join(
             [row_index.name.rjust(max_colwidth) for row_index in self.index]
@@ -355,7 +357,7 @@ class DataFrame:
         lines.append(row_headers)
         entity_ids = []
         # Create combinations for rows
-        num_mesh_entities_to_ask = 5
+        num_mesh_entities_to_ask = max_n_rows
         lists = []
         entity_ids = None
         for index in self.index:
@@ -387,7 +389,7 @@ class DataFrame:
             lines.append(line)
 
         # Create combinations for columns
-        num_mesh_entities_to_ask = 5
+        num_mesh_entities_to_ask = max_n_rows
         entity_ids = None
         lists = []
         time_position = 1
@@ -417,7 +419,7 @@ class DataFrame:
 
         # Add text for the first n_max_value_col columns
         previous_combination = [None] * len(lists)
-        for combination in combinations[:n_max_value_col]:
+        for i_c, combination in enumerate(combinations[:n_max_value_col]):
             to_append = [
                 str(combination[i]).rjust(max_colwidth)
                 if combination[i] != previous_combination[i]
@@ -435,12 +437,42 @@ class DataFrame:
             if entity_ids is None:
                 for field in fields:
                     array_values = []
+                    position = len(column_headers) + 1
                     for k in list(range(num_mesh_entities_to_ask)):
                         try:
                             values_list = field.get_entity_data(k).tolist()
-                            array_values.append(values_list)
                         except Exception as e:
-                            pass
+                            values_list = []
+                        num_nodes = len(values_list)
+                        num_components = len(values_list[0])
+                        current_number_lines = len(lines)
+                        # Detect number of nodes when elemental nodal and update headers to
+                        # repeat for each node (do not print their ID for now)
+                        if (
+                            i_c == 0
+                            and field.location == locations.elemental_nodal
+                            and len(values_list) != 0
+                        ):
+                            # Update row headers
+                            elem_headers = lines[position : position + num_components]
+                            new_elem_headers = []
+                            for i_node in range(1, num_nodes + 1):
+                                elem_header_i = [
+                                    elem_headers[0][2:max_colwidth]
+                                    + f"-{i_node}"
+                                    + elem_headers[0][max_colwidth:]
+                                ]
+                                elem_header_i.extend(elem_headers[1:])
+                                new_elem_headers.extend(elem_header_i)
+                            lines = (
+                                lines[:position] + new_elem_headers + lines[position:]
+                            )
+                            lines = lines[:current_number_lines]
+                            # print(f"{elem_headers=}")
+                        position += num_nodes * num_components
+                        array_values.append(values_list)
+                        if position >= current_number_lines:
+                            break
                     array_values = [
                         item for sublist in array_values for item in sublist
                     ]

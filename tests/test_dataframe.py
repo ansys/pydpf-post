@@ -86,19 +86,19 @@ def test_dataframe_select_raise(df):
 
 
 def test_dataframe_select(df):
-    print(df)
+    # print(df)
     df2 = df.select(node=[1, 2], set_id=1, comp="X")
     assert all(df2.mesh_index.values == [1, 2])
-    assert df2.index.comp.values == ["X"]
-    assert df2.columns.set_id.values == [1]
+    assert all(df2.index.comp.values == ["X"])
+    assert all(df2.columns.set_id.values == [1])
     # print(df2)
 
 
 def test_dataframe_iselect(df):
     df2 = df.iselect(node=[0, 1], set_id=0, comp=0)
     assert all(df2.mesh_index.values == [1, 26])
-    assert df2.index.comp.values == ["X"]
-    assert df2.columns.set_id.values == [1]
+    assert all(df2.index.comp.values == ["X"])
+    assert all(df2.columns.set_id.values == [1])
     # print(df2)
 
 
@@ -128,5 +128,20 @@ def test_dataframe_str(transient_rst):
                    Z  0.00e+00 -1.26e-10 -4.34e-10 -8.29e-10 -1.15e-09 -1.39e-09
        534         X  0.00e+00  6.55e-06  1.05e-04  5.30e-04  1.67e-03  4.02e-03
                    Y  0.00e+00  6.27e-04  2.51e-03  5.62e-03  9.86e-03  1.50e-02
+                   Z  0.00e+00 -3.20e-10 -1.10e-09 -2.13e-09 -2.94e-09 -3.57e-09
+"""  # noqa: W291
+    assert str(df) == ref
+    df = simulation.stress()
+    print(df)
+    ref = """
+             results         S
+              set_id        35
+    elem-n      comp          
+     391-1        XX -3.28e+05
+                  YY  1.36e+06
+                  ZZ  1.49e+08
+                  XY -4.89e+06
+                  YZ  1.43e+07
+                  XZ  1.65e+07
 """  # noqa: W291
     assert str(df) == ref
