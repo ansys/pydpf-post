@@ -316,11 +316,15 @@ class DataFrame:
         """
         self._validate_arguments(arguments=kwargs)
         for label in kwargs.keys():
-            indices = kwargs[label]
             if label in self.index.names:
-                ids = getattr(self.index, label).values[indices]
+                values = getattr(self.index, label).values
             else:
-                ids = getattr(self.columns, label).values[indices]
+                values = getattr(self.columns, label).values
+            indices = kwargs[label]
+            if isinstance(indices, list):
+                ids = [values[i] for i in indices]
+            else:
+                ids = values[indices]
             if isinstance(ids, DPFArray):
                 ids = ids.tolist()
             kwargs[label] = ids
