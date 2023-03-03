@@ -112,6 +112,7 @@ class _AnalysisType:
     modal = "modal"
     harmonic = "harmonic"
     transient = "transient"
+    msup = "MSUP"
 
 
 class _PhysicsType:
