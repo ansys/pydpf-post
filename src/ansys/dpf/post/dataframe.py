@@ -640,10 +640,8 @@ class DataFrame:
 
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
-                    new_kwargs[key] = value
             # Construct the associated label_space
             fc = self.select(**axis_kwargs)._fc
-            kwargs = new_kwargs
         else:
             # If no kwarg was given, construct a default label_space
             fc = self._fc
