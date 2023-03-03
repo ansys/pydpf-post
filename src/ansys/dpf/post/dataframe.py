@@ -126,17 +126,21 @@ class DataFrame:
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
-    def _validate_arguments(self, arguments):
-        """Check for invalid arguments based on available Index names."""
+    def _filter_arguments(self, arguments):
+        """Filter arguments based on available Index names."""
         rows, columns = self.axes
         axes_names = rows.names
         axes_names.extend(columns.names)
-        for argument in arguments.keys():
-            if argument not in axes_names:
-                raise ValueError(
-                    f"The DataFrame has no axis {argument}, cannot select it. "
-                    f"Available axes are: {axes_names}."
-                )
+        axis_arguments = {}
+        keys = list(arguments.keys())
+        for argument in keys:
+            if argument in axes_names:
+                axis_arguments[argument] = arguments.pop(argument)
+                # raise ValueError(
+                #     f"The DataFrame has no axis {argument}, cannot select it. "
+                #     f"Available axes are: {axes_names}."
+                # )
+        return axis_arguments, arguments
 
     def select(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (value-based).
@@ -157,9 +161,9 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        self._validate_arguments(arguments=kwargs)
-        if ref_labels.set_ids in kwargs.keys():
-            kwargs[ref_labels.time] = kwargs[ref_labels.set_ids]
+        axis_kwargs, _ = self._filter_arguments(arguments=kwargs)
+        if ref_labels.set_ids in axis_kwargs.keys():
+            axis_kwargs[ref_labels.time] = axis_kwargs[ref_labels.set_ids]
         # Initiate a workflow
         server = self._fc._server
         wf = dpf.Workflow(server=server)
@@ -180,34 +184,37 @@ class DataFrame:
         results_index = self.results_index
 
         # Treat selection on a label
-        if any([label in kwargs.keys() for label in self._fc.labels]):
+        if any([label in axis_kwargs.keys() for label in self._fc.labels]):
             fc = dpf.FieldsContainer()
             fc.labels = self._fc.labels
             for i, field in enumerate(self._fc):
+                to_add = True
                 label_space = self._fc.get_label_space(i)
                 for fc_key in label_space.keys():
-                    if fc_key in kwargs.keys() or (
+                    if fc_key in axis_kwargs.keys() or (
                         fc_key == ref_labels.time
-                        and ref_labels.set_ids in kwargs.keys()
+                        and ref_labels.set_ids in axis_kwargs.keys()
                     ):
                         key = fc_key
                         if (
                             fc_key == ref_labels.time
-                            and ref_labels.set_ids in kwargs.keys()
+                            and ref_labels.set_ids in axis_kwargs.keys()
                         ):
                             key = ref_labels.set_ids
-                        if not isinstance(kwargs[key], list):
-                            kwargs[key] = [kwargs[key]]
-                        if label_space[fc_key] not in kwargs[key]:
-                            continue
+                        if not isinstance(axis_kwargs[key], list):
+                            axis_kwargs[key] = [axis_kwargs[key]]
+                        if label_space[fc_key] not in axis_kwargs[key]:
+                            to_add = False
+                            break
+                if to_add:
                     fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
         # # Treat selection on components
-        if ref_labels.components in kwargs.keys():
+        if ref_labels.components in axis_kwargs.keys():
             from ansys.dpf.post.simulation import component_label_to_index
 
-            comp_to_extract = kwargs[ref_labels.components]
+            comp_to_extract = axis_kwargs[ref_labels.components]
             if not isinstance(comp_to_extract, list):
                 comp_to_extract = [comp_to_extract]
             component_indexes = [component_label_to_index[c] for c in comp_to_extract]
@@ -225,11 +232,11 @@ class DataFrame:
         else:
             mesh_index_name = self.index.mesh_index.name
         if (
-            mesh_index_name in kwargs.keys()
+            mesh_index_name in axis_kwargs.keys()
             and mesh_index.location != locations.elemental_nodal
         ):
             if ref_labels.node_ids in mesh_index_name:
-                node_ids = kwargs[mesh_index_name]
+                node_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(node_ids, (DPFArray, list)):
                     node_ids = [node_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
@@ -237,7 +244,7 @@ class DataFrame:
                     server=server,
                 )
             elif ref_labels.element_ids in mesh_index_name:
-                element_ids = kwargs[mesh_index_name]
+                element_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
@@ -257,7 +264,7 @@ class DataFrame:
             out = rescope_fc.outputs.fields_container
             mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
         elif (
-            mesh_index_name in kwargs.keys()
+            mesh_index_name in axis_kwargs.keys()
             and mesh_index.location == locations.elemental_nodal
         ):
             raise NotImplementedError(
@@ -314,21 +321,21 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        self._validate_arguments(arguments=kwargs)
-        for label in kwargs.keys():
+        axis_kwargs, _ = self._filter_arguments(arguments=kwargs)
+        for label in axis_kwargs.keys():
             if label in self.index.names:
                 values = getattr(self.index, label).values
             else:
                 values = getattr(self.columns, label).values
-            indices = kwargs[label]
+            indices = axis_kwargs[label]
             if isinstance(indices, list):
                 ids = [values[i] for i in indices]
             else:
                 ids = values[indices]
             if isinstance(ids, DPFArray):
                 ids = ids.tolist()
-            kwargs[label] = ids
-        return self.select(**kwargs)
+            axis_kwargs[label] = ids
+        return self.select(**axis_kwargs)
 
     def __len__(self):
         """Return the length of the DataFrame."""
@@ -621,6 +628,8 @@ class DataFrame:
             `set_id` 1 by using `df.plot(set_ids=1)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+            Also supports additional keyword arguments for the plotter. For additional keyword
+            arguments, see ``help(pyvista.plot)``.
 
         Returns
         -------
@@ -630,9 +639,9 @@ class DataFrame:
         from ansys.dpf.core.plotter import DpfPlotter as Plotter
 
         if kwargs != {}:
-            self._validate_arguments(arguments=kwargs)
+            axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
-            fc = self.select(**kwargs)._fc
+            fc = self.select(**axis_kwargs)._fc
         else:
             # If no kwarg was given, construct a default label_space
             fc = self._fc
