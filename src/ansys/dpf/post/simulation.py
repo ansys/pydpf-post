@@ -462,7 +462,34 @@ class Simulation(ABC):
             raise ValueError(f"'{category}' is not a valid category value.")
         return comp, to_extract, columns
 
-    def _create_dataframe(self, fc, location, columns, comp, base_name):
+    def _generate_disp_workflow(self, fc, selection) -> Union[dpf.Workflow, None]:
+        # Check displacement is an available result
+        if not any(
+            [
+                result.name == "displacement"
+                for result in self._model.metadata.result_info.available_results
+            ]
+        ):
+            return None
+        # Build an equivalent workflow for displacement for plots and animations
+        disp_wf = dpf.Workflow(server=fc._server)
+
+        disp_op = dpf.operators.result.displacement(
+            data_sources=self._model.metadata.data_sources,
+            streams_container=self._model.metadata.streams_provider,
+        )
+        # Connect time_scoping (do not connect mesh_scoping as we want to deform the whole mesh)
+        disp_wf.set_input_name("time_scoping", disp_op.inputs.time_scoping)
+        disp_wf.connect_with(
+            selection.time_freq_selection._selection,
+            output_input_names=("scoping", "time_scoping"),
+        )
+        # Expose output
+        disp_wf.set_output_name("output", disp_op.outputs.fields_container)
+
+        return disp_wf
+
+    def _create_dataframe(self, fc, location, columns, comp, base_name, disp_wf=None):
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
@@ -493,12 +520,15 @@ class Simulation(ABC):
             indexes=row_indexes,
         )
 
-        # Return the result wrapped in a DPF_Dataframe
-        return DataFrame(
+        df = DataFrame(
             data=fc,
             columns=column_index,
             index=row_index,
         )
+        df._disp_wf = disp_wf
+
+        # Return the result wrapped in a DPF_Dataframe
+        return df
 
 
 class MechanicalSimulation(Simulation, ABC):

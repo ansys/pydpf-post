@@ -65,8 +65,7 @@ class DataFrame:
         else:
             self._columns = None
 
-        # if parent_simulation is not None:
-        #     self._parent_simulation = weakref.ref(parent_simulation)
+        self._disp_wf = None
 
         self._str = None
         self._last_display_width = display_width
@@ -713,18 +712,26 @@ class DataFrame:
         """
         deform_by = None
         if deform:
-            try:
-                simulation = self._parent_simulation()
-                deform_by = simulation._model.results.displacement.on_time_scoping(
-                    self._fc.get_time_scoping()
-                )
-            except Exception as e:
+            if self._disp_wf is None:
                 warnings.warn(
                     UserWarning(
                         "Displacement result unavailable, "
-                        f"unable to animate on the deformed mesh:\n{e}"
+                        f"unable to animate on the deformed mesh."
                     )
                 )
+            else:
+                wf = dpf.workflow.Workflow()
+                forward_op = dpf.operators.utility.forward_fields_container(
+                    server=self._fc._server
+                )
+                wf.add_operator(forward_op)
+                wf.set_input_name("input", forward_op.inputs.fields)
+                output_input_names = ("output", "input")
+                wf.connect_with(
+                    left_workflow=self._disp_wf, output_input_names=output_input_names
+                )
+
+                deform_by = forward_op
         else:
             deform_by = False
         return self._fc.animate(

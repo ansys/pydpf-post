@@ -270,6 +270,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
+        disp_wf = self._generate_disp_workflow(fc, selection)
+
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
@@ -301,11 +303,13 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         )
 
         # Return the result wrapped in a DPF_Dataframe
-        return DataFrame(
+        df = DataFrame(
             data=fc,
             columns=column_index,
             index=row_index,
         )
+        df._disp_wf = disp_wf
+        return df
 
     def displacement(
         self,
