@@ -44,14 +44,17 @@ print(simulation.time_freq_support)
 displacement = simulation.displacement(set_ids=[1, 2])
 print(displacement)
 
-subdisp = displacement.select(complex=0, set_id=1)
-subdisp.plot()
+subdisp = displacement.select(complex=0, set_ids=1)
+print(subdisp)
+subdisp.plot(title="U tot real")
 
-subdisp = displacement.select(complex=1, set_id=1)
-subdisp.plot()
+subdisp = displacement.select(complex=1, set_ids=1)
+print(subdisp)
+subdisp.plot(title="U tot imaginary")
 
-subdisp = displacement.select(complex=0, set_id=2)
-subdisp.plot()
+subdisp = displacement.select(complex=0, set_ids=2)
+print(subdisp)
+subdisp.plot(title="U tot real")
 
 ###############################################################################
 # Extract stress eqv over a list of frequencies sets
@@ -60,11 +63,14 @@ subdisp.plot()
 stress_eqv = simulation.stress_eqv_von_mises_nodal(set_ids=[1, 2])
 print(stress_eqv)
 
-sub_eqv = stress_eqv.select(complex=0, set_id=1)
-sub_eqv.plot()
+sub_eqv = stress_eqv.select(complex=0, set_ids=1)
+print(sub_eqv)
+sub_eqv.plot(title="S_eqv real")
 
-sub_eqv = stress_eqv.select(complex=1, set_id=1)
-sub_eqv.plot()
+sub_eqv = stress_eqv.select(complex=1, set_ids=1)
+print(sub_eqv)
+sub_eqv.plot(title="S_eqv imaginary")
 
-sub_eqv = stress_eqv.select(complex=0, set_id=2)
-sub_eqv.plot()
+sub_eqv = stress_eqv.select(complex=0, set_ids=2)
+print(sub_eqv)
+sub_eqv.plot(title="S_eqv real")
