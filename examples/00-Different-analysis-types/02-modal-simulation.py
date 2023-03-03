@@ -48,7 +48,7 @@ displacement_norm = simulation.displacement(all_sets=True, norm=True)
 print(displacement_norm)
 
 for set_id in simulation.set_ids:
-    displacement_norm.plot(set_id=set_id)
+    displacement_norm.plot(set_ids=set_id)
 
 
 ###############################################################################
@@ -61,4 +61,4 @@ displacement_norm = simulation.displacement(modes=modes, norm=True)
 print(displacement_norm)
 
 for set_id in modes:
-    displacement_norm.plot(set_id=set_id)
+    displacement_norm.plot(set_ids=set_id)
