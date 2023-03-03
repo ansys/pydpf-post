@@ -297,7 +297,7 @@ class DataFrame:
             value or a list of values.
             For example, if 'time' is an available class:`Index <ansys.dpf.post.index.Index>`
             of the class:`DataFrame <ansys.dpf.post.DataFrame>` `df`, then you can select the first
-            `time` value by using `df.select(time=0)`.
+            `time` value by using `df.select(set_id=0)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
 

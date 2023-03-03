@@ -66,7 +66,7 @@ print(nodes_displacement)
 # ---------------------------------
 # Compute the norm of displacement on a selection of nodes
 
-nodes_displacement = simulation.displacement(node_ids=simulation.mesh.node_ids[100:], norm=True)
+nodes_displacement = simulation.displacement(node_ids=simulation.mesh.node_ids[10:], norm=True)
 print(nodes_displacement)
 nodes_displacement.plot()
 
@@ -87,7 +87,7 @@ elemental_stress = simulation.stress_elemental()
 print(elemental_stress)
 
 # extract  elemental stresses on specific elements
-elemental_stress = elemental_stress.select(element=simulation.mesh.element_ids[0:100])
+elemental_stress = elemental_stress.select(element=[5, 6, 7])
 elemental_stress.plot()
 
 # Compute nodal eqv stresses from the result file

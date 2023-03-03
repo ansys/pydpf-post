@@ -66,7 +66,7 @@ print(all_imaginary_values)
 sets_values = displacement.select(set_id=[1, 2])
 print(sets_values)
 
-node_values = displacement.select(nodes=[3548])
+node_values = displacement.select(node=[3548])
 print(node_values)
 
 ###############################################################################
@@ -75,17 +75,17 @@ print(node_values)
 # To select values by index for each label, the iselect method can be used.
 # The index to ID order follows what is returned by the values on index method used above.
 
-sets_values = displacement.iselect(set_id=[0, 1])
+sets_values = displacement.iselect(set_id=0)
 print(sets_values)
 
-node_values = displacement.iselect(nodes=[0])
+node_values = displacement.iselect(node=[0])
 print(node_values)
 
 ###############################################################################
 # Make multi selections in this DataFrame
 # ---------------------------------------
 
-real_values_for_one_set_onde_node = displacement.select(nodes=[3548], set_id=1, complex=0)
+real_values_for_one_set_onde_node = displacement.select(node=[3548], set_id=1, complex=0)
 print(real_values_for_one_set_onde_node)
 
 ###############################################################################
