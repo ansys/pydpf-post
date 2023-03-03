@@ -45,7 +45,7 @@ print(simulation.time_freq_support)
 
 # To get X displacements on the first 2 modes
 x_displacement = simulation.displacement(modes=[1, 2], components=["X"])
-# equivalent to 
+# equivalent to
 x_displacement = simulation.displacement(set_ids=[1, 2], components=["X"])
 print(x_displacement)
 
@@ -54,7 +54,8 @@ x_displacement.plot(set_id=1)
 ###############################################################################
 # Extract XX and XY elastic strain over a list modes
 # --------------------------------------------------
-# To get X displacements on the first 2 modes  
-XX_XY_elastic_strain = simulation.elastic_strain_nodal(modes=[3], components=["XX", "XY"])
+# To get X displacements on the first 2 modes
+XX_XY_elastic_strain = simulation.elastic_strain_nodal(
+    modes=[3], components=["XX", "XY"]
+)
 print(XX_XY_elastic_strain)
-

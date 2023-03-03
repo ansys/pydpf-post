@@ -61,7 +61,7 @@ displacement_norm.animate(deform=True, title="U norm")
 print(simulation.set_ids)
 
 # extract displacement on given time steps or select the times steps from the already evaluated
-# displacements
+# displacement DataFrame
 displacement = simulation.displacement(set_ids=simulation.set_ids[5:])
 displacement = displacement.select(set_ids=simulation.set_ids[5:])
 print(displacement)
