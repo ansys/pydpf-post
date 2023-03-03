@@ -224,6 +224,7 @@ class DataFrame:
                 server=server,
             )
             out = selector_fc.outputs.fields_container
+            input_fc = out
             comp_index = CompIndex(values=comp_to_extract)
 
         # Treat selection on DataFrame.index (rescope)
