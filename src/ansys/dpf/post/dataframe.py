@@ -91,11 +91,9 @@ class DataFrame:
         return self._index
 
     @property
-    def axes(self) -> List[str]:
-        """Returns a list of the axes of the DataFrame with the row Index and the column Index."""
-        names = self.index.names
-        names.extend(self.columns.names)
-        return names
+    def axes(self) -> List[MultiIndex]:
+        """Returns a list with the row MultiIndex first and the columns MultiIndex second."""
+        return [self.index, self.columns]
 
     @property
     def results_index(self) -> Union[ResultsIndex, None]:
@@ -127,6 +125,18 @@ class DataFrame:
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
+    def _validate_arguments(self, arguments):
+        """Check for invalid arguments based on available Index names."""
+        rows, columns = self.axes
+        axes_names = rows.names
+        axes_names.extend(columns.names)
+        for argument in arguments.keys():
+            if argument not in axes_names:
+                raise ValueError(
+                    f"The DataFrame has no axis {argument}, cannot select it. "
+                    f"Available axes are: {axes_names}."
+                )
+
     def select(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (value-based).
 
@@ -146,14 +156,7 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        # Check for invalid arguments
-        axes = self.axes
-        for argument in kwargs.keys():
-            if argument not in axes:
-                raise ValueError(
-                    f"The DataFrame has no axis {argument}, cannot select it. "
-                    f"Available axes are: {axes}."
-                )
+        self._validate_arguments(arguments=kwargs)
         if "set_id" in kwargs.keys():
             kwargs["time"] = kwargs["set_id"]
         # Initiate a workflow
@@ -306,14 +309,7 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        # Check for invalid arguments
-        axes = self.axes
-        for argument in kwargs.keys():
-            if argument not in axes:
-                raise ValueError(
-                    f"The DataFrame has no axis {argument}, cannot select it. "
-                    f"Available axes are: {axes}."
-                )
+        self._validate_arguments(arguments=kwargs)
         for label in kwargs.keys():
             indices = kwargs[label]
             if label in self.index.names:
@@ -625,14 +621,7 @@ class DataFrame:
         from ansys.dpf.core.plotter import DpfPlotter as Plotter
 
         if kwargs != {}:
-            # Check for invalid arguments
-            axes = self.axes
-            for argument in kwargs.keys():
-                if argument not in axes:
-                    raise ValueError(
-                        f"The DataFrame has no axis {argument}, cannot plot it. "
-                        f"Available axes are: {axes}."
-                    )
+            self._validate_arguments(arguments=kwargs)
             # Construct the associated label_space
             fc = self.select(**kwargs)._fc
         else:
