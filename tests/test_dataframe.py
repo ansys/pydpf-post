@@ -117,6 +117,18 @@ def test_dataframe_plot(df):
     df.plot(set_id=1, node=[1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 
+def test_dataframe_animate(transient_rst):
+    simulation = TransientMechanicalSimulation(transient_rst)
+    # Animate displacement
+    df = simulation.displacement(all_sets=True)
+    # df.animate()
+    df.animate(scale_factor=5.0, deform=True, save_as="test_dataframe_animate.gif")
+    # Animate nodal stress -> Does not work
+    df2 = simulation.stress_nodal(all_sets=True)
+    # df2.animate()
+    # assert False
+
+
 def test_dataframe_repr(df):
     ref = (
         "DataFrame<index=MultiIndex<[MeshIndex<name=\"node\", dtype=<class 'int'>>, "
