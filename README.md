@@ -9,7 +9,7 @@ simulation users/engineers with a toolbox for accessing and
 transforming simulation data.
 
 The Python `ansys-dpf-post` package provides a high level, physics oriented API for postprocessing.
-Loading a simulation (defined by its result files) allows to extract simulation metadata as well
+Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
 as results and apply postprocessing operations on it.
 
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package and can
@@ -45,7 +45,7 @@ pip install . --user
 
 ## Brief Demo
 
-Provided you have ANSYS 2023R1 installed, a DPF server will start
+Provided you have ANSYS 2023 R1 installed, a DPF server will start
 automatically once you start using pyDPF-Post.
 Loading a simulation to extract and post-process results:
 
@@ -77,7 +77,7 @@ Loading a simulation to extract and post-process results:
 ```
 ![Example Stress plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
-To use PyDPF-Post, with Ansys versions starting from 2021R1 to 2022R2, leverage legacy PyDPF-Post 
+To run PyDPF-Post with Ansys versions starting from 2021 R1 to 2022 R2, use the following legacy PyDPF-Post 
 tools:
 
 ```pycon
