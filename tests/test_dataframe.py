@@ -108,11 +108,11 @@ def test_dataframe_select(df):
 
 
 def test_dataframe_iselect(df):
-    df2 = df.iselect(node_ids=[0, 1], set_ids=0, components=0)
+    df2 = df.iselect(node_ids=[0, 1], set_ids=[0], components=0)
     assert all(df2.mesh_index.values == [1, 26])
     assert df2.index.components.values == ["X"]
     assert df2.columns.set_ids.values == [1]
-    # print(df2)
+    print(df2)
 
 
 def test_dataframe_plot(df):
