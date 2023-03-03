@@ -67,8 +67,7 @@ print(nodes_displacement)
 # Compute the norm of displacement on a selection of nodes
 
 nodes_displacement = simulation.displacement(
-    node_ids=simulation.mesh.node_ids[10:],
-    norm=True
+    node_ids=simulation.mesh.node_ids[10:], norm=True
 )
 print(nodes_displacement)
 nodes_displacement.plot()

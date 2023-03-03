@@ -199,8 +199,8 @@ def load_simulation(
             elif analysis_type == _AnalysisType.modal:
                 simulation_type = AvailableSimulationTypes.modal_mechanical
             elif (
-                    analysis_type == _AnalysisType.harmonic
-                    or analysis_type == _AnalysisType.msup
+                analysis_type == _AnalysisType.harmonic
+                or analysis_type == _AnalysisType.msup
             ):
                 simulation_type = AvailableSimulationTypes.harmonic_mechanical
             elif analysis_type == _AnalysisType.transient:

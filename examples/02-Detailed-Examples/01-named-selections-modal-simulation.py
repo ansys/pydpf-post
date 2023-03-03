@@ -52,7 +52,9 @@ print(bar2_tot_displacement)
 bar2_tot_displacement.plot()
 
 # both
-tot_displacement = simulation.displacement(named_selections=["BAR_1", "BAR_2"], norm=True)
+tot_displacement = simulation.displacement(
+    named_selections=["BAR_1", "BAR_2"], norm=True
+)
 print(tot_displacement)
 tot_displacement.plot()
 

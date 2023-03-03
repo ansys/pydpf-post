@@ -157,7 +157,7 @@ def test_dataframe_str(transient_rst):
 
     df = simulation.stress()
     print(df)
-    print(df._fc[0].get_entity_data_by_id(391))    
+    print(df._fc[0].get_entity_data_by_id(391))
     ref = """
              results         S
               set_id        35

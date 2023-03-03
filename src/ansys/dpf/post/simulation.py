@@ -545,8 +545,7 @@ class MechanicalSimulation(Simulation, ABC):
         # Create the SpatialSelection
         if named_selections:
             selection.select_named_selection(
-                named_selection=named_selections,
-                location=location
+                named_selection=named_selections, location=location
             )
         elif element_ids is not None:
             if location == locations.nodal:
