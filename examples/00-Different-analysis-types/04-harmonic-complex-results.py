@@ -1,5 +1,5 @@
 """
-.. _ref_harmonic_complex_example:
+.. _ref_harmonic_example:
 
 Harmonic Simulation
 ===================

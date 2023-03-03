@@ -1,5 +1,5 @@
 """
-.. _ref_static_example:
+.. _ref_transient_example:
 
 Transient Simulation with Animation
 ===================================

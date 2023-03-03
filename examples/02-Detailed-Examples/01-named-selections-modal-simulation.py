@@ -1,5 +1,5 @@
 """
-.. _ref_static_example:
+.. _ref_ns_modal_example:
 
 Extract results on named selections - Modal Simulation
 =======================================================

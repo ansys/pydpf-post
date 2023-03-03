@@ -1,9 +1,9 @@
 """
-.. _ref_modal_sub_results_example:
+.. _ref_modal_example:
 
 Modal Simulation
 ================
-Simple post processing operations like viewing the different mode shapes is diplayed
+Simple post processing operations like viewing the different mode shapes is displayed
 in this example.
 """
 
