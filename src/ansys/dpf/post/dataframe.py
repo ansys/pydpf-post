@@ -19,10 +19,11 @@ from ansys.dpf.post.index import (
     MultiIndex,
     ResultsIndex,
     SetIndex,
+    ref_labels,
 )
 
-display_width = 80
-display_max_colwidth = 10
+display_width = 100
+display_max_colwidth = 12
 display_max_lines = 6
 
 
@@ -157,8 +158,8 @@ class DataFrame:
 
         """
         self._validate_arguments(arguments=kwargs)
-        if "set_id" in kwargs.keys():
-            kwargs["time"] = kwargs["set_id"]
+        if ref_labels.set_ids in kwargs.keys():
+            kwargs[ref_labels.time] = kwargs[ref_labels.set_ids]
         # Initiate a workflow
         server = self._fc._server
         wf = dpf.Workflow(server=server)
@@ -186,11 +187,15 @@ class DataFrame:
                 label_space = self._fc.get_label_space(i)
                 for fc_key in label_space.keys():
                     if fc_key in kwargs.keys() or (
-                        fc_key == "time" and "set_id" in kwargs.keys()
+                        fc_key == ref_labels.time
+                        and ref_labels.set_ids in kwargs.keys()
                     ):
                         key = fc_key
-                        if fc_key == "time" and "set_id" in kwargs.keys():
-                            key = "set_id"
+                        if (
+                            fc_key == ref_labels.time
+                            and ref_labels.set_ids in kwargs.keys()
+                        ):
+                            key = ref_labels.set_ids
                         if not isinstance(kwargs[key], list):
                             kwargs[key] = [kwargs[key]]
                         if label_space[fc_key] not in kwargs[key]:
@@ -199,10 +204,10 @@ class DataFrame:
             input_fc = fc
 
         # # Treat selection on components
-        if "comp" in kwargs.keys():
+        if ref_labels.components in kwargs.keys():
             from ansys.dpf.post.simulation import component_label_to_index
 
-            comp_to_extract = kwargs["comp"]
+            comp_to_extract = kwargs[ref_labels.components]
             if not isinstance(comp_to_extract, list):
                 comp_to_extract = [comp_to_extract]
             component_indexes = [component_label_to_index[c] for c in comp_to_extract]
@@ -223,7 +228,7 @@ class DataFrame:
             mesh_index_name in kwargs.keys()
             and mesh_index.location != locations.elemental_nodal
         ):
-            if "node" in mesh_index_name:
+            if ref_labels.node_ids in mesh_index_name:
                 node_ids = kwargs[mesh_index_name]
                 if not isinstance(node_ids, (DPFArray, list)):
                     node_ids = [node_ids]
@@ -231,7 +236,7 @@ class DataFrame:
                     node_ids=node_ids,
                     server=server,
                 )
-            elif "element" in mesh_index_name:
+            elif ref_labels.element_ids in mesh_index_name:
                 element_ids = kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]
@@ -473,8 +478,8 @@ class DataFrame:
             label_space = {}
             for label_name in self.labels:
                 value = combination[label_positions_in_combinations[label_name]]
-                if label_name == "set_id":
-                    label_name = "time"
+                if label_name == ref_labels.set_ids:
+                    label_name = ref_labels.time
                 label_space[label_name] = value
             fields = self._fc.get_fields(label_space=label_space)
             values = []
