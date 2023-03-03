@@ -1,3 +1,5 @@
+import os.path
+
 import ansys.dpf.core as core
 import numpy as np
 import pytest
@@ -520,6 +522,14 @@ class TestStaticMechanicalSimulation:
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
+
+    def test_plot_stress_eqv_von_mises(self, static_simulation, tmp_path):
+        result = static_simulation.stress_eqv_von_mises_nodal()
+        result.plot()
+        d = tmp_path / "stress_eqv"
+        d.mkdir()
+        result.plot(screenshot=d / "stress.png")
+        os.path.exists(d / "stress.png")
 
 
 class TestTransientMechanicalSimulation:

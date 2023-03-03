@@ -44,11 +44,11 @@ type(displacement)
 
 # columns
 for column in displacement.columns:
-    print(f"Column with label \"{column.name}\" and available values {column.values}.")
+    print(f'Column with label "{column.name}" and available values {column.values}.')
 
 # rows
 for row in displacement.index:
-    print(f"Row with label \"{row.name}\" and available values {row.values}.")
+    print(f'Row with label "{row.name}" and available values {row.values}.')
 
 
 ###############################################################################
@@ -85,7 +85,9 @@ print(node_values)
 # Make multi selections in this DataFrame
 # ---------------------------------------
 
-real_values_for_one_set_onde_node = displacement.select(node=[3548], set_id=1, complex=0)
+real_values_for_one_set_onde_node = displacement.select(
+    node=[3548], set_id=1, complex=0
+)
 print(real_values_for_one_set_onde_node)
 
 ###############################################################################
