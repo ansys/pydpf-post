@@ -83,7 +83,7 @@ tools:
 ```pycon
 >>> from ansys.dpf import post
 >>> from ansys.dpf.post import examples
->>> solution = post.load_simulation(examples.download_crankshaft())
+>>> solution = post.load_solution(examples.download_crankshaft())
 >>> stress = solution.stress()
 >>> stress.eqv.plot_contour(show_edges=False)
 ```
