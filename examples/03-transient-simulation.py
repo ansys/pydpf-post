@@ -1,8 +1,8 @@
 """
 .. _ref_static_example:
 
-Transient Simulation
-====================
+Transient Simulation with Animation
+===================================
 In this script transient simulation is processed to extract results like
 stress, strain, displacement.
 Extracting data for chosen time steps and animating is also displayed.
@@ -47,44 +47,30 @@ displacement.animate(deform=True)
 # equivalent to 
 x_displacement = simulation.displacement(all_sets=True, components=["X"])
 print(x_displacement)
+displacement.animate(deform=True)
 
-# plot
-x_displacement.plot(set_id=1)
-x_displacement.animate()
+# get the available time set ids in the simulation
+print(simulation.set_ids)
 
-# extract displacement on specific nodes
-nodes_displacement = displacement.select(node=[1, 10, 100])
-nodes_displacement.plot()
-
-# equivalent to:
-nodes_displacement = simulation.displacement(node_ids=[1, 10, 100])
-print(nodes_displacement)
+# extract displacement on given time steps or select the times steps from teh already evaluated
+# displacements
+displacement = simulation.displacement(set_ids=simulation.set_ids[5:])
+displacement = displacement.select(set_id=simulation.set_ids[5:])
+print(displacement)
 
 ###############################################################################
-# Compute total displacement (norm)
+# Extract strain at all times or on a selection
+# ---------------------------------------------------
+strain = simulation.elastic_strain_nodal(all_sets=True)
+print(strain)
+
+strain = simulation.elastic_strain_nodal(set_ids=simulation.set_ids[10:])
+print(strain)
+
+
+###############################################################################
+# Animate strain eqv over all times
 # ---------------------------------
-# Compute the norm of displacement on a selection of nodes
-nodes_displacement = simulation.displacement(node_ids=[1, 10, 100], norm=True)
-print(nodes_displacement)
-nodes_displacement.plot()
 
-
-###############################################################################
-# Extract tensor stress, apply averaging, compute equivalent
-# ----------------------------------------------------------
-# Extract raw elemental nodal stresses from the rst file
-elem_nodal_stress = simulation.stress()
-print(elem_nodal_stress)
-
-# Compute nodal stresses from the result file
-nodal_stress = simulation.stress_nodal()
-print(nodal_stress)
-
-# Compute elemental stresses from the result file
-elemental_stress = simulation.stress_elemental()
-print(elemental_stress)
-
-# Compute nodal eqv stresses from the result file
-eqv_stress = simulation.stress_eqv_von_mises_nodal()
-print(eqv_stress)
-eqv_stress.plot()
+strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal(all_sets=True)
+strain_eqv.animate()

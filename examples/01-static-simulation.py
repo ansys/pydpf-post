@@ -4,7 +4,7 @@
 Static Simulation
 =================
 In this script static simulation is processed to extract results like stress, displacement.
-Selecting sub parts of the results by scoping on specific nodes, elements is also displayed here.
+Selecting sub parts of the results by scoping on specific nodes or elements is also displayed here.
 """
 
 ###############################################################################
@@ -65,7 +65,8 @@ print(nodes_displacement)
 # Compute total displacement (norm)
 # ---------------------------------
 # Compute the norm of displacement on a selection of nodes
-nodes_displacement = simulation.displacement(node_ids=[1, 10, 100], norm=True)
+
+nodes_displacement = simulation.displacement(node_ids=simulation.mesh.node_ids[100:], norm=True)
 print(nodes_displacement)
 nodes_displacement.plot()
 
@@ -84,6 +85,10 @@ print(nodal_stress)
 # Compute elemental stresses from the result file
 elemental_stress = simulation.stress_elemental()
 print(elemental_stress)
+
+# extract  elemental stresses on specific elements
+elemental_stress = elemental_stress.select(element=simulation.mesh.element_ids[0:100])
+elemental_stress.plot()
 
 # Compute nodal eqv stresses from the result file
 eqv_stress = simulation.stress_eqv_von_mises_nodal()
