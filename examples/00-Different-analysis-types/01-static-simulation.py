@@ -46,7 +46,7 @@ x_displacement = displacement.select(comp="X")
 print(x_displacement)
 
 
-# equivalent to 
+# equivalent to
 x_displacement = simulation.displacement(components=["X"])
 print(x_displacement)
 
@@ -66,7 +66,10 @@ print(nodes_displacement)
 # ---------------------------------
 # Compute the norm of displacement on a selection of nodes
 
-nodes_displacement = simulation.displacement(node_ids=simulation.mesh.node_ids[10:], norm=True)
+nodes_displacement = simulation.displacement(
+    node_ids=simulation.mesh.node_ids[10:],
+    norm=True
+)
 print(nodes_displacement)
 nodes_displacement.plot()
 

@@ -44,7 +44,7 @@ print(displacement)
 displacement.animate(deform=True)
 
 
-# equivalent to 
+# equivalent to
 x_displacement = simulation.displacement(all_sets=True, components=["X"])
 print(x_displacement)
 displacement.animate(deform=True)
@@ -52,8 +52,8 @@ displacement.animate(deform=True)
 # get the available time set ids in the simulation
 print(simulation.set_ids)
 
-# extract displacement on given time steps or select the times steps from teh already evaluated
-# displacements
+# extract displacement on given time steps or select the times steps from the already evaluated
+# displacement DataFrame
 displacement = simulation.displacement(set_ids=simulation.set_ids[5:])
 displacement = displacement.select(set_id=simulation.set_ids[5:])
 print(displacement)

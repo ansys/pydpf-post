@@ -31,10 +31,18 @@ from ansys.dpf.post.post_utility import (
     load_solution,
     print_available_keywords,
 )
-from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation  # noqa: F401
-from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation  # noqa: F401
-from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation  # noqa: F401
-from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation  # noqa: F401
+from ansys.dpf.post.harmonic_mechanical_simulation import ( # noqa: F401
+    HarmonicMechanicalSimulation
+)
+from ansys.dpf.post.transient_mechanical_simulation import ( # noqa: F401
+    TransientMechanicalSimulation
+)
+from ansys.dpf.post.static_mechanical_simulation import ( # noqa: F401
+    StaticMechanicalSimulation
+)
+from ansys.dpf.post.modal_mechanical_simulation import ( # noqa: F401
+    ModalMechanicalSimulation
+)
 
 # this must be after some ansys.dpf.post import
 __version__ = importlib_metadata.version("ansys-dpf-post")

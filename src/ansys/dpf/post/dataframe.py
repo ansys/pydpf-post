@@ -630,12 +630,15 @@ class DataFrame:
             # Check for invalid arguments
             axes = self.axes
             selection_kwargs = {}
+            new_kwargs = {}
             for key, value in kwargs.items():
                 if key in axes:
                     selection_kwargs[key] = value
-                    kwargs.pop(key)
+                else:
+                    new_kwargs[key] = value
             # Construct the associated label_space
             fc = self.select(**selection_kwargs)._fc
+            kwargs = new_kwargs
         else:
             # If no kwarg was given, construct a default label_space
             fc = self._fc

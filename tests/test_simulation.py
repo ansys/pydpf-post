@@ -531,8 +531,8 @@ class TestStaticMechanicalSimulation:
         result.plot()
         d = tmp_path / "stress_eqv"
         d.mkdir()
-        result.plot(screenshot=d/"stress.png")
-        os.path.exists(d/"stress.png")
+        result.plot(screenshot=d / "stress.png")
+        os.path.exists(d / "stress.png")
 
 
 class TestTransientMechanicalSimulation:
