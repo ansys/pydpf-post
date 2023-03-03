@@ -595,7 +595,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         assert field.component_count == 1
-        assert field.data.shape == (53,)
+        assert field.data.shape == (393,)
 
     def test_velocity(self, transient_simulation):
         result = transient_simulation.velocity(
@@ -1922,3 +1922,11 @@ class TestHarmonicMechanicalSimulation:
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
+
+
+def test_elemental_ns_on_nodal_result(modal_frame):
+    simulation = post.load_simulation(modal_frame)
+    assert "BAR_1" in simulation.named_selections
+    disp = simulation.displacement(named_selections=["BAR_1"])
+    assert disp.index[0].name == "node"
+    assert len(disp.index[0].values) == 1370

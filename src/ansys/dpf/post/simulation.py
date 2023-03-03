@@ -507,7 +507,7 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, result_file: PathLike):
+    def __init__(self, result_file: Union[PathLike,str]):
         """Instantiate a mechanical type simulation."""
         model = dpf.Model(result_file)
         data_sources = model.metadata.data_sources
@@ -544,7 +544,7 @@ class MechanicalSimulation(Simulation, ABC):
             selection = Selection(server=self._model._server)
         # Create the SpatialSelection
         if named_selections:
-            selection.select_named_selection(named_selection=named_selections)
+            selection.select_named_selection(named_selection=named_selections, location=location)
         elif element_ids is not None:
             if location == locations.nodal:
                 selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)

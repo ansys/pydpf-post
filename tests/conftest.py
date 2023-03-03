@@ -141,6 +141,12 @@ def rth_electric():
     return examples.electric_therm
 
 
+@pytest.fixture()
+def modal_frame():
+    """Resolve the path of the "rth/rth_electric.rth" result file."""
+    return examples.download_modal_frame()
+
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""

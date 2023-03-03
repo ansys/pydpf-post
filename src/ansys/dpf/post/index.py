@@ -164,6 +164,10 @@ class LabelIndex(Index):
         """Initiate this class."""
         super().__init__(name=name, values=values, scoping=scoping)
 
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"LabelIndex<name={self.name}, values={self.values}>"
+
 
 class TimeIndex(Index):
     """Index class specific to time."""
@@ -175,6 +179,10 @@ class TimeIndex(Index):
     ):
         """Initiate this class."""
         super().__init__(name="time", values=values, scoping=scoping)
+
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"TimeIndex<values={self.values}>"
 
 
 class ModeIndex(Index):
@@ -188,6 +196,10 @@ class ModeIndex(Index):
         """Initiate this class."""
         super().__init__(name="mode", values=values, scoping=scoping)
 
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"ModeIndex<values={self.values}>"
+
 
 class FrequencyIndex(Index):
     """Index class specific to frequency."""
@@ -200,8 +212,12 @@ class FrequencyIndex(Index):
         """Initiate this class."""
         super().__init__(name="frequency", values=values, scoping=scoping)
 
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"FrequencyIndex<values={self.values}>"
 
-class SetIndex(Index):
+
+class SetIndex(LabelIndex):
     """Index class specific to set_id."""
 
     def __init__(
@@ -211,6 +227,10 @@ class SetIndex(Index):
     ):
         """Initiate this class."""
         super().__init__(name="set_id", values=values, scoping=scoping)
+
+    def __repr__(self):
+        """Representation of the Index."""
+        return f"SetIndex<values={self.values}>"
 
 
 class CompIndex(Index):
