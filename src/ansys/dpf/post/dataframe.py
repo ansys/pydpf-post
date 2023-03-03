@@ -683,7 +683,7 @@ class DataFrame:
 
     def animate(
         self,
-        save_as: Union[PathLike, None] = None,
+        save_as: Union[PathLike, str, None] = None,
         deform: bool = False,
         scale_factor: Union[List[float], float] = 1.0,
         **kwargs,
@@ -718,6 +718,8 @@ class DataFrame:
                         f"unable to animate on the deformed mesh:\n{e}"
                     )
                 )
+        else:
+            deform_by = False
         return self._fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )
