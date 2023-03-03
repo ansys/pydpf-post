@@ -19,10 +19,11 @@ from ansys.dpf.post.index import (
     MultiIndex,
     ResultsIndex,
     SetIndex,
+    ref_labels,
 )
 
-display_width = 80
-display_max_colwidth = 10
+display_width = 100
+display_max_colwidth = 12
 display_max_lines = 6
 
 
@@ -91,11 +92,9 @@ class DataFrame:
         return self._index
 
     @property
-    def axes(self) -> List[str]:
-        """Returns a list of the axes of the DataFrame with the row Index and the column Index."""
-        names = self.index.names
-        names.extend(self.columns.names)
-        return names
+    def axes(self) -> List[MultiIndex]:
+        """Returns a list with the row MultiIndex first and the columns MultiIndex second."""
+        return [self.index, self.columns]
 
     @property
     def results_index(self) -> Union[ResultsIndex, None]:
@@ -127,6 +126,22 @@ class DataFrame:
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
 
+    def _filter_arguments(self, arguments):
+        """Filter arguments based on available Index names."""
+        rows, columns = self.axes
+        axes_names = rows.names
+        axes_names.extend(columns.names)
+        axis_arguments = {}
+        keys = list(arguments.keys())
+        for argument in keys:
+            if argument in axes_names:
+                axis_arguments[argument] = arguments.pop(argument)
+                # raise ValueError(
+                #     f"The DataFrame has no axis {argument}, cannot select it. "
+                #     f"Available axes are: {axes_names}."
+                # )
+        return axis_arguments, arguments
+
     def select(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (value-based).
 
@@ -146,16 +161,9 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        # Check for invalid arguments
-        axes = self.axes
-        for argument in kwargs.keys():
-            if argument not in axes:
-                raise ValueError(
-                    f"The DataFrame has no axis {argument}, cannot select it. "
-                    f"Available axes are: {axes}."
-                )
-        if "set_id" in kwargs.keys():
-            kwargs["time"] = kwargs["set_id"]
+        axis_kwargs, _ = self._filter_arguments(arguments=kwargs)
+        if ref_labels.set_ids in axis_kwargs.keys():
+            axis_kwargs[ref_labels.time] = axis_kwargs[ref_labels.set_ids]
         # Initiate a workflow
         server = self._fc._server
         wf = dpf.Workflow(server=server)
@@ -176,30 +184,37 @@ class DataFrame:
         results_index = self.results_index
 
         # Treat selection on a label
-        if any([label in kwargs.keys() for label in self._fc.labels]):
+        if any([label in axis_kwargs.keys() for label in self._fc.labels]):
             fc = dpf.FieldsContainer()
             fc.labels = self._fc.labels
             for i, field in enumerate(self._fc):
+                to_add = True
                 label_space = self._fc.get_label_space(i)
                 for fc_key in label_space.keys():
-                    if fc_key in kwargs.keys() or (
-                        fc_key == "time" and "set_id" in kwargs.keys()
+                    if fc_key in axis_kwargs.keys() or (
+                        fc_key == ref_labels.time
+                        and ref_labels.set_ids in axis_kwargs.keys()
                     ):
                         key = fc_key
-                        if fc_key == "time" and "set_id" in kwargs.keys():
-                            key = "set_id"
-                        if not isinstance(kwargs[key], list):
-                            kwargs[key] = [kwargs[key]]
-                        if label_space[fc_key] not in kwargs[key]:
-                            continue
+                        if (
+                            fc_key == ref_labels.time
+                            and ref_labels.set_ids in axis_kwargs.keys()
+                        ):
+                            key = ref_labels.set_ids
+                        if not isinstance(axis_kwargs[key], list):
+                            axis_kwargs[key] = [axis_kwargs[key]]
+                        if label_space[fc_key] not in axis_kwargs[key]:
+                            to_add = False
+                            break
+                if to_add:
                     fc.add_field(label_space=label_space, field=field)
             input_fc = fc
 
         # # Treat selection on components
-        if "comp" in kwargs.keys():
+        if ref_labels.components in axis_kwargs.keys():
             from ansys.dpf.post.simulation import component_label_to_index
 
-            comp_to_extract = kwargs["comp"]
+            comp_to_extract = axis_kwargs[ref_labels.components]
             if not isinstance(comp_to_extract, list):
                 comp_to_extract = [comp_to_extract]
             component_indexes = [component_label_to_index[c] for c in comp_to_extract]
@@ -217,19 +232,19 @@ class DataFrame:
         else:
             mesh_index_name = self.index.mesh_index.name
         if (
-            mesh_index_name in kwargs.keys()
+            mesh_index_name in axis_kwargs.keys()
             and mesh_index.location != locations.elemental_nodal
         ):
-            if "node" in mesh_index_name:
-                node_ids = kwargs[mesh_index_name]
+            if ref_labels.node_ids in mesh_index_name:
+                node_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(node_ids, (DPFArray, list)):
                     node_ids = [node_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
                     node_ids=node_ids,
                     server=server,
                 )
-            elif "element" in mesh_index_name:
-                element_ids = kwargs[mesh_index_name]
+            elif ref_labels.element_ids in mesh_index_name:
+                element_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]
                 mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
@@ -249,7 +264,7 @@ class DataFrame:
             out = rescope_fc.outputs.fields_container
             mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
         elif (
-            mesh_index_name in kwargs.keys()
+            mesh_index_name in axis_kwargs.keys()
             and mesh_index.location == locations.elemental_nodal
         ):
             raise NotImplementedError(
@@ -306,24 +321,21 @@ class DataFrame:
             A DataFrame of the selected values.
 
         """
-        # Check for invalid arguments
-        axes = self.axes
-        for argument in kwargs.keys():
-            if argument not in axes:
-                raise ValueError(
-                    f"The DataFrame has no axis {argument}, cannot select it. "
-                    f"Available axes are: {axes}."
-                )
-        for label in kwargs.keys():
-            indices = kwargs[label]
+        axis_kwargs, _ = self._filter_arguments(arguments=kwargs)
+        for label in axis_kwargs.keys():
             if label in self.index.names:
-                ids = getattr(self.index, label).values[indices]
+                values = getattr(self.index, label).values
             else:
-                ids = getattr(self.columns, label).values[indices]
+                values = getattr(self.columns, label).values
+            indices = axis_kwargs[label]
+            if isinstance(indices, list):
+                ids = [values[i] for i in indices]
+            else:
+                ids = values[indices]
             if isinstance(ids, DPFArray):
                 ids = ids.tolist()
-            kwargs[label] = ids
-        return self.select(**kwargs)
+            axis_kwargs[label] = ids
+        return self.select(**axis_kwargs)
 
     def __len__(self):
         """Return the length of the DataFrame."""
@@ -477,8 +489,8 @@ class DataFrame:
             label_space = {}
             for label_name in self.labels:
                 value = combination[label_positions_in_combinations[label_name]]
-                if label_name == "set_id":
-                    label_name = "time"
+                if label_name == ref_labels.set_ids:
+                    label_name = ref_labels.time
                 label_space[label_name] = value
             fields = self._fc.get_fields(label_space=label_space)
             values = []
@@ -616,6 +628,8 @@ class DataFrame:
             `set_id` 1 by using `df.plot(set_ids=1)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+            Also supports additional keyword arguments for the plotter. For additional keyword
+            arguments, see ``help(pyvista.plot)``.
 
         Returns
         -------
@@ -625,16 +639,9 @@ class DataFrame:
         from ansys.dpf.core.plotter import DpfPlotter as Plotter
 
         if kwargs != {}:
-            # Check for invalid arguments
-            axes = self.axes
-            for argument in kwargs.keys():
-                if argument not in axes:
-                    raise ValueError(
-                        f"The DataFrame has no axis {argument}, cannot plot it. "
-                        f"Available axes are: {axes}."
-                    )
+            axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
-            fc = self.select(**kwargs)._fc
+            fc = self.select(**axis_kwargs)._fc
         else:
             # If no kwarg was given, construct a default label_space
             fc = self._fc
@@ -683,7 +690,7 @@ class DataFrame:
 
     def animate(
         self,
-        save_as: Union[PathLike, None] = None,
+        save_as: Union[PathLike, str, None] = None,
         deform: bool = False,
         scale_factor: Union[List[float], float] = 1.0,
         **kwargs,
@@ -718,6 +725,8 @@ class DataFrame:
                         f"unable to animate on the deformed mesh:\n{e}"
                     )
                 )
+        else:
+            deform_by = False
         return self._fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )

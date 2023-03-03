@@ -39,23 +39,31 @@ print(simulation)
 # Extract displacement at all times or on a selection
 # ---------------------------------------------------
 
+# query the displacement vectorial field for all times
 displacement = simulation.displacement(all_sets=True)
 print(displacement)
-displacement.animate(deform=True)
+# animation shows the norm of vectorial fields with several components
+displacement.animate(deform=True, title="U")
 
 
-# equivalent to 
+# get specific components with "components"
 x_displacement = simulation.displacement(all_sets=True, components=["X"])
 print(x_displacement)
-displacement.animate(deform=True)
+x_displacement.animate(deform=True, title="UX")
+
+
+# get the norm of a vectorial result with "norm=True"
+displacement_norm = simulation.displacement(all_sets=True, norm=True)
+print(displacement_norm)
+displacement_norm.animate(deform=True, title="U norm")
 
 # get the available time set ids in the simulation
 print(simulation.set_ids)
 
-# extract displacement on given time steps or select the times steps from teh already evaluated
+# extract displacement on given time steps or select the times steps from the already evaluated
 # displacements
 displacement = simulation.displacement(set_ids=simulation.set_ids[5:])
-displacement = displacement.select(set_id=simulation.set_ids[5:])
+displacement = displacement.select(set_ids=simulation.set_ids[5:])
 print(displacement)
 
 ###############################################################################
@@ -73,4 +81,4 @@ print(strain)
 # ---------------------------------
 
 strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal(all_sets=True)
-strain_eqv.animate()
+strain_eqv.animate(deform=True, title="E_eqv")

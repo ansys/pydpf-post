@@ -7,13 +7,30 @@ import ansys.dpf.core as dpf
 
 from ansys.dpf import post
 
+
+class ref_labels:
+    """Reference naming for different common Indexes."""
+
+    components = "components"
+    results = "results"
+    time = "time"
+    modes = "modes"
+    frequencies = "frequencies"
+    set_ids = "set_ids"
+    node_ids = "node_ids"
+    element_ids = "element_ids"
+    elemental_nodal = "element_ids"
+    step = "step_ids"
+    overall = "overall"
+
+
 location_to_label = {
-    dpf.locations.nodal: "node",
-    dpf.locations.elemental: "element",
-    dpf.locations.elemental_nodal: "element",
-    dpf.locations.overall: "overall",
-    dpf.locations.time_freq_step: "step",
-    dpf.locations.time_freq: "set",
+    dpf.locations.nodal: ref_labels.node_ids,
+    dpf.locations.elemental: ref_labels.element_ids,
+    dpf.locations.elemental_nodal: ref_labels.elemental_nodal,
+    dpf.locations.overall: ref_labels.overall,
+    dpf.locations.time_freq_step: ref_labels.step,
+    dpf.locations.time_freq: ref_labels.set_ids,
 }
 
 
@@ -145,7 +162,7 @@ class ResultsIndex(Index):
         values: List[str],
     ):
         """Initiate this class."""
-        super().__init__(name="results", values=values, scoping=None)
+        super().__init__(name=ref_labels.results, values=values, scoping=None)
 
     def __repr__(self):
         """Representation of the Index."""
@@ -178,7 +195,7 @@ class TimeIndex(Index):
         scoping: Union[dpf.Scoping, None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name="time", values=values, scoping=scoping)
+        super().__init__(name=ref_labels.time, values=values, scoping=scoping)
 
     def __repr__(self):
         """Representation of the Index."""
@@ -194,7 +211,7 @@ class ModeIndex(Index):
         scoping: Union[dpf.Scoping, None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name="mode", values=values, scoping=scoping)
+        super().__init__(name=ref_labels.modes, values=values, scoping=scoping)
 
     def __repr__(self):
         """Representation of the Index."""
@@ -210,7 +227,7 @@ class FrequencyIndex(Index):
         scoping: Union[dpf.Scoping, None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name="frequency", values=values, scoping=scoping)
+        super().__init__(name=ref_labels.frequencies, values=values, scoping=scoping)
 
     def __repr__(self):
         """Representation of the Index."""
@@ -218,7 +235,7 @@ class FrequencyIndex(Index):
 
 
 class SetIndex(LabelIndex):
-    """Index class specific to set_id."""
+    """Index class specific to set_ids."""
 
     def __init__(
         self,
@@ -226,7 +243,7 @@ class SetIndex(LabelIndex):
         scoping: Union[dpf.Scoping, None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name="set_id", values=values, scoping=scoping)
+        super().__init__(name=ref_labels.set_ids, values=values, scoping=scoping)
 
     def __repr__(self):
         """Representation of the Index."""
@@ -241,7 +258,7 @@ class CompIndex(Index):
         values: Union[List, None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name="comp", values=values)
+        super().__init__(name=ref_labels.components, values=values)
 
 
 class MultiIndex:

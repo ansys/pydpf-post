@@ -5,10 +5,7 @@ from pytest import fixture
 
 from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes
-from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
-from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
-from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
-from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
+from ansys.dpf.post.index import ref_labels
 
 
 @fixture
@@ -20,13 +17,13 @@ def static_simulation(static_rst):
 
 
 def test_simulation_init(static_rst):
-    simulation = StaticMechanicalSimulation(static_rst)
+    simulation = post.StaticMechanicalSimulation(static_rst)
     assert simulation is not None
-    simulation = TransientMechanicalSimulation(static_rst)
+    simulation = post.TransientMechanicalSimulation(static_rst)
     assert simulation is not None
-    simulation = ModalMechanicalSimulation(static_rst)
+    simulation = post.ModalMechanicalSimulation(static_rst)
     assert simulation is not None
-    simulation = HarmonicMechanicalSimulation(static_rst)
+    simulation = post.HarmonicMechanicalSimulation(static_rst)
     assert simulation is not None
 
 
@@ -1928,5 +1925,5 @@ def test_elemental_ns_on_nodal_result(modal_frame):
     simulation = post.load_simulation(modal_frame)
     assert "BAR_1" in simulation.named_selections
     disp = simulation.displacement(named_selections=["BAR_1"])
-    assert disp.index[0].name == "node"
+    assert disp.index[0].name == ref_labels.node_ids
     assert len(disp.index[0].values) == 1370
