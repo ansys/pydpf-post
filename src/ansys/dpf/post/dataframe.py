@@ -135,8 +135,7 @@ class DataFrame:
                 raise ValueError(
                     f"Can only export to array if the DataFrame contains a single {index.name}."
                 )
-        else:
-            return self._fc[0].data
+        return self._fc[0].data
 
     def _filter_arguments(self, arguments):
         """Filter arguments based on available Index names."""
