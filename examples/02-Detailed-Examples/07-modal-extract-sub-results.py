@@ -58,4 +58,3 @@ x_displacement.plot(set_id=1)
 XX_XY_elastic_strain = simulation.elastic_strain_nodal(modes=[3], components=["XX", "XY"])
 print(XX_XY_elastic_strain)
 
-#XX_XY_elastic_strain.plot(set_id=3, comp="XX")
