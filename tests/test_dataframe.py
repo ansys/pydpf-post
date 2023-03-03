@@ -52,7 +52,8 @@ def test_dataframe_from_fields_container(simple_bar):
         columns=column_index,
         index=row_index,
     )
-    assert df.axes == ["node", "comp", "time", "results"]
+    assert df.index.names == ["node", "comp"]
+    assert df.columns.names == ["time", "results"]
 
 
 def test_dataframe_from_error():
