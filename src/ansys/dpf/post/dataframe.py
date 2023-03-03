@@ -616,6 +616,8 @@ class DataFrame:
             `set_id` 1 by using `df.plot(set_ids=1)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+            Additional keyword arguments for the plotter. More information
+            are available at :class:`pyvista.Plotter`.
 
         Returns
         -------
@@ -627,14 +629,13 @@ class DataFrame:
         if kwargs != {}:
             # Check for invalid arguments
             axes = self.axes
-            for argument in kwargs.keys():
-                if argument not in axes:
-                    raise ValueError(
-                        f"The DataFrame has no axis {argument}, cannot plot it. "
-                        f"Available axes are: {axes}."
-                    )
+            selection_kwargs = {}
+            for key, value in kwargs.items():
+                if key in axes:
+                    selection_kwargs[key] = value
+                    kwargs.pop(key)
             # Construct the associated label_space
-            fc = self.select(**kwargs)._fc
+            fc = self.select(**selection_kwargs)._fc
         else:
             # If no kwarg was given, construct a default label_space
             fc = self._fc
