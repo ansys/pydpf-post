@@ -18,7 +18,9 @@ on:
 #* * * * *
 
 env:
-  ANSYS_VERSION: 232
+  PACKAGE_NAME: 'ansys-dpf-post'
+  MODULE: 'post'
+  ANSYS_VERSION: '232'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
 
