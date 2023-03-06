@@ -196,6 +196,7 @@ class DataFrame:
         # Treat selection on a label
         if any([label in axis_kwargs.keys() for label in self._fc.labels]):
             fc = dpf.FieldsContainer()
+            to_add_list = []
             for i, field in enumerate(self._fc):
                 to_add = True
                 label_space = self._fc.get_label_space(i)
@@ -216,10 +217,12 @@ class DataFrame:
                             to_add = False
                             break
                 if to_add:
-                    fc.add_field(label_space=label_space, field=field)
-            if len(fc) != 0:
+                    to_add_list.append((label_space, field))
+            if len(to_add_list) != 0:
                 input_fc = fc
                 fc.labels = self._fc.labels
+                for label_space, field in to_add_list:
+                    fc.add_field(label_space=label_space, field=field)
             else:
                 # raise ValueError("Selection criteria resulted in an empty DataFrame.")
                 input_fc = fc
