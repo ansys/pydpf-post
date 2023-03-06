@@ -9,6 +9,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.common import shell_layers
 from ansys.dpf.core.dpf_array import DPFArray
+import numpy as np
 
 from ansys.dpf.post import locations
 from ansys.dpf.post.index import (
@@ -125,6 +126,16 @@ class DataFrame:
     def _core_object(self):
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.FieldsContainer` object."""
         return self._fc
+
+    @property
+    def array(self) -> np.ndarray:
+        """Returns the data as a np.ndarray for a single combination of column label values."""
+        for index in self.columns:
+            if len(index.values) > 1:
+                raise ValueError(
+                    f"Can only export to array if the DataFrame contains a single {index.name}."
+                )
+        return self._fc[0].data
 
     def _filter_arguments(self, arguments):
         """Filter arguments based on available Index names."""

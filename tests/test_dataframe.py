@@ -1,4 +1,5 @@
 import ansys.dpf.core as core
+import numpy as np
 import pytest
 from pytest import fixture
 
@@ -228,3 +229,21 @@ def test_dataframe_str_tensor(elastic_strain_df):
     for expected_str in expected_strs:
         assert expected_str in stri
     assert "ZZ" not in stri
+
+
+def test_dataframe_array(elastic_strain_df):
+    arr = elastic_strain_df.array
+    assert isinstance(arr, np.ndarray)
+    assert arr.ndim == 2
+    assert arr.size == 486
+    assert len(arr[0]) == 6
+    assert arr[0][0] - 1.5236e-07 < 1.0e-13
+
+
+def test_dataframe_array_raise(transient_rst):
+    simulation = TransientMechanicalSimulation(transient_rst)
+    df = simulation.displacement(all_sets=True)
+    with pytest.raises(
+        ValueError, match="Can only export to array if the DataFrame contains a single"
+    ):
+        _ = df.array
