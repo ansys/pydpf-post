@@ -120,6 +120,12 @@ def test_dataframe_plot(df):
     df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 
+def test_dataframe_plot_warn(df):
+    with pytest.warns(UserWarning, match="did not return data"):
+        plt = df.plot(set_ids=99)
+        assert plt is None
+
+
 def test_dataframe_animate(transient_rst):
     simulation = TransientMechanicalSimulation(transient_rst)
     # Animate displacement
