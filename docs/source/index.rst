@@ -20,7 +20,7 @@ Brief demo
 ~~~~~~~~~~
 
 Provided you have ANSYS 2023 R1 installed, a DPF server will start
-automatically once you start using pyDPF-Post.
+automatically once you start using PyDPF-Post.
 Loading a simulation for a MAPDL result file to extract and post-process results:
 
 .. code:: python
