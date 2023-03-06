@@ -208,7 +208,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
-        return self._create_dataframe(fc, location, columns, comp, base_name)
+        disp_wf = self._generate_disp_workflow(fc, selection)
+
+        return self._create_dataframe(fc, location, columns, comp, base_name, disp_wf)
 
     def displacement(
         self,

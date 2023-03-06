@@ -18,7 +18,7 @@ from ansys.dpf.core import (  # noqa: F401
     AvailableServerContexts,
     set_default_server_context,
 )
-from ansys.dpf.core.common import locations  # noqa: F401
+from ansys.dpf.core.common import locations, shell_layers  # noqa: F401
 
 try:
     import importlib.metadata as importlib_metadata
