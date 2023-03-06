@@ -1,28 +1,24 @@
-name: CI
+name: CI Release
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches-ignore:
-      - "*no-ci"
   push:
-    branches:
-      - master
-  workflow_dispatch:
-    inputs:
-      standalone_branch_suffix:
-        description: 'Suffix of the branch on standalone'
-        required: false
-        default: '.pre0'
+    tags:
+      - "v*"
+  schedule:
+    - cron: "0 13 * * 0"
 
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: true
+#┌───────────── minute (0 - 59)
+#│ ┌───────────── hour (0 - 23)
+#│ │ ┌───────────── day of the month (1 - 31)
+#│ │ │ ┌───────────── month (1 - 12)
+#│ │ │ │ ┌───────────── day of the week (0 - 6), 0 being Sunday
+#│ │ │ │ │
+#│ │ │ │ │
+#│ │ │ │ │
+#* * * * *
 
 env:
-  PACKAGE_NAME: 'ansys-dpf-post'
-  ANSYS_VERSION: '232'
+  ANSYS_VERSION: 232
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
 
@@ -75,7 +71,7 @@ jobs:
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ inputs.standalone_suffix }}
+          standalone_suffix: ".pre0"
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
@@ -110,7 +106,6 @@ jobs:
 
   retro:
     name: "Retro-compatibility"
-    if: startsWith(github.head_ref, 'master') || contains(github.head_ref, 'release') || contains(github.head_ref, 'retro') || startsWith(github.ref, 'refs/tags/v')
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -166,23 +161,36 @@ jobs:
         uses: codecov/codecov-action@v3
 
   docs:
-    if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: "232"
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
-      custom-requirements: requirements/requirements_dev.txt
-      custom-wheels: './dpf-standalone/v232/dist'
+      standalone_suffix: ".pre0"
       event_name: ${{ github.event_name }}
     secrets: inherit
 
-  upload-development-docs:
+  draft_release:
+    name: "Draft release"
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: [style, build_test, retro, docs]
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
-    needs: [docs]
     steps:
-      - name: "Upload development documentation"
-        uses: pyansys/actions/doc-deploy-dev@v3
+      - name: "Set up Python"
+        uses: actions/setup-python@v4.5.0
         with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: 3.9
+
+      - name: "Download artifacts"
+        uses: actions/download-artifact@v3
+
+      - name: "Display downloaded files"
+        run: ls -R
+
+      - name: "Create draft release"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./**/*.whl
+            ./**/*.tar.gz
+            ./**/*.zip
+          draft: true
+          generate_release_notes: true
