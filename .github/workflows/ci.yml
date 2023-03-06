@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Set licensing if necessary"
-        if: inputs.ANSYS_VERSION > 231
+        if: env.ANSYS_VERSION > 231
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -131,7 +131,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Set licensing if necessary"
-        if: inputs.ANSYS_VERSION > 231
+        if: env.ANSYS_VERSION > 231
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
