@@ -14,7 +14,7 @@ Examples
 """
 
 import ansys.dpf.core as core
-from ansys.dpf.core.common import locations  # noqa: F401
+from ansys.dpf.core.common import locations, shell_layers  # noqa: F401
 
 try:
     import importlib.metadata as importlib_metadata

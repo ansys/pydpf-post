@@ -1,7 +1,7 @@
 """Module containing the ``TransientMechanicalSimulation`` class."""
 from typing import List, Tuple, Union
 
-from ansys.dpf import core
+from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection
@@ -114,7 +114,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         )
 
         # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
+        wf = dpf.Workflow(server=self._model._server)
         wf.progress_bar = False
 
         if category == ResultCategory.equivalent and base_name[0] == "E":
@@ -218,9 +218,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
-        fc = wf.get_output("out", core.types.fields_container)
+        fc = wf.get_output("out", dpf.types.fields_container)
 
-        return self._create_dataframe(fc, location, columns, comp, base_name)
+        disp_wf = self._generate_disp_workflow(fc, selection)
+
+        return self._create_dataframe(fc, location, columns, comp, base_name, disp_wf)
 
     def displacement(
         self,

@@ -7,11 +7,10 @@ from typing import List, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core.common import shell_layers
 from ansys.dpf.core.dpf_array import DPFArray
 import numpy as np
 
-from ansys.dpf.post import locations
+from ansys.dpf.post import locations, shell_layers
 from ansys.dpf.post.index import (
     CompIndex,
     Index,
@@ -66,16 +65,15 @@ class DataFrame:
         else:
             self._columns = None
 
-        # if parent_simulation is not None:
-        #     self._parent_simulation = weakref.ref(parent_simulation)
+        self._disp_wf = None
 
         self._str = None
         self._last_display_width = display_width
         self._last_display_max_colwidth = display_max_colwidth
 
     @property
-    def columns(self):
-        """Returns the column labels of the DataFrame."""
+    def columns(self) -> MultiIndex:
+        """Returns the MultiIndex for the columns of the DataFrame."""
         if self._columns is None:
             indexes = [ResultsIndex(values=[self._fc[0].name.split("_")])]
             indexes.extend(
@@ -88,8 +86,8 @@ class DataFrame:
         return self._columns
 
     @property
-    def index(self) -> Union[MultiIndex, Index]:
-        """Returns the Index or MultiIndex for the rows of the DataFrame."""
+    def index(self) -> MultiIndex:
+        """Returns the MultiIndex for the rows of the DataFrame."""
         return self._index
 
     @property
@@ -631,7 +629,7 @@ class DataFrame:
         Parameters
         ----------
         shell_layer:
-            Shell layer to show if multi-layered shell data present. Defaults to top.
+            Shell layer to show if multi-layered shell data is present. Defaults to top.
         **kwargs:
             This function accepts as argument any of the Index names available associated with a
             single value.
@@ -686,7 +684,7 @@ class DataFrame:
                 if shell_layer is not None:
                     if not isinstance(shell_layer, shell_layers):
                         raise TypeError(
-                            "shell_layer attribute must be a core.shell_layers instance."
+                            "shell_layer attribute must be a dpf.shell_layers instance."
                         )
                     sl = shell_layer
                 changeOp.inputs.e_shell_layer.connect(sl.value)  # top layers taken
@@ -705,9 +703,14 @@ class DataFrame:
         save_as: Union[PathLike, str, None] = None,
         deform: bool = False,
         scale_factor: Union[List[float], float] = 1.0,
+        shell_layer: shell_layers = shell_layers.top,
         **kwargs,
     ):
-        """Animate the result.
+        """Animate the DataFrame along its 'set' axis.
+
+        .. note::
+            At the moment only useful to produce a temporal animation. Each frame will correspond
+            to data for a value of the SetIndex in the columns MultiIndex.
 
         Parameters
         ----------
@@ -718,6 +721,8 @@ class DataFrame:
         scale_factor : float, list, optional
             Scale factor to apply when warping the mesh. Defaults to 1.0. Can be a list to make
             scaling frequency-dependent.
+        shell_layer:
+            Shell layer to show if multi-layered shell data is present. Defaults to top.
 
         Returns
         -------
@@ -725,20 +730,68 @@ class DataFrame:
         """
         deform_by = None
         if deform:
-            try:
-                simulation = self._parent_simulation()
-                deform_by = simulation._model.results.displacement.on_time_scoping(
-                    self._fc.get_time_scoping()
-                )
-            except Exception as e:
+            if self._disp_wf is None:
                 warnings.warn(
                     UserWarning(
                         "Displacement result unavailable, "
-                        f"unable to animate on the deformed mesh:\n{e}"
+                        f"unable to animate on the deformed mesh."
                     )
                 )
+            else:
+                wf = dpf.workflow.Workflow()
+                forward_op = dpf.operators.utility.forward_fields_container(
+                    server=self._fc._server
+                )
+                wf.add_operator(forward_op)
+                wf.set_input_name("input", forward_op.inputs.fields)
+                output_input_names = ("output", "input")
+                wf.connect_with(
+                    left_workflow=self._disp_wf, output_input_names=output_input_names
+                )
+
+                deform_by = forward_op
         else:
             deform_by = False
-        return self._fc.animate(
+
+        fc = self._fc
+
+        # Modify fc to merge fields of different eltype at same time and to select a shell_layer
+        # (until it is done on core-side -> animation feature to refactor)
+
+        sl = shell_layers.top
+        # Select shell_layer
+        for field in fc:
+            # Treat multi-layer field
+            shell_layer_check = field.shell_layers
+            if shell_layer_check in [
+                shell_layers.topbottom,
+                shell_layers.topbottommid,
+            ]:
+                if shell_layer is not None:
+                    if not isinstance(shell_layer, shell_layers):
+                        raise TypeError(
+                            "shell_layer attribute must be a dpf.shell_layers instance."
+                        )
+                    sl = shell_layer
+                shell_layer_op = dpf.operators.utility.change_shell_layers(
+                    fields_container=fc,
+                    server=fc._server,
+                    e_shell_layer=sl.value(),
+                )
+                fc = shell_layer_op.outputs.fields_container_as_fields_container()
+                break
+
+        # Set shell layer input for self._disp_wf
+        self._disp_wf.connect("shell_layer_int", sl.value)
+
+        # Merge shell and solid fields at same set
+        if "eltype" in fc.labels:
+            merge_op = dpf.operators.utility.merge_fields_by_label(
+                fields_container=fc,
+                label="eltype",
+            )
+            fc = merge_op.outputs.fields_container()
+
+        return fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )
