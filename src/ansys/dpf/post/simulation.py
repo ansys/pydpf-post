@@ -477,6 +477,7 @@ class Simulation(ABC):
         disp_op = dpf.operators.result.displacement(
             data_sources=self._model.metadata.data_sources,
             streams_container=self._model.metadata.streams_provider,
+            server=fc._server,
         )
         # Connect time_scoping (do not connect mesh_scoping as we want to deform the whole mesh)
         disp_wf.set_input_name("time_scoping", disp_op.inputs.time_scoping)
@@ -484,8 +485,23 @@ class Simulation(ABC):
             selection.time_freq_selection._selection,
             output_input_names=("scoping", "time_scoping"),
         )
+
+        # Shell layer selection step
+        shell_layer_op = dpf.operators.utility.change_shell_layers(
+            fields_container=disp_op.outputs.fields_container,
+            server=fc._server,
+        )
+        # Expose shell layer input as workflow input
+        disp_wf.set_input_name("shell_layer_int", shell_layer_op.inputs.e_shell_layer)
+
+        # Merge shell and solid fields at same set
+        merge_op = dpf.operators.utility.merge_fields_by_label(
+            fields_container=shell_layer_op.outputs.fields_container_as_fields_container,
+            label="eltype",
+        )
+
         # Expose output
-        disp_wf.set_output_name("output", disp_op.outputs.fields_container)
+        disp_wf.set_output_name("output", merge_op.outputs.fields_container)
 
         return disp_wf
 
