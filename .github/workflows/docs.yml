@@ -122,6 +122,10 @@ jobs:
         run: |
           pip install -r requirements/requirements_docs.txt
 
+      - name: "List installed packages"
+        shell: bash
+        run: pip list
+
       - name: "Build sphinx doc"
         shell: bash
         run: |

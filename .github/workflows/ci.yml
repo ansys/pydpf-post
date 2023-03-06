@@ -90,6 +90,10 @@ jobs:
         with:
           DEBUG: true
 
+      - name: "List installed packages"
+        shell: bash
+        run: pip list
+
       - name: "Test Docstrings"
         uses: pyansys/pydpf-actions/test_docstrings@v2.3
         with:
@@ -159,6 +163,10 @@ jobs:
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
         with:
           DEBUG: true
+
+      - name: "List installed packages"
+        shell: bash
+        run: pip list
 
       - name: "Test API"
         shell: bash
