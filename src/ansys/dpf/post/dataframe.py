@@ -694,7 +694,11 @@ class DataFrame:
         shell_layer: shell_layers = shell_layers.top,
         **kwargs,
     ):
-        """Animate the result.
+        """Animate the DataFrame along its 'set' axis.
+
+        .. note::
+            At the moment only useful to produce a temporal animation. Each frame will correspond
+            to data for a value of the SetIndex in the columns MultiIndex.
 
         Parameters
         ----------
