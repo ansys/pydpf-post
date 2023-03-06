@@ -64,7 +64,7 @@ def test_simulation_named_selections(static_simulation):
 def test_simulation_active_selection(static_simulation):
     assert static_simulation.active_selection is None
     selection = post.selection.Selection()
-    static_simulation.activate_selection(selection=selection)
+    static_simulation.active_selection = selection
     assert static_simulation.active_selection == selection
     static_simulation.deactivate_selection()
     assert static_simulation.active_selection is None

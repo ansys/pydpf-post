@@ -58,7 +58,7 @@ class TimeFreqSelection:
         self._selection = Workflow(server=self._server)
 
     def select_time_freq_indices(self, time_freq_indices: List[int]) -> None:
-        """Select time frequency sets by their indices (0 based).
+        """Select time frequency sets by their indices (zero-based indexing).
 
         Parameters
         ----------
@@ -69,7 +69,7 @@ class TimeFreqSelection:
         self.select_time_freq_sets(time_freq_sets)
 
     def select_time_freq_sets(self, time_freq_sets: List[int]) -> None:
-        """Select time frequency sets by their cumulative sets (1 based).
+        """Select time frequency sets by their cumulative sets (one-based indexing).
 
         Parameters
         ----------
@@ -84,7 +84,7 @@ class TimeFreqSelection:
         self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
 
     def select_load_steps(self, load_steps: List[int]) -> None:
-        """Select a list of load steps (1 based).
+        """Select a list of load steps (one-based indexing).
 
         Parameters
         ----------
@@ -117,7 +117,7 @@ class TimeFreqSelection:
     def select_time_freq_values(
         self, time_freq_values: Union[List[float], ndarray, Field]
     ) -> None:
-        """Select time frequency sets by their values (1 based).
+        """Select time frequency sets by their values (one-based indexing).
 
         Parameters
         ----------
@@ -473,7 +473,7 @@ class Selection:
         self._spatial_selection = value
 
     def select_time_freq_indices(self, time_freq_indices: List[int]) -> None:
-        """Select time frequency sets by their indices (0 based).
+        """Select time frequency sets by their indices (zero-based indexing).
 
         Parameters
         ----------
@@ -482,14 +482,16 @@ class Selection:
         """
         self._time_freq_selection.select_time_freq_indices(time_freq_indices)
 
-    def select_time_freq_sets(self, time_freq_sets: List[int]) -> None:
-        """Select time frequency sets by their cumulative sets (1 based).
+    def select_time_freq_sets(self, time_freq_sets: Union[List[int], int]) -> None:
+        """Select time frequency sets by their cumulative sets (one-based indexing).
 
         Parameters
         ----------
         time_freq_sets:
             Time/freq sets to select.
         """
+        if isinstance(time_freq_sets, int):
+            time_freq_sets = [time_freq_sets]
         self._time_freq_selection.select_time_freq_sets(time_freq_sets)
 
     def select_time_freq_values(
