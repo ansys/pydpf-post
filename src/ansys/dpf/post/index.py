@@ -63,7 +63,7 @@ class Index(ABC):
         #     raise ValueError("Arguments 'values' and 'scoping' cannot both be None.")
         if scoping is not None:
             self._scoping_ref = weakref.ref(scoping)
-        if values is not None:
+        if values is not None and len(values) > 0:
             self._dtype = type(values[0])
         self._str = None
 
