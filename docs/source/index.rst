@@ -11,9 +11,8 @@ Loading a simulation (defined by its result files) allows you to extract simulat
 as results and apply postprocessing operations on it.
 
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package and can
-be found by visiting [PyDPF-Core
-GitHub](https://github.com/pyansys/pydpf-core).  Use ``ansys-dpf-core`` for
-building more advanced and customized workflows using Ansys DPF.
+be found by visiting [PyDPF-Core GitHub](https://github.com/pyansys/pydpf-core).
+Use ``ansys-dpf-core`` for building more advanced and customized workflows using Ansys DPF.
 
 
 Brief demo
