@@ -171,9 +171,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: "232"
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
-      custom-requirements: requirements/requirements_dev.txt
-      custom-wheels: './dpf-standalone/v232/dist'
+      standalone_suffix: ".pre0"
       event_name: ${{ github.event_name }}
     secrets: inherit
 
