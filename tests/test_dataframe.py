@@ -124,12 +124,11 @@ def test_dataframe_animate(transient_rst):
     simulation = TransientMechanicalSimulation(transient_rst)
     # Animate displacement
     df = simulation.displacement(all_sets=True)
-    # df.animate()
-    df.animate(scale_factor=5.0, deform=True, save_as="test_dataframe_animate.gif")
-    # Animate nodal stress -> Does not work
-    df2 = simulation.stress_nodal(all_sets=True)
-    # df2.animate()
-    # assert False
+    df.animate()
+    df.animate(scale_factor=5.0, deform=True)
+
+    df = simulation.stress_nodal(all_sets=True)
+    df.animate(deform=True, scale_factor=5.0)
 
 
 def test_dataframe_repr(df):
