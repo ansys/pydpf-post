@@ -20,7 +20,7 @@ Brief demo
 ~~~~~~~~~~
 
 Provided you have ANSYS 2023 R1 installed, a DPF server will start
-automatically once you start using PyDPF-Post.
+automatically once you start using pyDPF-Post.
 Loading a simulation for a MAPDL result file to extract and post-process results:
 
 .. code:: python
@@ -32,14 +32,36 @@ Loading a simulation for a MAPDL result file to extract and post-process results
     >>> print(displacement)
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+             results         U
+              set_id         3
+      node      comp
+      4872         X -3.41e-05
+                   Y  1.54e-03
+                   Z -2.64e-06
+      9005         X -5.56e-05
+                   Y  1.44e-03
+                   Z  5.31e-06
+       ...
+
 .. code:: python
 
     >>> displacement.plot()
+
+
+.. figure:: ./images/crankshaft_disp.png
+    :width: 300pt
 
 .. code:: python
 
     >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
     >>> stress_eqv.plot()
+
+.. figure:: ./images/crankshaft_stress.png
+    :width: 300pt
 
 To run PyDPF-Post with Ansys versions starting from 2021 R1 to 2022 R2, use the following legacy PyDPF-Post
 tools:
@@ -51,6 +73,9 @@ tools:
     >>> solution = post.load_solution(examples.download_crankshaft())
     >>> stress = solution.stress()
     >>> stress.eqv.plot_contour(show_edges=False)
+
+.. figure:: ./images/crankshaft_stress.png
+    :width: 300pt
 
 
 For comprehensive demos, see :ref:`gallery`.
