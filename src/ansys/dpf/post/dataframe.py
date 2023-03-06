@@ -72,8 +72,8 @@ class DataFrame:
         self._last_display_max_colwidth = display_max_colwidth
 
     @property
-    def columns(self):
-        """Returns the column labels of the DataFrame."""
+    def columns(self) -> MultiIndex:
+        """Returns the MultiIndex for the columns of the DataFrame."""
         if self._columns is None:
             indexes = [ResultsIndex(values=[self._fc[0].name.split("_")])]
             indexes.extend(
@@ -86,8 +86,8 @@ class DataFrame:
         return self._columns
 
     @property
-    def index(self) -> Union[MultiIndex, Index]:
-        """Returns the Index or MultiIndex for the rows of the DataFrame."""
+    def index(self) -> MultiIndex:
+        """Returns the MultiIndex for the rows of the DataFrame."""
         return self._index
 
     @property
