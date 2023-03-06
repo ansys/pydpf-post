@@ -8,6 +8,7 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
+from ansys.dpf.core.plotter import DpfPlotter as Plotter
 import numpy as np
 
 from ansys.dpf.post import locations, shell_layers
@@ -195,7 +196,6 @@ class DataFrame:
         # Treat selection on a label
         if any([label in axis_kwargs.keys() for label in self._fc.labels]):
             fc = dpf.FieldsContainer()
-            fc.labels = self._fc.labels
             for i, field in enumerate(self._fc):
                 to_add = True
                 label_space = self._fc.get_label_space(i)
@@ -217,7 +217,14 @@ class DataFrame:
                             break
                 if to_add:
                     fc.add_field(label_space=label_space, field=field)
-            input_fc = fc
+            if len(fc) != 0:
+                input_fc = fc
+                fc.labels = self._fc.labels
+            else:
+                # raise ValueError("Selection criteria resulted in an empty DataFrame.")
+                input_fc = fc
+                fc.labels = []
+                axis_kwargs = {}
 
         # # Treat selection on components
         if ref_labels.components in axis_kwargs.keys():
@@ -293,9 +300,14 @@ class DataFrame:
             indexes=row_indexes,
         )
 
+        if "time" in fc.labels:
+            set_index = SetIndex(values=fc.get_available_ids_for_label("time"))
+        else:
+            set_index = SetIndex(values=[])
+
         column_indexes = [
             results_index,
-            SetIndex(values=fc.get_available_ids_for_label("time")),
+            set_index,
         ]
         label_indexes = []
         for label in fc.labels:
@@ -623,7 +635,7 @@ class DataFrame:
         """Representation of the DataFrame."""
         return f"DataFrame<index={self.index}, columns={self.columns}>"
 
-    def plot(self, shell_layer=shell_layers.top, **kwargs):
+    def plot(self, shell_layer=shell_layers.top, **kwargs) -> Union[Plotter, None]:
         """Plot the result.
 
         Parameters
@@ -638,6 +650,7 @@ class DataFrame:
             `set_id` 1 by using `df.plot(set_ids=1)`.
             One can get the list of available axes using
             :func:`DataFrame.axes <ansys.dpf.post.DataFrame.axes>`.
+            If the combination of arguments on axes does not return data, this returns None.
             Also supports additional keyword arguments for the plotter. For additional keyword
             arguments, see ``help(pyvista.plot)``.
 
@@ -651,8 +664,18 @@ class DataFrame:
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
-            fc = self.select(**axis_kwargs)._fc
+            df_temp = self.select(**axis_kwargs)
+            fc = df_temp._fc
+            if len(fc) == 0:
+                warnings.warn(
+                    UserWarning(
+                        "This combination of criteria did not return data. "
+                        f"Nothing to plot for {axis_kwargs}."
+                    )
+                )
+                return
         else:
+            axis_kwargs = {}
             # If no kwarg was given, construct a default label_space
             fc = self._fc
         labels = fc.labels
@@ -667,9 +690,6 @@ class DataFrame:
         else:
             label_space = fc.get_label_space(0)
         label_space = label_space
-        # if "elshape" in self._fc.labels:
-        #     merge_solids_shell_op = dpf.operators.logic.solid_shell_fields(fc)
-        #     fc = merge_solids_shell_op.eval()
 
         for field in fc:
             # Treat multi-layer field
@@ -691,11 +711,23 @@ class DataFrame:
                 fc = changeOp.get_output(0, dpf.types.fields_container)
                 break
 
+        if "elshape" in self._fc.labels and "elshape" not in axis_kwargs.keys():
+            merge_solids_shell_op = dpf.operators.logic.solid_shell_fields(fc)
+            fc = merge_solids_shell_op.eval()
+
         fields = fc.get_fields(label_space=label_space)
         plotter = Plotter(**kwargs)
-        for field in fields:
-            plotter.add_field(field=field, **kwargs)
-            # field.plot(text="debug")
+        # for field in fields:
+        if len(fields) > 1:
+            warnings.warn(
+                UserWarning(
+                    "Plotting criteria resulted in incompatible data. "
+                    "Try narrowing down to specific values for each column."
+                )
+            )
+            return None
+        plotter.add_field(field=fields[0], **kwargs)
+        # field.plot(text="debug")
         return plotter.show_figure(text=str(label_space), **kwargs)
 
     def animate(
