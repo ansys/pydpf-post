@@ -204,15 +204,16 @@ class Simulation(ABC):
         the loads, and the boundary conditions currently defined.
         Each representation can be deactivated with its respective boolean argument.
 
-        Args:
-            mesh:
-                Whether to plot the mesh representation.
-            constructed_geometries:
-                Whether to plot the constructed geometries.
-            loads:
-                Whether to plot the loads.
-            boundary_conditions:
-                Whether to plot the boundary conditions.
+        Parameters
+        ----------
+        mesh:
+            Whether to plot the mesh representation.
+        constructed_geometries:
+            Whether to plot the constructed geometries.
+        loads:
+            Whether to plot the loads.
+        boundary_conditions:
+            Whether to plot the boundary conditions.
 
         Returns
         -------
@@ -238,7 +239,7 @@ class Simulation(ABC):
         plt.show_figure()
 
     @property
-    def active_selection(self) -> Selection:
+    def active_selection(self) -> Union[Selection, None]:
         """Active selection used by default for result queries.
 
         Returns a :object:`ansys.dpf.post.selection.Selection` object.
@@ -249,13 +250,14 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> selection = post.selection.Selection()
-        >>> simulation.activate_selection(selection=selection)
+        >>> simulation.active_selection = selection
         >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         <ansys.dpf.post.selection.Selection object at ...>
         """
         return self._active_selection
 
-    def activate_selection(self, selection: Selection):
+    @active_selection.setter
+    def active_selection(self, selection: Union[Selection, None]):
         """Sets a selection as active on the simulation.
 
         Activating a given selection on a simulation means it is used
@@ -267,11 +269,14 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> selection = post.selection.Selection()
-        >>> simulation.activate_selection(selection=selection)
+        >>> simulation.active_selection = selection
         >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         <ansys.dpf.post.selection.Selection object at ...>
         """
-        self._active_selection = selection
+        if selection is not None:
+            self._active_selection = selection
+        else:
+            self.deactivate_selection()
 
     def deactivate_selection(self):
         """Deactivate the currently active selection.
@@ -282,7 +287,7 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> selection = post.selection.Selection()
-        >>> simulation.activate_selection(selection=selection)
+        >>> simulation.active_selection = selection
         >>> print(simulation.active_selection) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         <ansys.dpf.post.selection.Selection object at ...>
         >>> simulation.deactivate_selection()
@@ -360,7 +365,8 @@ class Simulation(ABC):
             for comp in components:
                 if not (isinstance(comp, str) or isinstance(comp, int)):
                     raise ValueError(
-                        "Argument 'components' can only contain integers and/or strings."
+                        "Argument 'components' can only contain integers and/or strings.\n"
+                        f"The provided component '{comp}' is not valid."
                     )
                 if isinstance(comp, int):
                     comp = str(comp)
@@ -611,8 +617,6 @@ class MechanicalSimulation(Simulation, ABC):
                 dpf.time_freq_scoping_factory.scoping_on_all_time_freqs(self._model)
             )
         elif set_ids is not None:
-            if isinstance(set_ids, int):
-                set_ids = [set_ids]
             selection.select_time_freq_sets(time_freq_sets=set_ids)
 
         elif times is not None:

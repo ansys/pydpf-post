@@ -165,8 +165,8 @@ def load_simulation(
         except Exception as e:
             warnings.warn(
                 Warning(
-                    "Physics type is defaulting to 'mechanical'. Specify the physics type",
-                    "keyword if it is invalid.",
+                    "Physics type is defaulting to 'mechanical'. Specify 'simulation_type' "
+                    "keyword if you want to use another type."
                 )
             )
             physics_type = _PhysicsType.mechanical
@@ -175,8 +175,8 @@ def load_simulation(
         except Exception as e:
             warnings.warn(
                 Warning(
-                    "Analysis type is defaulting to 'static'. Specify the analysis"
-                    "type keyword if it is invalid."
+                    "Analysis type is set to 'static' as default. Specify the 'simulation_type' "
+                    "keyword if you want to use another type."
                 )
             )
             analysis_type = _AnalysisType.static
@@ -219,7 +219,8 @@ def load_simulation(
     else:
         raise ValueError(
             f"Simulation type '{simulation_type}' is not a recognized simulation type."
-            f" Please use ansys.dpf.common.AvailableSimulationTypes."
+            f" Please use ansys.dpf.post.common.AvailableSimulationTypes or instantiate one of the"
+            f" available Simulation sub-classes directly."
         )
 
 
