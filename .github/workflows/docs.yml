@@ -32,6 +32,14 @@ on:
         required: true
         type: string
         default: ''
+      generate_pdf:
+        description: "Whether to build the PDF doc"
+        type: string
+        default: 'True'
+      debug:
+        description: "Debug verbose mode"
+        type: string
+        default: 'True'
 # Can be called manually
   workflow_dispatch:
     inputs:
@@ -60,6 +68,10 @@ on:
         required: false
         type: string
         default: ''
+      generate_pdf:
+        description: "Whether to build the PDF doc"
+        type: string
+        default: 'True'
 
 env:
   PACKAGE_NAME: ansys-dpf-post
@@ -169,21 +181,23 @@ jobs:
       - name: "Upload Documentation Build log"
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: doc-${{inputs.PACKAGE_NAME}}-log
+          name: doc-${{env.PACKAGE_NAME}}-log
           path: docs/*.txt
-        if: inputs.debug == 'false'
+        if: always()
 
       - name: "Zip HTML Documentation"
         uses: vimtor/action-zip@v1.1
         with:
           files: docs/build/html
-          dest: HTML-doc-${{inputs.PACKAGE_NAME}}.zip
+          dest: HTML-doc-${{env.PACKAGE_NAME}}.zip
+        if: always()
 
       - name: "Upload HTML Documentation"
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-doc-${{inputs.PACKAGE_NAME}}
-          path: HTML-doc-${{inputs.PACKAGE_NAME}}.zip
+          name: HTML-doc-${{env.PACKAGE_NAME}}
+          path: HTML-doc-${{env.PACKAGE_NAME}}.zip
+        if: always()
 
       - name: "Find PDF Documentation"
         shell: bash
@@ -201,14 +215,14 @@ jobs:
         if: ${{ inputs.generate_pdf == 'true' }}
         with:
           files: docs/build/latex/${{ steps.pdf.outputs.PDF_file }}
-          dest: PDF-doc-${{inputs.PACKAGE_NAME}}.zip
+          dest: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Upload PDF Documentation"
         uses: actions/upload-artifact@v3.1.0
         if: inputs.generate_pdf == 'true'
         with:
-          name: PDF-doc-${{inputs.PACKAGE_NAME}}
-          path: PDF-doc-${{inputs.PACKAGE_NAME}}.zip
+          name: PDF-doc-${{env.PACKAGE_NAME}}
+          path: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Kill all servers"
         uses: pyansys/pydpf-actions/kill-dpf-servers@v2.3
