@@ -4,8 +4,8 @@
 Load the result file
 ********************
 
-The :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object is
-a central element of DPF-Post. This object is the entry point for browsing
+The :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object is
+a central element of PyDPF-Post. This object is the entry point for browsing
 the contents of a result file.
 
 **On Windows**
@@ -16,7 +16,7 @@ You can load the result file with:
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution('C:/Users/user/file.rst')
+    >>> simulation = post.load_simulation('C:/Users/user/file.rst')
 
 
 **On Linux**
@@ -24,9 +24,9 @@ You can load the result file with:
     
 .. code:: python
 
-    >>> solution = post.load_solution('/home/user/file.rst')
+    >>> simulation = post.load_simulation('/home/user/file.rst')
 
 
 For a more detailed example on interacting with the
-:class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object,
+:class:`Simulation <ansys.dpf.post.simulation.Simulation>` object,
 see :ref:`ref_basics`.

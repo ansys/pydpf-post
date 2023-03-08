@@ -84,6 +84,18 @@ def simple_bar():
 
 
 @pytest.fixture()
+def multishells():
+    """Resolve the path of the "multishells.rst" result file."""
+    return examples.find_multishells_rst()
+
+
+@pytest.fixture()
+def transient_rst():
+    """Resolve the path of the "transient.rst" result file."""
+    return examples.download_transient_result()
+
+
+@pytest.fixture()
 def static_rst():
     """Resolve the path of the "static.rst" result file."""
     return examples.static_rst
@@ -127,6 +139,12 @@ def rth_steady_state():
 def rth_electric():
     """Resolve the path of the "rth/rth_electric.rth" result file."""
     return examples.electric_therm
+
+
+@pytest.fixture()
+def modal_frame():
+    """Resolve the path of the "rth/rth_electric.rth" result file."""
+    return examples.download_modal_frame()
 
 
 @pytest.fixture(scope="session", autouse=True)

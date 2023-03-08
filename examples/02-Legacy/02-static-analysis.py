@@ -1,10 +1,10 @@
 """
-.. _ref_modal_analysis:
+.. _ref_static_analysis:
 
-Modal analysis
-==============
-This example shows how you can postprocess the result file for a modal analysis
-using DPF-Post.
+Static analysis
+===============
+This example shows how you can post-process a result file for a static analysis
+using PyDPF-Post.
 """
 
 ###############################################################################
@@ -18,14 +18,13 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object. This example loads a result file for a modal analysis
+# Get the ``Solution`` object. This example loads a result file for a static analysis
 # computed in Ansys Mechanical.
 
-example_path = examples.download_all_kinds_of_complexity_modal()
+example_path = examples.download_all_kinds_of_complexity()
 
 solution = post.load_solution(example_path)
 print(solution)
-
 
 ###############################################################################
 # Get ``Result`` objects
@@ -34,11 +33,11 @@ print(solution)
 ###############################################################################
 # Get displacement result
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# Get the displacement ``Result`` object. It contains a field for real values
-# and a field for imaginary values.
+# Get the displacement ``Result`` object.
 
 disp_result = solution.displacement()
 disp = disp_result.vector
+print(disp)
 
 ###############################################################################
 # Check number of fields
@@ -48,7 +47,9 @@ disp = disp_result.vector
 disp.num_fields
 
 ###############################################################################
-# **Get data from a field**
+# Get data from field
+# ~~~~~~~~~~~~~~~~~~~
+# Get data from a field.
 
 disp.get_data_at_field(0)
 
@@ -83,24 +84,16 @@ disp.get_min_data_at_field(0)
 ###############################################################################
 # Get stress result
 # -----------------
-# Get a stress result that deals with amplitude. It contains a field for real
-# values and a field for imaginary values.
+# Get the stress ``Result`` object for a tensor.
 
 stress_result = solution.stress()
-
-###############################################################################
-# Check if support has complex frequencies
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Check if the support has complex frequencies.
-
-stress_result.has_complex_frequencies()
-
-###############################################################################
-# Get tensor result
-# ~~~~~~~~~~~~~~~~~
-# Get the tensor result.
-
 stress = stress_result.tensor
+
+###############################################################################
+# Check number of fields
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Check the number of shell and solid elements in distinct fields.
+
 stress.num_fields
 
 ###############################################################################
@@ -119,26 +112,24 @@ shell_field.shell_layers
 solid_field = stress[1]
 
 ###############################################################################
-# Plot amplitude contour
-# ~~~~~~~~~~~~~~~~~~~~~~
-# Plot the amplitude contour.
+# Plot contour
+# ~~~~~~~~~~~~
+# Plot the contour.
 
-amplitude = stress_result.tensor_amplitude
 stress.plot_contour()
 
 ###############################################################################
 # Get elastic strain result
-# =========================
-# Get an elastic strain result that deals with phase. It contains a field for
-# real values and a field for imaginary values.
+# -------------------------
+# Get an elastic strain result.
 
 elastic_strain_result = solution.elastic_strain()
 elastic_strain = elastic_strain_result.tensor
 
+###############################################################################
 # Check number of fields
 # ~~~~~~~~~~~~~~~~~~~~~~
 # Check the number of shell and solid elements in distinct fields.
-
 elastic_strain.num_fields
 
 ###############################################################################
@@ -146,3 +137,8 @@ elastic_strain.num_fields
 # to get the elastic strain result.
 
 print(solution.plastic_strain())
+
+###############################################################################
+# You can also use this method to get the temperature result.
+
+print(solution.structural_temperature())

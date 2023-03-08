@@ -18,20 +18,39 @@ from ansys.dpf.core import (  # noqa: F401
     AvailableServerContexts,
     set_default_server_context,
 )
-from ansys.dpf.core.common import locations  # noqa: F401
+from ansys.dpf.core.common import locations, shell_layers  # noqa: F401
 
 try:
     import importlib.metadata as importlib_metadata
 except ModuleNotFoundError:  # pragma: no cover
     import importlib_metadata
 
+from ansys.dpf.post import mesh, selection, tools
+from ansys.dpf.post.common import Grouping as grouping
+from ansys.dpf.post.dataframe import DataFrame  # noqa: F401
+from ansys.dpf.post.dpf_path import create_path_on_coordinates
+from ansys.dpf.post.harmonic_mechanical_simulation import (  # noqa: F401
+    HarmonicMechanicalSimulation,
+)
+from ansys.dpf.post.misc import Report
+from ansys.dpf.post.modal_mechanical_simulation import (  # noqa: F401
+    ModalMechanicalSimulation,
+)
+from ansys.dpf.post.post_utility import (
+    load_simulation,
+    load_solution,
+    print_available_keywords,
+)
+from ansys.dpf.post.static_mechanical_simulation import (  # noqa: F401
+    StaticMechanicalSimulation,
+)
+from ansys.dpf.post.transient_mechanical_simulation import (  # noqa: F401
+    TransientMechanicalSimulation,
+)
+
 # this must be after some ansys.dpf.post import
 __version__ = importlib_metadata.version("ansys-dpf-post")
 
-from ansys.dpf.post.common import Grouping as grouping
-from ansys.dpf.post.dpf_path import create_path_on_coordinates
-from ansys.dpf.post.misc import Report
-from ansys.dpf.post.post_utility import load_solution, print_available_keywords
 
 if hasattr(core, "settings") and hasattr(
     core.settings, "set_dynamic_available_results_capability"

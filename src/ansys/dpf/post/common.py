@@ -1,5 +1,14 @@
-"""Module containing the common tools for a better usage of the DPF-Post module."""
+"""Module containing the common tools for a better usage of the PyDPF-Post module.
 
+Common
+------
+
+"""
+
+from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
+from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
+from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
@@ -108,6 +117,7 @@ class _AnalysisType:
     modal = "modal"
     harmonic = "harmonic"
     transient = "transient"
+    msup = "MSUP"
 
 
 class _PhysicsType:
@@ -119,3 +129,20 @@ class _PhysicsType:
     mechanical = "mechanical"
     mecanic = "mecanic"  # Keep for retro-compatibility with ANSYS < 231
     thermal = "thermal"
+
+
+class AvailableSimulationTypes:
+    """Contains available simulation types to give the :func:`load_simulation` function."""
+
+    static_mechanical = "static mechanical"  # StaticMechanicalSimulation
+    transient_mechanical = "transient mechanical"  # TransientMechanicalSimulation
+    modal_mechanical = "modal mechanical"  # ModalMechanicalSimulation
+    harmonic_mechanical = "harmonic mechanical"  # HarmonicMechanicalSimulation
+
+
+simulation_type_str_to_class = {
+    AvailableSimulationTypes.static_mechanical: StaticMechanicalSimulation,
+    AvailableSimulationTypes.transient_mechanical: TransientMechanicalSimulation,
+    AvailableSimulationTypes.modal_mechanical: ModalMechanicalSimulation,
+    AvailableSimulationTypes.harmonic_mechanical: HarmonicMechanicalSimulation,
+}

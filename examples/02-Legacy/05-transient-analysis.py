@@ -1,10 +1,10 @@
 """
-.. _ref_static_analysis:
+.. _ref_trasient_analysis:
 
-Static analysis
-===============
-This example shows how you can postprocess a result file for a static analysis
-using DPF-Post.
+Transient analysis
+==================
+This example shows how you can post-process a result file for a transient analysis
+using PyDPF-Post.
 """
 
 ###############################################################################
@@ -18,12 +18,10 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object. This example loads a result file for a static analysis
-# computed in Ansys Mechanical.
+# Get the ``Solution`` object. This example loads a result file for a transient
+# analysis computed in Ansys Mechanical.
 
-example_path = examples.download_all_kinds_of_complexity()
-
-solution = post.load_solution(example_path)
+solution = post.load_solution(examples.msup_transient)
 print(solution)
 
 ###############################################################################
@@ -37,7 +35,6 @@ print(solution)
 
 disp_result = solution.displacement()
 disp = disp_result.vector
-print(disp)
 
 ###############################################################################
 # Check number of fields
@@ -109,7 +106,7 @@ shell_field.shell_layers
 # ~~~~~~~~~~~~~~~
 # Get the solid field.
 
-solid_field = stress[1]
+solid_field = stress[0]
 
 ###############################################################################
 # Plot contour
@@ -125,20 +122,11 @@ stress.plot_contour()
 
 elastic_strain_result = solution.elastic_strain()
 elastic_strain = elastic_strain_result.tensor
-
-###############################################################################
-# Check number of fields
-# ~~~~~~~~~~~~~~~~~~~~~~
-# Check the number of shell and solid elements in distinct fields.
+# shell and solid elements are in distinct fields.
 elastic_strain.num_fields
 
 ###############################################################################
 # If the result file contains results, you can use this method
 # to get the elastic strain result.
 
-print(solution.plastic_strain())
-
-###############################################################################
-# You can also use this method to get the temperature result.
-
-print(solution.structural_temperature())
+print(solution.elastic_strain())

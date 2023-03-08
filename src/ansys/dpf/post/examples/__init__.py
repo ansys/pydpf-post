@@ -1,20 +1,17 @@
-"""DPF-Post example files."""
+"""PyDPF-Post example files.
+
+Examples
+--------
+This module module exposes PyDPF-Core functionalities.
+
+See `here <https://dpf.docs.pyansys.com/dev/api/ansys.dpf.core.examples.html>`_
+for a description of the PyDPF-Core ``example`` API.
+
+"""
 import os
 
 # alias files used by the core
-from ansys.dpf.core.examples import (
-    complex_rst,
-    download_all_kinds_of_complexity,
-    download_all_kinds_of_complexity_modal,
-    download_transient_result,
-    electric_therm,
-    msup_transient,
-    multishells_rst,
-    simple_bar,
-    static_rst,
-    steady_therm,
-    transient_therm,
-)
+from ansys.dpf.core.examples import *  # noqa: F403
 
 # must copy files over when using docker
 # running_docker = os.environ.get('DPF_DOCKER', False)
