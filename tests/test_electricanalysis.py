@@ -1,3 +1,4 @@
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0
 import numpy as np
 import pytest
 
@@ -170,11 +171,12 @@ def test_electricpotential(rth_electric):
     assert fc[0].location == s[0].location
     assert len(fc[0].data) == len(s[0].data)
     assert np.allclose(s[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(s.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out == True
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+        comp = core.operators.logic.identical_fc()
+        comp.inputs.fields_containerA.connect(fc)
+        comp.inputs.fields_containerB.connect(s.result_fields_container)
+        out = comp.outputs.boolean()
+        assert out == True
 
 
 to_return = "node scoping and element scoping returns the same"

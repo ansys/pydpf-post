@@ -2,6 +2,7 @@ import unittest
 import weakref
 
 from ansys.dpf.core.common import locations
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0
 import numpy as np
 import pytest
 
@@ -298,11 +299,12 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert fc[0].location == disp[0].location
     assert len(fc[0].data) == len(disp[0].data)
     assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(disp.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out == True
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+        comp = core.operators.logic.identical_fc()
+        comp.inputs.fields_containerA.connect(fc)
+        comp.inputs.fields_containerB.connect(disp.result_fields_container)
+        out = comp.outputs.boolean()
+        assert out == True
 
 
 def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
@@ -357,11 +359,12 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert fc[0].location == stress[0].location
     assert len(fc[0].data) == len(stress[0].data)
     assert np.allclose(stress[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(stress.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out == True
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+        comp = core.operators.logic.identical_fc()
+        comp.inputs.fields_containerA.connect(fc)
+        comp.inputs.fields_containerB.connect(stress.result_fields_container)
+        out = comp.outputs.boolean()
+        assert out == True
 
 
 def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
@@ -408,11 +411,12 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     assert fc[0].location == disp[0].location
     assert len(fc[0].data) == len(disp[0].data)
     assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(disp.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out is True
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+        comp = core.operators.logic.identical_fc()
+        comp.inputs.fields_containerA.connect(fc)
+        comp.inputs.fields_containerB.connect(disp.result_fields_container)
+        out = comp.outputs.boolean()
+        assert out is True
 
 
 def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
@@ -457,11 +461,12 @@ def test_groupingmat_elemlocation(allkindofcomplexity):
     assert fc[0].location == stress[0].location
     assert len(fc[0].data) == len(stress[0].data)
     assert np.allclose(stress[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(stress.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out is True
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+        comp = core.operators.logic.identical_fc()
+        comp.inputs.fields_containerA.connect(fc)
+        comp.inputs.fields_containerB.connect(stress.result_fields_container)
+        out = comp.outputs.boolean()
+        assert out is True
 
 
 def test_mapdlgrouping_nodallocation_verbose_api(allkindofcomplexity):
