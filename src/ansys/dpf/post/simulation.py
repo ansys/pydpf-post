@@ -1,4 +1,9 @@
-"""Module containing the ``Simulation`` class."""
+"""Module containing the ``Simulation`` class.
+
+Simulation
+----------
+
+"""
 from abc import ABC
 from enum import Enum
 from os import PathLike

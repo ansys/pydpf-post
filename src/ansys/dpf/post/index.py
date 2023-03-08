@@ -1,4 +1,9 @@
-"""Module containing the ``Index`` class."""
+"""Module containing the ``Index`` class and sub-classes.
+
+Index
+-----
+
+"""
 from abc import ABC
 from typing import List, Union
 import weakref

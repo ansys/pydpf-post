@@ -1,4 +1,9 @@
-"""Module containing the ``DataFrame`` class."""
+"""Module containing the ``DataFrame`` class.
+
+DataFrame
+---------
+
+"""
 from __future__ import annotations
 
 import itertools
