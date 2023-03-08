@@ -1,28 +1,28 @@
 .. _user_guide_extending_to_core:
 
-**********************
-Use DPF-Core operators
-**********************
+************************
+Use PyDPF-Core operators
+************************
 
-DPF-Post is based on DPF-Core, but it is streamlined for postprocessing.
-Because DPF-Post works hand-in-hand with DPF-Core, you can use the powerful,
+PyDPF-Post is based on PyDPF-Core, but it is streamlined for postprocessing.
+Because PyDPF-Post works hand-in-hand with PyDPF-Core, you can use the powerful,
 scalable  `operators <https://dpfdocs.pyansys.com/operator_reference.html>`_
-in DPF-Core to facilitate data manipulation and more general data transformations.
+of PyDPF-Core to facilitate data manipulation and more general data transformations.
 
-DPF-Core can access data from Ansys solver result files as well as from
-third-party file formats. With DPF-Core, you can assemble complex workflows
+PyDPF-Core can access data from Ansys solver result files as well as from
+third-party file formats. With PyDPF-Core, you can assemble complex workflows
 from simpler building blocks by chaining them together with operators.
 The data in DPF is represented by physics-agnostic mathematical quantities
 described in a self-sufficient entity called a :class:`Field <ansys.dpf.core.field.Field>`.
 
-To show the range of DPF-Core and DPF-Post capabilities, the following
-examples show they work together.
+To show the range of PyDPF-Core and PyDPF-Post capabilities, the following
+examples show how they work together.
 
 
 Export to VTK file
 ------------------
 
-This code shows how to export a fields container to a VTK file:
+This code shows how to export a fields container to a VTK file using the legacy PyDPF-Post API:
 
 .. code:: python
 
@@ -67,7 +67,7 @@ Export to HDF5 file
 -------------------
 
 This code shows how to export the same fields container
-to an HDF5 file:
+to an HDF5 file with the legacy PyDPF-Post API:
 
 .. code:: python
 

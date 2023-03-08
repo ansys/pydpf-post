@@ -3,8 +3,8 @@
 
 Transient analysis
 ==================
-This example shows how you can postprocess a result file for a transient analysis
-using DPF-Post.
+This example shows how you can post-process a result file for a transient analysis
+using PyDPF-Post.
 """
 
 ###############################################################################

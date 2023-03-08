@@ -1,4 +1,4 @@
-"""DPF-Post example files."""
+"""PyDPF-Post example files."""
 import os
 
 # alias files used by the core

@@ -3,8 +3,8 @@
 
 Modal analysis
 ==============
-This example shows how you can postprocess the result file for a modal analysis
-using DPF-Post.
+This example shows how you can post-process the result file for a modal analysis
+using PyDPF-Post.
 """
 
 ###############################################################################

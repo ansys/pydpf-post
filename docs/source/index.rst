@@ -10,15 +10,15 @@ The Python `ansys-dpf-post` package provides a high level, physics oriented API 
 Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
 as results and apply postprocessing operations on it.
 
-This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package and can
-be found by visiting [PyDPF-Core GitHub](https://github.com/pyansys/pydpf-core).
+This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package which can
+be found by visiting `PyDPF-Core GitHub <https://github.com/pyansys/pydpf-core>`_.
 Use ``ansys-dpf-core`` for building more advanced and customized workflows using Ansys DPF.
 
 
 Brief demo
 ~~~~~~~~~~
 
-Provided you have ANSYS 2023 R1 installed, a DPF server starts
+Provided you have Ansys 2023 R1 installed, a DPF server starts
 automatically once you start using PyDPF-Post.
 Loading a simulation for a MAPDL result file to extract and post-process results:
 
@@ -87,7 +87,7 @@ Key features
 
 PyDPF-Post is based on DPF, whose data framework localizes loading and
 postprocessing on the DPF server, enabling rapid postprocessing workflows
-because they are written in C and FORTRAN. Because DPF-Post presents results
+because they are written in C and FORTRAN. Because PyDPF-Post presents results
 in a Pythonic manner, you can rapidly develop simple or complex postprocessing
 scripts.
 

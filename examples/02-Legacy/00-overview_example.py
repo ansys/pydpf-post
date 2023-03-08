@@ -1,9 +1,9 @@
 """
 .. _ref_overview_example:
 
-DPF-Post overview
-=================
-This example provides an overview of how you use DPF-Post.
+PyDPF-Post overview
+===================
+This example provides an overview of how you use PyDPF-Post.
 """
 
 ###############################################################################
