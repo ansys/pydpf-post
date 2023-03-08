@@ -1,0 +1,1942 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>&lt;no title&gt; &#8212; PyDPF-Post</title>
+    
+<script>
+  document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+  document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
+</script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+
+    
+        <link href="../_static/css/breadcrumbs.css" rel="stylesheet">
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+    <div class="bd-header-announcement container-fluid" id="banner">
+      
+
+    </div>
+
+    
+    
+    <nav class="bd-header navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="bd-header__inner container-xl">
+
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="fas fa-bars"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../user_guide/index.html">
+  User guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="index.html">
+  API reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../examples/index.html">
+  Examples
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contributing.html">
+  Contribute
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        dev  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables api/ansys.dpf.post.strain and {'json_url': 'https://post.docs.pyansys.com/release/versions.json', 'version_match': 'dev'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "api/ansys.dpf.post.strain.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://post.docs.pyansys.com/release/versions.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "api/ansys.dpf.post.strain.html";
+        let btn = document.getElementById("version_switcher_button");
+        // Set empty strings by default so that these attributes exist and can be used in CSS selectors
+        btn.dataset["activeVersionName"] = "";
+        btn.dataset["activeVersion"] = "";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.2.6.dev0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "dev") {
+                node.classList.add("active");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span id="theme-switch" class="btn btn-sm btn-outline-primary navbar-btn rounded-circle">
+    <a class="theme-switch" data-mode="light"><i class="fas fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="far fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fas fa-adjust"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/pyansys/pydpf-post" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+     
+<div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => document.getElementById("announcement_msg").innerHTML = text)
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+
+    
+        <div class="container-xl">
+    <div class="row">
+        <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+        <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+    
+        <li class="nav-item nav-item-additional-breadcrumb"><a href="https://docs.pyansys.com/">PyAnsys</a> » </li>
+    
+    
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDPF-Post</a> » </li>
+    
+
+        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+      </ul>
+    </div>
+        </div>
+  </div>
+</div>
+    
+
+
+    <div class="bd-container container-xl">
+      <div class="bd-container__inner row">
+          
+
+<!-- Only show if we have sidebars configured, else just a small margin  -->
+<div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.examples.html">
+   ansys.dpf.post.examples package
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.common.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Grouping
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.displacement.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexDisplacement
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.dpf_path.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DpfPath
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.dpf_solution.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DpfMecanicComplexSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.electric_results.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ElectricField
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.errors.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     CoreVersionError
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     HarmonicAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.misc.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Report
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.misc_results.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexMecanicMisc
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.modal_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ModalAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.post_utility.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     load_solution()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_data.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ResultData
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_definition.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Definition
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_evaluation.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ResultEvaluator
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_object.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Result
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.scalar.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexScalar
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.static_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     StaticAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexElasticStrain
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.stress.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexStress
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.temperature.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexStructuralTemperature
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.tensor.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexTensor
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.transient_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ThermalTransientAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.vector.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexVector
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+    
+  </div>
+</nav>
+  </div>
+  <div class="sidebar-end-items">
+  </div>
+</div>
+
+
+          
+
+
+<div class="bd-sidebar-secondary d-none d-xl-block col-xl-2 bd-toc">
+  
+    
+    <div class="toc-item">
+      
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexElasticStrain
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.has_complex_frequencies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.has_complex_frequencies()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_1
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_1_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_1_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_2
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_2_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_2_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_3
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_3_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.principal_3_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.tensor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.tensor_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.tensor_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xx
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xx_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xx_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xy_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xy_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.xz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yy_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yy_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.yz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.zz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.zz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexElasticStrain.zz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexPlasticStrain
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.has_complex_frequencies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.has_complex_frequencies()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_1
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_1_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_1_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_2
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_2_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_2_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_3
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_3_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.principal_3_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.tensor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.tensor_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.tensor_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xx
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xx_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xx_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xy_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xy_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.xz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yy_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yy_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.yz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.zz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz_amplitude">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.zz_amplitude
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz_at_phase">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ComplexPlasticStrain.zz_at_phase()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ElasticStrain
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.has_complex_frequencies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.has_complex_frequencies()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.principal_1">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.principal_1
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.principal_2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.principal_2
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.principal_3">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.principal_3
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.tensor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.tensor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.xx">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.xx
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.xy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.xy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.xz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.xz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.yy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.yy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.yz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.yz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.ElasticStrain.zz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ElasticStrain.zz
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     PlasticStrain
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.has_complex_frequencies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.has_complex_frequencies()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.principal_1">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.principal_1
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.principal_2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.principal_2
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.principal_3">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.principal_3
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.tensor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.tensor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.xx">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.xx
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.xy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.xy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.xz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.xz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.yy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.yy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.yz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.yz
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ansys.dpf.post.strain.PlasticStrain.zz">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PlasticStrain.zz
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+    </div>
+    
+    <div class="toc-item">
+      
+    </div>
+    
+  
+</div>
+
+
+          
+          
+          <div class="bd-content col-12 col-md-9 col-xl-7">
+              
+              <article class="bd-article" role="main">
+                
+  <span class="target" id="module-ansys.dpf.post.strain"></span><p>This module contains classes for strain results.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.strain.</span></span><span class="sig-name descname"><span class="pre">ComplexElasticStrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain" title="Permalink to this definition">#</a></dt>
+<dd><p>Defines the complex elastic strain object, which is a tensor object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.has_complex_frequencies">
+<span class="sig-name descname"><span class="pre">has_complex_frequencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.has_complex_frequencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if the result contains complex frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the result contains complex frequencies, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_1_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_1_at_phase">
+<span class="sig-name descname"><span class="pre">principal_1_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor at a phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_2_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_2_at_phase">
+<span class="sig-name descname"><span class="pre">principal_2_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_3">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3" title="Permalink to this definition">#</a></dt>
+<dd><p>Results data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_3_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.principal_3_at_phase">
+<span class="sig-name descname"><span class="pre">principal_3_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the third principal component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.tensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.tensor_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.tensor_at_phase">
+<span class="sig-name descname"><span class="pre">tensor_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.tensor_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xx_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xx_at_phase">
+<span class="sig-name descname"><span class="pre">xx_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xx_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data of for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xy_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xy_at_phase">
+<span class="sig-name descname"><span class="pre">xy_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xy_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XY component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the  XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.xz_at_phase">
+<span class="sig-name descname"><span class="pre">xz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.xz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yy_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yy_at_phase">
+<span class="sig-name descname"><span class="pre">yy_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yy_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.yz_at_phase">
+<span class="sig-name descname"><span class="pre">yz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.yz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.zz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.zz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexElasticStrain.zz_at_phase">
+<span class="sig-name descname"><span class="pre">zz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexElasticStrain.zz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor at a specific phase.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.strain.</span></span><span class="sig-name descname"><span class="pre">ComplexPlasticStrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain" title="Permalink to this definition">#</a></dt>
+<dd><p>Defines the complex plastic strain object, which is a tensor object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.has_complex_frequencies">
+<span class="sig-name descname"><span class="pre">has_complex_frequencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.has_complex_frequencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if the result contains complex frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the result contains complex frequencies, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_at_phase">
+<span class="sig-name descname"><span class="pre">principal_1_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor at a phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_at_phase">
+<span class="sig-name descname"><span class="pre">principal_2_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_3">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3" title="Permalink to this definition">#</a></dt>
+<dd><p>Results data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_at_phase">
+<span class="sig-name descname"><span class="pre">principal_3_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the third principal component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.tensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.tensor_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.tensor_at_phase">
+<span class="sig-name descname"><span class="pre">tensor_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xx_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xx_at_phase">
+<span class="sig-name descname"><span class="pre">xx_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xx_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data of for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xy_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xy_at_phase">
+<span class="sig-name descname"><span class="pre">xy_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xy_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XY component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the  XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.xz_at_phase">
+<span class="sig-name descname"><span class="pre">xz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.xz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yy_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yy_at_phase">
+<span class="sig-name descname"><span class="pre">yy_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yy_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.yz_at_phase">
+<span class="sig-name descname"><span class="pre">yz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.yz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor at a specific phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.zz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.zz_amplitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz_amplitude</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz_amplitude" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ComplexPlasticStrain.zz_at_phase">
+<span class="sig-name descname"><span class="pre">zz_at_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ComplexPlasticStrain.zz_at_phase" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor at a specific phase.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.strain.</span></span><span class="sig-name descname"><span class="pre">ElasticStrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain" title="Permalink to this definition">#</a></dt>
+<dd><p>Defines the elastic strain object, which is a tensor object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.has_complex_frequencies">
+<span class="sig-name descname"><span class="pre">has_complex_frequencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.has_complex_frequencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if the result contains complex frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the result contains complex frequencies, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.principal_1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.principal_1" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.principal_2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.principal_2" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.principal_3">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.principal_3" title="Permalink to this definition">#</a></dt>
+<dd><p>Results data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.tensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.tensor" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.xx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.xx" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.xy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.xy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data of for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.xz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.xz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.yy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.yy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.yz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.yz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.ElasticStrain.zz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.ElasticStrain.zz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.strain.</span></span><span class="sig-name descname"><span class="pre">PlasticStrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain" title="Permalink to this definition">#</a></dt>
+<dd><p>Defines the plastic strain object, which is a tensor object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.has_complex_frequencies">
+<span class="sig-name descname"><span class="pre">has_complex_frequencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.has_complex_frequencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if the result contains complex frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the result contains complex frequencies, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.principal_1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_1</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.principal_1" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the first principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.principal_2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_2</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.principal_2" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the second principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.principal_3">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">principal_3</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.principal_3" title="Permalink to this definition">#</a></dt>
+<dd><p>Results data for the third principal component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.tensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.tensor" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the tensor values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.xx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xx</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.xx" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XX component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.xy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.xy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data of for the XY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.xz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.xz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the XZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.yy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yy</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.yy" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YY component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.yz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.yz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the YZ component of the tensor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.strain.PlasticStrain.zz">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zz</span></span><a class="headerlink" href="#ansys.dpf.post.strain.PlasticStrain.zz" title="Permalink to this definition">#</a></dt>
+<dd><p>Result data for the ZZ component of the tensor.</p>
+</dd></dl>
+
+</dd></dl>
+
+
+
+              </article>
+              
+
+              
+          </div>
+          
+      </div>
+    </div>
+
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+
+<footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    <p class="copyright">
+    &copy; Copyright (c) 2022 ANSYS, Inc. All rights reserved.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+  </div>
+  
+</div>
+</footer>
+  </body>
+</html>

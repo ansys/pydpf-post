@@ -1,0 +1,46 @@
+﻿ansys.dpf.post.temperature.HeatFlux
+===================================
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. autoclass:: HeatFlux
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      HeatFlux.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      HeatFlux.norm
+      
+      
+      HeatFlux.vector
+      
+      
+      HeatFlux.x
+      
+      
+      HeatFlux.y
+      
+      
+      HeatFlux.z
+      
+   
+   

@@ -1,0 +1,1269 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>ansys.dpf.post package &#8212; PyDPF-Post</title>
+    
+<script>
+  document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+  document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
+</script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+
+    
+        <link href="../_static/css/breadcrumbs.css" rel="stylesheet">
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+    <div class="bd-header-announcement container-fluid" id="banner">
+      
+
+    </div>
+
+    
+    
+    <nav class="bd-header navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="bd-header__inner container-xl">
+
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="fas fa-bars"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../user_guide/index.html">
+  User guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="index.html">
+  API reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../examples/index.html">
+  Examples
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contributing.html">
+  Contribute
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        dev  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables api/ansys.dpf.post and {'json_url': 'https://post.docs.pyansys.com/release/versions.json', 'version_match': 'dev'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "api/ansys.dpf.post.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://post.docs.pyansys.com/release/versions.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "api/ansys.dpf.post.html";
+        let btn = document.getElementById("version_switcher_button");
+        // Set empty strings by default so that these attributes exist and can be used in CSS selectors
+        btn.dataset["activeVersionName"] = "";
+        btn.dataset["activeVersion"] = "";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.2.6.dev0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "dev") {
+                node.classList.add("active");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span id="theme-switch" class="btn btn-sm btn-outline-primary navbar-btn rounded-circle">
+    <a class="theme-switch" data-mode="light"><i class="fas fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="far fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fas fa-adjust"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/pyansys/pydpf-post" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+     
+<div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => document.getElementById("announcement_msg").innerHTML = text)
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+
+    
+        <div class="container-xl">
+    <div class="row">
+        <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+        <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+    
+        <li class="nav-item nav-item-additional-breadcrumb"><a href="https://docs.pyansys.com/">PyAnsys</a> » </li>
+    
+    
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDPF-Post</a> » </li>
+    
+
+        <li class="nav-item nav-item-this"><a href="">ansys.dpf.post package</a></li> 
+      </ul>
+    </div>
+        </div>
+  </div>
+</div>
+    
+
+
+    <div class="bd-container container-xl">
+      <div class="bd-container__inner row">
+          
+
+<!-- Only show if we have sidebars configured, else just a small margin  -->
+<div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.examples.html">
+   ansys.dpf.post.examples package
+  </a>
+ </li>
+</ul>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.common.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Grouping
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.displacement.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexDisplacement
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.dpf_path.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DpfPath
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.dpf_solution.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DpfMecanicComplexSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.electric_results.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ElectricField
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.errors.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     CoreVersionError
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     HarmonicAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.misc.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Report
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.misc_results.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexMecanicMisc
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.modal_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ModalAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.post_utility.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     load_solution()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_data.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ResultData
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_definition.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Definition
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_evaluation.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ResultEvaluator
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.result_object.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Result
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.scalar.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexScalar
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.static_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     StaticAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.strain.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexElasticStrain
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.stress.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexStress
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.temperature.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexStructuralTemperature
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.tensor.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexTensor
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.transient_analysis.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ThermalTransientAnalysisSolution
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ansys.dpf.post.vector.html">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ComplexVector
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+    
+  </div>
+</nav>
+  </div>
+  <div class="sidebar-end-items">
+  </div>
+</div>
+
+
+          
+
+
+<div class="bd-sidebar-secondary d-none d-xl-block col-xl-2 bd-toc">
+  
+    
+    <div class="toc-item">
+      
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#subpackages">
+   Subpackages
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#submodules">
+   Submodules
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-ansys.dpf.post">
+   Module contents
+  </a>
+ </li>
+</ul>
+
+</nav>
+    </div>
+    
+    <div class="toc-item">
+      
+    </div>
+    
+  
+</div>
+
+
+          
+          
+          <div class="bd-content col-12 col-md-9 col-xl-7">
+              
+              <article class="bd-article" role="main">
+                
+  <section id="ansys-dpf-post-package">
+<h1>ansys.dpf.post package<a class="headerlink" href="#ansys-dpf-post-package" title="Permalink to this heading">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.examples.html">ansys.dpf.post.examples package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.examples.html#module-ansys.dpf.post.examples">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.common.html"><code class="docutils literal notranslate"><span class="pre">Grouping</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.displacement.html"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.norm"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.norm_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.norm_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.norm_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.norm_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.vector"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.vector_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.vector_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.vector_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.vector_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.x"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.x_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.x_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.x_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.x_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.y"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.y_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.y_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.y_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.y_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.z"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.z</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.z_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.z_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.ComplexDisplacement.z_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexDisplacement.z_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement"><code class="docutils literal notranslate"><span class="pre">Displacement</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Displacement.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.norm"><code class="docutils literal notranslate"><span class="pre">Displacement.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.vector"><code class="docutils literal notranslate"><span class="pre">Displacement.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.x"><code class="docutils literal notranslate"><span class="pre">Displacement.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.y"><code class="docutils literal notranslate"><span class="pre">Displacement.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement.z"><code class="docutils literal notranslate"><span class="pre">Displacement.z</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_path.html"><code class="docutils literal notranslate"><span class="pre">DpfPath</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_path.html#ansys.dpf.post.dpf_path.DpfPath.coordinates"><code class="docutils literal notranslate"><span class="pre">DpfPath.coordinates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_path.html#ansys.dpf.post.dpf_path.create_path_on_coordinates"><code class="docutils literal notranslate"><span class="pre">create_path_on_coordinates()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.displacement"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.has_complex_result"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.has_complex_result()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.mesh"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.stress"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicComplexSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">DpfMecanicComplexSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.displacement"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.mesh"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.stress"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfMecanicSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">DpfMecanicSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfSolution"><code class="docutils literal notranslate"><span class="pre">DpfSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">DpfSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfSolution.mesh"><code class="docutils literal notranslate"><span class="pre">DpfSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">DpfSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.electric_field"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.electric_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.electric_potential"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.electric_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.heat_flux"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.heat_flux()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.mesh"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.temperature"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html#ansys.dpf.post.dpf_solution.DpfThermalSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">DpfThermalSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.electric_results.html"><code class="docutils literal notranslate"><span class="pre">ElectricField</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ElectricField.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.norm"><code class="docutils literal notranslate"><span class="pre">ElectricField.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.vector"><code class="docutils literal notranslate"><span class="pre">ElectricField.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.x"><code class="docutils literal notranslate"><span class="pre">ElectricField.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.y"><code class="docutils literal notranslate"><span class="pre">ElectricField.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField.z"><code class="docutils literal notranslate"><span class="pre">ElectricField.z</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricPotential"><code class="docutils literal notranslate"><span class="pre">ElectricPotential</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricPotential.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ElectricPotential.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricPotential.scalar"><code class="docutils literal notranslate"><span class="pre">ElectricPotential.scalar</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.errors.html"><code class="docutils literal notranslate"><span class="pre">CoreVersionError</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.errors.html#ansys.dpf.post.errors.CoreVersionError.with_traceback"><code class="docutils literal notranslate"><span class="pre">CoreVersionError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.errors.html#ansys.dpf.post.errors.LabelSpaceError"><code class="docutils literal notranslate"><span class="pre">LabelSpaceError</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.errors.html#ansys.dpf.post.errors.LabelSpaceError.with_traceback"><code class="docutils literal notranslate"><span class="pre">LabelSpaceError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.errors.html#ansys.dpf.post.errors.NodalLocationError"><code class="docutils literal notranslate"><span class="pre">NodalLocationError</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.errors.html#ansys.dpf.post.errors.NodalLocationError.with_traceback"><code class="docutils literal notranslate"><span class="pre">NodalLocationError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.displacement"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.has_complex_result"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.has_complex_result()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.stress"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html#ansys.dpf.post.harmonic_analysis.HarmonicAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc.html"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.architecture"><code class="docutils literal notranslate"><span class="pre">Report.architecture</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.cpu_count"><code class="docutils literal notranslate"><span class="pre">Report.cpu_count</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.date"><code class="docutils literal notranslate"><span class="pre">Report.date</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.filesystem"><code class="docutils literal notranslate"><span class="pre">Report.filesystem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.machine"><code class="docutils literal notranslate"><span class="pre">Report.machine</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.mkl_info"><code class="docutils literal notranslate"><span class="pre">Report.mkl_info</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.packages"><code class="docutils literal notranslate"><span class="pre">Report.packages</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.platform"><code class="docutils literal notranslate"><span class="pre">Report.platform</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.python_environment"><code class="docutils literal notranslate"><span class="pre">Report.python_environment</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.sys_version"><code class="docutils literal notranslate"><span class="pre">Report.sys_version</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.system"><code class="docutils literal notranslate"><span class="pre">Report.system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.to_dict"><code class="docutils literal notranslate"><span class="pre">Report.to_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html#ansys.dpf.post.misc.Report.total_ram"><code class="docutils literal notranslate"><span class="pre">Report.total_ram</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_artificial_hourglass_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_artificial_hourglass_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_co_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_co_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_fluid_penetration_pressure"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_fluid_penetration_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_friction_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_friction_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_penetration"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_penetration()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_pressure"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_sliding_distance"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_sliding_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_status"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_status()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_surface_heat_flux"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_surface_heat_flux()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contact_total_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contact_total_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_contactgap_distance"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_contactgap_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_elastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_force"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_incremental_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_incremental_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_kinetic_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_kinetic_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_mass"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_mass()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_elastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_force"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_stress_ratio"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_structural_temperature"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_nodal_thermal_strains"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_nodal_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_stiffness_matrix_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_stiffness_matrix_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_stress_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_stress_amplitude()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_stress_ratio"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_structural_temperature"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_thermal_dissipation_energy"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_thermal_dissipation_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_thermal_strains"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.elemental_volume"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.elemental_volume()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.modal_basis"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.modal_basis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_acceleration"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_acceleration()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_displacement"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_displacement_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_displacement_amplitude()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_elastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_force"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_moment"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_moment()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_plastic_strain"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_raw_displacement"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_raw_displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_raw_reaction_force"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_raw_reaction_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_reaction_force"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_reaction_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_stress_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_stress_amplitude()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_stress_ratio"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_structural_temperature"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_thermal_strains"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.nodal_velocity"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.nodal_velocity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ComplexMecanicMisc.von_mises_stress"><code class="docutils literal notranslate"><span class="pre">ComplexMecanicMisc.von_mises_stress()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc"><code class="docutils literal notranslate"><span class="pre">MecanicMisc</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_artificial_hourglass_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_artificial_hourglass_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_co_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_co_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_fluid_penetration_pressure"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_fluid_penetration_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_friction_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_friction_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_penetration"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_penetration()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_pressure"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_sliding_distance"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_sliding_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_status"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_status()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_surface_heat_flux"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_surface_heat_flux()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contact_total_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contact_total_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_contactgap_distance"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_contactgap_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_elastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_force"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_incremental_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_incremental_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_kinetic_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_kinetic_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_mass"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_mass()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_elastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_force"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_stress_ratio"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_structural_temperature"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_nodal_thermal_strains"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_nodal_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_stiffness_matrix_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_stiffness_matrix_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_stress_ratio"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_structural_temperature"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_thermal_dissipation_energy"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_thermal_dissipation_energy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_thermal_strains"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.elemental_volume"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.elemental_volume()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.modal_basis"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.modal_basis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_acceleration"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_acceleration()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_accu_eqv_creep_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_accu_eqv_creep_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_accu_eqv_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_accu_eqv_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_creep_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_creep_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_displacement"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_elastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_elastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_elastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_eqv_stress_parameter"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_eqv_stress_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_force"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_hydrostatic_pressure"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_hydrostatic_pressure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_moment"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_moment()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_plastic_state_variable"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_plastic_state_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_plastic_strain"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_plastic_strain_energy_density"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_plastic_strain_energy_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_raw_displacement"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_raw_displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_raw_reaction_force"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_raw_reaction_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_reaction_force"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_reaction_force()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_stress_ratio"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_stress_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_structural_temperature"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_thermal_strains"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_thermal_strains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.nodal_velocity"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.nodal_velocity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc.von_mises_stress"><code class="docutils literal notranslate"><span class="pre">MecanicMisc.von_mises_stress()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.Misc"><code class="docutils literal notranslate"><span class="pre">Misc</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ThermalMisc"><code class="docutils literal notranslate"><span class="pre">ThermalMisc</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ThermalMisc.nodal_electric_field"><code class="docutils literal notranslate"><span class="pre">ThermalMisc.nodal_electric_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ThermalMisc.nodal_electric_potential"><code class="docutils literal notranslate"><span class="pre">ThermalMisc.nodal_electric_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.ThermalMisc.nodal_temperature"><code class="docutils literal notranslate"><span class="pre">ThermalMisc.nodal_temperature()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.displacement"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.has_complex_result"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.has_complex_result()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.stress"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html#ansys.dpf.post.modal_analysis.ModalAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.post_utility.html"><code class="docutils literal notranslate"><span class="pre">load_solution()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.post_utility.html#ansys.dpf.post.post_utility.print_available_keywords"><code class="docutils literal notranslate"><span class="pre">print_available_keywords()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_data.html"><code class="docutils literal notranslate"><span class="pre">ResultData</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.get_all_label_spaces"><code class="docutils literal notranslate"><span class="pre">ResultData.get_all_label_spaces()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.get_data_at_field"><code class="docutils literal notranslate"><span class="pre">ResultData.get_data_at_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.get_max_data_at_field"><code class="docutils literal notranslate"><span class="pre">ResultData.get_max_data_at_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.get_min_data_at_field"><code class="docutils literal notranslate"><span class="pre">ResultData.get_min_data_at_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.get_scoping_at_field"><code class="docutils literal notranslate"><span class="pre">ResultData.get_scoping_at_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.max"><code class="docutils literal notranslate"><span class="pre">ResultData.max</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.max_data"><code class="docutils literal notranslate"><span class="pre">ResultData.max_data</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.min"><code class="docutils literal notranslate"><span class="pre">ResultData.min</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.min_data"><code class="docutils literal notranslate"><span class="pre">ResultData.min_data</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.num_fields"><code class="docutils literal notranslate"><span class="pre">ResultData.num_fields</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.plot_contour"><code class="docutils literal notranslate"><span class="pre">ResultData.plot_contour()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html#ansys.dpf.post.result_data.ResultData.result_fields_container"><code class="docutils literal notranslate"><span class="pre">ResultData.result_fields_container</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_definition.html"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.element_scoping"><code class="docutils literal notranslate"><span class="pre">Definition.element_scoping</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.grouping"><code class="docutils literal notranslate"><span class="pre">Definition.grouping</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.location"><code class="docutils literal notranslate"><span class="pre">Definition.location</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.mapdl_grouping"><code class="docutils literal notranslate"><span class="pre">Definition.mapdl_grouping</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.named_selection"><code class="docutils literal notranslate"><span class="pre">Definition.named_selection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.node_scoping"><code class="docutils literal notranslate"><span class="pre">Definition.node_scoping</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.path"><code class="docutils literal notranslate"><span class="pre">Definition.path</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.set"><code class="docutils literal notranslate"><span class="pre">Definition.set</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.time"><code class="docutils literal notranslate"><span class="pre">Definition.time</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html#ansys.dpf.post.result_definition.Definition.time_scoping"><code class="docutils literal notranslate"><span class="pre">Definition.time_scoping</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_evaluation.html"><code class="docutils literal notranslate"><span class="pre">ResultEvaluator</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_evaluation.html#ansys.dpf.post.result_evaluation.ResultEvaluator.evaluate_result"><code class="docutils literal notranslate"><span class="pre">ResultEvaluator.evaluate_result()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_object.html"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_object.html#ansys.dpf.post.result_object.Result.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Result.has_complex_frequencies()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.scalar.html"><code class="docutils literal notranslate"><span class="pre">ComplexScalar</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.ComplexScalar.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexScalar.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.ComplexScalar.scalar"><code class="docutils literal notranslate"><span class="pre">ComplexScalar.scalar</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.ComplexScalar.scalar_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexScalar.scalar_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.ComplexScalar.scalar_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexScalar.scalar_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.Scalar"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.Scalar.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Scalar.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html#ansys.dpf.post.scalar.Scalar.scalar"><code class="docutils literal notranslate"><span class="pre">Scalar.scalar</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_analysis.html"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.displacement"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.stress"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.StaticAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.electric_field"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.electric_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.electric_potential"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.electric_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.heat_flux"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.heat_flux()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.temperature"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html#ansys.dpf.post.static_analysis.ThermalStaticAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">ThermalStaticAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_1"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_1_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_1_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_1_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_2"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_2_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_2_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_2_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_3"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_3_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.principal_3_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.principal_3_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.tensor"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.tensor_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.tensor_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.tensor_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.tensor_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xx"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xx_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xx_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xx_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xx_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xy"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xz"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.xz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.xz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yy"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yz"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.yz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.yz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.zz"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.zz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.zz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.zz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexElasticStrain.zz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexElasticStrain.zz_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_1_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_1_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_1_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_2_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_2_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_2_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_3_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.principal_3_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.principal_3_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.tensor"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.tensor_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.tensor_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.tensor_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xx"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xx_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xx_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xx_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xx_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xy"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xz"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.xz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.xz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yy"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yz"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.yz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.yz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.zz"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.zz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.zz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.zz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ComplexPlasticStrain.zz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexPlasticStrain.zz_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain"><code class="docutils literal notranslate"><span class="pre">ElasticStrain</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.principal_1"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.principal_2"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.principal_3"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.tensor"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.xx"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.xy"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.xz"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.yy"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.yz"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain.zz"><code class="docutils literal notranslate"><span class="pre">ElasticStrain.zz</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain"><code class="docutils literal notranslate"><span class="pre">PlasticStrain</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.principal_1"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.principal_2"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.principal_3"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.tensor"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.xx"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.xy"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.xz"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.yy"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.yz"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain.zz"><code class="docutils literal notranslate"><span class="pre">PlasticStrain.zz</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.stress.html"><code class="docutils literal notranslate"><span class="pre">ComplexStress</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexStress.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_1"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_1_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_1_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_1_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_1_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_2"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_2_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_2_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_2_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_2_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_3"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_3_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_3_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.principal_3_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.principal_3_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.tensor"><code class="docutils literal notranslate"><span class="pre">ComplexStress.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.tensor_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.tensor_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.tensor_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.tensor_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.von_mises"><code class="docutils literal notranslate"><span class="pre">ComplexStress.von_mises</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.von_mises_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.von_mises_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.von_mises_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.von_mises_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xx"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xx_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xx_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xx_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xx_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xy"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xz"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.xz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.xz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yy"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yz"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.yz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.yz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.zz"><code class="docutils literal notranslate"><span class="pre">ComplexStress.zz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.zz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStress.zz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.ComplexStress.zz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStress.zz_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress"><code class="docutils literal notranslate"><span class="pre">Stress</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Stress.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.principal_1"><code class="docutils literal notranslate"><span class="pre">Stress.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.principal_2"><code class="docutils literal notranslate"><span class="pre">Stress.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.principal_3"><code class="docutils literal notranslate"><span class="pre">Stress.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.tensor"><code class="docutils literal notranslate"><span class="pre">Stress.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.von_mises"><code class="docutils literal notranslate"><span class="pre">Stress.von_mises</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.xx"><code class="docutils literal notranslate"><span class="pre">Stress.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.xy"><code class="docutils literal notranslate"><span class="pre">Stress.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.xz"><code class="docutils literal notranslate"><span class="pre">Stress.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.yy"><code class="docutils literal notranslate"><span class="pre">Stress.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.yz"><code class="docutils literal notranslate"><span class="pre">Stress.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress.zz"><code class="docutils literal notranslate"><span class="pre">Stress.zz</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html"><code class="docutils literal notranslate"><span class="pre">ComplexStructuralTemperature</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.ComplexStructuralTemperature.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexStructuralTemperature.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.ComplexStructuralTemperature.scalar"><code class="docutils literal notranslate"><span class="pre">ComplexStructuralTemperature.scalar</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.ComplexStructuralTemperature.scalar_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexStructuralTemperature.scalar_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.ComplexStructuralTemperature.scalar_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexStructuralTemperature.scalar_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux"><code class="docutils literal notranslate"><span class="pre">HeatFlux</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">HeatFlux.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.norm"><code class="docutils literal notranslate"><span class="pre">HeatFlux.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.vector"><code class="docutils literal notranslate"><span class="pre">HeatFlux.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.x"><code class="docutils literal notranslate"><span class="pre">HeatFlux.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.y"><code class="docutils literal notranslate"><span class="pre">HeatFlux.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux.z"><code class="docutils literal notranslate"><span class="pre">HeatFlux.z</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.StructuralTemperature"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.StructuralTemperature.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.StructuralTemperature.scalar"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature.scalar</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.Temperature"><code class="docutils literal notranslate"><span class="pre">Temperature</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.Temperature.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Temperature.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.Temperature.scalar"><code class="docutils literal notranslate"><span class="pre">Temperature.scalar</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tensor.html"><code class="docutils literal notranslate"><span class="pre">ComplexTensor</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_1"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_1_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_1_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_1_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_1_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_2"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_2_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_2_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_2_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_2_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_3"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_3_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_3_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.principal_3_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.principal_3_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.tensor"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.tensor_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.tensor_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.tensor_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.tensor_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xx"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xx_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xx_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xx_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xx_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xy"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xz"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.xz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.xz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yy"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yy_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yy_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yy_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yy_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yz"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.yz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.yz_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.zz"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.zz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.zz_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.zz_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.ComplexTensor.zz_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexTensor.zz_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor"><code class="docutils literal notranslate"><span class="pre">Tensor</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Tensor.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.principal_1"><code class="docutils literal notranslate"><span class="pre">Tensor.principal_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.principal_2"><code class="docutils literal notranslate"><span class="pre">Tensor.principal_2</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.principal_3"><code class="docutils literal notranslate"><span class="pre">Tensor.principal_3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.tensor"><code class="docutils literal notranslate"><span class="pre">Tensor.tensor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.xx"><code class="docutils literal notranslate"><span class="pre">Tensor.xx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.xy"><code class="docutils literal notranslate"><span class="pre">Tensor.xy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.xz"><code class="docutils literal notranslate"><span class="pre">Tensor.xz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.yy"><code class="docutils literal notranslate"><span class="pre">Tensor.yy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.yz"><code class="docutils literal notranslate"><span class="pre">Tensor.yz</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html#ansys.dpf.post.tensor.Tensor.zz"><code class="docutils literal notranslate"><span class="pre">Tensor.zz</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.electric_field"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.electric_field()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.electric_potential"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.electric_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.heat_flux"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.heat_flux()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.temperature"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.ThermalTransientAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">ThermalTransientAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.displacement"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.displacement()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.elastic_strain"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.elastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.get_result_info"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.get_result_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.mesh"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.plastic_strain"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.plastic_strain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.stress"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.structural_temperature"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.structural_temperature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html#ansys.dpf.post.transient_analysis.TransientAnalysisSolution.time_freq_support"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution.time_freq_support</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.vector.html"><code class="docutils literal notranslate"><span class="pre">ComplexVector</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">ComplexVector.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.norm"><code class="docutils literal notranslate"><span class="pre">ComplexVector.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.norm_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexVector.norm_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.norm_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexVector.norm_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.vector"><code class="docutils literal notranslate"><span class="pre">ComplexVector.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.vector_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexVector.vector_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.vector_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexVector.vector_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.x"><code class="docutils literal notranslate"><span class="pre">ComplexVector.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.x_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexVector.x_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.x_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexVector.x_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.y"><code class="docutils literal notranslate"><span class="pre">ComplexVector.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.y_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexVector.y_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.y_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexVector.y_at_phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.z"><code class="docutils literal notranslate"><span class="pre">ComplexVector.z</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.z_amplitude"><code class="docutils literal notranslate"><span class="pre">ComplexVector.z_amplitude</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.ComplexVector.z_at_phase"><code class="docutils literal notranslate"><span class="pre">ComplexVector.z_at_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector"><code class="docutils literal notranslate"><span class="pre">Vector</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.has_complex_frequencies"><code class="docutils literal notranslate"><span class="pre">Vector.has_complex_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.norm"><code class="docutils literal notranslate"><span class="pre">Vector.norm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.vector"><code class="docutils literal notranslate"><span class="pre">Vector.vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.x"><code class="docutils literal notranslate"><span class="pre">Vector.x</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.y"><code class="docutils literal notranslate"><span class="pre">Vector.y</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html#ansys.dpf.post.vector.Vector.z"><code class="docutils literal notranslate"><span class="pre">Vector.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-ansys.dpf.post">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ansys.dpf.post" title="Permalink to this heading">#</a></h2>
+<p>Post-processing module.</p>
+<p>Using the Data Processing Framework.</p>
+<p>Allow to create a result object, then use it to get desired results.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">disp</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+              </article>
+              
+
+              
+          </div>
+          
+      </div>
+    </div>
+
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+
+<footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    <p class="copyright">
+    &copy; Copyright (c) 2022 ANSYS, Inc. All rights reserved.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+  </div>
+  
+</div>
+</footer>
+  </body>
+</html>

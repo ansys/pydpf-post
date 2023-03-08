@@ -1,0 +1,34 @@
+﻿ansys.dpf.post.temperature.Temperature
+======================================
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. autoclass:: Temperature
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      Temperature.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      Temperature.scalar
+      
+   
+   

@@ -1,0 +1,235 @@
+﻿ansys.dpf.post.misc\_results.MecanicMisc
+========================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. autoclass:: MecanicMisc
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      MecanicMisc.elemental_accu_eqv_creep_strain
+      
+      
+      MecanicMisc.elemental_accu_eqv_plastic_strain
+      
+      
+      MecanicMisc.elemental_artificial_hourglass_energy
+      
+      
+      MecanicMisc.elemental_co_energy
+      
+      
+      MecanicMisc.elemental_contact_fluid_penetration_pressure
+      
+      
+      MecanicMisc.elemental_contact_friction_stress
+      
+      
+      MecanicMisc.elemental_contact_penetration
+      
+      
+      MecanicMisc.elemental_contact_pressure
+      
+      
+      MecanicMisc.elemental_contact_sliding_distance
+      
+      
+      MecanicMisc.elemental_contact_status
+      
+      
+      MecanicMisc.elemental_contact_surface_heat_flux
+      
+      
+      MecanicMisc.elemental_contact_total_stress
+      
+      
+      MecanicMisc.elemental_contactgap_distance
+      
+      
+      MecanicMisc.elemental_creep_strain_energy_density
+      
+      
+      MecanicMisc.elemental_elastic_strain
+      
+      
+      MecanicMisc.elemental_elastic_strain_energy_density
+      
+      
+      MecanicMisc.elemental_eqv_stress_parameter
+      
+      
+      MecanicMisc.elemental_force
+      
+      
+      MecanicMisc.elemental_hydrostatic_pressure
+      
+      
+      MecanicMisc.elemental_incremental_energy
+      
+      
+      MecanicMisc.elemental_kinetic_energy
+      
+      
+      MecanicMisc.elemental_mass
+      
+      
+      MecanicMisc.elemental_nodal_accu_eqv_creep_strain
+      
+      
+      MecanicMisc.elemental_nodal_accu_eqv_plastic_strain
+      
+      
+      MecanicMisc.elemental_nodal_creep_strain_energy_density
+      
+      
+      MecanicMisc.elemental_nodal_elastic_strain
+      
+      
+      MecanicMisc.elemental_nodal_elastic_strain_energy_density
+      
+      
+      MecanicMisc.elemental_nodal_eqv_stress_parameter
+      
+      
+      MecanicMisc.elemental_nodal_force
+      
+      
+      MecanicMisc.elemental_nodal_hydrostatic_pressure
+      
+      
+      MecanicMisc.elemental_nodal_plastic_state_variable
+      
+      
+      MecanicMisc.elemental_nodal_plastic_strain
+      
+      
+      MecanicMisc.elemental_nodal_plastic_strain_energy_density
+      
+      
+      MecanicMisc.elemental_nodal_stress
+      
+      
+      MecanicMisc.elemental_nodal_stress_ratio
+      
+      
+      MecanicMisc.elemental_nodal_structural_temperature
+      
+      
+      MecanicMisc.elemental_nodal_thermal_strains
+      
+      
+      MecanicMisc.elemental_plastic_state_variable
+      
+      
+      MecanicMisc.elemental_plastic_strain
+      
+      
+      MecanicMisc.elemental_plastic_strain_energy_density
+      
+      
+      MecanicMisc.elemental_stiffness_matrix_energy
+      
+      
+      MecanicMisc.elemental_stress
+      
+      
+      MecanicMisc.elemental_stress_ratio
+      
+      
+      MecanicMisc.elemental_structural_temperature
+      
+      
+      MecanicMisc.elemental_thermal_dissipation_energy
+      
+      
+      MecanicMisc.elemental_thermal_strains
+      
+      
+      MecanicMisc.elemental_volume
+      
+      
+      MecanicMisc.modal_basis
+      
+      
+      MecanicMisc.nodal_acceleration
+      
+      
+      MecanicMisc.nodal_accu_eqv_creep_strain
+      
+      
+      MecanicMisc.nodal_accu_eqv_plastic_strain
+      
+      
+      MecanicMisc.nodal_creep_strain_energy_density
+      
+      
+      MecanicMisc.nodal_displacement
+      
+      
+      MecanicMisc.nodal_elastic_strain
+      
+      
+      MecanicMisc.nodal_elastic_strain_energy_density
+      
+      
+      MecanicMisc.nodal_eqv_stress_parameter
+      
+      
+      MecanicMisc.nodal_force
+      
+      
+      MecanicMisc.nodal_hydrostatic_pressure
+      
+      
+      MecanicMisc.nodal_moment
+      
+      
+      MecanicMisc.nodal_plastic_state_variable
+      
+      
+      MecanicMisc.nodal_plastic_strain
+      
+      
+      MecanicMisc.nodal_plastic_strain_energy_density
+      
+      
+      MecanicMisc.nodal_raw_displacement
+      
+      
+      MecanicMisc.nodal_raw_reaction_force
+      
+      
+      MecanicMisc.nodal_reaction_force
+      
+      
+      MecanicMisc.nodal_stress
+      
+      
+      MecanicMisc.nodal_stress_ratio
+      
+      
+      MecanicMisc.nodal_structural_temperature
+      
+      
+      MecanicMisc.nodal_thermal_strains
+      
+      
+      MecanicMisc.nodal_velocity
+      
+      
+      MecanicMisc.von_mises_stress
+      
+   
+   
+
+   
+   
+   

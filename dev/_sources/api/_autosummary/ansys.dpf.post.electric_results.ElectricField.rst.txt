@@ -1,0 +1,46 @@
+﻿ansys.dpf.post.electric\_results.ElectricField
+==============================================
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. autoclass:: ElectricField
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      ElectricField.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      ElectricField.norm
+      
+      
+      ElectricField.vector
+      
+      
+      ElectricField.x
+      
+      
+      ElectricField.y
+      
+      
+      ElectricField.z
+      
+   
+   

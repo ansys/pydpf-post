@@ -1,0 +1,64 @@
+﻿ansys.dpf.post.stress.Stress
+============================
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. autoclass:: Stress
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      Stress.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      Stress.principal_1
+      
+      
+      Stress.principal_2
+      
+      
+      Stress.principal_3
+      
+      
+      Stress.tensor
+      
+      
+      Stress.von_mises
+      
+      
+      Stress.xx
+      
+      
+      Stress.xy
+      
+      
+      Stress.xz
+      
+      
+      Stress.yy
+      
+      
+      Stress.yz
+      
+      
+      Stress.zz
+      
+   
+   

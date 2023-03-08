@@ -1,0 +1,834 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Harmonic analysis &#8212; PyDPF-Post</title>
+    
+<script>
+  document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+  document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
+</script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+
+    
+        <link href="../../_static/css/breadcrumbs.css" rel="stylesheet">
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transient analysis" href="04-transient-analysis.html" />
+    <link rel="prev" title="Modal analysis" href="02-modal-analysis.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+    <div class="bd-header-announcement container-fluid" id="banner">
+      
+
+    </div>
+
+    
+    
+    <nav class="bd-header navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="bd-header__inner container-xl">
+
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="fas fa-bars"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../user_guide/index.html">
+  User guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../api/index.html">
+  API reference
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../index.html">
+  Examples
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../contributing.html">
+  Contribute
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        dev  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables examples/01-Different-analysis-types/03-harmonic-analysis and {'json_url': 'https://post.docs.pyansys.com/release/versions.json', 'version_match': 'dev'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "examples/01-Different-analysis-types/03-harmonic-analysis.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://post.docs.pyansys.com/release/versions.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "examples/01-Different-analysis-types/03-harmonic-analysis.html";
+        let btn = document.getElementById("version_switcher_button");
+        // Set empty strings by default so that these attributes exist and can be used in CSS selectors
+        btn.dataset["activeVersionName"] = "";
+        btn.dataset["activeVersion"] = "";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.2.6.dev0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "dev") {
+                node.classList.add("active");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span id="theme-switch" class="btn btn-sm btn-outline-primary navbar-btn rounded-circle">
+    <a class="theme-switch" data-mode="light"><i class="fas fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="far fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fas fa-adjust"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/pyansys/pydpf-post" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+     
+<div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => document.getElementById("announcement_msg").innerHTML = text)
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+
+    
+        <div class="container-xl">
+    <div class="row">
+        <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+        <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+    
+        <li class="nav-item nav-item-additional-breadcrumb"><a href="https://docs.pyansys.com/">PyAnsys</a> » </li>
+    
+    
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDPF-Post</a> » </li>
+    
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> » </li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">DPF-Post analysis types</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Harmonic analysis</a></li> 
+      </ul>
+    </div>
+        </div>
+  </div>
+</div>
+    
+
+
+    <div class="bd-container container-xl">
+      <div class="bd-container__inner row">
+          
+
+<!-- Only show if we have sidebars configured, else just a small margin  -->
+<div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../00-Overview/index.html">
+   DPF-Post overview
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../00-Overview/00-overview_example.html">
+     DPF-Post overview
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="index.html">
+   DPF-Post analysis types
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-static-analysis.html">
+     Static analysis
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-modal-analysis.html">
+     Modal analysis
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Harmonic analysis
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="04-transient-analysis.html">
+     Transient analysis
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../02-Detailed-Examples/index.html">
+   DPF-Post feature examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../02-Detailed-Examples/01-introduction.html">
+     Introduction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../02-Detailed-Examples/02-basics.html">
+     Basic features
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../02-Detailed-Examples/03-result_keywords.html">
+     Result keywords
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../02-Detailed-Examples/04-complex_results.html">
+     Complex results from a modal or harmonic analysis
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../02-Detailed-Examples/05-result_on_path_of_coordinates.html">
+     Request result on a specific path
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    
+  </div>
+</nav>
+  </div>
+  <div class="sidebar-end-items">
+  </div>
+</div>
+
+
+          
+
+
+<div class="bd-sidebar-secondary d-none d-xl-block col-xl-2 bd-toc">
+  
+    
+    <div class="toc-item">
+      
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Harmonic analysis
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#perform-required-imports">
+     Perform required imports
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-solution-object">
+     Get
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Solution
+      </span>
+     </code>
+     object
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-result-objects">
+     Get
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Result
+      </span>
+     </code>
+     objects
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-displacement-result">
+       Get displacement result
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#check-number-of-fields">
+       Check number of fields
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-data-from-field">
+       Get data from field
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-maximum-data-value-over-all-fields">
+       Get maximum data value over all fields
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-minimum-data-value-over-all-fields">
+       Get minimum data value over all fields
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-maximum-data-value-over-targeted-field">
+       Get maximum data value over targeted field
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id1">
+       Get minimum data value over all fields
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-stress-result">
+     Get stress result
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#check-if-support-has-complex-frequencies">
+       Check if support has complex frequencies
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-tensor-result">
+       Get tensor result
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-shell-field">
+       Get shell field
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#get-solid-field">
+       Get solid field
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#plot-amplitude-contour">
+       Plot amplitude contour
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#get-elastic-strain-result">
+   Get elastic strain result
+  </a>
+ </li>
+</ul>
+
+</nav>
+    </div>
+    
+    <div class="toc-item">
+      
+    </div>
+    
+  
+</div>
+
+
+          
+          
+          <div class="bd-content col-12 col-md-9 col-xl-7">
+              
+              <article class="bd-article" role="main">
+                
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-01-different-analysis-types-03-harmonic-analysis-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="harmonic-analysis">
+<span id="ref-harmonic-analysis"></span><span id="sphx-glr-examples-01-different-analysis-types-03-harmonic-analysis-py"></span><h1>Harmonic analysis<a class="headerlink" href="#harmonic-analysis" title="Permalink to this heading">#</a></h1>
+<p>This example shows how you can postprocess a result file for an harmonic analysis
+using DPF-Post.</p>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Permalink to this heading">#</a></h2>
+<p>Perform required imports.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="get-solution-object">
+<h2>Get <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object<a class="headerlink" href="#get-solution-object" title="Permalink to this heading">#</a></h2>
+<p>Get the <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object. This example loads a result file for an harmonic
+analysis computed in Ansys Mechanical.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_all_kinds_of_complexity</span><span class="p">()</span>
+
+<span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">examples</span><span class="o">.</span><span class="n">complex_rst</span></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Harmonic Analysis Solution object.
+
+
+Data Sources
+------------------------------
+DPF  DataSources:
+  Result files:
+     result key: rst and path: /opt/hostedtoolcache/Python/3.8.15/x64/lib/python3.8/site-packages/ansys/dpf/core/examples/complex.rst
+  Secondary files:
+
+
+DPF Model
+------------------------------
+Harmonic analysis
+Unit system: MKS: m, kg, N, s, V, A, degC
+Physics Type: Mechanical
+Available results:
+     -  displacement: Nodal Displacement
+     -  reaction_force: Nodal Force
+     -  stress: ElementalNodal Stress
+     -  elemental_volume: Elemental Volume
+     -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+     -  artificial_hourglass_energy: Elemental Hourglass Energy
+     -  thermal_dissipation_energy: Elemental thermal dissipation energy
+     -  kinetic_energy: Elemental Kinetic Energy
+     -  co_energy: Elemental co-energy
+     -  incremental_energy: Elemental incremental energy
+     -  elastic_strain: ElementalNodal Strain
+     -  elemental_heat_generation: Elemental Elemental Heat Generation
+     -  structural_temperature: ElementalNodal Temperature
+     -  electric_potential: Nodal Electric Potential
+     -  electric_flux_density: ElementalNodal Electric flux density
+     -  electric_field: ElementalNodal Electric field
+------------------------------
+DPF  Meshed Region:
+  4802 nodes
+  657 elements
+  Unit: m
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support:
+  Number of sets: 1
+  With complex values
+
+Cumulative     Frequency (Hz) LoadStep       Substep        RPM
+1              343478.200000  1              1              0.000000
+
+This may contain complex results.
+</pre></div>
+</div>
+</section>
+<section id="get-result-objects">
+<h2>Get <code class="docutils literal notranslate"><span class="pre">Result</span></code> objects<a class="headerlink" href="#get-result-objects" title="Permalink to this heading">#</a></h2>
+<section id="get-displacement-result">
+<h3>Get displacement result<a class="headerlink" href="#get-displacement-result" title="Permalink to this heading">#</a></h3>
+<p>Get the displacement <code class="docutils literal notranslate"><span class="pre">Result</span></code> object. It contains a field for real values
+and a field for imaginary values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp_result</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+<span class="n">disp</span> <span class="o">=</span> <span class="n">disp_result</span><span class="o">.</span><span class="n">vector</span>
+</pre></div>
+</div>
+</section>
+<section id="check-number-of-fields">
+<h3>Check number of fields<a class="headerlink" href="#check-number-of-fields" title="Permalink to this heading">#</a></h3>
+<p>Check the number of fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">num_fields</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2
+</pre></div>
+</div>
+</section>
+<section id="get-data-from-field">
+<h3>Get data from field<a class="headerlink" href="#get-data-from-field" title="Permalink to this heading">#</a></h3>
+<p>Get data from a field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPFArray([[ 2.65783929e-09, -5.98949034e-10,  8.34267891e-11],
+          [ 2.63846617e-09, -3.00204960e-10,  8.27306877e-11],
+          [ 2.50179982e-09, -2.86371281e-10,  6.29386453e-11],
+          ...,
+          [-1.70840238e-09, -2.73504676e-09,  3.48706947e-11],
+          [-1.57038405e-09, -2.71125223e-09,  6.79105278e-11],
+          [-1.57311157e-09, -2.71904943e-09,  0.00000000e+00]])
+</pre></div>
+</div>
+</section>
+<section id="get-maximum-data-value-over-all-fields">
+<h3>Get maximum data value over all fields<a class="headerlink" href="#get-maximum-data-value-over-all-fields" title="Permalink to this heading">#</a></h3>
+<p>Get the maximum data value over all fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">max_data</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPFArray([[2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+          [6.53706736e-13, 6.53416337e-13, 9.25220948e-14]])
+</pre></div>
+</div>
+</section>
+<section id="get-minimum-data-value-over-all-fields">
+<h3>Get minimum data value over all fields<a class="headerlink" href="#get-minimum-data-value-over-all-fields" title="Permalink to this heading">#</a></h3>
+<p>Get the minimum data value over all fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">min_data</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPFArray([[-2.76946046e-09, -2.76952549e-09,  0.00000000e+00],
+          [-6.53727285e-13, -6.53452004e-13, -1.66091913e-13]])
+</pre></div>
+</div>
+</section>
+<section id="get-maximum-data-value-over-targeted-field">
+<h3>Get maximum data value over targeted field<a class="headerlink" href="#get-maximum-data-value-over-targeted-field" title="Permalink to this heading">#</a></h3>
+<p>Get the maximum data value over a targeted field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">get_max_data_at_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPFArray([2.76941713e-09, 2.76940199e-09, 4.10914311e-10])
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3>Get minimum data value over all fields<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>Get the minimum data value over all fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disp</span><span class="o">.</span><span class="n">get_min_data_at_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPFArray([-2.76946046e-09, -2.76952549e-09,  0.00000000e+00])
+</pre></div>
+</div>
+</section>
+</section>
+<section id="get-stress-result">
+<h2>Get stress result<a class="headerlink" href="#get-stress-result" title="Permalink to this heading">#</a></h2>
+<p>Get a stress result that deals with amplitude. It contains a field for real
+values and a field for imaginary values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stress_result</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">stress</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="check-if-support-has-complex-frequencies">
+<h3>Check if support has complex frequencies<a class="headerlink" href="#check-if-support-has-complex-frequencies" title="Permalink to this heading">#</a></h3>
+<p>Check if the support has complex frequencies.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stress_result</span><span class="o">.</span><span class="n">has_complex_frequencies</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</section>
+<section id="get-tensor-result">
+<h3>Get tensor result<a class="headerlink" href="#get-tensor-result" title="Permalink to this heading">#</a></h3>
+<p>Get the <code class="docutils literal notranslate"><span class="pre">Result</span></code> for a tensor.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stress</span> <span class="o">=</span> <span class="n">stress_result</span><span class="o">.</span><span class="n">tensor</span>
+
+<span class="c1"># Check number of fields</span>
+<span class="c1"># ~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="c1"># Check the number of shell and solid elements in distinct fields. Shell and</span>
+<span class="c1"># solid elements are in distinct fields. Thus, you have four fields: the</span>
+<span class="c1"># solid-real one, the solid-imaginary one, the shell-real one, and the</span>
+<span class="c1"># shell-imaginary one.</span>
+
+<span class="n">stress</span><span class="o">.</span><span class="n">num_fields</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2
+</pre></div>
+</div>
+</section>
+<section id="get-shell-field">
+<h3>Get shell field<a class="headerlink" href="#get-shell-field" title="Permalink to this heading">#</a></h3>
+<p>Get the shell field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shell_field</span> <span class="o">=</span> <span class="n">stress</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">shell_field</span><span class="o">.</span><span class="n">shell_layers</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;shell_layers.nonelayer: 5&gt;
+</pre></div>
+</div>
+</section>
+<section id="get-solid-field">
+<h3>Get solid field<a class="headerlink" href="#get-solid-field" title="Permalink to this heading">#</a></h3>
+<p>Get the solid field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">solid_field</span> <span class="o">=</span> <span class="n">stress</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-amplitude-contour">
+<h3>Plot amplitude contour<a class="headerlink" href="#plot-amplitude-contour" title="Permalink to this heading">#</a></h3>
+<p>Plot the amplitude contour.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amplitude</span> <span class="o">=</span> <span class="n">stress_result</span><span class="o">.</span><span class="n">tensor_amplitude</span>
+<span class="n">amplitude</span><span class="o">.</span><span class="n">plot_contour</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_03-harmonic-analysis_001.png" srcset="../../_images/sphx_glr_03-harmonic-analysis_001.png" alt="03 harmonic analysis" class = "sphx-glr-single-img"/></section>
+</section>
+</section>
+<section id="get-elastic-strain-result">
+<h1>Get elastic strain result<a class="headerlink" href="#get-elastic-strain-result" title="Permalink to this heading">#</a></h1>
+<p>Get an elastic strain result that deals with phase. It contains a field for
+real values and a field for imaginary values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">elastic_strain_result</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">elastic_strain</span><span class="p">()</span>
+<span class="n">elastic_strain</span> <span class="o">=</span> <span class="n">elastic_strain_result</span><span class="o">.</span><span class="n">tensor</span>
+<span class="c1"># shell and solid elements are in distinct fields.</span>
+<span class="n">elastic_strain</span><span class="o">.</span><span class="n">num_fields</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2
+</pre></div>
+</div>
+<p>Define the phase. The phase must be a float value. The unit is degrees.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">es_at_phase</span> <span class="o">=</span> <span class="n">elastic_strain_result</span><span class="o">.</span><span class="n">tensor_at_phase</span><span class="p">(</span><span class="mf">39.0</span><span class="p">)</span>
+<span class="n">es_at_phase</span><span class="o">.</span><span class="n">max_data</span>
+<span class="n">es_at_phase</span><span class="o">.</span><span class="n">num_fields</span>
+<span class="n">real_field</span> <span class="o">=</span> <span class="n">elastic_strain_result</span><span class="o">.</span><span class="n">tensor_at_phase</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">img_field</span> <span class="o">=</span> <span class="n">elastic_strain_result</span><span class="o">.</span><span class="n">tensor_at_phase</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the result file contains results, you can use this method
+to get the elastic strain result.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">elastic_strain</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Complex tensor object.
+
+Tensor object.
+
+Object properties:
+ - location   : Nodal
+
+Complex elastic strain object.
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.644 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-01-different-analysis-types-03-harmonic-analysis-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/eaeda4e20a7722bb432ab553c24d37f5/03-harmonic-analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">03-harmonic-analysis.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/5fe5c1d524755d70f828626dc0e17e49/03-harmonic-analysis.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03-harmonic-analysis.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+              </article>
+              
+
+              
+          </div>
+          
+      </div>
+    </div>
+
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+
+<footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    <p class="copyright">
+    &copy; Copyright (c) 2022 ANSYS, Inc. All rights reserved.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+  </div>
+  
+</div>
+</footer>
+  </body>
+</html>

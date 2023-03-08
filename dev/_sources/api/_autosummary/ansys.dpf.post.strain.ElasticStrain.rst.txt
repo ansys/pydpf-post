@@ -1,0 +1,61 @@
+﻿ansys.dpf.post.strain.ElasticStrain
+===================================
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. autoclass:: ElasticStrain
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      ElasticStrain.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      ElasticStrain.principal_1
+      
+      
+      ElasticStrain.principal_2
+      
+      
+      ElasticStrain.principal_3
+      
+      
+      ElasticStrain.tensor
+      
+      
+      ElasticStrain.xx
+      
+      
+      ElasticStrain.xy
+      
+      
+      ElasticStrain.xz
+      
+      
+      ElasticStrain.yy
+      
+      
+      ElasticStrain.yz
+      
+      
+      ElasticStrain.zz
+      
+   
+   

@@ -1,0 +1,37 @@
+﻿ansys.dpf.post.dpf\_solution.DpfSolution
+========================================
+
+.. currentmodule:: ansys.dpf.post.dpf_solution
+
+.. autoclass:: DpfSolution
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      DpfSolution.get_result_info
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      DpfSolution.mesh
+      
+      
+      DpfSolution.time_freq_support
+      
+   
+   

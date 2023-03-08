@@ -1,0 +1,61 @@
+﻿ansys.dpf.post.strain.PlasticStrain
+===================================
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. autoclass:: PlasticStrain
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      PlasticStrain.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      PlasticStrain.principal_1
+      
+      
+      PlasticStrain.principal_2
+      
+      
+      PlasticStrain.principal_3
+      
+      
+      PlasticStrain.tensor
+      
+      
+      PlasticStrain.xx
+      
+      
+      PlasticStrain.xy
+      
+      
+      PlasticStrain.xz
+      
+      
+      PlasticStrain.yy
+      
+      
+      PlasticStrain.yz
+      
+      
+      PlasticStrain.zz
+      
+   
+   

@@ -1,0 +1,46 @@
+﻿ansys.dpf.post.displacement.Displacement
+========================================
+
+.. currentmodule:: ansys.dpf.post.displacement
+
+.. autoclass:: Displacement
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      Displacement.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      Displacement.norm
+      
+      
+      Displacement.vector
+      
+      
+      Displacement.x
+      
+      
+      Displacement.y
+      
+      
+      Displacement.z
+      
+   
+   
