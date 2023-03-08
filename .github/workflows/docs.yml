@@ -199,6 +199,12 @@ jobs:
           path: HTML-doc-${{env.PACKAGE_NAME}}.zip
         if: always()
 
+      - name: "Upload HTML Documentation"
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation-html
+          path: docs/build/html
+
       - name: "Find PDF Documentation"
         shell: bash
         if: ${{ inputs.generate_pdf == 'true' }}
