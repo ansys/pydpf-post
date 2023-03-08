@@ -570,7 +570,7 @@ class DataFrame:
                             values_list = field.get_entity_data_by_id(
                                 entity_id
                             ).tolist()
-                        except Exception as e:
+                        except Exception:
                             values_list = [[None] * len(comp_values)]
                         num_entities = len(values_list)
                         num_components = len(values_list[0])
@@ -618,11 +618,11 @@ class DataFrame:
             # print(to_append)
             # print(len(to_append))
             # print(len(lines))
-            for i in range(len(lines)):
+            for i, _ in enumerate(lines):
                 lines[i] = lines[i] + to_append[i]
 
         if truncated_columns:
-            for i in range(len(lines)):
+            for i, _ in enumerate(lines):
                 lines[i] = lines[i] + truncated_str
 
         if truncated:
@@ -662,8 +662,6 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
-        from ansys.dpf.core.plotter import DpfPlotter
-
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space

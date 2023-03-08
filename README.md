@@ -24,7 +24,6 @@ detailed description of the package, or see the [Examples
 Gallery](https://postdocs.pyansys.com/examples/index.html) for more
 detailed examples.
 
-
 ## Installation
 
 Install this repository with:
