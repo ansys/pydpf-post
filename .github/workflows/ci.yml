@@ -188,6 +188,15 @@ jobs:
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v3
 
+  examples:
+    if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
+    uses: ./.github/workflows/examples.yml
+    with:
+      ANSYS_VERSION: "232"
+      python_versions: '["3.10"]'
+      standalone_suffix: ".pre0"
+    secrets: inherit
+
   docs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml

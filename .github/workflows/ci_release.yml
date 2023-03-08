@@ -185,6 +185,14 @@ jobs:
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v3
 
+  examples:
+    uses: ./.github/workflows/examples.yml
+    with:
+      ANSYS_VERSION: "232"
+      python_versions: '["3.10"]'
+      standalone_suffix: ".pre0"
+    secrets: inherit
+
   docs:
     uses: ./.github/workflows/docs.yml
     with:
@@ -196,7 +204,7 @@ jobs:
   draft_release:
     name: "Draft release"
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [style, build_test, retro, docs]
+    needs: [style, tests, retro, examples, docs]
     runs-on: ubuntu-latest
     steps:
       - name: "Set up Python"
