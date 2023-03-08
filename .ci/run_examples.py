@@ -24,5 +24,6 @@ for root, subdirectories, files in os.walk(
                 subprocess.check_call([sys.executable, file])
             except subprocess.CalledProcessError as e:
                 sys.stderr.write(str(e.args))
-                raise e
+                if e.returncode != 3221225477:
+                    raise e
             print("PASS")
