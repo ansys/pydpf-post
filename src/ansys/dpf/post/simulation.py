@@ -622,7 +622,7 @@ class MechanicalSimulation(Simulation, ABC):
         elif times is not None:
             # Check input
             if isinstance(times, list):
-                if any([not (type(t) in [float, int]) for t in times]):
+                if any([not isinstance(t, (float, int)) for t in times]):
                     raise ValueError("Argument times must contain numeric values only.")
             elif isinstance(times, float) or isinstance(times, int):
                 times = [times]

@@ -17,7 +17,6 @@ be found by visiting [PyDPF-Core
 GitHub](https://github.com/pyansys/pydpf-core).  Use ``ansys-dpf-core`` for
 building more advanced and customized workflows using Ansys DPF.
 
-
 ## Documentation
 
 Visit the [DPF-Post Documentation](https://postdocs.pyansys.com) for a
@@ -42,7 +41,6 @@ cd pydpf-post
 pip install . --user
 ```
 
-
 ## Brief Demo
 
 Provided you have ANSYS 2023 R1 installed, a DPF server will start
@@ -56,6 +54,7 @@ Loading a simulation to extract and post-process results:
 >>> displacement = simulation.displacement()
 >>> print(displacement)
 ```
+```pycon
              results         U
               set_id         3
       node      comp          
@@ -66,7 +65,7 @@ Loading a simulation to extract and post-process results:
                    Y  1.44e-03
                    Z  5.31e-06
        ...
-
+```
 ```pycon
 >>> displacement.plot()
 ```
@@ -88,7 +87,6 @@ tools:
 >>> stress.eqv.plot_contour(show_edges=False)
 ```
 ![Example Stress plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
-
 
 ## License
 

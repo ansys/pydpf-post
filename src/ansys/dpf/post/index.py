@@ -279,7 +279,7 @@ class MultiIndex:
         # self._labels = []
         # self._label_names = None
         # self._result_names = None
-        for i, index in enumerate(self._indexes):
+        for _, index in enumerate(self._indexes):
             setattr(self, index.name, index)
 
     # @property
