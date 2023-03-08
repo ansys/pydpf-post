@@ -1,5 +1,4 @@
 from ansys.dpf.core import locations
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0
 import numpy as np
 import pytest
 
@@ -371,12 +370,11 @@ def test_displacement(allkindofcomplexity):
     assert fc[0].location == value[0].location
     assert len(fc[0].data) == len(value[0].data)
     assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
-        comp = core.operators.logic.identical_fc()
-        comp.inputs.fields_containerA.connect(fc)
-        comp.inputs.fields_containerB.connect(value.result_fields_container)
-        out = comp.outputs.boolean()
-        assert out == True
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out == True
 
 
 def test_displacement_complex(complex_model):
@@ -468,12 +466,11 @@ def test_stress(allkindofcomplexity):
     assert fc[0].location == value[0].location
     assert len(fc[0].data) == len(value[0].data)
     assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
-        comp = core.operators.logic.identical_fc()
-        comp.inputs.fields_containerA.connect(fc)
-        comp.inputs.fields_containerB.connect(value.result_fields_container)
-        out = comp.outputs.boolean()
-        assert out is True
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out is True
 
 
 def test_stress_complex(complex_model):
@@ -617,12 +614,11 @@ def test_elastic_strain(allkindofcomplexity):
     assert fc[0].location == value[0].location
     assert len(fc[0].data) == len(value[0].data)
     assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
-        comp = core.operators.logic.identical_fc()
-        comp.inputs.fields_containerA.connect(fc)
-        comp.inputs.fields_containerB.connect(value.result_fields_container)
-        out = comp.outputs.boolean()
-        assert out is True
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out is True
 
 
 def test_elastic_strain_complex(complex_model):
@@ -700,12 +696,11 @@ def test_temperature(allkindofcomplexity):
     assert fc[0].location == value[0].location
     assert len(fc[0].data) == len(value[0].data)
     assert np.allclose(value[0].data.tolist(), fc[0].data.tolist())
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
-        comp = core.operators.logic.identical_fc()
-        comp.inputs.fields_containerA.connect(fc)
-        comp.inputs.fields_containerB.connect(value.result_fields_container)
-        out = comp.outputs.boolean()
-        assert out is True
+    comp = core.operators.logic.identical_fc()
+    comp.inputs.fields_containerA.connect(fc)
+    comp.inputs.fields_containerB.connect(value.result_fields_container)
+    out = comp.outputs.boolean()
+    assert out is True
 
 
 def test_temperature_complex(complex_model):

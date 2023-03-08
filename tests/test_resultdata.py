@@ -2,7 +2,6 @@ import os
 
 from ansys.dpf.core import Field
 from ansys.dpf.core.common import locations, natures
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0
 import numpy as np
 import pytest
 
@@ -272,10 +271,6 @@ def test_plot_contour_with_keys(allkindofcomplexity):
 
 
 @pytest.mark.skipif(RUNNING_DOCKER, reason="Path hidden within docker container")
-@pytest.mark.skipif(
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0,
-    reason="Operator is Premium starting with server version 6.0, deprecate test.",
-)
 def test_plot_with_vtk_file(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress(location=post.locations.elemental, time_scoping=[1])
