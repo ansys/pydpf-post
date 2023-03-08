@@ -42,7 +42,7 @@ pip install . --user
 
 ## Brief Demo
 
-Provided you have ANSYS 2023 R1 installed, a DPF server will start
+Provided you have ANSYS 2023 R1 installed, a DPF server starts
 automatically once you start using pyDPF-Post.
 Loading a simulation to extract and post-process results:
 

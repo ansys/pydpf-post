@@ -18,7 +18,7 @@ Use ``ansys-dpf-core`` for building more advanced and customized workflows using
 Brief demo
 ~~~~~~~~~~
 
-Provided you have ANSYS 2023 R1 installed, a DPF server will start
+Provided you have ANSYS 2023 R1 installed, a DPF server starts
 automatically once you start using PyDPF-Post.
 Loading a simulation for a MAPDL result file to extract and post-process results:
 
