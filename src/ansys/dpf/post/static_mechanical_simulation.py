@@ -1,4 +1,9 @@
-"""Module containing the ``StaticMechanicalSimulation`` class."""
+"""Module containing the ``StaticMechanicalSimulation`` class.
+
+StaticMechanicalSimulation
+--------------------------
+
+"""
 from typing import List, Tuple, Union
 
 from ansys.dpf import core

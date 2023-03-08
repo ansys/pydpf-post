@@ -17,7 +17,7 @@ from ansys.dpf.post import examples
 # Get ``Solution`` object
 # -----------------------
 # Get the ``Solution`` object. This example loads a simple file supplied with
-# DPF-Post.
+# PyDPF-Post.
 
 simple_bar = examples.simple_bar
 solution = post.load_solution(simple_bar)

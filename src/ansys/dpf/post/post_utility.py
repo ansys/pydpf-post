@@ -1,6 +1,9 @@
 """Module containing the method to instantiate the result object.
 
-This module is used for the initialization of DPF-Post objects.
+Post-utility
+------------
+
+This module is used for the initialization of PyDPF-Post objects.
 """
 from typing import TypeVar, Union
 import warnings

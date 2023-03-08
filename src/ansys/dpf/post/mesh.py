@@ -1,4 +1,9 @@
-"""Module containing the ``Mesh`` class."""
+"""Module containing the ``Mesh`` class.
+
+Mesh
+----
+
+"""
 from typing import List
 
 from ansys.dpf.core import MeshedRegion

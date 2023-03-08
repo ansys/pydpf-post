@@ -4,10 +4,10 @@
 User guide
 ==========
 
-DPF-Post provides a Python interface to DPF that is streamlined for
+PyDPF-Post provides a Python interface to DPF that is streamlined for
 postprocessing.
 
-The following content explains the conceptual model of DPF-Post and
+The following content explains the conceptual model of PyDPF-Post and
 typical usage.
 
 .. toctree::

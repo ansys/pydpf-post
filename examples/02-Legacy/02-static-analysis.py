@@ -3,8 +3,8 @@
 
 Static analysis
 ===============
-This example shows how you can postprocess a result file for a static analysis
-using DPF-Post.
+This example shows how you can post-process a result file for a static analysis
+using PyDPF-Post.
 """
 
 ###############################################################################

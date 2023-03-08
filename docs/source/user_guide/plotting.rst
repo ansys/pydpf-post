@@ -4,15 +4,15 @@
 Plot results
 ************
 
-DPF-Post provides functionality for plotting results. Here is a summary of
+PyDPF-Post provides functionality for plotting results. Here is a summary of
 the steps:
 
-#. Load the :class:`DpfSolution <ansys.dpf.post.dpf_solution.DpfSolution>` object
+#. Load the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object
    with the result file.
-#. Request a :class:`Result <ansys.dpf.post.result_object.Result>` object and
+#. Request a :class:`DataFrame <ansys.dpf.post.dataframe.DataFrame>` object to
    obtain the scalar field of interest.
-#. Use the :func:`plot_contour <ansys.dpf.post.result_data.ResultData.plot_contour>`
-   method to render it.
+#. Use the plotting methods of the :class:`DataFrame <ansys.dpf.post.dataframe.DataFrame>` object
+   to render it.
 
 Subsequent sections provide some plotting examples.
 
@@ -27,37 +27,41 @@ You can plot the total deformation (norm of the displacement vector field) with:
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
+    >>> simulation = post.load_simulation(examples.download_crankshaft())
 
-    Instantiate a displacement result object 
+    Instantiate a DataFrame object containing the displacement norm data
 
-    >>> displacement = solution.displacement()
-    >>> norm = displacement.norm  # this is the result data (data container)
+    >>> displacement_norm = simulation.displacement(norm=True)
 
-    Plot the result data
+    Plot the data and save the image
 
-    >>> norm.plot_contour()
+    >>> displacement_norm.plot(screenshot="crankshaft_disp.png")
 
+.. figure:: ./images/crankshaft_disp.png
+    :width: 300pt
 
 Normal stresses
 ---------------
 
-You can plot the normal x-component of stress with:
+Plotting of raw data at Gauss points is not available yet.
+You can however plot data averaged at nodes or elements.
+You can plot the nodal xx-component of stress with:
 
 .. code:: python
 
-    Instantiate the solution object
+    Instantiate the simulation object
 
     >>> from ansys.dpf import post
     >>> from ansys.dpf.post import examples
-    >>> solution = post.load_solution(examples.multishells_rst)
+    >>> simulation = post.load_simulation(examples.download_crankshaft())
 
-    Instantiate a stress result object
+    Extract the XX stress data
 
-    >>> stress = solution.stress()
-    >>> s_xx = stress.xx  # this is the result data (data container)
+    >>> stress_xx = simulation.stress_nodal(components=["XX"])
 
-    Plot the result data
+    Plot the data and save the image
 
-    >>> s_xx.plot_contour()
+    >>> stress_xx.plot(screenshot="crankshaft_stress_xx.png")
 
+.. figure:: ./images/crankshaft_stress_xx.png
+    :width: 300pt

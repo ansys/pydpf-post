@@ -1,4 +1,9 @@
-"""Module containing the common tools for a better usage of the DPF-Post module."""
+"""Module containing the common tools for a better usage of the PyDPF-Post module.
+
+Common
+------
+
+"""
 
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation

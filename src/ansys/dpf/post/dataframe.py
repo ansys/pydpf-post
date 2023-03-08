@@ -1,4 +1,9 @@
-"""Module containing the ``DataFrame`` class."""
+"""Module containing the ``DataFrame`` class.
+
+DataFrame
+---------
+
+"""
 from __future__ import annotations
 
 import itertools
@@ -8,7 +13,7 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
-from ansys.dpf.core.plotter import DpfPlotter as Plotter
+from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations, shell_layers
@@ -288,8 +293,8 @@ class DataFrame:
             and mesh_index.location == locations.elemental_nodal
         ):
             raise NotImplementedError(
-                f"Element selection on a DataFrame with elemental nodal results "
-                f"is not yet supported"
+                "Element selection on a DataFrame with elemental nodal results "
+                "is not yet supported"
             )
 
         if out is not None:
@@ -526,7 +531,7 @@ class DataFrame:
                     for k in list(range(num_mesh_entities_to_ask)):
                         try:
                             values_list = field.get_entity_data(k).tolist()
-                        except Exception as e:
+                        except Exception:
                             values_list = [[None] * len(comp_values)]
                         num_entities = len(values_list)
                         if isinstance(values_list[0], list):
@@ -570,7 +575,7 @@ class DataFrame:
                             values_list = field.get_entity_data_by_id(
                                 entity_id
                             ).tolist()
-                        except Exception as e:
+                        except Exception:
                             values_list = [[None] * len(comp_values)]
                         num_entities = len(values_list)
                         num_components = len(values_list[0])
@@ -618,11 +623,11 @@ class DataFrame:
             # print(to_append)
             # print(len(to_append))
             # print(len(lines))
-            for i in range(len(lines)):
+            for i, _ in enumerate(lines):
                 lines[i] = lines[i] + to_append[i]
 
         if truncated_columns:
-            for i in range(len(lines)):
+            for i, _ in enumerate(lines):
                 lines[i] = lines[i] + truncated_str
 
         if truncated:
@@ -638,7 +643,7 @@ class DataFrame:
         """Representation of the DataFrame."""
         return f"DataFrame<index={self.index}, columns={self.columns}>"
 
-    def plot(self, shell_layer=shell_layers.top, **kwargs) -> Union[Plotter, None]:
+    def plot(self, shell_layer=shell_layers.top, **kwargs) -> Union[DpfPlotter, None]:
         """Plot the result.
 
         Parameters
@@ -662,8 +667,6 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
-        from ansys.dpf.core.plotter import DpfPlotter as Plotter
-
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
@@ -719,7 +722,7 @@ class DataFrame:
             fc = merge_solids_shell_op.eval()
 
         fields = fc.get_fields(label_space=label_space)
-        plotter = Plotter(**kwargs)
+        plotter = DpfPlotter(**kwargs)
         # for field in fields:
         if len(fields) > 1:
             warnings.warn(
@@ -769,7 +772,7 @@ class DataFrame:
                 warnings.warn(
                     UserWarning(
                         "Displacement result unavailable, "
-                        f"unable to animate on the deformed mesh."
+                        "unable to animate on the deformed mesh."
                     )
                 )
             else:

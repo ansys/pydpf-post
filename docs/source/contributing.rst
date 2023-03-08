@@ -25,7 +25,7 @@ development mode, run:
 Post issues
 -----------
 
-Use the `PyDPF-Post Issues <https://github.com/pyansys/DPF-Post/issues>`_
+Use the `PyDPF-Post Issues <https://github.com/pyansys/pydpf-post/issues>`_
 page to submit questions, report bugs, and request new features.
 
 To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
@@ -33,5 +33,5 @@ To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.sup
 View documentation
 ------------------
 Documentation for the latest stable release of PyDPF-Post is hosted at
-`PyDPF Documentation <https://postdocs.pyansys.com/>_.
+`PyDPF Documentation <https://post.docs.pyansys.com/>`_.
 
