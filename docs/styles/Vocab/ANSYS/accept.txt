@@ -4,6 +4,7 @@ ansys
 postprocess
 postprocessing
 PyDPF
+PyDPF-Core
 PyDPF-Post
 Post
 post
