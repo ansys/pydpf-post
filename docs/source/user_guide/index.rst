@@ -17,5 +17,6 @@ typical usage.
    accessing_file_metadata
    accessing_results
    plotting
+   server_context
    extending_to_core
    troubleshooting

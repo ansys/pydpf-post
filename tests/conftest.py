@@ -6,6 +6,7 @@ pytest as a sesson fixture
 import os
 import re
 
+from ansys.dpf.core.check_version import get_server_version, meets_version
 import matplotlib as mpl
 import pytest
 import pyvista as pv
@@ -136,3 +137,17 @@ def cleanup(request):
         core.server.shutdown_all_session_servers()
 
     request.addfinalizer(close_servers)
+
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
+    get_server_version(core._global_server()), "6.0"
+)
+
+
+# to call at the end
+if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+    core.server.shutdown_all_session_servers()
+    try:
+        core.set_default_server_context(core.AvailableServerContexts.premium)
+    except core.errors.DpfVersionNotSupported:
+        pass

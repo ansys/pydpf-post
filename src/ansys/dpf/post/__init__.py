@@ -14,7 +14,11 @@ Examples
 """
 
 import ansys.dpf.core as core
-from ansys.dpf.core.common import locations
+from ansys.dpf.core import (  # noqa: F401
+    AvailableServerContexts,
+    set_default_server_context,
+)
+from ansys.dpf.core.common import locations  # noqa: F401
 
 try:
     import importlib.metadata as importlib_metadata
