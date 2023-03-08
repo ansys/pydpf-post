@@ -5,6 +5,11 @@ Request result on a specific path
 =================================
 This example shows how you can request a result on a
 specific path of coordinates.
+
+.. note::
+    This example requires the Premium Server Context.
+    For more information, see :ref:`user_guide_server_context`.
+
 """
 
 ###############################################################################
@@ -14,6 +19,8 @@ specific path of coordinates.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
+
+post.set_default_server_context(post.AvailableServerContexts.premium)
 
 ###############################################################################
 # Get ``Solution`` object
