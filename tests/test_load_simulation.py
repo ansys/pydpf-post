@@ -15,7 +15,7 @@ def test_load_simulation_static_mechanical(simple_bar, complex_model):
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
-    assert type(simulation) == StaticMechanicalSimulation
+    assert isinstance(simulation, StaticMechanicalSimulation)
 
 
 def test_load_simulation_transient_mechanical(plate_msup, complex_model):
@@ -25,7 +25,7 @@ def test_load_simulation_transient_mechanical(plate_msup, complex_model):
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.transient_mechanical,
     )
-    assert type(simulation) == TransientMechanicalSimulation
+    assert isinstance(simulation, TransientMechanicalSimulation)
 
 
 def test_load_simulation_modal_mechanical(modalallkindofcomplexity, complex_model):
@@ -35,7 +35,7 @@ def test_load_simulation_modal_mechanical(modalallkindofcomplexity, complex_mode
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.transient_mechanical,
     )
-    assert type(simulation) == TransientMechanicalSimulation
+    assert isinstance(simulation, TransientMechanicalSimulation)
 
 
 def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
@@ -45,7 +45,7 @@ def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
         data_sources=simple_bar,
         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
     )
-    assert type(simulation) == HarmonicMechanicalSimulation
+    assert isinstance(simulation, HarmonicMechanicalSimulation)
 
 
 def test_load_simulation_raise_simulation_type(simple_bar):

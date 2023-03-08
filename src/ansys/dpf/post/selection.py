@@ -145,7 +145,7 @@ class TimeFreqSelection:
         Parameters
         ----------
         simulation:
-            DPF-Post Simulation to evaluate the time/freq selection on.
+            Simulation object to evaluate the time/freq selection on.
 
         Returns
         -------

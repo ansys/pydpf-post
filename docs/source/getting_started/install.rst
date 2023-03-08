@@ -50,7 +50,7 @@ and unzip it to the same local directory before running the preceding command ag
 Install in development mode
 ---------------------------
 
-If you want to edit and potentially contribute to DPF-Post,
+If you want to edit and potentially contribute to PyDPF-Post,
 clone the repository and install it using ``pip`` with the ``-e``
 development flag:
 
@@ -66,5 +66,5 @@ Run the following Python code to verify your PyDPF-Post installation:
 
    from ansys.dpf import post
    from ansys.dpf.post import examples
-   solution = post.load_solution(examples.simple_bar)
-   print(solution)
+   simulation = post.load_simulation(examples.simple_bar)
+   print(simulation)

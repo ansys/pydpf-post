@@ -1,4 +1,9 @@
-"""Module containing the ``Index`` class."""
+"""Module containing the ``Index`` class and sub-classes.
+
+Index
+-----
+
+"""
 from abc import ABC
 from typing import List, Union
 import weakref
@@ -279,7 +284,7 @@ class MultiIndex:
         # self._labels = []
         # self._label_names = None
         # self._result_names = None
-        for i, index in enumerate(self._indexes):
+        for _, index in enumerate(self._indexes):
             setattr(self, index.name, index)
 
     # @property

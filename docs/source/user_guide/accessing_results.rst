@@ -5,47 +5,44 @@ Access results
 **************
 
 In addition to being the entry point for browsing the contents of a
-result file, the :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
-object provides access to the results themselves. The results are contained
-in :class:`Result <ansys.dpf.post.result_object.Result>` objects, which can
-be returned from dedicated methods.
+result file, the :class:`Simulation <ansys.dpf.post.simulation.Simulation>`
+object provides access to the results themselves. You can query results
+using dedicated methods.
 
 Here is how you get the ``displacement`` result:
 
 .. code:: python
 
-	Instantiate the solution object
+	Instantiate the simulation object
 
 	>>> from ansys.dpf import post
 	>>> from ansys.dpf.post import examples
-	>>> solution = post.load_solution(examples.multishells_rst)
+	>>> simulation = post.load_simulation(examples.multishells_rst)
 
-	Instantiate the displacement result object
+	Extract the displacement data as a DataFrame object
 
-	>>> displacement = solution.displacement()
+	>>> displacement = simulation.displacement()
 	>>> # stress, elastic_strain (...) can also be called.
 
-	See the following list for the result objects that can be
-	instantiated.
+	See the following list for the results that can be
+	extracted.
 
 You can use *keyword arguments* to further specify other options,
-including the result type, scope, and time. For detailed examples,
+including the components, scope, and time. For detailed examples,
 see :ref:`ref_result_keywords`.
 
-DPF-Post supports two types of result files:
+PyDPF-Post supports two types of result files:
 
 * Structural (RST)
-* Thermal/electric (RTH)
+* Thermal/electric (RTH) (with the legacy *load_solution()* method only)
 
-Once loaded into a :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>`
-object, a result file offers a variety of :class:`Result <ansys.dpf.post.result_object.Result>`
-objects, depending on its type.
-
-You should request only ``Result`` objects that are available in a result file.
-To determine which ``Result`` objects are available, see :ref:`user_guide_accessing_file_metadata`.
+You should only request results available in the result file.
+To determine which results are available, see :ref:`user_guide_accessing_file_metadata`.
 
 Structural result files
 =======================
+
+This section details how to access structural results using the legacy ``Solution`` object.
 
 After loading a ``Solution`` object from a structural analysis result (RST)
 file, you can query these ``Result`` objects:
@@ -261,6 +258,8 @@ information, see :ref:`user_guide_accessing_file_metadata`.
 
 Thermal/electric result files
 =============================
+
+This section details how to access thermal/electric results using the legacy ``Solution`` object.
 
 After loading a ``Solution`` object from a thermal/electric analysis
 result file (RTH), you can query these ``Result`` objects:
