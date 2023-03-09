@@ -182,7 +182,7 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          python-version: '3.9'
+          branch: release-0.2.5
 
   draft_release:
     name: "Draft release"
