@@ -3,5 +3,10 @@
     "name": "dev",
     "version": "dev",
     "url": "https://post.docs.pyansys.com/version/dev/"
+  },
+  {
+    "name": "0.3 (stable)",
+    "version": "0.3",
+    "url": "https://post.docs.pyansys.com/version/stable/"
   }
 ]

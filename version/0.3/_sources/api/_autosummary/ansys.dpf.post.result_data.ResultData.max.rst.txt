@@ -1,0 +1,6 @@
+max
+===
+
+.. currentmodule:: ansys.dpf.post.result_data
+
+.. autoproperty:: ResultData.max
