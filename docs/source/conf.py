@@ -31,7 +31,7 @@ author = "ANSYS Inc."
 
 # The short X.Y version
 release = version = __version__
-cname = os.getenv("DOCUMENTATION_CNAME", "https://post.docs.pyansys.com")
+cname = os.getenv("DOCUMENTATION_CNAME", "post.docs.pyansys.com")
 
 
 # -- General configuration ---------------------------------------------------
