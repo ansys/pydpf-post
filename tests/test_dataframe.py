@@ -139,9 +139,15 @@ def test_dataframe_animate(transient_rst):
 
 def test_dataframe_repr(df):
     ref = (
-        "DataFrame<index=MultiIndex<[MeshIndex<name=\"node_ids\", dtype=<class 'int'>>, "
-        "Index<name=\"components\", dtype=<class 'str'>>]>, columns=MultiIndex<[ResultIndex<['U']>, "  # noqa: E501
-        "SetIndex<values=[1]>]>>"
+        "DataFrame<"
+        "index=MultiIndex<["
+        "MeshIndex<name=\"node_ids\", dtype=<class 'int'>>, "
+        "Index<name=\"components\", dtype=<class 'str'>>"
+        "]>, "
+        "columns=MultiIndex<["
+        "ResultIndex<['U (m)']>, "
+        "SetIndex<values=[1]>"
+        "]>>"
     )
     assert repr(df) == ref
 
@@ -151,7 +157,7 @@ def test_dataframe_str(transient_rst):
     df = simulation.displacement(all_sets=True)
     print(df)
     ref = """
-                 results           U                                                                     ...
+                 results       U (m)                                                                     ...
                  set_ids           1           2           3           4           5           6         ...
     node_ids  components                                                                                 ...
          525           X  0.0000e+00  4.8506e-05  2.3022e-04  6.5140e-04  1.4812e-03  2.9324e-03         ...
@@ -166,7 +172,7 @@ def test_dataframe_str(transient_rst):
     df2 = df.select(node_ids=525)
     print(df2)
     ref = """
-                 results           U                                                                     ...
+                 results       U (m)                                                                     ...
                  set_ids           1           2           3           4           5           6         ...
     node_ids  components                                                                                 ...
          525           X  0.0000e+00  4.8506e-05  2.3022e-04  6.5140e-04  1.4812e-03  2.9324e-03         ...
@@ -179,7 +185,7 @@ def test_dataframe_str(transient_rst):
     print(df)
     print(df._fc[0].get_entity_data_by_id(391))
     ref = """
-                 results           S
+                 results      S (Pa)
                  set_ids          35
  element_ids  components            
          391      XX (1) -3.2780e+05
@@ -194,7 +200,7 @@ def test_dataframe_str(transient_rst):
     df2 = df.select(components="YY")
     print(df2)
     ref = """
-                 results           S
+                 results      S (Pa)
                  set_ids          35
  element_ids  components            
          391      YY (1)  1.3601e+06
