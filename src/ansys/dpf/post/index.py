@@ -165,9 +165,24 @@ class ResultsIndex(Index):
     def __init__(
         self,
         values: List[str],
+        units: Union[List[Union[str, None]], None] = None,
     ):
         """Initiate this class."""
-        super().__init__(name=ref_labels.results, values=values, scoping=None)
+        result_values = values
+        if units is not None:
+            for i, unit in enumerate(units):
+                result_values[i] += f" ({unit})" if unit is not None else ""
+            if len(units) < len(values):
+                units.extend([None] * (len(values) - len(units)))
+        else:
+            units = [None] * len(values)
+        self._units = units
+        super().__init__(name=ref_labels.results, values=result_values, scoping=None)
+
+    @property
+    def units(self) -> List[str]:
+        """Return the list of units for this index."""
+        return self._units
 
     def __repr__(self):
         """Representation of the Index."""

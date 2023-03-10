@@ -523,6 +523,7 @@ class Simulation(ABC):
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
+        unit = fc[0].unit
         comp_index = None
         if comp is not None:
             comp_index = CompIndex(values=comp)
@@ -530,7 +531,7 @@ class Simulation(ABC):
         if comp_index is not None:
             row_indexes.append(comp_index)
         column_indexes = [
-            ResultsIndex(values=[base_name]),
+            ResultsIndex(values=[base_name], units=[unit]),
             SetIndex(values=fc.get_available_ids_for_label("time")),
         ]
         label_indexes = []
