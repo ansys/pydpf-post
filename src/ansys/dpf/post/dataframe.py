@@ -77,6 +77,8 @@ class DataFrame:
         self._last_display_width = display_width
         self._last_display_max_colwidth = display_max_colwidth
 
+        self._last_minmax: dict = {"axis": None, "min": None, "max": None}
+
     @property
     def columns(self) -> MultiIndex:
         """Returns the MultiIndex for the columns of the DataFrame."""
@@ -513,7 +515,7 @@ class DataFrame:
                 else empty
                 for i in range(len(combination))
             ]
-            to_append.append(empty)
+            to_append.append(empty)  # row where row index headers are
             # Get data in the FieldsContainer for those positions
             # Create label_space from combination
             label_space = {}
@@ -833,3 +835,117 @@ class DataFrame:
         return fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )
+
+    def min(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
+        """Return the minimum value over the requested axis.
+
+        Parameters
+        ----------
+        axis:
+            Axis to perform minimum across.
+            Defaults to the MeshIndex (0).
+            Can also be the SetIndex (1).
+
+        """
+        self._query_min_max(axis)
+        return self._last_minmax["min"]
+
+    def max(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
+        """Return the maximum value over the requested axis.
+
+        Parameters
+        ----------
+        axis:
+            Axis to perform maximums across.
+            Defaults to the MeshIndex (0).
+            Can also be the SetIndex (1).
+
+        """
+        self._query_min_max(axis)
+        return self._last_minmax["max"]
+
+    def _query_min_max(self, axis: Union[int, str, None]) -> None:
+        """Create a DPF workflow based on the query arguments for min/max."""
+        # Translate None query to empty dict
+        if axis in [None, 0, self.index.mesh_index.name]:
+            axis = 0
+        elif axis in [1, ref_labels.set_ids]:
+            axis = 1
+        else:
+            raise ValueError(f"'{axis}' is not an available axis value.")
+
+        # print(f"{axis=}")
+        # If same query as last and last is not None, do not change
+        if self._last_minmax["axis"] == axis and not self._last_minmax["axis"] is None:
+            return
+        # If in need of an update, create the appropriate workflow
+        wf = dpf.Workflow(server=self._fc._server)
+        wf.progress_bar = False
+
+        # If over mesh
+        if axis == 0:
+            min_max_op = dpf.operators.min_max.min_max_over_label_fc(
+                fields_container=self._fc,
+                label="time",
+                server=self._fc._server,
+            )
+            # Here the fields are located on the label ("time"), so we have to "transpose" it.
+            # Extract the data for each time (entity) from the field and create a fields_container
+
+            min_fc = dpf.FieldsContainer(server=self._fc._server)
+            min_fc.add_label(label="time")
+            min_field = min_max_op.outputs.field_min()
+            for i, time in enumerate(min_field.scoping.ids):
+                min_fc.add_field(
+                    label_space={"time": time},
+                    field=dpf.fields_factory.field_from_array(
+                        arr=min_field.get_entity_data(i),
+                        server=self._fc._server,
+                    ),
+                )
+
+            max_fc = dpf.FieldsContainer(server=self._fc._server)
+            max_fc.add_label(label="time")
+            max_field = min_max_op.outputs.field_max()
+            for i, time in enumerate(max_field.scoping.ids):
+                max_fc.add_field(
+                    label_space={"time": time},
+                    field=dpf.fields_factory.field_from_array(
+                        arr=max_field.get_entity_data(i),
+                        server=self._fc._server,
+                    ),
+                )
+
+            index = MultiIndex(
+                indexes=[i for i in self.index if i != self.index.mesh_index]
+            )
+            columns = self.columns
+
+        # If over time
+        else:
+            min_max_op = dpf.operators.min_max.min_max_over_time_by_entity(
+                fields_container=self._fc,
+                server=self._fc._server,
+            )
+            wf.set_output_name("min", min_max_op.outputs.min)
+            wf.set_output_name("max", min_max_op.outputs.max)
+
+            index = self.index
+            columns = MultiIndex(
+                indexes=[c for c in self.columns if c != self.columns.set_ids]
+            )
+
+            min_fc = wf.get_output("min", dpf.types.fields_container)
+            max_fc = wf.get_output("max", dpf.types.fields_container)
+
+        self._last_minmax["min"] = DataFrame(
+            data=min_fc,
+            index=index,
+            columns=columns,
+        )
+        self._last_minmax["max"] = DataFrame(
+            data=max_fc,
+            index=index,
+            columns=columns,
+        )
+        self._last_minmax["axis"] = axis
