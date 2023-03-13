@@ -4,4 +4,4 @@ pandas==1.5.3; python_version >= "3.8"
 pytest-cov==4.0.0
 pytest-rerunfailures==11.0
 pytest==7.2.1
-pyvista==0.38.3
+pyvista==0.38.4
