@@ -29,6 +29,7 @@ from ansys.dpf.post import mesh, selection, tools
 from ansys.dpf.post.common import Grouping as grouping
 from ansys.dpf.post.dataframe import DataFrame  # noqa: F401
 from ansys.dpf.post.dpf_path import create_path_on_coordinates
+from ansys.dpf.post.fluid_simulation import FluidSimulation  # noqa: F401
 from ansys.dpf.post.harmonic_mechanical_simulation import (  # noqa: F401
     HarmonicMechanicalSimulation,
 )

@@ -191,7 +191,7 @@ def load_simulation(
                 raise NotImplementedError
             else:
                 raise ValueError(
-                    f"Unknown analysis type '{analysis_type}' for thermal."
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
                 )
         elif (
             physics_type == _PhysicsType.mecanic
@@ -210,7 +210,16 @@ def load_simulation(
                 simulation_type = AvailableSimulationTypes.transient_mechanical
             else:
                 raise ValueError(
-                    f"Unknown analysis type '{analysis_type}' for mechanical."
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
+                )
+        elif physics_type == _PhysicsType.fluid:
+            if analysis_type == _AnalysisType.steady:
+                simulation_type = AvailableSimulationTypes.steady_fluid
+            elif analysis_type == _AnalysisType.unsteady:
+                simulation_type = AvailableSimulationTypes.unsteady_fluid
+            else:
+                raise ValueError(
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
                 )
         else:
             raise ValueError(f"Unknown physics type '{physics_type}.")

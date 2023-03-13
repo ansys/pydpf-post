@@ -5,6 +5,7 @@ Common
 
 """
 
+from ansys.dpf.post.fluid_simulation import FluidSimulation
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
@@ -118,6 +119,8 @@ class _AnalysisType:
     harmonic = "harmonic"
     transient = "transient"
     msup = "MSUP"
+    steady = "steady"
+    unsteady = "unsteady"
 
 
 class _PhysicsType:
@@ -129,6 +132,7 @@ class _PhysicsType:
     mechanical = "mechanical"
     mecanic = "mecanic"  # Keep for retro-compatibility with ANSYS < 231
     thermal = "thermal"
+    fluid = "fluid"
 
 
 class AvailableSimulationTypes:
@@ -138,6 +142,8 @@ class AvailableSimulationTypes:
     transient_mechanical = "transient mechanical"  # TransientMechanicalSimulation
     modal_mechanical = "modal mechanical"  # ModalMechanicalSimulation
     harmonic_mechanical = "harmonic mechanical"  # HarmonicMechanicalSimulation
+    steady_fluid = "steady fluid"  # FluidSimulation
+    unsteady_fluid = "unsteady fluid"  # FluidSimulation
 
 
 simulation_type_str_to_class = {
@@ -145,4 +151,6 @@ simulation_type_str_to_class = {
     AvailableSimulationTypes.transient_mechanical: TransientMechanicalSimulation,
     AvailableSimulationTypes.modal_mechanical: ModalMechanicalSimulation,
     AvailableSimulationTypes.harmonic_mechanical: HarmonicMechanicalSimulation,
+    AvailableSimulationTypes.steady_fluid: FluidSimulation,
+    AvailableSimulationTypes.unsteady_fluid: FluidSimulation,
 }
