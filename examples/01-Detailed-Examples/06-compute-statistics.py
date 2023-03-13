@@ -55,3 +55,19 @@ print(maximum)
 
 minimum = displacement.min(axis="set_ids")
 print(minimum)
+
+###############################################################################
+# Compute the average displacement value for each component at each time-step
+# ---------------------------------------------------------------------------
+
+mean = displacement.mean()
+print("Mean over mesh")
+print(mean)
+
+###############################################################################
+# Compute the average displacement for each node and component across time
+# ------------------------------------------------------------------------
+
+mean = displacement.mean(axis=1)
+print("Mean over time")
+print(mean)
