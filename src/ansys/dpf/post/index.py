@@ -168,14 +168,21 @@ class ResultsIndex(Index):
         units: Union[List[Union[str, None]], None] = None,
     ):
         """Initiate this class."""
+        # Initialize results labels
         result_values = values
-        if units is not None:
+        if units is None:
+            # If no units, initialize as list of None
+            units = [None] * len(values)
+        else:
+            # Truncate units if longer than values
+            if len(units) > len(values):
+                units = units[: len(values)]
+            # Update result labels with unit when necessary
             for i, unit in enumerate(units):
                 result_values[i] += f" ({unit})" if unit is not None else ""
+            # If units was shorter than values, extend with Nones
             if len(units) < len(values):
                 units.extend([None] * (len(values) - len(units)))
-        else:
-            units = [None] * len(values)
         self._units = units
         super().__init__(name=ref_labels.results, values=result_values, scoping=None)
 
