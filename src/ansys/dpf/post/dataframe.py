@@ -856,7 +856,7 @@ class DataFrame:
         Parameters
         ----------
         axis:
-            Axis to perform maximums across.
+            Axis to perform maximum across.
             Defaults to the MeshIndex (0).
             Can also be the SetIndex (1).
 
