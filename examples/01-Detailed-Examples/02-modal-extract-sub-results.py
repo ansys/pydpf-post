@@ -3,8 +3,8 @@
 
 Extract components of results - Modal Simulation
 ================================================
-In this script modal simulation is processed to extract sub components of results like elastic
-stain, displacement.
+In this script modal simulation is processed to extract sub-components of results like elastic
+strain, displacement.
 """
 
 ###############################################################################
