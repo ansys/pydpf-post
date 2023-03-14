@@ -36,7 +36,22 @@ print(simulation)
 
 mesh = simulation.mesh
 print(mesh)
-
+# meshes : MeshesContainer = simulation.meshes_with_elements_grouped_by("mat_id")
+# meshes : MeshesContainer = simulation.meshes(elements_grouped_by="mat_id")
+# meshes : MeshesContainer = simulation.meshes.elements_grouped_by("mat_id")
+# meshes : MeshesContainer = simulation.meshes.elements_grouped_by("mat_id")
+# meshes : MeshesContainer = simulation.meshes_by_properties("mat_id", "thickness")
+# print(meshes)
+# """
+# mesh0: {mat_id=1, thickness=1}
+# mesh1: {mat_id=1, thickness=2}
+# mesh2: {mat_id=2, thickness=1}
+# mesh3: {mat_id=2, thickness=2}
+# """
+# mesh = simulation.mesh_by_property(mat_id=1)
+# mesh_info = simulation.mesh_info ->
+# mesh = MeshesContainer.mesh_by_id(mat_id=1)
+# for id, mesh for
 ###############################################################################
 # Query basic information about the mesh (available)
 # --------------------------------------
