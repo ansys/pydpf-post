@@ -3,8 +3,8 @@
 
 Extract components of results - Modal Simulation
 ================================================
-In this script modal simulation is processed to extract sub-components of results like elastic
-strain, displacement.
+In this script a modal simulation is processed to extract sub-components
+of results like elastic strain and displacement.
 """
 
 ###############################################################################
@@ -29,9 +29,6 @@ simulation = post.load_simulation(example_path)
 
 # for no autocompletion, this line is equivalent to:
 simulation = post.ModalMechanicalSimulation(example_path)
-
-displacement = simulation.displacement(modes=[1, 2])
-str(displacement)
 # print the simulation to get an overview of what's available
 print(simulation)
 
