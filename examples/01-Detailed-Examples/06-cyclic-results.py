@@ -36,18 +36,27 @@ print(simulation.mesh._core_object)
 # Extract expanded X displacement for the first mode
 # --------------------------------------------------
 
-ignore_cyclic = [True, False, False, False]
-expand_sectors = [
-    False,
-    False,
+read_cyclic_to_args = [
+    {"merge_stages": True, "expand_sectors": False},
+    {"merge_stages": False, "expand_sectors": False},
+    {"merge_stages": False, "expand_sectors": True},
+    {"merge_stages": True, "expand_sectors": True},
 ]
 
 for read_cyclic in range(4):
-    displacement = simulation.displacement(components="X", read_cyclic=read_cyclic)
+    merge_stages = read_cyclic_to_args[read_cyclic]["merge_stages"]
+    expand_sectors = read_cyclic_to_args[read_cyclic]["expand_sectors"]
+    displacement = simulation.displacement(
+        components="X",
+        merge_stages=merge_stages,
+        expand_sectors=expand_sectors,
+    )
     fc = displacement._core_object
     f = fc[0]
     print("================")
     print(f"{read_cyclic=}")
+    print(f"{merge_stages=}")
+    print(f"{expand_sectors=}")
     print(f"{displacement}")
     # print(f"{fc}")
     # print(f"{f}")

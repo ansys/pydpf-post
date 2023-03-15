@@ -31,7 +31,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        read_cyclic: int = 1,
+        expand_sectors: bool = False,
+        merge_stages: bool = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -78,6 +79,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            expand_sectors:
+                For cyclic problems, whether to expand the sectors.
+            merge_stages:
+                For multi-stage problems, whether to merge the stages.
 
         Returns
         -------
@@ -132,7 +137,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             force_elemental_nodal=force_elemental_nodal,
         )
 
-        # Treat cyclic options
+        # Treat cyclic cases
+        if not expand_sectors and merge_stages:
+            read_cyclic = 0
+        elif not merge_stages and not expand_sectors:
+            read_cyclic = 1
+        elif expand_sectors and not merge_stages:
+            read_cyclic = 2
+        elif merge_stages and expand_sectors:
+            read_cyclic = 3
         result_op.connect(pin=14, inpt=read_cyclic)  # Connect the read_cyclic pin
 
         # Its output is selected as future workflow output for now
@@ -238,7 +251,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        read_cyclic: int = 1,
+        expand_sectors: bool = False,
+        merge_stages: bool = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -274,6 +288,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_sectors:
+                For cyclic problems, whether to expand the sectors.
+            merge_stages:
+                For multi-stage problems, whether to merge the stages.
 
         Returns
         -------
@@ -294,7 +312,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
-            read_cyclic=read_cyclic,
+            expand_sectors=expand_sectors,
+            merge_stages=merge_stages,
         )
 
     def stress(
