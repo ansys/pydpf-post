@@ -31,6 +31,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        read_cyclic: int = 1,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -130,6 +131,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=force_elemental_nodal,
         )
+
+        # Treat cyclic options
+        result_op.connect(pin=14, inpt=read_cyclic)  # Connect the read_cyclic pin
+
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
@@ -233,6 +238,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        read_cyclic: int = 1,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -288,6 +294,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            read_cyclic=read_cyclic,
         )
 
     def stress(
