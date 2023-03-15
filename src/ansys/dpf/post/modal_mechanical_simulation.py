@@ -6,7 +6,7 @@ ModalMechanicalSimulation
 """
 from typing import List, Union
 
-from ansys.dpf import core
+from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection
@@ -31,8 +31,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        expand_sectors: bool = False,
-        merge_stages: bool = False,
+        expand_cyclic: Union[bool, list[int], list[list[int]]] = True,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -79,10 +78,11 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
-            expand_sectors:
+            expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-            merge_stages:
-                For multi-stage problems, whether to merge the stages.
+                Can take a list of sector numbers to select specific sectors to expand.
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
 
         Returns
         -------
@@ -122,7 +122,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
 
         # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
+        wf = dpf.Workflow(server=self._model._server)
         wf.progress_bar = False
 
         if category == ResultCategory.equivalent and base_name[0] == "E":
@@ -138,15 +138,52 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
 
         # Treat cyclic cases
-        if not expand_sectors and merge_stages:
-            read_cyclic = 0
-        elif not merge_stages and not expand_sectors:
-            read_cyclic = 1
-        elif expand_sectors and not merge_stages:
-            read_cyclic = 2
-        elif merge_stages and expand_sectors:
-            read_cyclic = 3
-        result_op.connect(pin=14, inpt=read_cyclic)  # Connect the read_cyclic pin
+        if expand_cyclic is not False:
+            # If expand_cyclic is a list
+            if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
+                # If a list of sector numbers, directly connect it to the num_sectors pin
+                if all(
+                    [
+                        isinstance(expand_cyclic_i, int)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    result_op.connect(pin=18, inpt=expand_cyclic)
+                # If any is a list, treat it as per stage num_sectors
+                elif any(
+                    [
+                        isinstance(expand_cyclic_i, list)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    # Create a ScopingsContainer to fill
+                    sectors_scopings = dpf.ScopingsContainer()
+                    sectors_scopings.labels = ["stage"]
+                    # For each potential num_sectors, check either an int or a list of ints
+                    for i, num_sectors_stage_i in enumerate(expand_cyclic):
+                        # Prepare num_sectors data
+                        if isinstance(num_sectors_stage_i, int):
+                            num_sectors_stage_i = [num_sectors_stage_i]
+                        elif isinstance(num_sectors_stage_i, list):
+                            if not all(
+                                [isinstance(n, int) for n in num_sectors_stage_i]
+                            ):
+                                raise ValueError(
+                                    "'expand_cyclic' argument only accepts int values."
+                                )
+                        # num_sectors_stage_i is now a list of int,
+                        # add an equivalent Scoping with the correct 'stage' label value
+                        sectors_scopings.add_scoping(
+                            {"stage": i}, dpf.Scoping(ids=num_sectors_stage_i)
+                        )
+                    result_op.connect(pin=18, inpt=sectors_scopings)
+            elif not isinstance(expand_cyclic, bool):
+                raise ValueError(
+                    "'expand_cyclic' argument can only be a boolean or a list."
+                )
+            result_op.connect(pin=14, inpt=3)  # Connect the read_cyclic pin
+        else:
+            result_op.connect(pin=14, inpt=1)  # Connect the read_cyclic pin
 
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
@@ -233,7 +270,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
-        fc = wf.get_output("out", core.types.fields_container)
+        fc = wf.get_output("out", dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
@@ -251,8 +288,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        expand_sectors: bool = False,
-        merge_stages: bool = False,
+        expand_cyclic: Union[bool, list[int], list[list[int]]] = True,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -288,10 +324,11 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
-            expand_sectors:
+            expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-            merge_stages:
-                For multi-stage problems, whether to merge the stages.
+                Can take a list of sector numbers to select specific sectors to expand.
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
 
         Returns
         -------
@@ -312,8 +349,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
-            expand_sectors=expand_sectors,
-            merge_stages=merge_stages,
+            expand_cyclic=expand_cyclic,
         )
 
     def stress(
