@@ -32,6 +32,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, list[int], list[list[int]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -83,6 +84,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Can take a list of sector numbers to select specific sectors to expand.
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
+            phase_angle_cyclic:
+                For cyclic problems, phase angle to apply.
 
         Returns
         -------
@@ -184,6 +187,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             result_op.connect(pin=14, inpt=3)  # Connect the read_cyclic pin
         else:
             result_op.connect(pin=14, inpt=1)  # Connect the read_cyclic pin
+        if phase_angle_cyclic is not None:
+            if not isinstance(phase_angle_cyclic, float):
+                raise ValueError(
+                    "'phase_angle_cyclic' argument only accepts a single float value."
+                )
+            result_op.connect(pin=19, inpt=phase_angle_cyclic)
 
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
@@ -289,6 +298,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         expand_cyclic: Union[bool, list[int], list[list[int]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -329,6 +339,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Can take a list of sector numbers to select specific sectors to expand.
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
+            phase_angle_cyclic:
+                For cyclic problems, phase angle to apply.
 
         Returns
         -------
@@ -350,6 +362,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             element_ids=element_ids,
             named_selections=named_selections,
             expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress(

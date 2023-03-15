@@ -42,6 +42,7 @@ for expand_cyclic in expand_cyclic_arg:
     displacement = simulation.displacement(
         components="X",
         expand_cyclic=expand_cyclic,
+        phase_angle_cyclic=90.0,
     )
     fc = displacement._core_object
     f = fc[0]
