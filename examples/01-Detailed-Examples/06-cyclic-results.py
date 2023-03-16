@@ -13,8 +13,6 @@ how to expand the mesh and results.
 # Perform required imports. # This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
-from ansys.dpf.core.plotter import DpfPlotter
-
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
@@ -36,11 +34,17 @@ print(simulation.mesh._core_object)
 # Extract expanded X displacement for the first mode
 # --------------------------------------------------
 
-expand_cyclic_arg = [False, True, [1, 2, 3], [[1, 2, 3], [1, 2, 3, 4]]]
+expand_cyclic_arg = [
+    False,
+    True,
+    # [1, 2, 3],
+    # [[1, 2, 3], [1, 2, 3, 4]]
+]
+
 
 for expand_cyclic in expand_cyclic_arg:
-    displacement = simulation.displacement(
-        components="X",
+    displacement = simulation.stress_nodal(
+        components="XX",
         expand_cyclic=expand_cyclic,
         phase_angle_cyclic=90.0,
     )
@@ -56,12 +60,13 @@ for expand_cyclic in expand_cyclic_arg:
     # print(f"{f.scoping.size=}")
     # print(f"{f.meshed_region.elements.n_elements=}")
     # print(f"{f.meshed_region.nodes.n_nodes=}")
-    plt = DpfPlotter()
-    try:
-        plt.add_field(field=f)
-    except:
-        plt.add_field(field=f, meshed_region=simulation.mesh._core_object)
-    plt.show_figure()
+    displacement.plot()
+    # plt = DpfPlotter()
+    # try:
+    #     plt.add_field(field=f)
+    # except:
+    #     plt.add_field(field=f, meshed_region=simulation.mesh._core_object)
+    # plt.show_figure()
 # print(displacement._core_object)
 # print(displacement._core_object[0].meshed_region)  # Empty for read_cyclic=1
 # displacement._core_object[0].meshed_region.plot()

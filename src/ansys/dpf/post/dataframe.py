@@ -667,6 +667,7 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        label_space = {}
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
@@ -680,22 +681,26 @@ class DataFrame:
                     )
                 )
                 return
+            labels = fc.labels
+            for label in labels:
+                if label == "time":
+                    value = fc.get_available_ids_for_label(label)[-1]
+                elif label == "frequencies":
+                    value = fc.get_available_ids_for_label(label)[0]
+                elif label in axis_kwargs.keys():
+                    value = axis_kwargs[label]
+                    if isinstance(value, list):
+                        raise ValueError(
+                            f"Plot argument '{label}' must be a single value."
+                        )
+                else:
+                    value = fc.get_available_ids_for_label(label)[0]
+                label_space[label] = value
         else:
             axis_kwargs = {}
             # If no kwarg was given, construct a default label_space
             fc = self._fc
-        labels = fc.labels
-        if "time" in labels:
-            label = "time"
-            value = fc.get_available_ids_for_label(label)[-1]
-            label_space = {label: value}
-        elif "frequencies" in labels:
-            label = "frequencies"
-            value = fc.get_available_ids_for_label(label)[0]
-            label_space = {label: value}
-        else:
             label_space = fc.get_label_space(0)
-        label_space = label_space
 
         for field in fc:
             # Treat multi-layer field
@@ -717,24 +722,40 @@ class DataFrame:
                 fc = changeOp.get_output(0, dpf.types.fields_container)
                 break
 
+        # Merge fields for all 'elshape' label values if none selected
         if "elshape" in self._fc.labels and "elshape" not in axis_kwargs.keys():
             merge_solids_shell_op = dpf.operators.logic.solid_shell_fields(fc)
             fc = merge_solids_shell_op.eval()
 
+        # Merge fields for all 'stage' label values if none selected
+        if "stage" in self._fc.labels and "stage" not in axis_kwargs.keys():
+            merge_stages_op = dpf.operators.utility.merge_fields_by_label(
+                fields_container=fc, label="stage"
+            )
+            fc = merge_stages_op.outputs.fields_container()
+            label_space.pop("stage")
+
         fields = fc.get_fields(label_space=label_space)
         plotter = DpfPlotter(**kwargs)
+        plotter.add_field(field=fields[0], **kwargs)
         # for field in fields:
         if len(fields) > 1:
-            warnings.warn(
-                UserWarning(
-                    "Plotting criteria resulted in incompatible data. "
-                    "Try narrowing down to specific values for each column."
-                )
+            # try:
+            #     for field in fields[1:]:
+            #         plotter.add_field(field=field, **kwargs)
+            # except Exception as e:
+            raise ValueError(
+                f"Plotting failed with filter {axis_kwargs} due to incompatible data."
             )
-            return None
-        plotter.add_field(field=fields[0], **kwargs)
+            # warnings.warn(
+            #     UserWarning(
+            #         "Plotting criteria resulted in incompatible data. "
+            #         "Try narrowing down to specific values for each column."
+            #     )
+            # )
+            # return None
         # field.plot(text="debug")
-        return plotter.show_figure(text=str(label_space), **kwargs)
+        return plotter.show_figure(title=str(label_space), **kwargs)
 
     def animate(
         self,
