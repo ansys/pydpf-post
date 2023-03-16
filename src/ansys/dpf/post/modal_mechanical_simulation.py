@@ -31,7 +31,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        expand_cyclic: Union[bool, List[int], List[List[int]]] = True,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
@@ -297,7 +297,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        expand_cyclic: Union[bool, List[int], List[List[int]]] = True,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
@@ -512,7 +512,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        expand_cyclic: Union[bool, List[int], List[List[int]]] = True,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
