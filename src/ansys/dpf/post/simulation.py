@@ -558,6 +558,62 @@ class Simulation(ABC):
         # Return the result wrapped in a DPF_Dataframe
         return df
 
+    @staticmethod
+    def _treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op):
+        if expand_cyclic is not False:
+            # If expand_cyclic is a list
+            if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
+                # If a list of sector numbers, directly connect it to the num_sectors pin
+                if all(
+                    [
+                        isinstance(expand_cyclic_i, int)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    result_op.connect(pin=18, inpt=expand_cyclic)
+                # If any is a list, treat it as per stage num_sectors
+                elif any(
+                    [
+                        isinstance(expand_cyclic_i, list)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    # Create a ScopingsContainer to fill
+                    sectors_scopings = dpf.ScopingsContainer()
+                    sectors_scopings.labels = ["stage"]
+                    # For each potential num_sectors, check either an int or a list of ints
+                    for i, num_sectors_stage_i in enumerate(expand_cyclic):
+                        # Prepare num_sectors data
+                        if isinstance(num_sectors_stage_i, int):
+                            num_sectors_stage_i = [num_sectors_stage_i]
+                        elif isinstance(num_sectors_stage_i, list):
+                            if not all(
+                                [isinstance(n, int) for n in num_sectors_stage_i]
+                            ):
+                                raise ValueError(
+                                    "'expand_cyclic' argument only accepts int values."
+                                )
+                        # num_sectors_stage_i is now a list of int,
+                        # add an equivalent Scoping with the correct 'stage' label value
+                        sectors_scopings.add_scoping(
+                            {"stage": i}, dpf.Scoping(ids=num_sectors_stage_i)
+                        )
+                    result_op.connect(pin=18, inpt=sectors_scopings)
+            elif not isinstance(expand_cyclic, bool):
+                raise ValueError(
+                    "'expand_cyclic' argument can only be a boolean or a list."
+                )
+            result_op.connect(pin=14, inpt=3)  # Connect the read_cyclic pin
+        else:
+            result_op.connect(pin=14, inpt=1)  # Connect the read_cyclic pin
+        if phase_angle_cyclic is not None:
+            if not isinstance(phase_angle_cyclic, float):
+                raise ValueError(
+                    "'phase_angle_cyclic' argument only accepts a single float value."
+                )
+            result_op.connect(pin=19, inpt=phase_angle_cyclic)
+        return result_op
+
 
 class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
