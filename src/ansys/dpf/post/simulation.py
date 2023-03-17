@@ -607,6 +607,8 @@ class Simulation(ABC):
         else:
             result_op.connect(pin=14, inpt=1)  # Connect the read_cyclic pin
         if phase_angle_cyclic is not None:
+            if isinstance(phase_angle_cyclic, int):
+                phase_angle_cyclic = float(phase_angle_cyclic)
             if not isinstance(phase_angle_cyclic, float):
                 raise ValueError(
                     "'phase_angle_cyclic' argument only accepts a single float value."

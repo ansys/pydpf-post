@@ -1108,19 +1108,62 @@ class TestModalMechanicalSimulation:
         simulation = post.ModalMechanicalSimulation(simple_cyclic)
         displacement = simulation.displacement(expand_cyclic=False)
         assert "base_sector" in displacement.columns.names
+        assert len(displacement.mesh_index) == 51
+
         displacement = simulation.displacement(expand_cyclic=True)
         assert "base_sector" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 408
+
+        with pytest.raises(
+            ValueError,
+            match="'phase_angle_cyclic' argument only accepts a single float value.",
+        ):
+            _ = simulation.displacement(phase_angle_cyclic=[0.1])
+
+        displacement = simulation.displacement(phase_angle_cyclic=90)
+        assert displacement
+        displacement = simulation.displacement(phase_angle_cyclic=90.0)
+        assert displacement
 
     def test_multi_stage(self, multi_stage_cyclic):
         simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+
         displacement = simulation.displacement(expand_cyclic=False)
-        print(displacement)
         assert "base_sector" in displacement.columns.names
         assert "stage" in displacement.columns.names
+        assert len(displacement.mesh_index) == 3595
+
         displacement = simulation.displacement(expand_cyclic=True)
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 26742
+
+        displacement = simulation.displacement(expand_cyclic=[1, 2])
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 18717
+
+        displacement = simulation.displacement(expand_cyclic=[[1, 2], 1])
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 5644
+
+        displacement = simulation.displacement(expand_cyclic=[[1, 2], [1, 2]])
         print(displacement)
         assert "base_sector" not in displacement.columns.names
         assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 6848
+
+        with pytest.raises(
+            ValueError, match="'expand_cyclic' argument only accepts int values."
+        ):
+            _ = simulation.displacement(expand_cyclic=[[1, 2], [0.2, 2]])
+
+        with pytest.raises(
+            ValueError,
+            match="'expand_cyclic' argument can only be a boolean or a list.",
+        ):
+            _ = simulation.displacement(expand_cyclic=1)
 
     def test_displacement(self, modal_simulation):
         print(modal_simulation)
