@@ -682,6 +682,7 @@ class DataFrame:
                 )
                 return
             labels = fc.labels
+            # TODO: treat complex label by taking amplitude
             for label in labels:
                 if label == "time":
                     value = fc.get_available_ids_for_label(label)[-1]
