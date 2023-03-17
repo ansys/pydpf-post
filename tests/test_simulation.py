@@ -1,6 +1,6 @@
 import os.path
 
-import ansys.dpf.core as core
+import ansys.dpf.core as dpf
 import numpy as np
 import pytest
 from pytest import fixture
@@ -75,6 +75,26 @@ def test_simulation_plot(static_simulation):
 
 
 class TestStaticMechanicalSimulation:
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.StaticMechanicalSimulation(simple_cyclic)
+        result = simulation.stress(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        result = simulation.stress(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.StaticMechanicalSimulation(multi_stage_cyclic)
+        result = simulation.stress(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        assert "stage" in result.columns.names
+        result = simulation.stress(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+        assert "stage" not in result.columns.names
+
     def test_times_argument(self, static_simulation):
         _ = static_simulation.displacement(times=1)
         _ = static_simulation.displacement(times=1.0)
@@ -117,7 +137,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_x._fc.get_time_scoping().ids == [1]
         field = displacement_x._fc[0]
         op = static_simulation._model.operator("UX")
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [42, 43, 44], server=static_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -144,7 +164,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_y._fc.get_time_scoping().ids == [1]
         field = displacement_y._fc[0]
         op = static_simulation._model.operator("UY")
-        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.named_selection_scoping(
             static_simulation.named_selections[0],
             server=static_simulation._model._server,
             model=static_simulation._model,
@@ -164,7 +184,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
-        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.named_selection_scoping(
             static_simulation.named_selections[0],
             server=static_simulation._model._server,
             model=static_simulation._model,
@@ -184,11 +204,11 @@ class TestStaticMechanicalSimulation:
         assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
-        mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
             element_ids=[1, 2, 3],
             server=static_simulation._model._server,
         )
-        mesh_scoping = core.operators.scoping.transpose(
+        mesh_scoping = dpf.operators.scoping.transpose(
             mesh_scoping=mesh_scoping,
             meshed_region=static_simulation.mesh._meshed_region,
             inclusive=1,
@@ -207,7 +227,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_norm._fc.get_time_scoping().ids == [1]
         field = displacement_norm._fc[0]
         op = static_simulation._model.operator("U")
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [42, 43, 44], server=static_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -474,7 +494,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -491,7 +511,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -510,7 +530,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -548,7 +568,7 @@ class TestTransientMechanicalSimulation:
 
         # Get reference field at t=0.15s
         op = transient_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             15, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -580,11 +600,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [20]
         field = result._fc[0]
         op = transient_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             20, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -612,11 +632,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("VX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -633,11 +653,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("AX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -652,7 +672,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -667,7 +687,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -682,7 +702,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -697,7 +717,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -712,7 +732,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -729,7 +749,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -744,7 +764,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -759,7 +779,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -774,7 +794,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -789,7 +809,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -806,7 +826,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -821,7 +841,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -838,7 +858,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -857,7 +877,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -876,7 +896,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1024,7 +1044,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1041,7 +1061,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1062,7 +1082,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1084,6 +1104,24 @@ class TestModalMechanicalSimulation:
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
 
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.ModalMechanicalSimulation(simple_cyclic)
+        displacement = simulation.displacement(expand_cyclic=False)
+        assert "base_sector" in displacement.columns.names
+        displacement = simulation.displacement(expand_cyclic=True)
+        assert "base_sector" not in displacement.columns.names
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+        displacement = simulation.displacement(expand_cyclic=False)
+        print(displacement)
+        assert "base_sector" in displacement.columns.names
+        assert "stage" in displacement.columns.names
+        displacement = simulation.displacement(expand_cyclic=True)
+        print(displacement)
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+
     def test_displacement(self, modal_simulation):
         print(modal_simulation)
         result = modal_simulation.displacement(
@@ -1099,11 +1137,11 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=modal_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -1176,7 +1214,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1191,7 +1229,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1206,7 +1244,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1221,7 +1259,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1236,7 +1274,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1251,7 +1289,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1266,7 +1304,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1281,7 +1319,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1296,7 +1334,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1322,7 +1360,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1337,7 +1375,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1352,7 +1390,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1367,7 +1405,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1386,7 +1424,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1405,7 +1443,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1422,7 +1460,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1439,7 +1477,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1458,7 +1496,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1480,6 +1518,26 @@ class TestHarmonicMechanicalSimulation:
             simulation_type=AvailableSimulationTypes.harmonic_mechanical,
         )
 
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.HarmonicMechanicalSimulation(simple_cyclic)
+        result = simulation.displacement(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        result = simulation.displacement(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.HarmonicMechanicalSimulation(multi_stage_cyclic)
+        result = simulation.displacement(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        assert "stage" in result.columns.names
+        result = simulation.displacement(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+        assert "stage" not in result.columns.names
+
     def test_displacement(self, harmonic_simulation):
         print(harmonic_simulation)
 
@@ -1488,11 +1546,11 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=harmonic_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -1510,11 +1568,11 @@ class TestHarmonicMechanicalSimulation:
     #     field = result._fc[0]
     #
     #     op = harmonic_simulation._model.operator("UX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1534,11 +1592,11 @@ class TestHarmonicMechanicalSimulation:
     #     assert result._fc.get_time_scoping().ids == [1]
     #     field = result._fc[0]
     #     op = harmonic_simulation._model.operator("VX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1555,11 +1613,11 @@ class TestHarmonicMechanicalSimulation:
     #     assert result._fc.get_time_scoping().ids == [1]
     #     field = result._fc[0]
     #     op = harmonic_simulation._model.operator("AX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1633,7 +1691,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1648,7 +1706,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1663,7 +1721,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1678,7 +1736,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1693,7 +1751,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1710,7 +1768,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1725,7 +1783,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1740,7 +1798,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1755,7 +1813,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1781,7 +1839,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1796,7 +1854,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1811,7 +1869,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1826,7 +1884,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1845,7 +1903,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1864,7 +1922,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1881,7 +1939,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1898,7 +1956,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1917,7 +1975,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
