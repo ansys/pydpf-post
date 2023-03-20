@@ -147,10 +147,15 @@ class MeshIndex(Index):
             # Merge the fields container scoping
             fc = self._fc()
             if fc is not None:
-                scopings = dpf.operators.utility.extract_scoping(
-                    field_or_fields_container=fc
-                ).outputs.mesh_scoping_as_scopings_container
-                merge_op = dpf.operators.utility.merge_scopings(scopings=scopings)
+                merge_op = dpf.operators.utility.merge_scopings()
+                if float(fc._server.version) >= 6.0:
+                    scopings = dpf.operators.utility.extract_scoping(
+                        field_or_fields_container=fc
+                    ).outputs.mesh_scoping_as_scopings_container
+                    merge_op.connect(0, scopings)
+                else:
+                    for i, f in enumerate(fc):
+                        merge_op.connect(i, f.scoping)
                 self._values = merge_op.eval().ids
             else:
                 raise AttributeError(
