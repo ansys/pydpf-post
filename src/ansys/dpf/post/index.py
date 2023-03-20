@@ -148,7 +148,7 @@ class MeshIndex(Index):
             fc = self._fc()
             if fc is not None:
                 merge_op = dpf.operators.utility.merge_scopings()
-                if float(fc._server.version) >= 6.0:
+                if float(fc._server.version) >= 5.0:
                     scopings = dpf.operators.utility.extract_scoping(
                         field_or_fields_container=fc
                     ).outputs.mesh_scoping_as_scopings_container
