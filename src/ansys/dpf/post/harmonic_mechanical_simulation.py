@@ -264,12 +264,6 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
 
-        extract_scoping = self._model.operator(name="extract_scoping")
-        extract_scoping.connect(0, out)
-        merge_scopings = self._model.operator(name="merge::scoping")
-        merge_scopings.connect(0, extract_scoping.outputs.mesh_scoping_as_scoping)
-        wf.set_output_name("scoping", merge_scopings.outputs.merged_scoping)
-
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
