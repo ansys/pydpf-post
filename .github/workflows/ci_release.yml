@@ -154,7 +154,7 @@ jobs:
         run: |
           pip install ansys-grpc-dpf==0.4.0
           pip uninstall -y protobuf
-          pip install protobuf<4.0
+          pip install "protobuf<4.0"
         if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
