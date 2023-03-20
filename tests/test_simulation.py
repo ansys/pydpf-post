@@ -1,6 +1,7 @@
 import os.path
 
 import ansys.dpf.core as dpf
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -450,6 +451,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces()
@@ -462,6 +467,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (103766, 3)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_nodal()
@@ -475,6 +484,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (14982, 3)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_elemental()
@@ -994,6 +1007,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1008,6 +1025,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1023,6 +1044,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1207,6 +1232,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1221,6 +1250,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1236,6 +1269,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1683,6 +1720,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1697,6 +1738,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1712,6 +1757,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,

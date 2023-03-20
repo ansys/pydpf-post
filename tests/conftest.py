@@ -173,6 +173,9 @@ SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
     get_server_version(core._global_server()), "6.0"
 )
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0 = meets_version(
+    get_server_version(core._global_server()), "5.0"
+)
 
 # to call at the end
 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:

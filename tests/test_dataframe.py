@@ -19,6 +19,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 @fixture
 def df(static_rst):
     simulation = StaticMechanicalSimulation(static_rst)
+    print(simulation._model._server.version)
     return simulation.displacement()
 
 
