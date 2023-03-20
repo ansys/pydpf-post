@@ -78,7 +78,6 @@ class DataFrame:
         self._last_display_max_colwidth = display_max_colwidth
 
         self._last_minmax: dict = {"axis": None, "min": None, "max": None}
-        self._last_mean: dict = {"axis": None, "mean": None}
 
     @property
     def columns(self) -> MultiIndex:
@@ -837,7 +836,7 @@ class DataFrame:
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )
 
-    def min(self, axis: Union[int, str, None] = 0) -> DataFrame:
+    def min(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
         """Return the minimum value over the requested axis.
 
         Parameters
@@ -851,7 +850,7 @@ class DataFrame:
         self._query_min_max(axis)
         return self._last_minmax["min"]
 
-    def max(self, axis: Union[int, str, None] = 0) -> DataFrame:
+    def max(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
         """Return the maximum value over the requested axis.
 
         Parameters
@@ -864,20 +863,6 @@ class DataFrame:
         """
         self._query_min_max(axis)
         return self._last_minmax["max"]
-
-    def mean(self, axis: Union[int, str, None] = 0) -> DataFrame:
-        """Return the mean value over the requested axis.
-
-        Parameters
-        ----------
-        axis:
-            Axis to perform average across.
-            Defaults to the MeshIndex (0).
-            Can also be the SetIndex (1).
-
-        """
-        self._query_mean(axis)
-        return self._last_mean["mean"]
 
     def _query_min_max(self, axis: Union[int, str, None]) -> None:
         """Create a DPF workflow based on the query arguments for min/max."""
@@ -947,11 +932,7 @@ class DataFrame:
 
             index = self.index
             columns = MultiIndex(
-                indexes=[
-                    c
-                    for c in self.columns
-                    if c != getattr(self.columns, ref_labels.set_ids)
-                ]
+                indexes=[c for c in self.columns if c != self.columns.set_ids]
             )
 
             min_fc = wf.get_output("min", dpf.types.fields_container)
@@ -968,58 +949,3 @@ class DataFrame:
             columns=columns,
         )
         self._last_minmax["axis"] = axis
-
-    def _query_mean(self, axis: Union[int, str, None]) -> None:
-        """Create a DPF workflow based on the query arguments for mean."""
-        # Translate None query to empty dict
-        if axis in [None, 0, self.index.mesh_index.name]:
-            axis = 0
-        elif axis in [1, ref_labels.set_ids]:
-            axis = 1
-        else:
-            raise ValueError(f"'{axis}' is not an available axis value.")
-        # If same query as last and last is not None, do not change
-        if self._last_mean["axis"] == axis and not self._last_mean["axis"] is None:
-            return
-        # If in need of an update, create the appropriate workflow
-        wf = dpf.Workflow(server=self._fc._server)
-        wf.progress_bar = False
-
-        # If over mesh
-        if axis == 0:
-            sum_op = dpf.operators.math.accumulate_fc(
-                fields_container=self._fc,
-                server=self._fc._server,
-            )
-
-            mean_fc = sum_op.outputs.fields_container()
-
-            index = MultiIndex(
-                indexes=[i for i in self.index if i != self.index.mesh_index]
-            )
-            columns = self.columns
-
-        # If over time
-        else:
-            average_over_label_op = dpf.operators.math.average_over_label_fc(
-                fields_container=self._fc,
-                server=self._fc._server,
-            )
-
-            mean_fc = average_over_label_op.outputs.field()
-
-            index = self.index
-            columns = MultiIndex(
-                indexes=[
-                    c
-                    for c in self.columns
-                    if c != getattr(self.columns, ref_labels.set_ids)
-                ]
-            )
-
-        self._last_mean["mean"] = DataFrame(
-            data=mean_fc,
-            index=index,
-            columns=columns,
-        )
-        self._last_mean["axis"] = axis
