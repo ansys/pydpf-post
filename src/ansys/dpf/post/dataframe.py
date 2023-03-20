@@ -843,8 +843,10 @@ class DataFrame:
         ----------
         axis:
             Axis to perform minimum across.
-            Defaults to the MeshIndex (0).
-            Can also be the SetIndex (1).
+            Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+            This computes the minimum across the mesh for each set.
+            Can also be the SetIndex (1), the column index containing set (time/freq) IDs.
+            This computes the minimum across sets (time/freq) for each mesh entity.
 
         """
         self._query_min_max(axis)
@@ -857,8 +859,10 @@ class DataFrame:
         ----------
         axis:
             Axis to perform maximum across.
-            Defaults to the MeshIndex (0).
-            Can also be the SetIndex (1).
+            Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+            This computes the maximum across the mesh for each set.
+            Can also be the SetIndex (1), the column index containing set (time/freq) IDs.
+            This computes the maximum across sets (time/freq) for each mesh entity.
 
         """
         self._query_min_max(axis)
