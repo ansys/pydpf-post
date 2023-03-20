@@ -756,7 +756,9 @@ class DataFrame:
             # )
             # return None
         # field.plot(text="debug")
-        return plotter.show_figure(title=str(label_space), **kwargs)
+        return plotter.show_figure(
+            title=kwargs.pop("title", str(label_space)), **kwargs
+        )
 
     def animate(
         self,
