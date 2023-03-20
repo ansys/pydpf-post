@@ -229,6 +229,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            base_name += "_VM"
 
         # Add an optional component selection step if result is vector, or matrix
         if (

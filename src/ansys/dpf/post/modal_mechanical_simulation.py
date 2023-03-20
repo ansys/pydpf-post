@@ -197,6 +197,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            base_name += "_VM"
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
