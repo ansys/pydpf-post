@@ -218,6 +218,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+            comp = None
+            base_name += "_N"
 
         extract_scoping = self._model.operator(name="extract_scoping")
         extract_scoping.connect(0, out)

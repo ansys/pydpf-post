@@ -220,6 +220,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+            comp = None
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
