@@ -10,7 +10,7 @@ from ansys.dpf.core import MeshedRegion
 
 
 class Mesh:
-    """Exposes the mesh of the solution."""
+    """Exposes the complete mesh of the simulation."""
 
     def __init__(self, meshed_region: MeshedRegion):
         """Initialize this class."""
