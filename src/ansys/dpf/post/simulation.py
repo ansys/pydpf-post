@@ -90,6 +90,18 @@ class Simulation(ABC):
         self._model.metadata.release_streams()
 
     @property
+    def mesh_info(self):
+        """Return available mesh information."""
+        mesh_selection_manager_provider_op = (
+            dpf.operators.metadata.mesh_selection_manager_provider(
+                data_sources=self._data_sources
+            )
+        )
+        outputs = mesh_selection_manager_provider_op.outputs
+        # print(dir(outputs))
+        return outputs.mesh_selection_manager
+
+    @property
     def results(self) -> List[str]:
         r"""Available results.
 

@@ -30,6 +30,10 @@ simulation = post.StaticMechanicalSimulation(example_path)
 # print the simulation to get an overview of what's available
 print(simulation)
 
+mesh_info = simulation.mesh_info  # TODO: expose MeshSelectionManager?
+print(mesh_info)
+
+exit()
 ###############################################################################
 # Get the mesh
 # ------------
