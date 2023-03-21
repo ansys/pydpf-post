@@ -344,32 +344,30 @@ class Simulation(ABC):
         """Returns the current time/frequency and distance units used."""
         return self._units
 
-    def split_mesh_by(self, labels: dict) -> Meshes:
-        """Splits the simulation Mesh according to labels and returns it as Meshes."""
-        meshes = [self.mesh._core_object]
-        label_spaces = []
-        for label in labels.keys():
-            new_meshes = []
-            new_label_spaces = []
-            for mesh in meshes:
-                split_op = dpf.operators.mesh.split_mesh(
-                    mesh=mesh,
-                    property=label,
-                )
-                new_meshes_container = split_op.outputs.meshes()
-                for i, m in enumerate(new_meshes_container):
-                    new_meshes.append(m)
-                    new_label_spaces.append(new_meshes_container.get_label_space(i))
-            meshes = new_meshes
-            label_spaces = new_label_spaces
-
-        # Reconstruct the meshes_container
+    def split_mesh_by_properties(self, properties: dict = None) -> Meshes:
+        """Splits the simulation Mesh according to properties and returns it as Meshes."""
+        split_op = dpf.operators.scoping.split_on_property_type(
+            mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            requested_location=dpf.locations.elemental,
+        )
+        if properties is not None:
+            for i, label in enumerate(properties.keys()):
+                split_op.connect(13 + i, label)
+        scopings_container = split_op.outputs.mesh_scoping()
+        # meshes = []
         meshes_container = dpf.MeshesContainer()
-        for label_space in label_spaces:
-            for key in label_space.keys():
-                meshes_container.add_label(label=key)
-        for i, mesh in enumerate(meshes):
-            meshes_container.add_mesh(mesh=mesh, label_space=label_spaces[i])
+        for label in scopings_container.labels:
+            meshes_container.add_label(label)
+        for i, scoping in enumerate(scopings_container):
+            mesh_from_scoping = dpf.operators.mesh.from_scoping(
+                scoping=scoping,
+                mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            )
+            # meshes.append(mesh_from_scoping.outputs.mesh())
+            meshes_container.add_mesh(
+                mesh=mesh_from_scoping.outputs.mesh(),
+                label_space=scopings_container.get_label_space(i),
+            )
         return Meshes(meshes_container=meshes_container)
 
     def __str__(self):
