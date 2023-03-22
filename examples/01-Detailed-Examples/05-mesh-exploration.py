@@ -24,16 +24,16 @@ from ansys.dpf.post import examples
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
 
-example_path = examples.download_crankshaft()
+example_path = examples.download_all_kinds_of_complexity()
 simulation = post.StaticMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
 print(simulation)
 
 mesh_info = simulation.mesh_info  # TODO: expose MeshSelectionManager?
-print(mesh_info)
+# print(mesh_info)
 
-exit()
+# exit()
 ###############################################################################
 # Get the mesh
 # ------------
@@ -86,7 +86,13 @@ exit()
 
 # Get the mesh split by material ID but only for mat_id 1 and 2 and thickness 2
 # meshes : Meshes = simulation.split_mesh_by(labels={"mat_id": [1, 2], "elshape": })  <--
+# meshes = simulation.split_mesh_by(labels={"mat_id": [1, 2]})
+meshes = simulation.split_mesh_by_properties(properties={"mat_id": [1, 2]})
+print(meshes._core_object)
 # mesh = meshes.select(mat_id=1)
+# print(mesh)
+exit()
+
 # simulation.create_elemental_named_selection() -> Selection
 # simulation.create_named_selection(element_ids=[,2,,4], name="my_ns") -> Selection
 # simulation.split_mesh_by({"named_selection"="my_ns")
