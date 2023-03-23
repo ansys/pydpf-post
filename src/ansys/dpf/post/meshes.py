@@ -68,3 +68,12 @@ class Meshes:
                         mesh=mesh,
                     )
             return Meshes(meshes_container=meshes_container)
+
+    def plot(self, **kwargs):
+        """Plots the Meshes."""
+        from ansys.dpf.core.plotter import DpfPlotter
+
+        plt = DpfPlotter(**kwargs)
+        for mesh in self._core_object:
+            plt.add_mesh(meshed_region=mesh, **kwargs)
+        return plt.show_figure(**kwargs)
