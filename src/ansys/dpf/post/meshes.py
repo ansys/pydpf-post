@@ -21,9 +21,15 @@ class Meshes:
         """Initialize this class."""
         self._core_object = meshes_container
 
-    def __getitem__(self, item) -> Mesh:
+    def __getitem__(self, item: Union[int, dict]) -> Mesh:
         """Select a specific mesh based on its position in the container."""
-        return Mesh(meshed_region=self._core_object[item])
+        if isinstance(item, (int, dict)):
+            return Mesh(meshed_region=self._core_object.get_mesh(item))
+        else:
+            ValueError(
+                "Access to a specific Mesh of a Meshes requires an index (int) "
+                "or a combination of labels (dict)."
+            )
 
     def __str__(self):
         """String representation of this class."""
