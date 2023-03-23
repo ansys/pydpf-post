@@ -39,3 +39,7 @@ class Mesh:
     def _core_object(self):
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.MeshedRegion` object."""
         return self._meshed_region
+
+    def plot(self, **kwargs):
+        """Plots the Mesh."""
+        return self._core_object.plot(**kwargs)
