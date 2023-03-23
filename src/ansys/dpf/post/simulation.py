@@ -344,15 +344,15 @@ class Simulation(ABC):
         """Returns the current time/frequency and distance units used."""
         return self._units
 
-    def split_mesh_by_properties(self, properties: dict = None) -> Meshes:
+    def split_mesh_by_properties(self, properties: List[str] = None) -> Meshes:
         """Splits the simulation Mesh according to properties and returns it as Meshes."""
         split_op = dpf.operators.scoping.split_on_property_type(
             mesh=self._model.metadata.mesh_provider.outputs.mesh,
             requested_location=dpf.locations.elemental,
         )
         if properties is not None:
-            for i, label in enumerate(properties.keys()):
-                split_op.connect(13 + i, label)
+            for i, prop in enumerate(properties):
+                split_op.connect(13 + i, prop)
         scopings_container = split_op.outputs.mesh_scoping()
         # meshes = []
         meshes_container = dpf.MeshesContainer()
