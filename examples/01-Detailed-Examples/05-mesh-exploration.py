@@ -87,8 +87,17 @@ mesh_info = simulation.mesh_info  # TODO: expose MeshSelectionManager?
 # Get the mesh split by material ID but only for mat_id 1 and 2 and thickness 2
 # meshes : Meshes = simulation.split_mesh_by(labels={"mat_id": [1, 2], "elshape": })  <--
 # meshes = simulation.split_mesh_by(labels={"mat_id": [1, 2]})
-meshes = simulation.split_mesh_by_properties(properties={"mat_id": [1, 2]})
+meshes = simulation.split_mesh_by_properties(
+    properties={"mat": [1, 2], "elshape": [1, 2]}
+)
 print(meshes._core_object)
+print(meshes._core_object.labels)
+print(meshes._core_object.get_available_ids_for_label("mat"))
+print(meshes._core_object.get_available_ids_for_label("elshape"))
+meshes.plot()
+meshes[1].plot()
+
+meshes[{"mat": 5, "elshape": 0}].plot()
 # mesh = meshes.select(mat_id=1)
 # print(mesh)
 exit()
