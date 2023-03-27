@@ -6,6 +6,7 @@ Meshes
 """
 from __future__ import annotations
 
+import itertools
 from typing import Union
 
 import ansys.dpf.core as dpf
@@ -61,7 +62,33 @@ class Meshes:
         for key in kwargs.keys():
             if key in initial_labels:
                 label_space[key] = kwargs[key]
-        selected_meshes = self._core_object.get_meshes(label_space=label_space)
+        # selected_meshes = self._core_object.get_meshes(label_space=label_space)
+        # Create label_spaces to select
+        label_values_to_select = {}
+        for label in initial_labels:
+            if label in list(label_space.keys()):
+                values = label_space[label]
+                if not isinstance(values, list):
+                    values = [values]
+                label_values_to_select[label] = values
+            else:
+                label_values_to_select[
+                    label
+                ] = self._core_object.get_available_ids_for_label(label)
+
+        combinations = itertools.product(
+            *[values for values in label_values_to_select.values()]
+        )
+        selected_meshes = []
+        label_spaces_to_select = [dict(zip(initial_labels, p)) for p in combinations]
+        selected_meshes_label_spaces = []
+        for p in label_spaces_to_select:
+            m = self._core_object.get_mesh(p)
+            if m is None:
+                continue
+            selected_meshes.append(m)
+            selected_meshes_label_spaces.append(p)
+
         if len(selected_meshes) == 1:
             return Mesh(meshed_region=selected_meshes[0])
         elif len(selected_meshes) == 0:
@@ -70,13 +97,11 @@ class Meshes:
             meshes_container = dpf.MeshesContainer()
             for label in initial_labels:
                 meshes_container.add_label(label=label)
-            for i, mesh in enumerate(self._core_object):
-                if mesh in selected_meshes:
-                    new_label_space = self._core_object.get_label_space(i)
-                    meshes_container.add_mesh(
-                        label_space=new_label_space,
-                        mesh=mesh,
-                    )
+            for i, selected in enumerate(selected_meshes):
+                meshes_container.add_mesh(
+                    label_space=selected_meshes_label_spaces[i],
+                    mesh=selected,
+                )
             return Meshes(meshes_container=meshes_container)
 
     def plot(self, **kwargs):
