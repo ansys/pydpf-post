@@ -1,4 +1,4 @@
-import ansys.dpf.core as core
+import ansys.dpf.core as dpf
 import numpy as np
 from pytest import fixture
 
@@ -12,7 +12,7 @@ def mesh(static_rst):
 
 
 def test_mesh_core_object(mesh):
-    assert isinstance(mesh._core_object, core.MeshedRegion)
+    assert isinstance(mesh._core_object, dpf.MeshedRegion)
     assert mesh._core_object.nodes.n_nodes == 81
 
 
