@@ -79,6 +79,23 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
     simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
     meshes = simulation.split_mesh_by_properties(properties=["mat", "elshape"])
     assert isinstance(meshes, Meshes)
+    assert len(meshes) == 16
+    meshes = simulation.split_mesh_by_properties(
+        properties=["mat", "elshape"],
+        values=[1, [0, 1]],
+    )
+    assert isinstance(meshes, Meshes)
+    assert len(meshes) == 2
+    meshes = simulation.split_mesh_by_properties(
+        properties=["mat", "elshape"],
+        values=[1, [0, 2]],
+    )
+    assert isinstance(meshes, post.Mesh)
+    meshes = simulation.split_mesh_by_properties(
+        properties=["mat", "elshape"],
+        values=[22, [0, 2]],
+    )
+    assert meshes is None
 
 
 class TestStaticMechanicalSimulation:

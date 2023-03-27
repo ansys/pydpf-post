@@ -344,15 +344,31 @@ class Simulation(ABC):
         """Returns the current time/frequency and distance units used."""
         return self._units
 
-    def split_mesh_by_properties(self, properties: List[str] = None) -> Meshes:
-        """Splits the simulation Mesh according to properties and returns it as Meshes."""
+    def split_mesh_by_properties(
+        self,
+        properties: List[str],
+        values: List[Union[int, List[int]]] = None,
+    ) -> Meshes:
+        """Splits the simulation Mesh according to properties and returns it as Meshes.
+
+        Parameters
+        ----------
+        properties:
+            Labels of properties to split the global mesh by.
+        values:
+            Associated label values for which to return the resulting meshes.
+
+        Returns
+        -------
+        A Meshes entity with resulting meshes.
+
+        """
         split_op = dpf.operators.scoping.split_on_property_type(
             mesh=self._model.metadata.mesh_provider.outputs.mesh,
             requested_location=dpf.locations.elemental,
         )
-        if properties is not None:
-            for i, prop in enumerate(properties):
-                split_op.connect(13 + i, prop)
+        for i, prop in enumerate(properties):
+            split_op.connect(13 + i, prop)
         scopings_container = split_op.outputs.mesh_scoping()
         # meshes = []
         meshes_container = dpf.MeshesContainer()
@@ -368,7 +384,11 @@ class Simulation(ABC):
                 mesh=mesh_from_scoping.outputs.mesh(),
                 label_space=scopings_container.get_label_space(i),
             )
-        return Meshes(meshes_container=meshes_container)
+        meshes = Meshes(meshes_container=meshes_container)
+        if values is None:
+            return meshes
+        else:
+            return meshes.select(**dict(zip(properties, values)))
 
     def __str__(self):
         """Get the string representation of this class."""
