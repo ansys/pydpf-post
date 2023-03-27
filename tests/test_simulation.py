@@ -8,6 +8,7 @@ from pytest import fixture
 from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes
 from ansys.dpf.post.index import ref_labels
+from ansys.dpf.post.meshes import Meshes
 
 
 @fixture
@@ -72,6 +73,12 @@ def test_simulation_active_selection(static_simulation):
 
 def test_simulation_plot(static_simulation):
     static_simulation.plot()
+
+
+def test_simulation_split_mesh_by_properties(allkindofcomplexity):
+    simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+    meshes = simulation.split_mesh_by_properties(properties=["mat", "elshape"])
+    assert isinstance(meshes, Meshes)
 
 
 class TestStaticMechanicalSimulation:
