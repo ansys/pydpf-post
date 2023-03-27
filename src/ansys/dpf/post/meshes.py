@@ -26,7 +26,7 @@ class Meshes:
         if isinstance(item, (int, dict)):
             return Mesh(meshed_region=self._core_object.get_mesh(item))
         else:
-            ValueError(
+            raise ValueError(
                 "Access to a specific Mesh of a Meshes requires an index (int) "
                 "or a combination of labels (dict)."
             )
@@ -34,6 +34,10 @@ class Meshes:
     def __str__(self):
         """String representation of this class."""
         return str(self._core_object)
+
+    def __len__(self):
+        """Return the length of the Meshes."""
+        return len(self._core_object)
 
     def select(self, **kwargs) -> Union[Mesh, Meshes, None]:
         """Select a specific mesh based on a combination of property values.
