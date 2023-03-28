@@ -15,6 +15,7 @@ query mesh information such as connectivity, element IDs, element types and so o
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
+from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
 # Get ``Simulation`` object
@@ -38,14 +39,21 @@ print(simulation)
 # ------------
 
 # Split the global mesh according to mesh properties
-meshes = simulation.split_mesh_by_properties(properties=["mat", "elshape"])
+meshes = simulation.split_mesh_by_properties(
+    properties=[elemental_properties.material, elemental_properties.element_shape]
+)
 meshes.plot()
 
 # Split the global mesh and select meshes for specific property values
+print(meshes)
 meshes = simulation.split_mesh_by_properties(
-    properties=["mat", "elshape"],
-    values=[1, [0, 1]],
+    properties={
+        elemental_properties.material: 1,
+        elemental_properties.element_shape: [0, 1],
+    }
 )
+
+# Mesh<index=0, num_nodes=100, num_elem=1000>
 meshes.plot()
 
 # Select a specific Mesh in the Meshes, by index
@@ -143,6 +151,7 @@ plt = mesh.plot()
 #
 # # Get the type of the element
 # e_type = mesh._core_object.elements.element_by_id(1).type
+# -> link with element_type Enum and element_property map
 # # Get the shape of the element
 # e_shape = mesh._core_object.elements.element_by_id(1).shape
 # # Get the connectivity of the element
