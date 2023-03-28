@@ -4,6 +4,7 @@ Common
 ------
 
 """
+from ansys.dpf.core.common import elemental_properties  # noqa: F401
 
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
