@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from ansys.dpf.post.simulation import Simulation
+    from ansys.dpf.post.mesh import Mesh
 
 from typing import Union
 
@@ -27,8 +28,6 @@ from ansys.dpf.core.field import _get_size_of_list
 from ansys.dpf.core.server import get_or_create_server
 from ansys.dpf.core.server_types import BaseServer
 from numpy import ndarray
-
-from ansys.dpf.post.mesh import Mesh
 
 
 class _WfNames:

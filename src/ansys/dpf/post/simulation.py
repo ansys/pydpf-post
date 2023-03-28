@@ -13,11 +13,11 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport
+from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations
-from ansys.dpf.post.common import elemental_properties
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
     CompIndex,

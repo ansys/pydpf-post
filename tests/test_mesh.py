@@ -2,7 +2,7 @@ import ansys.dpf.core as dpf
 import numpy as np
 from pytest import fixture
 
-from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
+from ansys.dpf.post import StaticMechanicalSimulation
 
 
 @fixture
@@ -40,3 +40,20 @@ def test_mesh_str(mesh):
         txt
         == "DPF  Mesh: \n  81 nodes \n  8 elements \n  Unit: m \n  With solid (3D) elements"
     )
+
+
+def test_mesh_coordinates(mesh):
+    coord = mesh.coordinates
+    print(coord)
+    ref = """
+                 results   coord (m)
+    node_ids  components            
+           1           X  1.5000e-02
+                       Y  4.5000e-02
+                       Z  1.5000e-02
+           2           X  1.5000e-02
+                       Y  4.5000e-02
+                       Z  0.0000e+00
+         ...
+"""  # noqa
+    assert str(coord) == ref
