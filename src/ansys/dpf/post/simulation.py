@@ -8,7 +8,7 @@ from abc import ABC
 from enum import Enum
 from os import PathLike
 import re
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
@@ -16,6 +16,7 @@ from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
+from ansys.dpf import post
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
@@ -346,27 +347,50 @@ class Simulation(ABC):
 
     def split_mesh_by_properties(
         self,
-        properties: List[str],
-        values: List[Union[int, List[int]]] = None,
+        properties: Union[
+            List[post.elemental_properties],
+            Dict[post.elemental_properties, Union[int, List[int]]],
+        ],
     ) -> Meshes:
         """Splits the simulation Mesh according to properties and returns it as Meshes.
 
         Parameters
         ----------
         properties:
-            Labels of properties to split the global mesh by.
-        values:
-            Associated label values for which to return the resulting meshes.
+            Elemental properties to split the global mesh by. Returns all meshes if a list,
+            or returns only meshes for certain elemental property values if a dict with
+            elemental properties labels with associated value or list of values.
 
         Returns
         -------
         A Meshes entity with resulting meshes.
 
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> # Split by elemental properties and get all resulting meshes
+        >>> meshes_split = simulation.split_mesh_by_properties(
+        >>>     properties=[post.elemental_properties.material,
+        >>>                 post.elemental_properties.element_shape]
+        >>> )
+        >>> # Split by elemental properties and only get meshes for certain property values
+        >>> # Here: split by material and shape, return only for material 1 and shapes 0 and 1
+        >>> meshes_filtered = simulation.split_mesh_by_properties(
+        >>>     properties={post.elemental_properties.material: 1,
+        >>>                 post.elemental_properties.element_shape: [0, 1]}
+        >>> )
         """
         split_op = dpf.operators.scoping.split_on_property_type(
             mesh=self._model.metadata.mesh_provider.outputs.mesh,
             requested_location=dpf.locations.elemental,
         )
+        values = None
+        if isinstance(properties, dict):
+            values = properties.values()
+            properties = list(properties.keys())
         for i, prop in enumerate(properties):
             split_op.connect(13 + i, prop)
         scopings_container = split_op.outputs.mesh_scoping()
