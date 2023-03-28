@@ -16,7 +16,25 @@ from ansys.dpf.post.mesh import Mesh
 
 
 class Meshes:
-    """Container to hold and interact with a split mesh."""
+    """Container to hold and interact with a split mesh.
+
+    Examples
+    --------
+    Selection of a mesh by index or by property values
+    >>> from ansys.dpf import post
+    >>> from ansys.dpf.post.common import elemental_properties as elt_prop
+    >>> from ansys.dpf.post import examples
+    >>> example_path = examples.download_all_kinds_of_complexity()
+    >>> simulation = post.StaticMechanicalSimulation(example_path)
+    >>> # Split by elemental properties and get all resulting meshes
+    >>> meshes_split = simulation.split_mesh_by_properties(
+    ...     properties=[elt_prop.material,
+    ...                 elt_prop.element_shape]
+    >>> # Select the second mesh by its index (0-based)
+    >>> mesh_1 = meshes_split[1]
+    >>> # Select the mesh for material=1 and elshape=0
+    >>> mesh_2 = meshes_split[{elt_prop.material: 1, elt_prop.element_shape: 0}]
+    """
 
     def __init__(self, meshes_container: MeshesContainer):
         """Initialize this class."""
@@ -41,7 +59,7 @@ class Meshes:
         return len(self._core_object)
 
     def select(self, **kwargs) -> Union[Mesh, Meshes, None]:
-        """Select a specific mesh based on a combination of property values.
+        """Select meshes based on a combination of property values.
 
         Parameters
         ----------
@@ -55,6 +73,18 @@ class Meshes:
         or a Meshes when several are selected,
         or None when the criteria result in no mesh.
 
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> from ansys.dpf.post import examples
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> # Split by elemental properties and get all resulting meshes
+        >>> meshes_split = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        >>> mesh = meshes_split.select(mat=1, elshape=[0, 1])
         """
         initial_labels = self._core_object.labels
         # Filter labels
