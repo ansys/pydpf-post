@@ -374,15 +374,15 @@ class Simulation(ABC):
         >>> simulation = post.StaticMechanicalSimulation(example_path)
         >>> # Split by elemental properties and get all resulting meshes
         >>> meshes_split = simulation.split_mesh_by_properties(
-        >>>     properties=[elemental_properties.material,
-        >>>                 elemental_properties.element_shape]
-        >>> )
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
         >>> # Split by elemental properties and only get meshes for certain property values
         >>> # Here: split by material and shape, return only for material 1 and shapes 0 and 1
         >>> meshes_filtered = simulation.split_mesh_by_properties(
-        >>>     properties={elemental_properties.material: 1,
-        >>>                 elemental_properties.element_shape: [0, 1]}
-        >>> )
+        ...     properties={elemental_properties.material: 1,
+        ...                 elemental_properties.element_shape: [0, 1]}
+        ... )
         """
         split_op = dpf.operators.scoping.split_on_property_type(
             mesh=self._model.metadata.mesh_provider.outputs.mesh,
