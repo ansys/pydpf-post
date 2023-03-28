@@ -16,8 +16,8 @@ from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
-from ansys.dpf import post
 from ansys.dpf.post import locations
+from ansys.dpf.post.common import elemental_properties
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
     CompIndex,
@@ -348,8 +348,8 @@ class Simulation(ABC):
     def split_mesh_by_properties(
         self,
         properties: Union[
-            List[post.elemental_properties],
-            Dict[post.elemental_properties, Union[int, List[int]]],
+            List[elemental_properties],
+            Dict[elemental_properties, Union[int, List[int]]],
         ],
     ) -> Meshes:
         """Splits the simulation Mesh according to properties and returns it as Meshes.
@@ -368,19 +368,20 @@ class Simulation(ABC):
         Examples
         --------
         >>> from ansys.dpf import post
+        >>> from ansys.dpf.post.common import elemental_properties
         >>> from ansys.dpf.post import examples
         >>> example_path = examples.download_all_kinds_of_complexity()
         >>> simulation = post.StaticMechanicalSimulation(example_path)
         >>> # Split by elemental properties and get all resulting meshes
         >>> meshes_split = simulation.split_mesh_by_properties(
-        >>>     properties=[post.elemental_properties.material,
-        >>>                 post.elemental_properties.element_shape]
+        >>>     properties=[elemental_properties.material,
+        >>>                 elemental_properties.element_shape]
         >>> )
         >>> # Split by elemental properties and only get meshes for certain property values
         >>> # Here: split by material and shape, return only for material 1 and shapes 0 and 1
         >>> meshes_filtered = simulation.split_mesh_by_properties(
-        >>>     properties={post.elemental_properties.material: 1,
-        >>>                 post.elemental_properties.element_shape: [0, 1]}
+        >>>     properties={elemental_properties.material: 1,
+        >>>                 elemental_properties.element_shape: [0, 1]}
         >>> )
         """
         split_op = dpf.operators.scoping.split_on_property_type(
