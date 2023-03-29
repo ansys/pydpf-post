@@ -30,6 +30,7 @@ class Meshes:
     >>> meshes_split = simulation.split_mesh_by_properties(
     ...     properties=[elt_prop.material,
     ...                 elt_prop.element_shape]
+    ... )
     >>> # Select the second mesh by its index (0-based)
     >>> mesh_1 = meshes_split[1]
     >>> # Select the mesh for material=1 and elshape=0
@@ -84,6 +85,7 @@ class Meshes:
         >>> meshes_split = simulation.split_mesh_by_properties(
         ...     properties=[elemental_properties.material,
         ...                 elemental_properties.element_shape]
+        ... )
         >>> mesh = meshes_split.select(mat=1, elshape=[0, 1])
         """
         initial_labels = self._core_object.labels
