@@ -39,3 +39,28 @@ class Mesh:
     def _core_object(self):
         """Returns the underlying PyDPF-Core class:`ansys.dpf.core.MeshedRegion` object."""
         return self._meshed_region
+
+    def plot(self, **kwargs):
+        """Plots the Mesh.
+
+        Parameters
+        ----------
+        kwargs:
+            Additional keyword arguments for the plotter. For additional keyword
+            arguments, see ``help(pyvista.plot)``.
+
+        Returns
+        -------
+        A Plotter instance of the current plotting back-end.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> mesh = simulation.mesh
+        >>> mesh.plot()
+        """
+        return self._core_object.plot(**kwargs)
