@@ -1,17 +1,14 @@
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post.common import AvailableSimulationTypes
 
 
 @fixture
-def static_simulation(static_rst):
-    return post.load_simulation(
-        data_sources=static_rst,
-        simulation_type=AvailableSimulationTypes.steady_fluid,
-    )
+def fluid_example():
+    return r"D:\ANSYSDev\Sandbox\plugins\Ans.Dpf.CFF\source\Ans.Dpf.CFFTest\test_models\FLPRJ\axial_comp\axial_comp_reduced.flprj"  # noqa
 
 
-def test_simulation_init(static_rst):
-    simulation = post.FluidSimulation(static_rst)
-    assert simulation is not None
+def test_simulation_init(fluid_example):
+    fluid_simulation = post.FluidSimulation(fluid_example)
+    print(fluid_simulation)
+    assert fluid_simulation is not None
