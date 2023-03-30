@@ -523,23 +523,33 @@ class Simulation(ABC):
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
-        unit = fc[0].unit
+        unit = None
+        if len(fc) > 0:
+            unit = fc[0].unit
+        if unit == "":
+            unit = None
         comp_index = None
         if comp is not None:
             comp_index = CompIndex(values=comp)
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
+        if len(fc) > 0:
+            times = fc.get_available_ids_for_label("time")
+        else:
+            times = [""]
         column_indexes = [
             ResultsIndex(values=[base_name], units=[unit]),
-            SetIndex(values=fc.get_available_ids_for_label("time")),
+            SetIndex(values=times),
         ]
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
-                label_indexes.append(
-                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                )
+                if len(fc) > 0:
+                    values = fc.get_available_ids_for_label(label)
+                else:
+                    values = [""]
+                label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
