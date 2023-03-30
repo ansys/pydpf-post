@@ -92,29 +92,26 @@ named_selections = mesh.available_named_selections
 # Query basic information about the mesh (available in PyDPF-Core)
 # --------------------------------------
 #
-# # Number of nodes
-# n_nodes = mesh._core_object.nodes.n_nodes
-#
-# # Number of elements
-# n_elements = mesh._core_object.elements.n_elements
-#
-# # Number of named selections
-# n_ns = len(named_selections)
-#
-# # Unit (get and set)
-# mesh_unit = mesh._core_object.unit
-# mesh._core_object.unit = "mm"
-#
-# # Get the list of nodes/elements IDs of a given named selection
-# ns_scoping = mesh._core_object.named_selection(named_selection=named_selections[0])
-# ns_ids = ns_scoping.ids
-#
-# # Named selection setter
-# mesh._core_object.set_named_selection_scoping(
-#     named_selection_name=named_selections[0],
-#     scoping=ns_scoping,
-# )
+# Number of nodes
+n_nodes = mesh.num_nodes
 
+# Number of elements
+n_elements = mesh.num_elements
+
+# Number of named selections
+n_ns = len(named_selections)
+
+# Unit (get and set)
+mesh_unit = mesh.unit
+mesh.unit = "mm"
+
+# Get the list of nodes/elements IDs of a given named selection
+ns_ids = mesh.named_selections[named_selections[0]]
+
+# Named selection setter
+# No update, only creation
+ns_name = "test_ns"
+mesh.named_selections[ns_name] = [344, 345, 346]
 # Plot the mesh
 plt = mesh.plot()
 
