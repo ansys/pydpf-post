@@ -418,7 +418,10 @@ class DataFrame:
         lines.append(row_headers)
         entity_ids = []
         truncated = False
-        num_mesh_entities_to_ask = self._fc[0].size
+        if len(self._fc) > 0:
+            num_mesh_entities_to_ask = self._fc[0].size
+        else:
+            num_mesh_entities_to_ask = 0
         if num_mesh_entities_to_ask > max_n_rows:
             num_mesh_entities_to_ask = max_n_rows
             truncated = True
@@ -514,6 +517,10 @@ class DataFrame:
                 for i in range(len(combination))
             ]
             to_append.append(empty)
+            if len(self._fc) == 0:
+                for i, _ in enumerate(to_append):
+                    lines[i] = lines[i] + to_append[i]
+                break
             # Get data in the FieldsContainer for those positions
             # Create label_space from combination
             label_space = {}
@@ -635,9 +642,12 @@ class DataFrame:
         txt = "\n" + "".join([line + "\n" for line in lines])
         self._str = txt
 
-    def _first_n_ids_first_field(self, n: int):
+    def _first_n_ids_first_field(self, n: int) -> List[int]:
         """Return the n first entity IDs of the first field in the underlying FieldsContainer."""
-        return self._fc[0].scoping.ids[:n]
+        if len(self._fc) > 0:
+            return self._fc[0].scoping.ids[:n]
+        else:
+            return []
 
     def __repr__(self):
         """Representation of the DataFrame."""
