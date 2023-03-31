@@ -106,31 +106,43 @@ mesh_unit = mesh.unit
 mesh.unit = "mm"
 
 # Get the list of nodes/elements IDs of a given named selection
-ns_ids = mesh.named_selections[named_selections[0]]
+first_name = named_selections[0]
+named_selection = mesh.named_selections[first_name]
+print(named_selection)
+for k, v in mesh.named_selections.items():
+    print(k)
+    print(v)
 
 # Named selection setter
-# No update, only creation
-ns_name = "test_ns"
-mesh.named_selections[ns_name] = [344, 345, 346]
+assert all(
+    mesh._core_object.named_selection(first_name)
+    == mesh.named_selections[first_name].ids
+)
+mesh.named_selections[first_name].ids = [1, 2, 3]
+assert all(mesh._core_object.named_selection(first_name).ids == [1, 2, 3])
+
+
 # Plot the mesh
 plt = mesh.plot()
 
 # # #######################################
 # # Manipulating elements
-#
-# # Get an element by ID
-# element_by_id = mesh._core_object.elements.element_by_id(1)
-# # Get an element by index
-# element_by_index = mesh._core_object.elements.element_by_index(0)
-# # Get the ID of an element
-# e_id = mesh._core_object.elements.element_by_index(0).id
-#
-# # Adding elements to the mesh
-#
-# # Get the element types
-# e_types = mesh._core_object.elements.element_types_field
-#
-# # Get the materials
+
+# Get an element by ID
+el_0 = mesh.elements[1]
+
+# Get an element by index
+el_0 = mesh.ielements[0]
+el_id = mesh.ielements[0].id
+
+# Adding elements to the mesh
+# Not mutable for now
+
+# Get the element types
+mesh.elements.types
+print(mesh.elements.types[el_id])
+
+# Get the materials
 # e_materials = mesh._core_object.elements.materials_field
 #
 # # Get the elemental connectivity
@@ -139,28 +151,36 @@ plt = mesh.plot()
 # # ##############################################
 # # Query information about one particular element
 #
-# # Get the nodes of an element
+# Get the nodes of an element
+mesh.elements[1].nodes
 # e_nodes = mesh._core_object.elements.element_by_id(1).nodes
-# # Get the node IDs of an element
+# Get the node IDs of an element
+mesh.elements[1].node_ids
 # e_node_ids = mesh._core_object.elements.element_by_id(1).node_ids
-# # Get the nodes of an element
+# Get the nodes of an element
+mesh.elements[1].n_nodes
 # e_n_node = mesh._core_object.elements.element_by_id(1).n_nodes
 #
-# # Get the type of the element
+# Get the type of the element
+mesh.elements[1].type
 # e_type = mesh._core_object.elements.element_by_id(1).type
 # -> link with element_type Enum and element_property map
-# # Get the shape of the element
+# Get the shape of the element
+mesh.elements[1].shape
 # e_shape = mesh._core_object.elements.element_by_id(1).shape
-# # Get the connectivity of the element
+# Get the connectivity of the element
+mesh.elements[1].connectivity
 # e_connectivity = mesh._core_object.elements.element_by_id(1).connectivity
 #
 #
 # # ##################
 # # Manipulating nodes
 #
-# # Get a node by ID
+# Get a node by ID
+node_by_id = mesh.nodes[1]
 # node_by_id = mesh._core_object.nodes.node_by_id(1)
-# # Get a node by index
+# Get a node by index
+node_by_index = mesh.inodes[0]
 # node_by_index = mesh._core_object.nodes.node_by_index(0)
 #
 # # Get the coordinates of all nodes
@@ -169,7 +189,9 @@ plt = mesh.plot()
 # # ###########################################
 # # Query information about one particular node
 #
-# # Coordinates
+# Coordinates
+coords = mesh.nodes[1].coordinates
 # coor = mesh._core_object.nodes.node_by_id(1).coordinates
 # # Nodal connectivity
+conn = mesh.nodes[1].nodal_connectivity
 # conn = mesh._core_object.nodes.node_by_id(1).nodal_connectivity
