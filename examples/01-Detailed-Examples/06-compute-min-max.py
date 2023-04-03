@@ -1,11 +1,10 @@
 """
 .. _ref_compute_statistics_example:
 
-Compute statistics of a DataFrame
-=================================
+Compute minimum and maximum of a DataFrame
+==========================================
 In this example, transient mechanical displacement data is used
-to show how to compute statistical values such as the min or max
-of a given DataFrame.
+to show how to compute the min or max of a given DataFrame.
 """
 
 ###############################################################################
