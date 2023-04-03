@@ -862,15 +862,18 @@ class DataFrame:
         >>> # Compute the maximum displacement value for each component at each time-step
         >>> minimum_over_mesh = displacement.min(axis="node_ids")
         >>> print(minimum_over_mesh)  # doctest: +NORMALIZE_WHITESPACE
+
            results       U (m)
            set_ids           1           2           3
         components
                  X -7.4732e-04 -1.5081e-03 -2.2755e-03
                  Y -4.0138e-04 -8.0316e-04 -1.2014e-03
                  Z -2.1555e-04 -4.3299e-04 -6.5101e-04
+
         >>> # Compute the maximum displacement for each node and component across time
         >>> minimum_over_time = displacement.min(axis="set_ids")
         >>> print(minimum_over_time)  # doctest: +NORMALIZE_WHITESPACE
+
                    results       U (m)
         node_ids  components
           4872           X -3.4137e-05
@@ -880,14 +883,17 @@ class DataFrame:
                          Y  4.8445e-04
                          Z -4.9795e-07
                        ...
+
         >>> # Compute the maximum displacement overall
         >>> minimum_overall = minimum_over_time.max()
         >>> print(minimum_overall)  # doctest: +NORMALIZE_WHITESPACE
+
            results       U (m)
         components
                  X -2.2755e-03
                  Y -1.2014e-03
                  Z -6.5101e-04
+
         """
         self._query_min_max(axis)
         return self._last_minmax["min"]
@@ -918,15 +924,18 @@ class DataFrame:
         >>> # Compute the maximum displacement value for each component at each time-step
         >>> maximum_over_mesh = displacement.max(axis="node_ids")
         >>> print(maximum_over_mesh)  # doctest: +NORMALIZE_WHITESPACE
+
            results       U (m)
            set_ids           1           2           3
         components
                  X  7.3303e-04  1.4495e-03  2.1441e-03
                  Y  1.3962e-03  2.7884e-03  4.1656e-03
                  Z  2.1567e-04  4.3321e-04  6.5135e-04
+
         >>> # Compute the maximum displacement for each node and component across time
         >>> maximum_over_time = displacement.max(axis="set_ids")
         >>> print(maximum_over_time)  # doctest: +NORMALIZE_WHITESPACE
+
                    results       U (m)
         node_ids  components
           4872           X  5.6781e-06
@@ -936,14 +945,17 @@ class DataFrame:
                          Y  1.4448e-03
                          Z  5.3134e-06
            ...
+
         >>> # Compute the maximum displacement overall
         >>> maximum_overall = maximum_over_time.max()
         >>> print(maximum_overall)  # doctest: +NORMALIZE_WHITESPACE
+
            results       U (m)
         components
                  X  2.1441e-03
                  Y  4.1656e-03
                  Z  6.5135e-04
+
         """
         self._query_min_max(axis)
         return self._last_minmax["max"]
