@@ -614,7 +614,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -869,7 +869,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1120,7 +1120,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1619,7 +1619,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1870,7 +1870,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -2945,7 +2945,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal element orientations results from the simulation.
+        """Extract element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.

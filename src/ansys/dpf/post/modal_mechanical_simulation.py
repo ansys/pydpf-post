@@ -331,7 +331,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -568,7 +568,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -801,7 +801,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent Von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1027,7 +1027,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1112,7 +1112,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract nodal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1188,7 +1188,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract elemental elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1264,7 +1264,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1497,7 +1497,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent Von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1722,7 +1722,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal plastic state variable results from the simulation.
+        """Extract plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1948,7 +1948,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal plastic strain results from the simulation.
+        """Extract plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -2185,7 +2185,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal plastic strain results from the simulation.
+        """Extract principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -2418,7 +2418,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent plastic strain results from the simulation.
+        """Extract equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.

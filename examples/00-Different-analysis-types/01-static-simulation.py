@@ -88,7 +88,7 @@ print(nodal_stress)
 elemental_stress = simulation.stress_elemental()
 print(elemental_stress)
 
-# extract  elemental stresses on specific elements
+# Extract elemental stresses on specific elements
 elemental_stress = elemental_stress.select(element_ids=[5, 6, 7])
 elemental_stress.plot()
 
