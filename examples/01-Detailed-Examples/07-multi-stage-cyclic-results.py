@@ -42,28 +42,28 @@ displacement_norm.plot()
 # Extract equivalent von mises nodal stress without expansion
 # -----------------------------------------------------------
 
-stress_vm_1 = simulation.stress_eqv_von_mises_nodal(
+stress_vm_sector_0_both_stages = simulation.stress_eqv_von_mises_nodal(
     expand_cyclic=False,
 )
-print(stress_vm_1)
-stress_vm_1.plot()
+print(stress_vm_sector_0_both_stages)
+stress_vm_sector_0_both_stages.plot()
 
 #############################################################################
-# Extract equivalent von mises nodal stress expanded on the first three sectors of the first stage
-# ------------------------------------------------------------------------------------------------
+# Extract equivalent von mises nodal stress expanded on the first four sectors of the first stage
+# -----------------------------------------------------------------------------------------------
 
-stress_vm_1_2_3 = simulation.stress_eqv_von_mises_nodal(
-    expand_cyclic=[1, 2, 3],
+stress_vm_sectors_0_1_2_3_first_stage = simulation.stress_eqv_von_mises_nodal(
+    expand_cyclic=[0, 1, 2, 3],
 )
-print(stress_vm_1_2_3)
-stress_vm_1_2_3.plot()
+print(stress_vm_sectors_0_1_2_3_first_stage)
+stress_vm_sectors_0_1_2_3_first_stage.plot()
 
 #############################################################################
-# Extract equivalent von mises nodal stress expanded on the first two sectors of each stage
-# -----------------------------------------------------------------------------------------
+# Extract equivalent von mises nodal stress expanded on the first two sectors of both stages
+# ------------------------------------------------------------------------------------------
 
-stress_vm_1_2 = simulation.stress_eqv_von_mises_nodal(
-    expand_cyclic=[[1, 2], [1, 2]],
+stress_vm_sectors_0_1_both_stages = simulation.stress_eqv_von_mises_nodal(
+    expand_cyclic=[[0, 1], [0, 1]],
 )
-print(stress_vm_1_2)
-stress_vm_1_2.plot()
+print(stress_vm_sectors_0_1_both_stages)
+stress_vm_sectors_0_1_both_stages.plot()

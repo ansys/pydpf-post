@@ -24,7 +24,7 @@ from ansys.dpf.post import examples
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
 
-example_path = examples.simple_cyclic
+example_path = examples.find_simple_cyclic()
 simulation = post.ModalMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
@@ -42,21 +42,21 @@ print(displacement_norm)
 displacement_norm.plot()
 
 #############################################################################
-# Extract equivalent von mises nodal stress expanded on the first three sectors
-# -----------------------------------------------------------------------------
+# Extract equivalent von mises nodal stress expanded on the first four sectors
+# ----------------------------------------------------------------------------
 
-stress_vm_1_2_3 = simulation.stress_eqv_von_mises_nodal(
-    expand_cyclic=[1, 2, 3],
+stress_vm_sectors_0_1_2_3 = simulation.stress_eqv_von_mises_nodal(
+    expand_cyclic=[0, 1, 2, 3],
 )
-print(stress_vm_1_2_3)
-stress_vm_1_2_3.plot()
+print(stress_vm_sectors_0_1_2_3)
+stress_vm_sectors_0_1_2_3.plot()
 
 #############################################################################
 # Extract equivalent von mises nodal stress without expansion
 # -----------------------------------------------------------
 
-stress_vm_1 = simulation.stress_eqv_von_mises_nodal(
+stress_vm_sector_0 = simulation.stress_eqv_von_mises_nodal(
     expand_cyclic=False,
 )
-print(stress_vm_1)
-stress_vm_1.plot()
+print(stress_vm_sector_0)
+stress_vm_sector_0.plot()
