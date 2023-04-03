@@ -3,14 +3,14 @@
 
 Extract cyclic results
 ======================
-In this script a modal analysis with cyclic symmetry is processed to show
+In this script, a modal analysis with cyclic symmetry is processed to show
 how to expand the mesh and results.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -42,7 +42,7 @@ print(displacement_norm)
 displacement_norm.plot()
 
 #############################################################################
-# Extract equivalent von mises nodal stress expanded on the first four sectors
+# Extract equivalent von Mises nodal stress expanded on the first four sectors
 # ----------------------------------------------------------------------------
 
 stress_vm_sectors_0_1_2_3 = simulation.stress_eqv_von_mises_nodal(
@@ -52,7 +52,7 @@ print(stress_vm_sectors_0_1_2_3)
 stress_vm_sectors_0_1_2_3.plot()
 
 #############################################################################
-# Extract equivalent von mises nodal stress without expansion
+# Extract equivalent von Mises nodal stress without expansion
 # -----------------------------------------------------------
 
 stress_vm_sector_0 = simulation.stress_eqv_von_mises_nodal(

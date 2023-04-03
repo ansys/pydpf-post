@@ -85,7 +85,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 Named selection or list of named selections to get results for.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -291,7 +292,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -381,7 +383,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -458,7 +461,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -538,7 +542,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -627,7 +632,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -703,7 +709,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -782,7 +789,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -867,7 +875,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -940,7 +949,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1016,7 +1026,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1105,7 +1116,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1185,7 +1197,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1262,7 +1275,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1350,7 +1364,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1429,7 +1444,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1505,7 +1521,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1590,7 +1607,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1663,7 +1681,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1739,7 +1758,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1824,7 +1844,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1897,7 +1918,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1973,7 +1995,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2062,7 +2085,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2142,7 +2166,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2219,7 +2244,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2307,7 +2333,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2386,7 +2413,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2462,7 +2490,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2547,7 +2576,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2623,7 +2653,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2696,7 +2727,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2785,7 +2817,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2865,7 +2898,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2942,7 +2976,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3030,7 +3065,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3109,7 +3145,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3185,7 +3222,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3270,7 +3308,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3346,7 +3385,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3419,7 +3459,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3502,7 +3543,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3579,7 +3621,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3652,7 +3695,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3725,7 +3769,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3798,7 +3843,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3871,7 +3917,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3956,7 +4003,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4029,7 +4077,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4105,7 +4154,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4178,7 +4228,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4251,7 +4302,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4324,7 +4376,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4397,7 +4450,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4474,7 +4528,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4550,7 +4605,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4623,7 +4679,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4708,7 +4765,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4784,7 +4842,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4857,7 +4916,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -4949,7 +5009,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -5033,7 +5094,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -5114,7 +5176,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -5198,7 +5261,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -5282,7 +5346,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand.
+                Can take a list of sector numbers to select specific sectors to expand
+                (zero-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:

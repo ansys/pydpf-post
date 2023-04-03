@@ -3,14 +3,14 @@
 
 Extract components of results - Modal Simulation
 ================================================
-In this script a modal simulation is processed to extract sub-components
+In this script, a modal simulation is processed to extract sub-components
 of results like elastic strain and displacement.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
