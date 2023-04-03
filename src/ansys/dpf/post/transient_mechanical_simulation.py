@@ -884,7 +884,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -956,7 +956,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1019,7 +1019,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1508,7 +1508,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1580,7 +1580,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1643,7 +1643,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
