@@ -4,7 +4,8 @@
 Compute statistics of a DataFrame
 =================================
 In this example, transient mechanical displacement data is used
-to show how to compute statistical values such as the min, max or mean.
+to show how to compute statistical values such as the min or max
+for a given DataFrame.
 """
 
 ###############################################################################
