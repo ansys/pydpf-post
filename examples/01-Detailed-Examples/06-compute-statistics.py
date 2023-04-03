@@ -5,13 +5,12 @@ Compute statistics of a DataFrame
 =================================
 In this example, transient mechanical displacement data is used
 to show how to compute statistical values such as the min or max
-for a given DataFrame.
+of a given DataFrame.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
 # This example uses a supplied file that you can
 # get using the ``examples`` module.
 
