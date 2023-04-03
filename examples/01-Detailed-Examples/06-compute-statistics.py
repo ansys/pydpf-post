@@ -40,19 +40,43 @@ displacement = simulation.displacement(all_sets=True)
 print(displacement)
 
 ###############################################################################
-# Compute the maximum displacement value for each component at each time-step
-# ---------------------------------------------------------------------------
+# Compute the maximum displacement for each component at each time-step
+# ---------------------------------------------------------------------
 
 # The default axis is the MeshIndex
-maximum = displacement.max()
-print(maximum)
+maximum_over_mesh = displacement.max()
+print(maximum_over_mesh)
 # is equivalent to
-maximum = displacement.max(axis="node_ids")
-print(maximum)
+maximum_over_mesh = displacement.max(axis="node_ids")
+print(maximum_over_mesh)
+
+# Compute the maximum displacement for each node and component across time
+# ------------------------------------------------------------------------
+maximum_over_time = displacement.max(axis="set_ids")
+print(maximum_over_time)
+
+# Compute the maximum displacement overall
+# ----------------------------------------
+maximum_overall = maximum_over_time.max()
+print(maximum_overall)
 
 ###############################################################################
+# Compute the minimum displacement for each component at each time-step
+# ---------------------------------------------------------------------
+
+# The default axis is the MeshIndex
+minimum_over_mesh = displacement.min()
+print(minimum_over_mesh)
+# is equivalent to
+minimum_over_mesh = displacement.min(axis="node_ids")
+print(minimum_over_mesh)
+
 # Compute the minimum displacement for each node and component across time
 # ------------------------------------------------------------------------
+minimum_over_time = displacement.min(axis="set_ids")
+print(minimum_over_time)
 
-minimum = displacement.min(axis="set_ids")
-print(minimum)
+# Compute the minimum displacement overall
+# ----------------------------------------
+minimum_overall = minimum_over_time.min()
+print(minimum_overall)
