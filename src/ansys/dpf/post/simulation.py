@@ -524,8 +524,10 @@ class Simulation(ABC):
                 category=UserWarning,
             )
         unit = None
+        times = [""]
         if len(fc) > 0:
             unit = fc[0].unit
+            times = fc.get_available_ids_for_label("time")
         if unit == "":
             unit = None
         comp_index = None
@@ -534,10 +536,6 @@ class Simulation(ABC):
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
-        if len(fc) > 0:
-            times = fc.get_available_ids_for_label("time")
-        else:
-            times = [""]
         column_indexes = [
             ResultsIndex(values=[base_name], units=[unit]),
             SetIndex(values=times),
