@@ -297,6 +297,175 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         -------
             Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.ModalMechanicalSimulation(examples.download_modal_frame())
+        >>> # Extract the displacement field for the first mode
+        >>> displacement = simulation.displacement()
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+             367           X -2.9441e-01
+                           Y  1.2397e+00
+                           Z  5.1160e-01
+             509           X -3.4043e-01
+                           Y  1.8414e+00
+                           Z  3.4187e-01
+             ...
+        >>> # Extract the displacement field for the first two modes
+        >>> displacement = simulation.displacement(modes=[1, 2])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1           2
+        node_ids  components
+             367           X -2.9441e-01  1.7382e+00
+                           Y  1.2397e+00  5.4243e-01
+                           Z  5.1160e-01 -4.2969e-01
+             509           X -3.4043e-01  2.4632e+00
+                           Y  1.8414e+00  7.5043e-01
+                           Z  3.4187e-01 -2.7130e-01
+             ...
+        >>> # Extract the displacement field for all modes
+        >>> displacement = simulation.displacement(all_sets=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1           2           3           4           5           6
+        node_ids  components
+             367           X -2.9441e-01  1.7382e+00 -1.0401e-01 -3.6455e-01  2.8577e+00 -6.7501e-01
+                           Y  1.2397e+00  5.4243e-01  1.9069e+00  2.1373e+00 -5.0887e-02 -1.0978e+00
+                           Z  5.1160e-01 -4.2969e-01  6.5813e-01  6.7056e-01 -8.8191e-01 -1.4610e-01
+             509           X -3.4043e-01  2.4632e+00 -3.1666e-01 -3.1348e-01  3.9674e+00 -5.1783e-01
+                           Y  1.8414e+00  7.5043e-01  2.5367e+00  3.0538e+00 -6.2025e-02 -1.1483e+00
+                           Z  3.4187e-01 -2.7130e-01  4.4146e-01  3.9606e-01 -5.0972e-01 -1.1397e-01
+             ...
+        >>> # Extract the norm of the displacement field for the first mode
+        >>> displacement = simulation.displacement(norm=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+         results    U_N (mm)
+         set_ids           1
+        node_ids
+             367  1.3730e+00
+             509  1.9036e+00
+             428  1.0166e+00
+             510  1.0461e+00
+            3442  1.6226e+00
+            3755  1.4089e+00
+             ...
+        >>> # Extract the displacement field along X for the first mode
+        >>> displacement = simulation.displacement(components=["X"])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+         results    U_X (mm)
+         set_ids           1
+        node_ids
+             367 -2.9441e-01
+             509 -3.4043e-01
+             428 -1.1434e-01
+             510 -2.0561e-01
+            3442 -3.1765e-01
+            3755 -2.2155e-01
+             ...
+        >>> # Extract the displacement field at nodes 23 and 24 for the first mode
+        >>> displacement = simulation.displacement(node_ids=[23, 24])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+              23           X -0.0000e+00
+                           Y -0.0000e+00
+                           Z -0.0000e+00
+              24           X  2.8739e-02
+                           Y  1.3243e-01
+                           Z  1.4795e-01
+        >>> # Extract the displacement field at nodes of element 40 for the first mode
+        >>> displacement = simulation.displacement(element_ids=[40])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+             344           X -2.0812e-01
+                           Y  1.1289e+00
+                           Z  3.5111e-01
+             510           X -2.0561e-01
+                           Y  9.8847e-01
+                           Z  2.7365e-01
+             ...
+        >>> # For cyclic results
+        >>> simulation = post.ModalMechanicalSimulation(examples.find_simple_cyclic())
+        >>> # Extract the displacement field with cyclic expansion on all sectors at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+               1           X  1.7611e-13
+                           Y  8.5207e+01
+                           Z  3.1717e-12
+              52           X  2.3620e-12
+                           Y  8.5207e+01
+                           Z  2.1160e-12
+             ...
+        >>> # Extract the displacement field without cyclic expansion at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=False)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+                 base_sector           1
+        node_ids  components
+               1           X  4.9812e-13
+                           Y  2.4100e+02
+                           Z  8.9709e-12
+              14           X -1.9511e-12
+                           Y  1.9261e+02
+                           Z  5.0359e-12
+             ...
+        >>> # Extract the displacement field with cyclic expansion on selected sectors at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[1, 2, 3])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+               1           X  1.7611e-13
+                           Y  8.5207e+01
+                           Z  3.1717e-12
+              52           X  2.3620e-12
+                           Y  8.5207e+01
+                           Z  2.1160e-12
+             ...
+        >>> # For multi-stage cyclic results
+        >>> simulation = post.ModalMechanicalSimulation(
+        ...     examples.download_multi_stage_cyclic_result()
+        ... )
+        >>> # Extract the displacement field with cyclic expansion on the first four sectors of the
+        >>> # first stage at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[1, 2, 3, 4])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+            1376           X  4.3586e-02
+                           Y -3.0071e-02
+                           Z -9.4850e-05
+            4971           X  4.7836e-02
+                           Y  2.2711e-02
+                           Z -9.4850e-05
+             ...
+        >>> # Extract the displacement field with cyclic expansion on the first two sectors of both
+        >>> # stages at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[[1, 2], [1, 2]])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+            1376           X  4.3586e-02
+                           Y -3.0071e-02
+                           Z -9.4850e-05
+            4971           X  4.7836e-02
+                           Y  2.2711e-02
+                           Z -9.4850e-05
+             ...
         """
         return self._get_result(
             base_name="U",
