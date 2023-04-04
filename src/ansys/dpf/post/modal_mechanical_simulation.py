@@ -6,7 +6,7 @@ ModalMechanicalSimulation
 """
 from typing import List, Union
 
-from ansys.dpf import core
+from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection
@@ -31,6 +31,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         modes: Union[int, List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -77,6 +79,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -116,7 +126,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
 
         # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
+        wf = dpf.Workflow(server=self._model._server)
         wf.progress_bar = False
 
         if category == ResultCategory.equivalent and base_name[0] == "E":
@@ -130,6 +140,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=force_elemental_nodal,
         )
+
+        # Treat cyclic cases
+        result_op = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op)
+
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
@@ -184,6 +198,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            base_name += "_VM"
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
@@ -198,6 +213,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
 
         # Add an optional norm operation if requested
         if norm:
@@ -205,11 +223,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+            comp = None
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
-        fc = wf.get_output("out", core.types.fields_container)
+        fc = wf.get_output("out", dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
@@ -227,6 +247,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -238,7 +260,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-         Args:
+        Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -262,11 +284,188 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
             Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.ModalMechanicalSimulation(examples.download_modal_frame())
+        >>> # Extract the displacement field for the first mode
+        >>> displacement = simulation.displacement()
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+             367           X -2.9441e-01
+                           Y  1.2397e+00
+                           Z  5.1160e-01
+             509           X -3.4043e-01
+                           Y  1.8414e+00
+                           Z  3.4187e-01
+             ...
+        >>> # Extract the displacement field for the first two modes
+        >>> displacement = simulation.displacement(modes=[1, 2])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1           2
+        node_ids  components
+             367           X -2.9441e-01  1.7382e+00
+                           Y  1.2397e+00  5.4243e-01
+                           Z  5.1160e-01 -4.2969e-01
+             509           X -3.4043e-01  2.4632e+00
+                           Y  1.8414e+00  7.5043e-01
+                           Z  3.4187e-01 -2.7130e-01
+             ...
+        >>> # Extract the displacement field for all modes
+        >>> displacement = simulation.displacement(all_sets=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1           2           3           4           5           6
+        node_ids  components
+             367           X -2.9441e-01  1.7382e+00 -1.0401e-01 -3.6455e-01  2.8577e+00 -6.7501e-01
+                           Y  1.2397e+00  5.4243e-01  1.9069e+00  2.1373e+00 -5.0887e-02 -1.0978e+00
+                           Z  5.1160e-01 -4.2969e-01  6.5813e-01  6.7056e-01 -8.8191e-01 -1.4610e-01
+             509           X -3.4043e-01  2.4632e+00 -3.1666e-01 -3.1348e-01  3.9674e+00 -5.1783e-01
+                           Y  1.8414e+00  7.5043e-01  2.5367e+00  3.0538e+00 -6.2025e-02 -1.1483e+00
+                           Z  3.4187e-01 -2.7130e-01  4.4146e-01  3.9606e-01 -5.0972e-01 -1.1397e-01
+             ...
+        >>> # Extract the norm of the displacement field for the first mode
+        >>> displacement = simulation.displacement(norm=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+         results    U_N (mm)
+         set_ids           1
+        node_ids
+             367  1.3730e+00
+             509  1.9036e+00
+             428  1.0166e+00
+             510  1.0461e+00
+            3442  1.6226e+00
+            3755  1.4089e+00
+             ...
+        >>> # Extract the displacement field along X for the first mode
+        >>> displacement = simulation.displacement(components=["X"])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+         results    U_X (mm)
+         set_ids           1
+        node_ids
+             367 -2.9441e-01
+             509 -3.4043e-01
+             428 -1.1434e-01
+             510 -2.0561e-01
+            3442 -3.1765e-01
+            3755 -2.2155e-01
+             ...
+        >>> # Extract the displacement field at nodes 23 and 24 for the first mode
+        >>> displacement = simulation.displacement(node_ids=[23, 24])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+              23           X -0.0000e+00
+                           Y -0.0000e+00
+                           Z -0.0000e+00
+              24           X  2.8739e-02
+                           Y  1.3243e-01
+                           Z  1.4795e-01
+        >>> # Extract the displacement field at nodes of element 40 for the first mode
+        >>> displacement = simulation.displacement(element_ids=[40])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results      U (mm)
+                     set_ids           1
+        node_ids  components
+             344           X -2.0812e-01
+                           Y  1.1289e+00
+                           Z  3.5111e-01
+             510           X -2.0561e-01
+                           Y  9.8847e-01
+                           Z  2.7365e-01
+             ...
+        >>> # For cyclic results
+        >>> simulation = post.ModalMechanicalSimulation(examples.find_simple_cyclic())
+        >>> # Extract the displacement field with cyclic expansion on all sectors at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=True)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+               1           X  1.7611e-13
+                           Y  8.5207e+01
+                           Z  3.1717e-12
+              52           X  2.3620e-12
+                           Y  8.5207e+01
+                           Z  2.1160e-12
+             ...
+        >>> # Extract the displacement field without cyclic expansion at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=False)
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+                 base_sector           1
+        node_ids  components
+               1           X  4.9812e-13
+                           Y  2.4100e+02
+                           Z  8.9709e-12
+              14           X -1.9511e-12
+                           Y  1.9261e+02
+                           Z  5.0359e-12
+             ...
+        >>> # Extract the displacement field with cyclic expansion on selected sectors at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[1, 2, 3])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+               1           X  1.7611e-13
+                           Y  8.5207e+01
+                           Z  3.1717e-12
+              52           X  2.3620e-12
+                           Y  8.5207e+01
+                           Z  2.1160e-12
+             ...
+        >>> # For multi-stage cyclic results
+        >>> simulation = post.ModalMechanicalSimulation(
+        ...     examples.download_multi_stage_cyclic_result()
+        ... )
+        >>> # Extract the displacement field with cyclic expansion on the first four sectors of the
+        >>> # first stage at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[1, 2, 3, 4])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+            1376           X  4.3586e-02
+                           Y -3.0071e-02
+                           Z -9.4850e-05
+            4971           X  4.7836e-02
+                           Y  2.2711e-02
+                           Z -9.4850e-05
+             ...
+        >>> # Extract the displacement field with cyclic expansion on the first two sectors of both
+        >>> # stages at first mode
+        >>> displacement = simulation.displacement(expand_cyclic=[[1, 2], [1, 2]])
+        >>> print(displacement)  # doctest: +NORMALIZE_WHITESPACE
+                     results       U (m)
+                     set_ids           1
+        node_ids  components
+            1376           X  4.3586e-02
+                           Y -3.0071e-02
+                           Z -9.4850e-05
+            4971           X  4.7836e-02
+                           Y  2.2711e-02
+                           Z -9.4850e-05
+             ...
         """
         return self._get_result(
             base_name="U",
@@ -282,6 +481,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress(
@@ -296,8 +497,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -337,6 +540,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -356,6 +567,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_elemental(
@@ -368,6 +581,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -399,6 +614,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -418,6 +641,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_nodal(
@@ -431,6 +656,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -464,6 +691,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -483,6 +718,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal(
@@ -497,8 +734,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -537,6 +776,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -556,6 +803,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal_elemental(
@@ -568,6 +817,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -598,6 +849,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -617,6 +876,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal_nodal(
@@ -630,6 +891,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -662,6 +925,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -681,6 +952,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises(
@@ -694,8 +967,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -732,6 +1007,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -751,6 +1034,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -762,8 +1047,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -790,6 +1077,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -809,6 +1104,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -821,8 +1118,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -851,6 +1150,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -870,6 +1177,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain(
@@ -884,8 +1193,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -925,6 +1236,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -944,6 +1263,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_nodal(
@@ -957,8 +1278,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract nodal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -990,6 +1313,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1009,6 +1340,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_elemental(
@@ -1021,8 +1354,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract stress results from the simulation.
+        """Extract elemental elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1052,6 +1387,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1071,6 +1414,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal(
@@ -1085,8 +1430,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1125,6 +1472,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1144,6 +1499,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal_nodal(
@@ -1157,6 +1514,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1189,6 +1548,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1208,6 +1575,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal_elemental(
@@ -1220,6 +1589,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1250,6 +1621,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1269,6 +1648,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises(
@@ -1282,8 +1663,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1320,6 +1703,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1339,6 +1730,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises_elemental(
@@ -1350,8 +1743,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1378,6 +1773,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1397,6 +1800,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises_nodal(
@@ -1409,8 +1814,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1439,6 +1846,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1458,6 +1873,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_state_variable(
@@ -1471,8 +1888,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal plastic state variable results from the simulation.
+        """Extract plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1509,6 +1928,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1528,6 +1955,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_state_variable_elemental(
@@ -1539,6 +1968,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1567,6 +1998,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1586,6 +2025,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_state_variable_nodal(
@@ -1598,6 +2039,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1628,6 +2071,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1647,6 +2098,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain(
@@ -1661,8 +2114,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal plastic strain results from the simulation.
+        """Extract plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1702,6 +2157,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1721,6 +2184,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_nodal(
@@ -1734,6 +2199,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
@@ -1767,6 +2234,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1786,6 +2261,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_elemental(
@@ -1798,6 +2275,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
@@ -1829,6 +2308,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1848,6 +2335,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_principal(
@@ -1862,8 +2351,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal plastic strain results from the simulation.
+        """Extract principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -1902,6 +2393,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1921,6 +2420,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_principal_nodal(
@@ -1934,6 +2435,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -1966,6 +2469,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1985,6 +2496,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_principal_elemental(
@@ -1997,6 +2510,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -2027,6 +2542,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2046,6 +2569,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_eqv(
@@ -2059,8 +2584,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent plastic strain results from the simulation.
+        """Extract equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
         exclusive.
@@ -2097,6 +2624,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2116,6 +2651,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_eqv_nodal(
@@ -2128,6 +2665,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -2158,6 +2697,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2177,6 +2724,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def plastic_strain_eqv_elemental(
@@ -2188,6 +2737,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -2216,6 +2767,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2235,6 +2794,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def reaction_force(
@@ -2249,6 +2810,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -2284,6 +2847,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2304,6 +2875,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elemental_volume(
@@ -2315,6 +2888,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -2343,6 +2918,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2362,6 +2945,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elemental_mass(
@@ -2373,6 +2958,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -2401,6 +2988,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2420,6 +3015,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_centroids(
@@ -2431,6 +3028,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -2459,6 +3058,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2478,6 +3085,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def thickness(
@@ -2489,6 +3098,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -2517,6 +3128,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2536,6 +3155,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations(
@@ -2549,6 +3170,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -2587,6 +3210,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2606,6 +3237,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations_elemental(
@@ -2617,6 +3250,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -2645,6 +3280,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2664,6 +3307,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations_nodal(
@@ -2676,6 +3321,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -2706,6 +3353,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2725,6 +3380,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def hydrostatic_pressure(
@@ -2738,6 +3395,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -2776,6 +3435,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2795,6 +3462,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def hydrostatic_pressure_nodal(
@@ -2807,6 +3476,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -2837,6 +3508,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2856,6 +3535,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def hydrostatic_pressure_elemental(
@@ -2867,6 +3548,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -2895,6 +3578,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2914,6 +3605,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces(
@@ -2929,6 +3622,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         location: Union[locations, str] = locations.elemental_nodal,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -2972,6 +3667,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2992,6 +3695,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces_nodal(
@@ -3006,6 +3711,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -3041,6 +3748,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -3061,6 +3776,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces_elemental(
@@ -3074,6 +3791,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -3107,6 +3826,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -3127,6 +3854,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def nodal_force(
@@ -3141,6 +3870,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -3176,6 +3907,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -3196,6 +3935,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def nodal_moment(
@@ -3210,6 +3951,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -3245,6 +3988,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 Common to all simulation types for easier scripting.
             all_sets:
                 Whether to get results for all sets/modes.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -3265,4 +4016,6 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )

@@ -7,7 +7,7 @@ HarmonicMechanicalSimulation
 from typing import List, Tuple, Union
 import warnings
 
-from ansys.dpf import core
+from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
@@ -44,6 +44,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -97,6 +99,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -146,7 +156,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         )
 
         # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
+        wf = dpf.Workflow(server=self._model._server)
         wf.progress_bar = False
 
         if category == ResultCategory.equivalent and base_name[0] == "E":
@@ -162,6 +172,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=force_elemental_nodal,
         )
+
+        # Treat cyclic cases
+        result_op = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op)
+
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
@@ -216,6 +230,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            base_name += "_VM"
 
         # Add an optional component selection step if result is vector, or matrix
         if (
@@ -234,6 +249,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
 
         # Add an optional sweeping phase or amplitude operation if requested
         # (must be after comp_selector for U)
@@ -263,11 +281,13 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+            comp = None
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
         # Evaluate  the workflow
-        fc = wf.get_output("out", core.types.fields_container)
+        fc = wf.get_output("out", dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
@@ -326,6 +346,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -363,6 +385,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -385,6 +415,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def velocity(
@@ -403,6 +435,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract velocity results from the simulation.
 
@@ -440,6 +474,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -462,6 +504,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def acceleration(
@@ -480,6 +524,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract acceleration results from the simulation.
 
@@ -517,6 +563,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -539,6 +593,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress(
@@ -555,8 +611,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -598,6 +656,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -619,6 +685,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_elemental(
@@ -633,6 +701,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -666,6 +736,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -687,6 +765,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_nodal(
@@ -702,6 +782,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -737,6 +819,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -758,6 +848,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal(
@@ -774,8 +866,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -816,6 +910,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -837,6 +939,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal_elemental(
@@ -851,6 +955,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -883,6 +989,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -904,6 +1018,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_principal_nodal(
@@ -919,6 +1035,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -953,6 +1071,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -974,6 +1100,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises(
@@ -989,8 +1117,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1029,6 +1159,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1050,6 +1188,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -1063,8 +1203,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1093,6 +1235,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1114,6 +1264,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -1128,8 +1280,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1160,6 +1314,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1181,6 +1343,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain(
@@ -1197,6 +1361,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1240,6 +1406,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1261,6 +1435,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_nodal(
@@ -1276,6 +1452,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1311,6 +1489,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1332,6 +1518,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_elemental(
@@ -1346,6 +1534,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1379,6 +1569,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1400,6 +1598,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal(
@@ -1416,8 +1616,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1458,6 +1660,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1479,6 +1689,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal_nodal(
@@ -1494,6 +1706,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1528,6 +1742,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1549,6 +1771,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_principal_elemental(
@@ -1563,6 +1787,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1595,6 +1821,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1616,6 +1850,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises(
@@ -1631,8 +1867,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1671,6 +1909,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1692,6 +1938,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises_elemental(
@@ -1705,8 +1953,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1735,6 +1985,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1756,6 +2014,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elastic_strain_eqv_von_mises_nodal(
@@ -1770,8 +2030,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -1802,6 +2064,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1823,6 +2093,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def reaction_force(
@@ -1839,6 +2111,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -1876,6 +2150,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1898,6 +2180,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elemental_volume(
@@ -1911,6 +2195,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -1941,6 +2227,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -1962,6 +2256,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def elemental_mass(
@@ -1975,6 +2271,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -2005,6 +2303,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2026,6 +2332,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces(
@@ -2043,6 +2351,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -2088,6 +2398,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2110,6 +2428,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces_nodal(
@@ -2126,6 +2446,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -2163,6 +2485,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2185,6 +2515,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_nodal_forces_elemental(
@@ -2200,6 +2532,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -2235,6 +2569,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2257,6 +2599,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def nodal_force(
@@ -2273,6 +2617,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -2310,6 +2656,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2332,6 +2686,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def nodal_moment(
@@ -2348,6 +2704,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -2385,6 +2743,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2407,6 +2773,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_centroids(
@@ -2420,6 +2788,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -2450,6 +2820,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2471,6 +2849,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def thickness(
@@ -2484,6 +2864,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -2514,6 +2896,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2535,6 +2925,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations(
@@ -2550,8 +2942,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
-        """Extract elemental nodal element orientations results from the simulation.
+        """Extract element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `load_steps` are mutually
         exclusive.
@@ -2590,6 +2984,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2611,6 +3013,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations_elemental(
@@ -2624,6 +3028,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -2654,6 +3060,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2675,6 +3089,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )
 
     def element_orientations_nodal(
@@ -2689,6 +3105,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -2721,6 +3139,14 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
 
         Returns
         -------
@@ -2742,4 +3168,6 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
         )

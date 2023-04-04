@@ -72,6 +72,18 @@ def allkindofcomplexity():
 
 
 @pytest.fixture()
+def simple_cyclic():
+    """Resolve the path of the "simple_cyclic.rst" result file."""
+    return examples.simple_cyclic
+
+
+@pytest.fixture()
+def multi_stage_cyclic():
+    """Resolve the path of the "multi_stage.rst" result file."""
+    return examples.download_multi_stage_cyclic_result()
+
+
+@pytest.fixture()
 def modalallkindofcomplexity():
     """Resolve the path of the "allKindOfComplexity.rst" result file."""
     return examples.download_all_kinds_of_complexity_modal()

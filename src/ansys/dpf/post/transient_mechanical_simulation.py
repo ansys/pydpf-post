@@ -187,6 +187,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            base_name += "_VM"
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (
@@ -205,6 +206,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
 
         # Add an optional norm operation if requested
         if norm:
@@ -213,6 +217,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
             comp = None
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
@@ -457,7 +462,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -670,7 +675,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -879,7 +884,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -951,7 +956,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1014,7 +1019,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1294,7 +1299,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1503,7 +1508,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1575,7 +1580,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1638,7 +1643,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1704,7 +1709,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal plastic state variable results from the simulation.
+        """Extract plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1906,7 +1911,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal plastic strain results from the simulation.
+        """Extract plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2119,7 +2124,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal principal plastic strain results from the simulation.
+        """Extract principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2328,7 +2333,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent plastic strain results from the simulation.
+        """Extract equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2912,7 +2917,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
     ) -> DataFrame:
-        """Extract elemental nodal element orientations results from the simulation.
+        """Extract element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
