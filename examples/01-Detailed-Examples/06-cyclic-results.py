@@ -45,18 +45,18 @@ displacement_norm.plot()
 # Extract equivalent von Mises nodal stress expanded on the first four sectors
 # ----------------------------------------------------------------------------
 
-stress_vm_sectors_0_1_2_3 = simulation.stress_eqv_von_mises_nodal(
-    expand_cyclic=[0, 1, 2, 3],
+stress_vm_sectors_1_2_3_4 = simulation.stress_eqv_von_mises_nodal(
+    expand_cyclic=[1, 2, 3, 4],
 )
-print(stress_vm_sectors_0_1_2_3)
-stress_vm_sectors_0_1_2_3.plot()
+print(stress_vm_sectors_1_2_3_4)
+stress_vm_sectors_1_2_3_4.plot()
 
 #############################################################################
 # Extract equivalent von Mises nodal stress without expansion
 # -----------------------------------------------------------
 
-stress_vm_sector_0 = simulation.stress_eqv_von_mises_nodal(
+stress_vm_sector_1 = simulation.stress_eqv_von_mises_nodal(
     expand_cyclic=False,
 )
-print(stress_vm_sector_0)
-stress_vm_sector_0.plot()
+print(stress_vm_sector_1)
+stress_vm_sector_1.plot()
