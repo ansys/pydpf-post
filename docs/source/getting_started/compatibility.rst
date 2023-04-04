@@ -19,18 +19,27 @@ libraries.
    :widths: 20 20 20
    :header-rows: 1
 
-   * - Ansys installation
+   * - DPF server version
      - ansys.dpf.core python module version
      - ansys.dpf.post python module version
-   * - Ansys 2022 R2
+   * - 6.1 (DPF Server 2023.2.pre1)
+     - 0.8.0 or later
+     - 0.4.0 or later
+   * - 6.0 (DPF Server 2023.2.pre0)
+     - 0.7.0 or later
+     - 0.3.0 or later
+   * - 5.0 (Ansys 2023 R1)
+     - 0.6.0 or later
+     - 0.3.0 or later
+   * - 4.0 (Ansys 2022 R2)
      - 0.5.0 or later
      - 0.3.0 or later
-   * - Ansys 2022 R1
+   * - 3.0 (Ansys 2022 R1)
      - 0.4.0 or later
      - 0.1.0 or later
-   * - Ansys 2021 R2
+   * - 2.0 (Ansys 2021 R2)
      - 0.3.0 or later
      - 0.1.0 or later
-   * - Ansys 2021 R1
+   * - 1.0 (Ansys 2021 R1)
      - 0.2.*
      - 0.1.0 or later
