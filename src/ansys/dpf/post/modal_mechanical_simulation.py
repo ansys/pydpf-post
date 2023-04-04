@@ -82,7 +82,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -260,7 +260,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-         Args:
+        Args:
             node_ids:
                 List of IDs of nodes to get results for.
             element_ids:
@@ -287,7 +287,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -374,7 +374,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -448,7 +448,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -525,7 +525,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -610,7 +610,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -683,7 +683,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -759,7 +759,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -841,7 +841,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -911,7 +911,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -984,7 +984,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1070,7 +1070,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1147,7 +1147,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1221,7 +1221,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1306,7 +1306,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1382,7 +1382,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1455,7 +1455,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1537,7 +1537,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1607,7 +1607,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1680,7 +1680,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1762,7 +1762,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1832,7 +1832,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1905,7 +1905,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -1991,7 +1991,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2068,7 +2068,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2142,7 +2142,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2227,7 +2227,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2303,7 +2303,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2376,7 +2376,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2458,7 +2458,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2531,7 +2531,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2601,7 +2601,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2681,7 +2681,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2752,7 +2752,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2822,7 +2822,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2892,7 +2892,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -2962,7 +2962,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3044,7 +3044,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3114,7 +3114,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3187,7 +3187,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3269,7 +3269,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3342,7 +3342,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3412,7 +3412,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3501,7 +3501,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3582,7 +3582,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3660,7 +3660,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3741,7 +3741,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:
@@ -3822,7 +3822,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             expand_cyclic:
                 For cyclic problems, whether to expand the sectors.
                 Can take a list of sector numbers to select specific sectors to expand
-                (zero-based indexing).
+                (one-based indexing).
                 If the problem is multi-stage, can take a list of lists of sector numbers, ordered
                 by stage.
             phase_angle_cyclic:

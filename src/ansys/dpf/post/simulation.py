@@ -578,7 +578,11 @@ class Simulation(ABC):
                         for expand_cyclic_i in expand_cyclic
                     ]
                 ):
-                    result_op.connect(pin=18, inpt=expand_cyclic)
+                    if any([i < 1 for i in expand_cyclic]):
+                        raise ValueError(
+                            "Sector selection with 'expand_cyclic' starts at 1."
+                        )
+                    result_op.connect(pin=18, inpt=[i - 1 for i in expand_cyclic])
                 # If any is a list, treat it as per stage num_sectors
                 elif any(
                     [
@@ -599,12 +603,17 @@ class Simulation(ABC):
                                 [isinstance(n, int) for n in num_sectors_stage_i]
                             ):
                                 raise ValueError(
-                                    "'expand_cyclic' argument only accepts int values."
+                                    "'expand_cyclic' only accepts lists of int values >= 1."
                                 )
                         # num_sectors_stage_i is now a list of int,
                         # add an equivalent Scoping with the correct 'stage' label value
+                        if any([i < 1 for i in num_sectors_stage_i]):
+                            raise ValueError(
+                                "Sector selection with 'expand_cyclic' starts at 1."
+                            )
                         sectors_scopings.add_scoping(
-                            {"stage": i}, dpf.Scoping(ids=num_sectors_stage_i)
+                            {"stage": i},
+                            dpf.Scoping(ids=[i - 1 for i in num_sectors_stage_i]),
                         )
                     result_op.connect(pin=18, inpt=sectors_scopings)
             elif not isinstance(expand_cyclic, bool):

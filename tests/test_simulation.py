@@ -1145,6 +1145,12 @@ class TestModalMechanicalSimulation:
         ):
             _ = simulation.displacement(phase_angle_cyclic=[0.1])
 
+        with pytest.raises(
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
+        ):
+            _ = simulation.displacement(expand_cyclic=[0])
+
         displacement = simulation.displacement(phase_angle_cyclic=90)
         assert displacement
         displacement = simulation.displacement(phase_angle_cyclic=90.0)
@@ -1163,6 +1169,12 @@ class TestModalMechanicalSimulation:
         assert "stage" not in displacement.columns.names
         assert len(displacement.mesh_index) == 26742
 
+        with pytest.raises(
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
+        ):
+            _ = simulation.displacement(expand_cyclic=[[0, 1], 1])
+
         displacement = simulation.displacement(expand_cyclic=[1, 2])
         assert "base_sector" not in displacement.columns.names
         assert "stage" not in displacement.columns.names
@@ -1180,7 +1192,7 @@ class TestModalMechanicalSimulation:
         assert len(displacement.mesh_index) == 6848
 
         with pytest.raises(
-            ValueError, match="'expand_cyclic' argument only accepts int values."
+            ValueError, match="'expand_cyclic' only accepts lists of int values >= 1."
         ):
             _ = simulation.displacement(expand_cyclic=[[1, 2], [0.2, 2]])
 
