@@ -27,6 +27,7 @@ from ansys.dpf.post.index import (
     SetIndex,
     ref_labels,
 )
+from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 display_width = 100
 display_max_colwidth = 12
@@ -38,7 +39,7 @@ class DataFrame:
 
     def __init__(
         self,
-        data: dpf.FieldsContainer,
+        data: Union[dpf.FieldsContainer,PropertyFieldsContainer],
         index: Union[MultiIndex, Index, List[int]],
         columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
@@ -54,7 +55,7 @@ class DataFrame:
             Column indexing (labels) to use.
         """
         self._index = index
-        if isinstance(data, dpf.FieldsContainer):
+        if isinstance(data, dpf.FieldsContainer) or isinstance(data, PropertyFieldsContainer):
             self._fc = data
             # if index is None:
             #     raise NotImplementedError("Creation from FieldsContainer without index "

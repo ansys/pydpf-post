@@ -12,10 +12,11 @@ import ansys.dpf.core as dpf
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
-from ansys.dpf.post.elements import ElementList
+from ansys.dpf.post.elements import ElementListIdx
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeList
 
+from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 class Mesh:
     """Exposes the complete mesh of the simulation."""
@@ -59,9 +60,9 @@ class Mesh:
         return len(self.element_ids)
 
     @property
-    def elements(self) -> ElementList:
+    def elements(self) -> ElementListIdx:
         """Returns a list of elements indexed by ID."""
-        return ElementList(self._meshed_region.elements, by_id=True)
+        return ElementListIdx(self._meshed_region.elements)
 
     @property
     def ielements(self) -> ElementList:

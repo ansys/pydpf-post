@@ -9,6 +9,9 @@ import ansys.dpf.core as dpf
 import ansys.dpf.core.elements as elements
 import ansys.dpf.core.nodes as nodes  # noqa: F401
 
+import ansys.dpf.post as post
+from ansys.dpf.post import index, locations
+from  ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 class ElementType(dpf.ElementDescriptor):
     """Wrapper type to instantiate an ElementDescriptor from an int."""
@@ -36,6 +39,11 @@ class ElementType(dpf.ElementDescriptor):
             _obj.is_quadratic,
         )
 
+    def __str__(self):
+        return self.name
+    
+    def __repr__(self):
+        return self.__str__()
 
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
@@ -89,37 +97,57 @@ class Element:
         """See :py:meth:`ansys.dpf.core.elements.Element.connectivity`."""
         return self._resolve().connectivity
 
-
-class ElementList(Sequence):
+class ElementListIdx(Sequence):
     """List of Elements."""
 
-    def __init__(self, elements: elements.Elements, by_id=True):
+    def __init__(self, elements: elements.Elements):
         """Constructs list from existing dpf.core.elements.Elements list."""
         self._elements = elements
-        self.by_id = by_id
 
-    def __getitem__(self, key: int) -> Element:
+    def __getitem__(self, idx: int) -> Element:
         """Delegates to element_by_id() if by_id, otherwise to element_by_index()."""
-        index = key
-        if self.by_id:
-            index = self._elements.element_by_id(key).index
-
-        return Element(self._elements, index)
+        return Element(self._elements, idx)
 
     def __len__(self) -> int:
         """Returns the number of elements in the list."""
         return self._elements.n_elements
 
-    # def __repr__(self) -> str:
-    #    return list(iter(self._meshed_region.elements)).__repr__()
+    @property
+    def by_id(self) -> ElementListById:
+        return ElementListById(self._elements)
 
     @property
-    def types(self) -> Dict[int, ElementType]:
+    def types(self) -> post.DataFrame:
         """Returns mapping of element id to corresponding type."""
-        # TODO: Dataframe
         field: dpf.Field = self._elements.element_types_field
-        keys = field.scoping.ids
+        label = "el_type_id"
+        fields_container = PropertyFieldsContainer()
+        fields_container.add_field(
+            label_space={}, field=field
+        )
 
-        int_to_ed = lambda i: ElementType(int(i))
-        vals = map(int_to_ed, field.data)
-        return dict(zip(keys, vals))
+        return post.DataFrame(
+            data=fields_container,
+            index=index.MultiIndex(
+                indexes=[
+                    index.MeshIndex(
+                        location=locations.elemental,
+                        scoping=self._elements.scoping,
+                        fc=fields_container
+                    )
+                ]
+            ),
+            columns=index.MultiIndex(
+                indexes=[
+                    index.ResultsIndex(values=[label])
+                ]
+            )
+        )
+
+class ElementListById(ElementListIdx):
+    def __init__(self, elements: elements.Elements):
+        super().__init__(elements)
+
+    def __getitem__(self, id: int) -> Element:
+        idx = self._elements.scoping.index(id)
+        return super().__getitem__(idx)
