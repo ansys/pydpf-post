@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Iterator, Mapping
-from typing import List
+from typing import List, Union
+import copy
 
 import ansys.dpf.core as dpf
+import ansys.dpf.core.dpf_array as dpf_array
 
 
 class NamedSelectionsIterator(Iterator):
@@ -46,27 +48,14 @@ class NamedSelectionsDict(Mapping):
 
         raise KeyError(f'named selection "{key}" could not be found')
 
-    # def __setitem__(self, key: str, value: List[int]):
-    #    """Implements [] setter access function."""
-    #    self._meshed_region.set_named_selection_scoping(
-    #        named_selection_name=key, scoping=dpf.Scoping(ids=value)
-    #    )
-
-    def __len__(self) -> int:
-        """Returns the length of the dictionary (number of named selections)."""
-        return len(self.keys())
-
     def keys(self) -> List[str]:
         """Returns the available named selections."""
         return self._meshed_region.available_named_selections
 
-    def values(self) -> List[NamedSelection]:
-        """Returns list of the values of all the named selections."""
-        return [self[key] for key in self.keys()]
-
-    def has_key(self, key) -> bool:
-        """Returns True the given key is present in available named selections."""
-        return key in self.keys()
+    
+    def __len__(self) -> int:
+        """Returns the length of the dictionary (number of named selections)."""
+        return len(self.keys())
 
     def __delitem__(self, __key):
         """Not implemented."""
@@ -77,13 +66,12 @@ class NamedSelectionsDict(Mapping):
         return NamedSelectionsIterator(self)
 
 
-class NamedSelection(dpf.Scoping):
+class NamedSelection:
     """Class decorating dpf.Scoping with a name attribute."""
 
     def __init__(self, name: str, scoping: dpf.Scoping):
         """Constructs a NamedSelection from a name and a Scoping."""
-        super().__init__(scoping)
-
+        self._scoping = scoping
         self._name = name
 
     @property
@@ -91,10 +79,38 @@ class NamedSelection(dpf.Scoping):
         """Returns the name."""
         return self._name
 
-    # @name.setter
-    # def name(self, val: str):
-    #    self._name = val
+    # Scoping forwarding
+    def set_id(self, index: int, scopingid: int):
+        self._scoping.set_id(index, scopingid)
 
+    def id(self, index: int) -> int:
+        return self._scoping.id(index)
+
+    def index(self, id: int) -> int:
+        return self._scoping.index(id)
+
+    @property
+    def ids(self) -> Union[dpf_array.DPFArray, List[int]]:
+        return self._scoping.ids
+        
+    @property
+    def location(self) -> str:
+        return self._scoping.location
+
+    @property
+    def size(self) -> int:
+        return self._scoping.size
+
+    def deep_copy(self, server=None) -> NamedSelection:
+        new_scoping = self._scoping.deep_copy(server)
+        new_name    = copy.copy(self._name)
+        return NamedSelection(new_name, new_scoping)
+    
+    def as_local_scoping(self) -> NamedSelection:
+        local_scoping = self._scoping.as_local_scoping()
+        local_name    = copy.copy(self._name)
+        return NamedSelection(local_name, local_scoping)
+    
     def __repr__(self) -> str:
         """Pretty print string of the NamedSelection."""
-        return f"NamedSelection '{self.name}' with scoping {repr(super())}"
+        return f"NamedSelection '{self.name}' with scoping {self._scoping.__str__()}"
