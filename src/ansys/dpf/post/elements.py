@@ -83,9 +83,13 @@ class Element:
         return self._resolve().n_nodes
 
     @property
-    def type(self) -> ElementType:
+    def type_info(self) -> ElementType:
         """Gets an element descriptor, See :py:meth:`ansys.dpf.core.elements.Element.id`."""
         return ElementType(self._resolve().type.value)
+
+    @property
+    def type_id(self) -> int:
+        return self._resolve().type.value
 
     @property
     def shape(self) -> str:
