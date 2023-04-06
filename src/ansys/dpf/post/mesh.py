@@ -14,7 +14,7 @@ import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.elements import ElementListIdx
 from ansys.dpf.post.named_selection import NamedSelectionsDict
-from ansys.dpf.post.nodes import NodeList
+from ansys.dpf.post.nodes import NodeListIdx
 
 from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
@@ -65,9 +65,41 @@ class Mesh:
         return ElementListIdx(self._meshed_region.elements)
 
     @property
-    def ielements(self) -> ElementList:
-        """Returns a list of element indexed by index (of the original list)."""
-        return ElementList(self._meshed_region.elements, by_id=False)
+    def nodes(self) -> NodeList:
+        """Returns a list of nodes indexed by ID."""
+        return NodeListIdx(self._meshed_region.nodes)
+    
+    @property
+    def element_types(self) -> post.DataFrame:
+        pass
+
+    @property
+    def materials(self) -> post.DataFrame:
+        label = "material_id"
+        fields_container = PropertyFieldsContainer()
+        field = self._meshed_region.elements.materials_field
+        fields_container.add_field(
+            label_space={}, field=field
+        )
+
+        return post.DataFrame(
+            data=fields_container,
+            index=index.MultiIndex(
+                indexes=[
+                    index.MeshIndex(
+                        location=locations.elemental,
+                        scoping=self._meshed_region.elements.scoping,
+                        fc=fields_container
+                    )
+                ]
+            ),
+            columns=index.MultiIndex(
+                indexes=[
+                    index.ResultsIndex(values=[label])
+                ]
+            )
+        )
+    
 
     @property
     def nodes(self) -> NodeList:
