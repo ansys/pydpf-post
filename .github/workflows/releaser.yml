@@ -38,7 +38,7 @@ jobs:
       - name: "Download Release Asset - HTML"
         uses: dsaltares/fetch-gh-release-asset@1.1.0
         with:
-          file: HTML-doc-ansys-dpf-post.zip
+          file: HTML-doc-ansys-dpf-post
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy the stable documentation
@@ -47,4 +47,3 @@ jobs:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
           doc-artifact-name: HTML-doc-ansys-dpf-post
-          decompress-artifact: true
