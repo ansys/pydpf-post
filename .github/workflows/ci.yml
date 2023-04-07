@@ -219,4 +219,4 @@ jobs:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
           doc-artifact-name: HTML-doc-ansys-dpf-post
-          decompress-artifact: true
+#          decompress-artifact: true
