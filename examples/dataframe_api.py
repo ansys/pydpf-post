@@ -36,6 +36,14 @@ def test_cat_index(cat_index_type):
     print(union_index)
     print(intersection_index)
 
+
+def test_multi_index(multi_index_type):
+    multi_index1 = multi_index_type.from_arrays([["a","b","c"], [1,2,3]])
+    multi_index2 = multi_index_type.from_product([[4,5,6], ["a","b"], ["oui", "non"]])
+
+    print(multi_index1)
+    print(multi_index2)
+
 def test_series_iloc(series):
     
     elem_0      = series.iloc[0]
@@ -51,6 +59,16 @@ def test_series_iloc(series):
     print(elems_bool)
     print(elems_bool.index)
 
+def test_series_multi_idx(series):
+    print(series)
+    print(series["one"])
+    print(series["one"]["foo"])
+    print(series["one"]["foo"]["X"])
+
+    print(series.loc[("one","foo","X")])
+    print(series.xs(("foo"), level=("name")))
+    print(series.xs(("bar","Z"), level=("name","component")))
+
 print("===Range Indexes===")
 print("----pandas----")
 test_range_index(pd.RangeIndex)
@@ -58,12 +76,31 @@ print("----post_index----")
 test_range_index(index.RangeIndex)
 
 print("===Categorical Indexes===")
+print("----pandas----")
 test_cat_index(pd.CategoricalIndex)
+print("----post_index----")
 test_cat_index(index.CategoricalIndex)
+
+print("====MultiIndex====")
+print("----pandas----")
+test_multi_index(pd.MultiIndex)
+print("----post_index----")
+test_multi_index(index.MultiIndex)
+
 
 sample_intl = random_int_list(5)
 
-pd_series = pd.Series(data=sample_intl,name="test_pd_series")
+pd_series = pd.Series(data=sample_intl,name="test_pd_series", index=pd.RangeIndex(0,5,1, name="X"))
 post_series = series.Series(data=sample_intl, name="test_post_series")
+print("====Series====")
+print("----pandas----")
 test_series_iloc(pd_series)
+print("----post_series----")
 test_series_iloc(post_series)
+
+
+rand_data = np.random.randn(3*2*3)
+
+multi_pd_index = pd.MultiIndex.from_product([["one","two","three"],["foo","bar"], ["X","Y","Z"]], names=["num","name","component"])
+multi_pd_series = pd.Series(data=rand_data, name="multi_pd_series",index=multi_pd_index)
+test_series_multi_idx(multi_pd_series)

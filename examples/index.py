@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Index:
-    def __init__(self, data: Union[Index, NDArray], name: Union[str,None] = None, mapping_to_idx = None):
+    def __init__(self, data: Union[Index, NDArray], name: Union[str,None] = "", mapping_to_idx = None):
         # copy constructor
         if isinstance(data, Index):
             other = data
@@ -28,7 +28,7 @@ class Index:
         return self._data
     
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
     
     def get_loc(self, key):
@@ -50,7 +50,7 @@ class Index:
         return Index(new_data, new_name)
     
     def __repr__(self):
-        return f"Index({self.array}, name={self.name})"
+        return f"Index({self.array}, name=\"{self.name}\")"
     
 
 class RangeIndex(Index):
@@ -156,4 +156,38 @@ class CategoricalIndex(Index):
     def __repr__(self):
         return f"CategoricalIndex(data={self.array}, categories={self._categories}, name={self._name})"
     
-# TODO: MultiIndex
+class MultiIndex(Index):
+    def __init__(self, levels: Union[MultiIndex, Index, List[NDArray[Any]]] = [], names=[]):
+        if isinstance(levels, MultiIndex):
+            other = levels
+            self.__init__(other._levels, other._names)
+        elif isinstance(levels, Index):
+            other = levels
+            _levels = [other._data]
+            _names = [other._name]
+            self.__init__(_levels, _names)
+        else:
+            self._levels = levels
+            self._names = names
+
+            # workaround to assign a list of tuples to np array
+            unpacked = list(zip(*self._levels))
+            np_arr = np.empty(len(unpacked), dtype=object)
+            np_arr[:] = unpacked
+            super().__init__(data=np_arr)
+
+    @staticmethod
+    def from_arrays(levels=[], names=[]):
+        return MultiIndex(levels, names)
+    
+    @staticmethod
+    def from_product(array_list, names=[]):
+        arr_l = np.meshgrid(*array_list)
+        arrays = [arr.ravel() for arr in arr_l]
+        return MultiIndex(arrays, names)
+
+    def to_flat_index(self):
+        return Index(data=self._data)
+
+    def __repr__(self):
+        return f"MultiIndex({self.array}, names={self._names})"
