@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Index:
-    def __init__(self, data: Union[Index, NDArray], name: Union[str,None] = "", mapping_to_idx = None):
+    def __init__(self, data: Union[Index, NDArray], name: str = "", mapping_to_idx = None):
         # copy constructor
         if isinstance(data, Index):
             other = data
@@ -18,10 +18,14 @@ class Index:
             self._data = data
             self._name = name
 
+            # TODO: not optimal
             if mapping_to_idx == None:
                 mapping_to_idx = dict(zip(self._data, range(len(self._data))))
 
             self._mapping = mapping_to_idx
+
+    def __len__(self):
+        return len(self.array)
 
     @property
     def array(self):
@@ -54,7 +58,7 @@ class Index:
     
 
 class RangeIndex(Index):
-    def __init__(self, start: Union[Index, RangeIndex, int, None] = None, stop=None, step=None, name = None):
+    def __init__(self, start: Union[Index, RangeIndex, int, None] = None, stop=None, step=None, name: str = ""):
         if isinstance(start, RangeIndex): # copy
             other = start
             self.__init__(other._start, other._stop, other._step, other._name)
@@ -130,7 +134,7 @@ class RangeIndex(Index):
         return f"RangeIndex(start={self._start}, stop={self._stop}, step={self._step}, name={self._name})"
 
 class CategoricalIndex(Index):
-    def __init__(self, data: Union[Index, CategoricalIndex, List[Any], NDArray[Any]], categories=[], name=None):
+    def __init__(self, data: Union[Index, CategoricalIndex, List[Any], NDArray[Any]], categories=[], name: str = ""):
         if isinstance(data, CategoricalIndex): # copy
             other = data
             self.__init__(other._data, other._categories, other._name)

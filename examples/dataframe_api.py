@@ -1,6 +1,7 @@
 
 import pandas as pd
 import numpy as np
+
 import index
 import series
 
@@ -13,9 +14,9 @@ def random_int_list(size, _min=0, _max=100):
 def random_char_list(size):
     return np.array(map(lambda i: chr(i),random_int_list(size, ord('A'), ord('Z'))))
 
-def test_range_index(range_index_type):
-    range_index1 = range_index_type(0, 8, name="test_range1")
-    range_index2 = range_index_type(4, 10)
+def test_range_index(mod):
+    range_index1 = mod.RangeIndex(0, 8, name="test_range1")
+    range_index2 = mod.RangeIndex(4, 10)
 
     union_index = range_index1.union(range_index2)
     intersection_index = range_index1.intersection(range_index2)
@@ -25,9 +26,9 @@ def test_range_index(range_index_type):
     print(union_index)
     print(intersection_index)
 
-def test_cat_index(cat_index_type):
-    cat_index1 = cat_index_type(data=['a','a','b','c','a'])
-    cat_index2 = cat_index_type(data=['f','f','e','g','f'])
+def test_cat_index(mod):
+    cat_index1 = mod.CategoricalIndex(data=['a','a','b','c','a'])
+    cat_index2 = mod.CategoricalIndex(data=['f','f','e','g','f'])
 
     print(cat_index1)
     print(cat_index2)
@@ -37,15 +38,21 @@ def test_cat_index(cat_index_type):
     print(intersection_index)
 
 
-def test_multi_index(multi_index_type):
-    multi_index1 = multi_index_type.from_arrays([["a","b","c"], [1,2,3]])
-    multi_index2 = multi_index_type.from_product([[4,5,6], ["a","b"], ["oui", "non"]])
+def test_multi_index(mod):
+    multi_index1 = mod.MultiIndex.from_arrays([["a","b","c"], [1,2,3]])
+    multi_index2 = mod.MultiIndex.from_product([[4,5,6], ["a","b"], ["oui", "non"]])
 
     print(multi_index1)
     print(multi_index2)
 
-def test_series_iloc(series):
-    
+def test_series_multi(series):
+    print(series)
+
+def test_series_iloc(mods):
+    mod_series, mod_index = mods
+
+    series = mod_series.Series(data=np.random.randn(5), name="test_range_series", index=mod_index.RangeIndex(0,5,1, name="X"))
+
     elem_0      = series.iloc[0]
     elems_list  = series.iloc[[0,3,4]]
     elems_slice = series.iloc[0:5]
@@ -71,32 +78,28 @@ def test_series_multi_idx(series):
 
 print("===Range Indexes===")
 print("----pandas----")
-test_range_index(pd.RangeIndex)
+test_range_index(pd)
 print("----post_index----")
-test_range_index(index.RangeIndex)
+test_range_index(index)
 
 print("===Categorical Indexes===")
 print("----pandas----")
-test_cat_index(pd.CategoricalIndex)
+test_cat_index(pd)
 print("----post_index----")
-test_cat_index(index.CategoricalIndex)
+test_cat_index(index)
 
 print("====MultiIndex====")
 print("----pandas----")
-test_multi_index(pd.MultiIndex)
+test_multi_index(pd)
 print("----post_index----")
-test_multi_index(index.MultiIndex)
+test_multi_index(index)
 
 
-sample_intl = random_int_list(5)
-
-pd_series = pd.Series(data=sample_intl,name="test_pd_series", index=pd.RangeIndex(0,5,1, name="X"))
-post_series = series.Series(data=sample_intl, name="test_post_series")
 print("====Series====")
 print("----pandas----")
-test_series_iloc(pd_series)
+test_series_iloc([pd, pd])
 print("----post_series----")
-test_series_iloc(post_series)
+test_series_iloc([series, index])
 
 
 rand_data = np.random.randn(3*2*3)
