@@ -72,8 +72,31 @@ class Mesh:
     
     @property
     def element_types(self) -> post.DataFrame:
-        pass
+        label = "elem_type_id"
+        fields_container = PropertyFieldsContainer()
+        field = self._meshed_region.elements.element_types_field
+        fields_container.add_field(
+            label_space={}, field=field
+        )
 
+        return post.DataFrame(
+            data=fields_container,
+            index=index.MultiIndex(
+                indexes=[
+                    index.MeshIndex(
+                        location=locations.elemental,
+                        scoping=self._meshed_region.elements.scoping,
+                        fc=fields_container
+                    )
+                ]
+            ),
+            columns=index.MultiIndex(
+                indexes=[
+                    index.ResultsIndex(values=[label])
+                ]
+            )
+        )
+    
     @property
     def materials(self) -> post.DataFrame:
         label = "material_id"
