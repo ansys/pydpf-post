@@ -172,6 +172,9 @@ class MultiIndex(Index):
             self.__init__(_levels, _names)
         else:
             self._levels = levels
+            if len(names) != len(levels):
+                missing = len(levels)-len(names)
+                names += [""] * missing
             self._names = names
 
             # workaround to assign a list of tuples to np array

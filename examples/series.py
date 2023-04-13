@@ -78,8 +78,11 @@ class SeriesFormatter:
     def _compute_left_width(self):
         #name_size = len(self._series.name)
         label_size = len(self._series.index.name)
-
         max_size = label_size #max(name_size, label_size)
+
+        if isinstance(self._series.index,post_idx.MultiIndex):
+            max_size = self._compute_label_width() * len(self._series.index._levels)
+
         return self._next_multiple(max_size, 4)
 
     def _compute_right_width(self):
@@ -94,6 +97,18 @@ class SeriesFormatter:
             value_width = self._precision + 3 + 1# integer part, dot, minus sign, + space
         
         return self._next_multiple(value_width, 4)
+
+    def _compute_label_width(self):
+        label_size = len(self._series.index.name)
+        if isinstance(self._series.index,post_idx.MultiIndex):
+            label_size = max( [
+                                max([len(str(e)) for e in self._series.index._data[i]])
+                                for i in range(min(self._row_end,len(self._series)))
+                            ]
+                           )
+            names_size = max(map(len,self._series.index._names))
+            label_size = max(label_size, names_size)
+        return self._next_multiple(label_size, 4)
 
     def _get_value_fmt(self):
         value_fmt = "{: " + f"{self._value_width}" + "}"
@@ -114,23 +129,31 @@ class SeriesFormatter:
         return ret
     
     def _generate_header(self):
-        label_fmt = "{:<" + f"{self._left_width}" + "}"
+        label_fmt = "{:<" + f"{self._compute_label_width()}" + "}"
         
         ret = f"Name: {self._series._name}\n"
-        ret += label_fmt.format(self._series.index.name) + "\n"
+
+        if isinstance(self._series._index,post_idx.MultiIndex):
+            for n in self._series._index._names:
+                ret += label_fmt.format(n)
+        else:
+            ret += label_fmt.format(self._series.index.name)
         
-            
+        ret += "\n"
         return ret
 
     def _generate_values(self):
         ret = ""
 
-        label_fmt = "{:<" + f"{self._left_width}" + "}"
+        label_fmt = "{:<" + f"{self._compute_label_width()}" + "}"
         value_fmt = self._get_value_fmt()
         
         for zidx, val in enumerate(self._series[:self._row_end]):
             id  = self._series.index._data[zidx]
-            ret += label_fmt.format(id)
+            if not isinstance(id, tuple):
+                id = (id,)
+            for e in id:
+                ret += label_fmt.format(e)
             ret += value_fmt.format(val)
             ret += "\n"
         return ret
