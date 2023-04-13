@@ -15,6 +15,7 @@ from ansys.dpf.post import index, locations
 from ansys.dpf.post.elements import ElementListIdx
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
+from ansys.dpf.post.connectivity import ConnectivityList, Mode
 
 from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
@@ -65,7 +66,7 @@ class Mesh:
         return ElementListIdx(self._meshed_region.elements)
 
     @property
-    def nodes(self) -> NodeList:
+    def nodes(self) -> NodeListIdx:
         """Returns a list of nodes indexed by ID."""
         return NodeListIdx(self._meshed_region.nodes)
     
@@ -100,16 +101,30 @@ class Mesh:
             )
         )
     
+    @property
+    def conn_elem_to_node_id(self):
+        conn_field = self._meshed_region.elements.connectivities_field
+        nodes_scoping = self._meshed_region.nodes.scoping
+        return ConnectivityList(conn_field, nodes_scoping, Mode.IDS_FROM_IDX)
 
     @property
-    def nodes(self) -> NodeList:
-        """Returns a list of nodes indexed by ID."""
-        return NodeList(self._meshed_region.nodes, by_id=True)
+    def conn_node_to_elem_id(self):
+        conn_field = self._meshed_region.nodes.nodal_connectivity_field
+        elems_scoping = self._meshed_region.elements.scoping
+        return ConnectivityList(conn_field, elems_scoping, Mode.IDS_FROM_IDX)
 
     @property
-    def inodes(self) -> NodeList:
-        """Returns a list of nodes indexed by index (of the original list)."""
-        return NodeList(self._meshed_region.nodes, by_id=False)
+    def conn_elem_to_node(self):
+        conn_field = self._meshed_region.elements.connectivities_field
+        nodes_scoping = self._meshed_region.nodes.scoping
+        return ConnectivityList(conn_field, nodes_scoping, Mode.IDX_FROM_IDX)
+
+    @property
+    def conn_node_to_elem(self):
+        conn_field = self._meshed_region.nodes.nodal_connectivity_field
+        elems_scoping = self._meshed_region.elements.scoping
+        return ConnectivityList(conn_field, elems_scoping, Mode.IDX_FROM_IDX)
+    
 
     @property
     def unit(self) -> str:

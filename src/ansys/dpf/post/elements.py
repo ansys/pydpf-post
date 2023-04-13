@@ -100,6 +100,12 @@ class Element:
     def connectivity(self) -> List[int]:
         """See :py:meth:`ansys.dpf.core.elements.Element.connectivity`."""
         return self._resolve().connectivity
+    
+    def __repr__(self) -> str:
+        return self._resolve().__repr__()
+    
+    def __str__(self) -> str:
+        return self._resolve().__str__()
 
 class ElementListIdx(Sequence):
     """List of Elements."""
