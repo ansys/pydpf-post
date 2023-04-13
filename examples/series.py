@@ -148,8 +148,10 @@ class SeriesFormatter:
         label_fmt = "{:<" + f"{self._compute_label_width()}" + "}"
         value_fmt = self._get_value_fmt()
         
-        for zidx, val in enumerate(self._series[:self._row_end]):
-            id  = self._series.index._data[zidx]
+        indices = self._series._index._data
+        
+        for id in indices[:self._row_end]:
+            val = self._series.get(id)
             if not isinstance(id, tuple):
                 id = (id,)
             for e in id:

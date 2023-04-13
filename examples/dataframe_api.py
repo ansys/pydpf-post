@@ -45,13 +45,17 @@ def test_multi_index(mod):
     print(multi_index1)
     print(multi_index2)
 
-def test_series_multi(series):
-    print(series)
-
-def test_series_iloc(mods):
+def test_series_multi(mods, data):
     mod_series, mod_index = mods
 
-    series = mod_series.Series(data=np.random.randn(5), name="test_range_series", index=mod_index.RangeIndex(0,5,1, name="X"))
+    series = mod_series.Series(data=data, name="test_multi_series", index=mod_index.MultiIndex.from_product([["a","b","c"],[1,2,3]]))
+    
+    print(series)
+
+def test_series_iloc(mods, data):
+    mod_series, mod_index = mods
+
+    series = mod_series.Series(data=data, name="test_range_series", index=mod_index.RangeIndex(0,5,1, name="X"))
 
     elem_0      = series.iloc[0]
     elems_list  = series.iloc[[0,3,4]]
@@ -96,10 +100,18 @@ test_multi_index(index)
 
 
 print("====Series====")
+data = np.random.randn(5)
 print("----pandas----")
-test_series_iloc([pd, pd])
+test_series_iloc([pd, pd], data)
 print("----post_series----")
-test_series_iloc([series, index])
+test_series_iloc([series, index], data)
+
+print("====Series Multi====")
+data = np.random.randn(9)
+print("----pandas----")
+test_series_multi([pd, pd], data)
+print("----post_series----")
+test_series_multi([series, index], data)
 
 
 rand_data = np.random.randn(3*2*3)

@@ -181,7 +181,7 @@ class MultiIndex(Index):
             unpacked = list(zip(*self._levels))
             np_arr = np.empty(len(unpacked), dtype=object)
             np_arr[:] = unpacked
-            super().__init__(data=np_arr)
+            super().__init__(data=np.sort(np_arr))
 
     @staticmethod
     def from_arrays(levels=[], names=[]):
