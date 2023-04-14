@@ -2,17 +2,19 @@
 PyDPF-Post
 ==========
 
-The Data Processing Framework (DPF) is designed to provide numerical
-simulation users/engineers with a toolbox for accessing and
-transforming simulation data.
+The Ansys Data Processing Framework (DPF) is designed to provide
+numerical simulation users and engineers with a toolbox for accessing
+and transforming simulation data.
 
-The Python `ansys-dpf-post` package provides a high level, physics oriented API for postprocessing.
-Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
-as results and apply postprocessing operations on it.
+The Python `ansys-dpf-post` package provides a high-level, physics-oriented API
+for postprocessing. Loading a simulation (defined by its result files) allows you
+to extract simulation metadata as well as results and then apply postprocessing
+operations on it.
 
-This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package which can
-be found by visiting `PyDPF-Core GitHub <https://github.com/pyansys/pydpf-core>`_.
-Use ``ansys-dpf-core`` for building more advanced and customized workflows using Ansys DPF.
+This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
+available at `PyDPF-Core GitHub <https://github.com/pyansys/pydpf-core>`_.
+Use the ``ansys-dpf-core`` package for building more advanced and customized
+workflows using DPF.
 
 
 Brief demo
@@ -20,7 +22,9 @@ Brief demo
 
 Provided you have Ansys 2023 R1 installed, a DPF server starts
 automatically once you start using PyDPF-Post.
-Loading a simulation for a MAPDL result file to extract and post-process results:
+
+To load a simulation for a MAPDL result file to extract and
+postprocess results, use this code:
 
 .. code:: python
 
@@ -62,8 +66,8 @@ Loading a simulation for a MAPDL result file to extract and post-process results
 .. figure:: ./images/crankshaft_stress.png
     :width: 300pt
 
-To run PyDPF-Post with Ansys versions starting from 2021 R1 to 2022 R2, use the following legacy PyDPF-Post
-tools:
+To run PyDPF-Post with Ansys versions 2021 R1 and 2022 R2, use this code to
+start the legacy PyDPF-Post tools:
 
 .. code:: python
 
@@ -77,7 +81,7 @@ tools:
     :width: 300pt
 
 
-For comprehensive demos, see :ref:`gallery`.
+For comprehensive how-to information, see :ref:`gallery`.
 
 
 Key features
