@@ -1,7 +1,10 @@
 import os.path
 
 import ansys.dpf.core as dpf
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+)
 import numpy as np
 import pytest
 from pytest import fixture
@@ -30,6 +33,10 @@ def test_simulation_init(static_rst):
     assert simulation is not None
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    reason="Available starting DPF 4.0",
+)
 def test_simulation_init_with_server(static_rst, grpc_server):
     simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
     assert simulation is not None

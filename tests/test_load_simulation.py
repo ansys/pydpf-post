@@ -1,4 +1,5 @@
 import ansys.dpf.core as dpf
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0
 import pytest
 
 from ansys.dpf import post
@@ -57,6 +58,10 @@ def test_load_simulation_raise_simulation_type(simple_bar):
         )
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    reason="Available starting DPF 4.0",
+)
 def test_load_simulation_with_server(simple_bar, grpc_server):
     simulation = post.load_simulation(data_sources=simple_bar, server=grpc_server)
     assert type(simulation) == StaticMechanicalSimulation
