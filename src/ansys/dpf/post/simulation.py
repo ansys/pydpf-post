@@ -14,6 +14,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
+from ansys.dpf.core.server_types import BaseServer
 import numpy as np
 
 from ansys.dpf.post import locations
@@ -640,9 +641,13 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, result_file: Union[PathLike, str]):
+    def __init__(
+        self,
+        result_file: Union[PathLike, str, DataSources],
+        server: Union[BaseServer, None] = None,
+    ):
         """Instantiate a mechanical type simulation."""
-        model = dpf.Model(result_file)
+        model = dpf.Model(result_file, server=server)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
 

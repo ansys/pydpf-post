@@ -1,3 +1,4 @@
+import ansys.dpf.core as dpf
 import pytest
 
 from ansys.dpf import post
@@ -54,3 +55,10 @@ def test_load_simulation_raise_simulation_type(simple_bar):
             data_sources=simple_bar,
             simulation_type="test",
         )
+
+
+def test_load_simulation_with_server(simple_bar, grpc_server):
+    simulation = post.load_simulation(data_sources=simple_bar, server=grpc_server)
+    assert type(simulation) == StaticMechanicalSimulation
+    assert simulation._model._server != dpf.SERVER
+    assert simulation._model._server == grpc_server

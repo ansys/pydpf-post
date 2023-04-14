@@ -30,6 +30,13 @@ def test_simulation_init(static_rst):
     assert simulation is not None
 
 
+def test_simulation_init_with_server(static_rst, grpc_server):
+    simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
+    assert simulation is not None
+    assert simulation._model._server != dpf.SERVER
+    assert simulation._model._server == grpc_server
+
+
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
