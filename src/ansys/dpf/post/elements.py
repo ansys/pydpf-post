@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Dict, List, Union
+from typing import List, Union
 
 import ansys.dpf.core as dpf
 import ansys.dpf.core.elements as elements
@@ -11,7 +11,8 @@ import ansys.dpf.core.nodes as nodes  # noqa: F401
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
-from  ansys.dpf.post.fields_container import PropertyFieldsContainer
+from ansys.dpf.post.fields_container import PropertyFieldsContainer
+
 
 class ElementType(dpf.ElementDescriptor):
     """Wrapper type to instantiate an ElementDescriptor from an int."""
@@ -40,10 +41,13 @@ class ElementType(dpf.ElementDescriptor):
         )
 
     def __str__(self):
+        """Returns a string representation of the Element Type."""
         return self.name
-    
+
     def __repr__(self):
+        """Returns a string representation of the Element Type."""
         return self.__str__()
+
 
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
@@ -89,6 +93,7 @@ class Element:
 
     @property
     def type_id(self) -> int:
+        """Returns the ID of the Element Type."""
         return self._resolve().type.value
 
     @property
@@ -100,12 +105,15 @@ class Element:
     def connectivity(self) -> List[int]:
         """See :py:meth:`ansys.dpf.core.elements.Element.connectivity`."""
         return self._resolve().connectivity
-    
+
     def __repr__(self) -> str:
+        """Returns string representation of an Element."""
         return self._resolve().__repr__()
-    
+
     def __str__(self) -> str:
+        """Returns string representation of an Element."""
         return self._resolve().__str__()
+
 
 class ElementListIdx(Sequence):
     """List of Elements."""
@@ -124,6 +132,7 @@ class ElementListIdx(Sequence):
 
     @property
     def by_id(self) -> ElementListById:
+        """Returns an equivalent list accessible with ID instead of index."""
         return ElementListById(self._elements)
 
     @property
@@ -132,9 +141,7 @@ class ElementListIdx(Sequence):
         field: dpf.Field = self._elements.element_types_field
         label = "el_type_id"
         fields_container = PropertyFieldsContainer()
-        fields_container.add_field(
-            label_space={}, field=field
-        )
+        fields_container.add_field(label_space={}, field=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -143,21 +150,26 @@ class ElementListIdx(Sequence):
                     index.MeshIndex(
                         location=locations.elemental,
                         scoping=self._elements.scoping,
-                        fc=fields_container
+                        fc=fields_container,
                     )
                 ]
             ),
-            columns=index.MultiIndex(
-                indexes=[
-                    index.ResultsIndex(values=[label])
-                ]
-            )
+            columns=index.MultiIndex(indexes=[index.ResultsIndex(values=[label])]),
         )
 
+
 class ElementListById(ElementListIdx):
+    """Wrapper class for accessing Elements by ID instead of index."""
+
     def __init__(self, elements: elements.Elements):
+        """Constructs an ElementListById from an Elements instance."""
         super().__init__(elements)
 
     def __getitem__(self, id: int) -> Element:
+        """Access an Element with an ID."""
         idx = self._elements.scoping.index(id)
         return super().__getitem__(idx)
+
+    def __len__(self) -> int:
+        """Returns the number of elements in the list."""
+        return self._elements.n_elements

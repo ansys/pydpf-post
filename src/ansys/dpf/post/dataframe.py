@@ -17,6 +17,7 @@ from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations, shell_layers
+from ansys.dpf.post.fields_container import PropertyFieldsContainer
 from ansys.dpf.post.index import (
     CompIndex,
     Index,
@@ -27,7 +28,6 @@ from ansys.dpf.post.index import (
     SetIndex,
     ref_labels,
 )
-from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 display_width = 100
 display_max_colwidth = 12
@@ -39,7 +39,7 @@ class DataFrame:
 
     def __init__(
         self,
-        data: Union[dpf.FieldsContainer,PropertyFieldsContainer],
+        data: Union[dpf.FieldsContainer, PropertyFieldsContainer],
         index: Union[MultiIndex, Index, List[int]],
         columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
@@ -55,7 +55,9 @@ class DataFrame:
             Column indexing (labels) to use.
         """
         self._index = index
-        if isinstance(data, dpf.FieldsContainer) or isinstance(data, PropertyFieldsContainer):
+        if isinstance(data, dpf.FieldsContainer) or isinstance(
+            data, PropertyFieldsContainer
+        ):
             self._fc = data
             # if index is None:
             #     raise NotImplementedError("Creation from FieldsContainer without index "

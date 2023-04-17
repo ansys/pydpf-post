@@ -12,12 +12,12 @@ import ansys.dpf.core as dpf
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
+from ansys.dpf.post.connectivity import ConnectivityList, Mode
 from ansys.dpf.post.elements import ElementListIdx
+from ansys.dpf.post.fields_container import PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
-from ansys.dpf.post.connectivity import ConnectivityList, Mode
 
-from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 class Mesh:
     """Exposes the complete mesh of the simulation."""
@@ -69,15 +69,14 @@ class Mesh:
     def nodes(self) -> NodeListIdx:
         """Returns a list of nodes indexed by ID."""
         return NodeListIdx(self._meshed_region.nodes)
-    
+
     @property
     def element_types(self) -> post.DataFrame:
+        """Returns a DataFrame containing element types ID."""
         label = "elem_type_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.element_types_field
-        fields_container.add_field(
-            label_space={}, field=field
-        )
+        fields_container.add_field(label_space={}, field=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -86,25 +85,20 @@ class Mesh:
                     index.MeshIndex(
                         location=locations.elemental,
                         scoping=self._meshed_region.elements.scoping,
-                        fc=fields_container
+                        fc=fields_container,
                     )
                 ]
             ),
-            columns=index.MultiIndex(
-                indexes=[
-                    index.ResultsIndex(values=[label])
-                ]
-            )
+            columns=index.MultiIndex(indexes=[index.ResultsIndex(values=[label])]),
         )
-    
+
     @property
     def materials(self) -> post.DataFrame:
+        """Returns a DataFrame containing element materials ID."""
         label = "material_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.materials_field
-        fields_container.add_field(
-            label_space={}, field=field
-        )
+        fields_container.add_field(label_space={}, field=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -113,41 +107,40 @@ class Mesh:
                     index.MeshIndex(
                         location=locations.elemental,
                         scoping=self._meshed_region.elements.scoping,
-                        fc=fields_container
+                        fc=fields_container,
                     )
                 ]
             ),
-            columns=index.MultiIndex(
-                indexes=[
-                    index.ResultsIndex(values=[label])
-                ]
-            )
+            columns=index.MultiIndex(indexes=[index.ResultsIndex(values=[label])]),
         )
-    
+
     @property
     def conn_elem_to_node_id(self):
+        """Returns a list of Node ID for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
         return ConnectivityList(conn_field, nodes_scoping, Mode.IDS_FROM_IDX)
 
     @property
     def conn_node_to_elem_id(self):
+        """Returns a list of Element ID for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
         return ConnectivityList(conn_field, elems_scoping, Mode.IDS_FROM_IDX)
 
     @property
     def conn_elem_to_node(self):
+        """Returns a list of Node index for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
         return ConnectivityList(conn_field, nodes_scoping, Mode.IDX_FROM_IDX)
 
     @property
     def conn_node_to_elem(self):
+        """Returns a list of Element index for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
         return ConnectivityList(conn_field, elems_scoping, Mode.IDX_FROM_IDX)
-    
 
     @property
     def unit(self) -> str:

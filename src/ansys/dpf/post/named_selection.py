@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterator, Mapping
-from typing import List, Union
 import copy
+from typing import List, Union
 
 import ansys.dpf.core as dpf
 import ansys.dpf.core.dpf_array as dpf_array
@@ -52,7 +52,6 @@ class NamedSelectionsDict(Mapping):
         """Returns the available named selections."""
         return self._meshed_region.available_named_selections
 
-    
     def __len__(self) -> int:
         """Returns the length of the dictionary (number of named selections)."""
         return len(self.keys())
@@ -81,36 +80,44 @@ class NamedSelection:
 
     # Scoping forwarding
     def set_id(self, index: int, scopingid: int):
+        """Sets the ID of the underlying scoping's index."""
         self._scoping.set_id(index, scopingid)
 
     def id(self, index: int) -> int:
+        """Retrieve the ID at a given index."""
         return self._scoping.id(index)
 
     def index(self, id: int) -> int:
+        """Retrieve the index of a given ID."""
         return self._scoping.index(id)
 
     @property
     def ids(self) -> Union[dpf_array.DPFArray, List[int]]:
+        """Retrieve a list of IDs in the underlying scoping."""
         return self._scoping.ids
-        
+
     @property
     def location(self) -> str:
+        """Location of the IDs as a string."""
         return self._scoping.location
 
     @property
     def size(self) -> int:
+        """Length of the list of IDs."""
         return self._scoping.size
 
     def deep_copy(self, server=None) -> NamedSelection:
+        """Create a deep copy of the underlying scoping's data on a given server."""
         new_scoping = self._scoping.deep_copy(server)
-        new_name    = copy.copy(self._name)
+        new_name = copy.copy(self._name)
         return NamedSelection(new_name, new_scoping)
-    
+
     def as_local_scoping(self) -> NamedSelection:
+        """Create a deep copy of the underlying scoping that can be modified locally."""
         local_scoping = self._scoping.as_local_scoping()
-        local_name    = copy.copy(self._name)
+        local_name = copy.copy(self._name)
         return NamedSelection(local_name, local_scoping)
-    
+
     def __repr__(self) -> str:
         """Pretty print string of the NamedSelection."""
         return f"NamedSelection '{self.name}' with scoping {self._scoping.__str__()}"
