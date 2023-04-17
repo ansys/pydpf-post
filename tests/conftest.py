@@ -169,10 +169,25 @@ def cleanup(request):
     request.addfinalizer(close_servers)
 
 
+@pytest.fixture
+def grpc_server():
+    """Starts up a temporary gRPC server"""
+
+    server = core.start_local_server(
+        as_global=False, config=core.AvailableServerConfigs.GrpcServer
+    )
+    yield server
+    server.shutdown()
+
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
     get_server_version(core._global_server()), "6.0"
 )
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0 = meets_version(
     get_server_version(core._global_server()), "5.0"
+)
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0 = meets_version(
+    get_server_version(core._global_server()), "4.0"
 )
