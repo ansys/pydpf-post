@@ -135,29 +135,6 @@ class ElementListIdx(Sequence):
         """Returns an equivalent list accessible with ID instead of index."""
         return ElementListById(self._elements)
 
-    @property
-    def types(self) -> post.DataFrame:
-        """Returns mapping of element id to corresponding type."""
-        field: dpf.Field = self._elements.element_types_field
-        label = "el_type_id"
-        fields_container = PropertyFieldsContainer()
-        fields_container.add_field(label_space={}, field=field)
-
-        return post.DataFrame(
-            data=fields_container,
-            index=index.MultiIndex(
-                indexes=[
-                    index.MeshIndex(
-                        location=locations.elemental,
-                        scoping=self._elements.scoping,
-                        fc=fields_container,
-                    )
-                ]
-            ),
-            columns=index.MultiIndex(indexes=[index.ResultsIndex(values=[label])]),
-        )
-
-
 class ElementListById(ElementListIdx):
     """Wrapper class for accessing Elements by ID instead of index."""
 

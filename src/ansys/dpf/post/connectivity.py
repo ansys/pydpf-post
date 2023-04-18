@@ -28,6 +28,8 @@ class ConnectivityList(Sequence):
         self._mode = mode
         self._scoping = scoping
 
+        self.local_scoping = None
+
     def __getitem__(self, key: int) -> List[int]:
         """Returns a list of indexes or IDs for a given index or ID, see Mode Enum."""
         if self._mode == Mode.IDS_FROM_IDX:
@@ -66,7 +68,10 @@ class ConnectivityList(Sequence):
 
     def _to_ids(self, indices) -> List[int]:
         """Helper method to convert a list of indexes into a list of IDs."""
-        to_id = self._scoping.id
+        if not self.local_scoping:
+            self.local_scoping = self._scoping.as_local_scoping()
+
+        to_id = self.local_scoping.id
         return list(map(to_id, indices))
 
     def __len__(self) -> int:

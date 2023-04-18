@@ -47,7 +47,7 @@ class PropertyFieldsContainer(Sequence):
         self.label_spaces = []
         self.ids = []
 
-        # fields_container copy
+        # PropertyFieldsContainer copy
         if fields_container is not None:
             self._labels = copy.deepcopy(fields_container.labels)
             self.scopings = copy.deepcopy(fields_container.scopings)

@@ -39,40 +39,13 @@ print(stress_df)
 # Get the mesh
 # ------------
 
-# Split the global mesh according to mesh properties
-meshes = simulation.split_mesh_by_properties(
-    properties=[elemental_properties.material, elemental_properties.element_shape]
-)
-meshes.plot()
-
-# Split the global mesh and select meshes for specific property values
-print(meshes)
-meshes = simulation.split_mesh_by_properties(
-    properties={
-        elemental_properties.material: 1,
-        elemental_properties.element_shape: [0, 1],
-    }
-)
-
-# Mesh<index=0, num_nodes=100, num_elem=1000>
-meshes.plot()
-
-# Select a specific Mesh in the Meshes, by index
-meshes[1].plot()
-# or by property values
-meshes[{"mat": 1, "elshape": 0}].plot()
-
-###############################################################################
 # Retrieve the actual mesh
 mesh = simulation.mesh
-
-# Plot the mesh
-plt = mesh.plot()
 
 ###############################################################################
 # Query basic information about the mesh (available in PyDPF-Core)
 # --------------------------------------
-#
+
 # Node IDs
 n_ids = mesh.node_ids
 
@@ -118,7 +91,7 @@ for k, v in mesh.named_selections.items():
 ###############################################################################
 # Get elements
 # ------------
-#
+
 # Get an element by ID
 el_by_id = mesh.elements.by_id[1]
 
@@ -128,7 +101,8 @@ print(mesh.elements[index])
 
 ###############################################################################
 # Element Types and Materials
-#
+# ---------------------------
+
 # Get the element types
 el_types = mesh.element_types
 print(el_types)
@@ -139,7 +113,8 @@ print(e_materials)
 
 ###############################################################################
 # Query information about one particular element
-#
+# ----------------------------------------------
+
 # Get the nodes of an element
 mesh.elements[1].nodes
 
@@ -158,7 +133,8 @@ mesh.elements[1].shape
 
 ###############################################################################
 # Get the elemental connectivity
-#
+# ------------------------------
+
 # get node indices from element index
 conn1 = mesh.conn_elem_to_node
 
@@ -172,7 +148,7 @@ conn2.by_id[el_idx_5.id]
 ###############################################################################
 # Get nodes
 # ---------
-#
+
 # Get a node by ID
 node_by_id = mesh.nodes.by_id[1]
 
@@ -184,6 +160,7 @@ print(mesh.coordinates)
 
 ###############################################################################
 # Query information about one particular node
+# -------------------------------------------
 
 # Coordinates
 mesh.nodes[1].coordinates
@@ -192,6 +169,42 @@ mesh.nodes[1].coordinates
 conn3 = mesh.conn_node_to_elem
 conn4 = mesh.conn_node_to_elem_id
 
+print(mesh.nodes[0])
+
+# elements indices to elem_id
+print(conn3[0])
+
 # elements IDs from node index
-conn4[0]
+print(conn4[0])
+
+###############################################################################
+# Splitting into meshes
+# --------
+
+# Plot the mesh
+mesh.plot()
+
+# Split the global mesh according to mesh properties
+meshes = simulation.split_mesh_by_properties(
+    properties=[elemental_properties.material, elemental_properties.element_shape]
+)
+meshes.plot()
+
+# Split the global mesh and select meshes for specific property values
+print(meshes)
+meshes = simulation.split_mesh_by_properties(
+    properties={
+        elemental_properties.material: 1,
+        elemental_properties.element_shape: [0, 1],
+    }
+)
+
+# Mesh<index=0, num_nodes=100, num_elem=1000>
+meshes.plot()
+
+# Select a specific Mesh in the Meshes, by index
+meshes[1].plot()
+# or by property values
+meshes[{"mat": 1, "elshape": 0}].plot()
+
 
