@@ -6,6 +6,11 @@ Explore the mesh
 In this script a static simulation is used as an example to show how to
 query mesh information such as connectivity, element IDs, element types and so on.
 """
+from __future__ import annotations
+
+from ansys.dpf import post
+from ansys.dpf.post import examples
+from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
 # Perform required imports
@@ -13,9 +18,6 @@ query mesh information such as connectivity, element IDs, element types and so o
 # Perform required imports. # This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
-from ansys.dpf import post
-from ansys.dpf.post import examples
-from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
 # Get ``Simulation`` object
@@ -30,9 +32,8 @@ simulation = post.StaticMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
 print(simulation)
-
-# mesh_info = simulation.mesh_info  # TODO: expose MeshSelectionManager?
-# # print(mesh_info)
+stress_df = simulation.stress(components=["XX"])
+print(stress_df)
 
 ###############################################################################
 # Get the mesh
@@ -61,25 +62,17 @@ meshes[1].plot()
 # or by property values
 meshes[{"mat": 1, "elshape": 0}].plot()
 
-
-# simulation.create_elemental_named_selection() -> Selection
-# simulation.create_named_selection(element_ids=[,2,,4], name="my_ns") -> Selection
-# simulation.split_mesh_by({"named_selection"="my_ns")
-# simulation.save_hfd5()
-# mesh.name = "mat_id 1"
-
-# print(meshes)
-# """
-# mesh1: {mat_id=1, thickness=2}
-# mesh1: {mat_id=2, thickness=2}
-# """
-
+###############################################################################
+# Retrieve the actual mesh
 mesh = simulation.mesh
 
-###############################################################################
-# Query basic information about the mesh (available)
-# --------------------------------------
+# Plot the mesh
+plt = mesh.plot()
 
+###############################################################################
+# Query basic information about the mesh (available in PyDPF-Core)
+# --------------------------------------
+#
 # Node IDs
 n_ids = mesh.node_ids
 
@@ -89,9 +82,6 @@ e_ids = mesh.element_ids
 # Available named selection names
 named_selections = mesh.available_named_selections
 
-# Query basic information about the mesh (available in PyDPF-Core)
-# --------------------------------------
-#
 # Number of nodes
 n_nodes = mesh.num_nodes
 
@@ -105,93 +95,103 @@ n_ns = len(named_selections)
 mesh_unit = mesh.unit
 mesh.unit = "mm"
 
-# Get the list of nodes/elements IDs of a given named selection
-first_name = named_selections[0]
-named_selection = mesh.named_selections[first_name]
-print(named_selection)
-for k, v in mesh.named_selections.items():
+print(n_ids)
+print(e_ids)
+print(named_selections)
+print(n_nodes)
+print(n_elements)
+
+###############################################################################
+# Get Named Selections
+# --------------------
+ns_list     = mesh.available_named_selections
+first_key = ns_list[0]
+named_selection = mesh.named_selections[first_key]
+
+for k in mesh.named_selections.keys():
     print(k)
+for v in mesh.named_selections.values():
     print(v)
+for k, v in mesh.named_selections.items():
+    print(f"{k} = {v}")
 
-# Named selection setter
-assert all(
-    mesh._core_object.named_selection(first_name)
-    == mesh.named_selections[first_name].ids
-)
-mesh.named_selections[first_name].ids = [1, 2, 3]
-assert all(mesh._core_object.named_selection(first_name).ids == [1, 2, 3])
-
-
-# Plot the mesh
-plt = mesh.plot()
-
-# # #######################################
-# # Manipulating elements
-
+###############################################################################
+# Get elements
+# ------------
+#
 # Get an element by ID
-el_0 = mesh.elements[1]
+el_by_id = mesh.elements.by_id[1]
 
 # Get an element by index
-el_0 = mesh.ielements[0]
-el_id = mesh.ielements[0].id
+index = el_by_id.index
+print(mesh.elements[index])
 
-# Adding elements to the mesh
-# Not mutable for now
-
+###############################################################################
+# Element Types and Materials
+#
 # Get the element types
-mesh.elements.types
-print(mesh.elements.types[el_id])
+el_types = mesh.element_types
+print(el_types)
 
 # Get the materials
-# e_materials = mesh._core_object.elements.materials_field
-#
-# # Get the elemental connectivity
-# connectivity = mesh._core_object.elements.connectivities_field
-#
-# # ##############################################
-# # Query information about one particular element
+e_materials = mesh.materials
+print(e_materials)
+
+###############################################################################
+# Query information about one particular element
 #
 # Get the nodes of an element
 mesh.elements[1].nodes
-# e_nodes = mesh._core_object.elements.element_by_id(1).nodes
+
 # Get the node IDs of an element
 mesh.elements[1].node_ids
-# e_node_ids = mesh._core_object.elements.element_by_id(1).node_ids
+
 # Get the nodes of an element
 mesh.elements[1].n_nodes
-# e_n_node = mesh._core_object.elements.element_by_id(1).n_nodes
-#
+
 # Get the type of the element
-mesh.elements[1].type
-# e_type = mesh._core_object.elements.element_by_id(1).type
-# -> link with element_type Enum and element_property map
+mesh.elements[1].type_info
+mesh.elements[1].type_id
+
 # Get the shape of the element
 mesh.elements[1].shape
-# e_shape = mesh._core_object.elements.element_by_id(1).shape
-# Get the connectivity of the element
-mesh.elements[1].connectivity
-# e_connectivity = mesh._core_object.elements.element_by_id(1).connectivity
+
+###############################################################################
+# Get the elemental connectivity
 #
-#
-# # ##################
-# # Manipulating nodes
+# get node indices from element index
+conn1 = mesh.conn_elem_to_node
+
+# get node IDs from element index
+conn2 = mesh.conn_elem_to_node_id
+
+el_idx_5 = mesh.elements[5]
+# get node IDS from element ID
+conn2.by_id[el_idx_5.id]
+
+###############################################################################
+# Get nodes
+# ---------
 #
 # Get a node by ID
-node_by_id = mesh.nodes[1]
-# node_by_id = mesh._core_object.nodes.node_by_id(1)
+node_by_id = mesh.nodes.by_id[1]
+
 # Get a node by index
-node_by_index = mesh.inodes[0]
-# node_by_index = mesh._core_object.nodes.node_by_index(0)
-#
-# # Get the coordinates of all nodes
-# coordinates = mesh._core_object.nodes.coordinates_field
-#
-# # ###########################################
-# # Query information about one particular node
-#
+node_by_index = mesh.nodes[0]
+
+# Get the coordinates of all nodes
+print(mesh.coordinates)
+
+###############################################################################
+# Query information about one particular node
+
 # Coordinates
-coords = mesh.nodes[1].coordinates
-# coor = mesh._core_object.nodes.node_by_id(1).coordinates
-# # Nodal connectivity
-conn = mesh.nodes[1].nodal_connectivity
-# conn = mesh._core_object.nodes.node_by_id(1).nodal_connectivity
+mesh.nodes[1].coordinates
+
+# Get Nodal connectivity
+conn3 = mesh.conn_node_to_elem
+conn4 = mesh.conn_node_to_elem_id
+
+# elements IDs from node index
+conn4[0]
+
