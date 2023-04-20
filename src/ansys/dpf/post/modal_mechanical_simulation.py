@@ -91,10 +91,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -339,10 +341,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -605,10 +609,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -689,10 +695,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -776,10 +784,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -871,10 +881,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -954,10 +966,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1040,10 +1054,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1132,10 +1148,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1212,10 +1230,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1295,10 +1315,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1391,10 +1413,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1478,10 +1502,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1562,10 +1588,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1657,10 +1685,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1743,10 +1773,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1826,10 +1858,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1918,10 +1952,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1998,10 +2034,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2081,10 +2119,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2173,10 +2213,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2253,10 +2295,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2336,10 +2380,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2432,10 +2478,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2519,10 +2567,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2603,10 +2653,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2698,10 +2750,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2784,10 +2838,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2867,10 +2923,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2959,10 +3017,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3042,10 +3102,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3122,10 +3184,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3212,10 +3276,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3293,10 +3359,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3373,10 +3441,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3453,10 +3523,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3533,10 +3605,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3625,10 +3699,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3705,10 +3781,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3788,10 +3866,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3880,10 +3960,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3963,10 +4045,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4043,10 +4127,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4142,10 +4228,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4233,10 +4321,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4321,10 +4411,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4412,10 +4504,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4503,10 +4597,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction.
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
