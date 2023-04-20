@@ -33,6 +33,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -103,6 +105,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             )
 
         selection = self._build_selection(
+            base_name=base_name,
             selection=selection,
             set_ids=set_ids,
             times=times,
@@ -112,6 +115,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             element_ids=element_ids,
             named_selections=named_selections,
             location=location,
+            external_layer=external_layer,
+            skin=skin,
         )
 
         comp, to_extract, columns = self._create_components(
@@ -122,13 +127,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         wf = dpf.Workflow(server=self._model._server)
         wf.progress_bar = False
 
-        if category == ResultCategory.equivalent and base_name[0] == "E":
-            force_elemental_nodal = True
-        else:
-            force_elemental_nodal = False
+        force_elemental_nodal = self._requires_manual_averaging(
+            base_name=base_name,
+            location=location,
+            category=category,
+            selection=selection
+        )
 
         # Instantiate the main result operator
-        result_op = self._build_result_operator(
+        wf, result_op = self._build_result_workflow(
             name=base_name,
             location=location,
             force_elemental_nodal=force_elemental_nodal,
@@ -143,9 +150,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection.time_freq_selection._selection,
             output_input_names=("scoping", "time_scoping"),
         )
+        if selection.requires_mesh:
+            wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
+            mesh_wf = dpf.Workflow(server=self._model._server)
+            mesh_wf.set_output_name(_WfNames.mesh, self._model.metadata.mesh_provider)
+            selection.spatial_selection._selection.connect_with(
+                mesh_wf,
+                output_input_names={
+                    _WfNames.mesh: _WfNames.mesh
+                },
+            )
         wf.connect_with(
             selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
+            output_input_names={
+                "scoping": "mesh_scoping",
+                _WfNames.mesh: _WfNames.mesh
+            },
         )
 
         # Connect data_sources and streams_container inputs of selection if necessary
@@ -154,13 +174,25 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
 
+        average_op = None
+        if force_elemental_nodal:
+            average_op = self._create_averaging_operator(
+                location=location,
+                selection=selection
+            )
+
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
-            principal_op.connect(0, out)
-            wf.add_operator(operator=principal_op)
+            if force_elemental_nodal:
+                average_op[0].connect(0, out)
+                principal_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                average_op = None
+            else:
+                principal_op.connect(0, out)
             # Set as future output of the workflow
             if len(to_extract) == 1:
                 out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
@@ -187,8 +219,25 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                     wf.add_operator(operator=average_op)
                     # Set as future output of the workflow
                     out = average_op.outputs.fields_container
+            if force_elemental_nodal and category == ResultCategory.equivalent and base_name[
+                0] == "E":
+                equivalent_op.connect(0, out)
+                average_op[0].connect(0, equivalent_op)
+                wf.add_operator(operator=average_op[1])
+                # Set as future output of the workflow
+                out = average_op[1].outputs.fields_container
+            elif force_elemental_nodal:
+                average_op[0].connect(0, out)
+                equivalent_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                out = equivalent_op.outputs.fields_container
+            average_op = None
             base_name += "_VM"
 
+        if average_op is not None:
+            average_op[0].connect(0, out)
+            out = average_op[1].outputs.fields_container
+            
         # Add an optional component selection step if result is vector, matrix, or principal
         if (
             category
@@ -242,6 +291,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -279,6 +330,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -315,6 +374,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract velocity results from the simulation.
 
@@ -352,6 +413,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -388,6 +457,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract acceleration results from the simulation.
 
@@ -425,6 +496,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -537,6 +616,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -570,6 +651,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -604,6 +693,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -639,6 +730,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -749,6 +848,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -781,6 +882,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -815,6 +924,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -849,6 +960,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -955,6 +1074,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises stress results from the simulation.
 
@@ -985,6 +1106,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1018,6 +1147,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises stress results from the simulation.
 
@@ -1050,6 +1181,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1162,6 +1301,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1197,6 +1338,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1230,6 +1379,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1263,6 +1414,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1374,6 +1533,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1408,6 +1569,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1441,6 +1610,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1473,6 +1644,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1579,6 +1758,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
@@ -1609,6 +1790,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1642,6 +1831,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
@@ -1674,6 +1865,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1780,6 +1979,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1810,6 +2011,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1843,6 +2052,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1875,6 +2086,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1987,6 +2206,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
@@ -2022,6 +2243,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2055,6 +2284,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
@@ -2088,6 +2319,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2199,6 +2438,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -2233,6 +2474,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2266,6 +2515,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -2298,6 +2549,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2405,6 +2664,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -2437,6 +2698,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2469,6 +2738,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -2499,6 +2770,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2534,6 +2813,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -2571,6 +2852,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2604,6 +2893,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -2634,6 +2925,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2666,6 +2965,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -2696,6 +2997,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2728,6 +3037,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental heat generation results from the simulation.
 
@@ -2758,6 +3069,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2790,6 +3109,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -2820,6 +3141,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2852,6 +3181,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -2882,6 +3213,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2988,6 +3327,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -3018,6 +3359,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3051,6 +3400,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -3083,6 +3434,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3115,6 +3474,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -3145,6 +3506,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3177,6 +3546,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -3207,6 +3578,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3239,6 +3618,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract kinetic energy results from the simulation.
 
@@ -3269,6 +3650,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3376,6 +3765,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -3408,6 +3799,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3440,6 +3839,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -3470,6 +3871,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3577,6 +3986,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract structural temperature nodal results from the simulation.
 
@@ -3609,6 +4020,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3641,6 +4060,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract structural temperature elemental results from the simulation.
 
@@ -3671,6 +4092,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3788,6 +4217,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -3825,6 +4256,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3860,6 +4299,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -3895,6 +4336,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3931,6 +4380,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -3968,6 +4419,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4004,6 +4463,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -4041,6 +4502,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
