@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
@@ -187,13 +187,20 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Treat cyclic cases
-        result_op = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op)
+        wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, wf)
 
         # Connect data_sources and streams_container inputs of selection if necessary
         if "streams" in wf.input_names:
             wf.connect("streams", self._model.metadata.streams_provider)
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
+
+        average_op = None
+        if force_elemental_nodal:
+            average_op = self._create_averaging_operator(
+                location=location,
+                selection=selection
+            )
 
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
@@ -219,7 +226,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
+            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
+            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
             if force_elemental_nodal and category == ResultCategory.equivalent and base_name[
                 0] == "E":

@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
@@ -205,20 +205,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             equivalent_op = self._model.operator(name="eqv_fc")
             equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
-            # Set as future output of the workflow
             out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
-            if force_elemental_nodal:
-                average_op = None
-                if location == locations.nodal:
-                    average_op = self._model.operator(name="to_nodal_fc")
-                elif location == locations.elemental:
-                    average_op = self._model.operator(name="to_elemental_fc")
-                if average_op is not None:
-                    average_op.connect(0, out)
-                    wf.add_operator(operator=average_op)
-                    # Set as future output of the workflow
-                    out = average_op.outputs.fields_container
             if force_elemental_nodal and category == ResultCategory.equivalent and base_name[
                 0] == "E":
                 equivalent_op.connect(0, out)
@@ -358,6 +346,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def velocity(
@@ -441,6 +431,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def acceleration(
@@ -524,6 +516,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress(
@@ -540,6 +534,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -583,6 +579,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -602,6 +606,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_elemental(
@@ -678,6 +684,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_nodal(
@@ -757,6 +765,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal(
@@ -773,6 +783,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract principal stress results from the simulation.
 
@@ -815,6 +827,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -834,6 +854,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_elemental(
@@ -909,6 +931,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_nodal(
@@ -987,6 +1011,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises(
@@ -1002,6 +1028,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises stress results from the simulation.
 
@@ -1042,6 +1070,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1061,6 +1097,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -1133,6 +1171,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -1208,6 +1248,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain(
@@ -1224,6 +1266,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1267,6 +1311,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1286,6 +1338,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_nodal(
@@ -1365,6 +1419,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_elemental(
@@ -1441,6 +1497,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal(
@@ -1457,6 +1515,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract principal elastic strain results from the simulation.
 
@@ -1499,6 +1559,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1518,6 +1586,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_nodal(
@@ -1596,6 +1666,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_elemental(
@@ -1671,6 +1743,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises(
@@ -1686,6 +1760,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises elastic strain results from the simulation.
 
@@ -1726,6 +1802,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1745,6 +1829,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_elemental(
@@ -1817,6 +1903,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_nodal(
@@ -1892,6 +1980,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable(
@@ -1907,6 +1997,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract plastic state variable results from the simulation.
 
@@ -1947,6 +2039,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -1966,6 +2066,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_elemental(
@@ -2038,6 +2140,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_nodal(
@@ -2113,6 +2217,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain(
@@ -2129,6 +2235,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract plastic strain results from the simulation.
 
@@ -2172,6 +2280,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2191,6 +2307,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_nodal(
@@ -2270,6 +2388,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_elemental(
@@ -2346,6 +2466,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal(
@@ -2362,6 +2484,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract principal plastic strain results from the simulation.
 
@@ -2404,6 +2528,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2423,6 +2555,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_nodal(
@@ -2501,6 +2635,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_elemental(
@@ -2576,6 +2712,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv(
@@ -2591,6 +2729,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract equivalent plastic strain results from the simulation.
 
@@ -2631,6 +2771,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -2650,6 +2798,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_nodal(
@@ -2725,6 +2875,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_elemental(
@@ -2797,6 +2949,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def reaction_force(
@@ -2880,6 +3034,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_volume(
@@ -2952,6 +3108,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_mass(
@@ -3024,6 +3182,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_heat_generation(
@@ -3096,6 +3256,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_centroids(
@@ -3168,6 +3330,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thickness(
@@ -3240,6 +3404,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations(
@@ -3255,6 +3421,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element orientations results from the simulation.
 
@@ -3295,6 +3463,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3314,6 +3490,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_elemental(
@@ -3386,6 +3564,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_nodal(
@@ -3461,6 +3641,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def artificial_hourglass_energy(
@@ -3533,6 +3715,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thermal_dissipation_energy(
@@ -3605,6 +3789,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def kinetic_energy(
@@ -3677,6 +3863,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure(
@@ -3692,6 +3880,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3732,6 +3922,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3751,6 +3949,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_nodal(
@@ -3826,6 +4026,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_elemental(
@@ -3898,6 +4100,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature(
@@ -3913,6 +4117,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3953,6 +4159,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -3972,6 +4186,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_nodal(
@@ -4047,6 +4263,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_elemental(
@@ -4119,6 +4337,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces(
@@ -4136,6 +4356,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -4181,6 +4403,14 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements.
 
         Returns
         -------
@@ -4201,6 +4431,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_nodal(
@@ -4284,6 +4516,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_elemental(
@@ -4364,6 +4598,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_force(
@@ -4447,6 +4683,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_moment(
@@ -4530,4 +4768,6 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )

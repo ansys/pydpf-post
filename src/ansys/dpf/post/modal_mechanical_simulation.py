@@ -225,7 +225,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
+            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
+            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
             if force_elemental_nodal and category == ResultCategory.equivalent and base_name[0] == "E":
                 equivalent_op.connect(0, out)

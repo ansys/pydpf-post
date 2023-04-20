@@ -18,7 +18,7 @@ from ansys.dpf.post.index import (
     ResultsIndex,
     SetIndex,
 )
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
@@ -215,7 +215,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         )
 
         # Treat cyclic cases
-        result_op = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op)
+        wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, wf)
 
         # Connect data_sources and streams_container inputs of selection if necessary
         if "streams" in wf.input_names:
@@ -253,6 +253,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
+            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
             # Set as future output of the workflow
             out = equivalent_op.outputs.fields_container
