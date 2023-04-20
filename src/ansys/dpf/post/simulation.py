@@ -12,7 +12,7 @@ from typing import List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.server_types import BaseServer
@@ -29,7 +29,7 @@ from ansys.dpf.post.index import (
     SetIndex,
 )
 from ansys.dpf.post.mesh import Mesh
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from build.lib.ansys.dpf.gate.common import locations
 
 component_label_to_index = {
@@ -426,18 +426,39 @@ class Simulation(ABC):
         else:
             columns = [base_name + self._principal_names[i] for i in out]
         return out, columns
-    
-    def _create_averaging_operator(
-            self,
-            location: str,
-            selection: Selection,
-        ):
-        average_op = None
-        if location == locations.nodal:
-            average_op = self._model.operator(name="to_nodal_fc")
-        elif location == locations.elemental:
-            average_op = self._model.operator(name="to_elemental_fc")
-        return average_op
+
+    def _build_result_operator(
+        self,
+        name: str,
+        location: Union[locations, str],
+        force_elemental_nodal: bool,
+    ) -> dpf.Operator:
+        op = self._model.operator(name=name)
+        op.connect(7, self.mesh._meshed_region)
+        if force_elemental_nodal:
+            op.connect(9, "ElementalNodal")
+        else:
+            op.connect(9, location)
+        return op
+
+    def _build_result_workflow(
+        self,
+        name: str,
+        location: Union[locations, str],
+        force_elemental_nodal: bool,
+    ) -> (dpf.Workflow, dpf.Operator):
+        op = self._model.operator(name=name)
+        op.connect(7, self.mesh._meshed_region)
+        if force_elemental_nodal:
+            op.connect(9, "ElementalNodal")
+        else:
+            op.connect(9, location)
+        wf = Workflow(server=self._model._server)
+        wf.set_input_name(_WfNames.read_cyclic, op, 14)
+        wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
+        wf.set_input_name(_WfNames.cyclic_phase, op, 19)
+        wf.set_output_name(_WfNames.result, op, 0)
+        return wf, op
 
     def _create_components(self, base_name, category, components):
         comp = None
@@ -568,7 +589,7 @@ class Simulation(ABC):
         return df
 
     @staticmethod
-    def _treat_cyclic(expand_cyclic, phase_angle_cyclic, result_op):
+    def _treat_cyclic(expand_cyclic, phase_angle_cyclic, result_wf):
         if expand_cyclic is not False:
             # If expand_cyclic is a list
             if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
@@ -583,7 +604,7 @@ class Simulation(ABC):
                         raise ValueError(
                             "Sector selection with 'expand_cyclic' starts at 1."
                         )
-                    result_op.connect(pin=18, inpt=[i - 1 for i in expand_cyclic])
+                    result_wf.connect(_WfNames.cyclic_sectors_to_expand, [i - 1 for i in expand_cyclic])
                 # If any is a list, treat it as per stage num_sectors
                 elif any(
                     [
@@ -616,14 +637,14 @@ class Simulation(ABC):
                             {"stage": i},
                             dpf.Scoping(ids=[i - 1 for i in num_sectors_stage_i]),
                         )
-                    result_op.connect(pin=18, inpt=sectors_scopings)
+                    result_wf.connect(_WfNames.cyclic_sectors_to_expand, inpt=sectors_scopings)
             elif not isinstance(expand_cyclic, bool):
                 raise ValueError(
                     "'expand_cyclic' argument can only be a boolean or a list."
                 )
-            result_op.connect(pin=14, inpt=3)  # Connect the read_cyclic pin
+            result_wf.connect(_WfNames.read_cyclic, 3)  # Connect the read_cyclic pin
         else:
-            result_op.connect(pin=14, inpt=1)  # Connect the read_cyclic pin
+            result_wf.connect(_WfNames.read_cyclic, 1)  # Connect the read_cyclic pin
         if phase_angle_cyclic is not None:
             if isinstance(phase_angle_cyclic, int):
                 phase_angle_cyclic = float(phase_angle_cyclic)
@@ -631,8 +652,8 @@ class Simulation(ABC):
                 raise ValueError(
                     "'phase_angle_cyclic' argument only accepts a single float value."
                 )
-            result_op.connect(pin=19, inpt=phase_angle_cyclic)
-        return result_op
+            result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
+        return result_wf
 
 
 class MechanicalSimulation(Simulation, ABC):
@@ -667,6 +688,7 @@ class MechanicalSimulation(Simulation, ABC):
         location: Union[locations, str] = locations.nodal,
         external_layer: bool=False,
         skin: Union[bool]=False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -714,12 +736,17 @@ class MechanicalSimulation(Simulation, ABC):
             res = _result_properties[base_name] if base_name in _result_properties else None
             if external_layer not in [None, False]:
                 selection.select_external_layer(
+                    elements=external_layer if external_layer is not False else None,
                     location=location,
                     result_native_location=res["location"] if res is not None else location,
-                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                    is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
                 )
             else:
-                selection.select_skin(location=location)
+                selection.select_skin(
+                    elements=skin if skin is not False else None,
+                    location=location, 
+                    is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
+                )
             
         # Create the TimeFreqSelection
         if all_sets:
@@ -812,16 +839,37 @@ class MechanicalSimulation(Simulation, ABC):
             return selection.requires_manual_averaging(location=location,result_native_location=res["location"], is_model_cyclic=self._model.operator("is_cyclic").eval())
         return False
 
-    def _build_result_operator(
-        self,
-        name: str,
-        location: Union[locations, str],
-        force_elemental_nodal: bool,
-    ) -> dpf.Operator:
-        op = self._model.operator(name=name)
-        op.connect(7, self.mesh._meshed_region)
-        if force_elemental_nodal:
-            op.connect(9, locations.elemental_nodal)
-        else:
-            op.connect(9, location)
-        return op
+    def _create_averaging_operator(
+            self,
+            location: str,
+            selection: Selection,
+        ):
+        average_op = None
+        first_average_op = None
+        forward = None
+        if _WfNames.skin in selection.spatial_selection._selection.output_names:
+            if self._model._server.meet_version("6.2"):
+                first_average_op = self._model.operator(name="solid_to_skin_fc")
+                forward = first_average_op
+            else:
+                first_average_op = self._model.operator(name="solid_to_skin")
+                forward = self._model.operator(name="forward_fc")
+                forward.connect(0, first_average_op, 0)
+            average_wf = dpf.Workflow(server=self._model._server)
+            average_wf.set_input_name(_WfNames.skin, first_average_op.inputs.mesh_scoping)
+            average_wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={
+                    _WfNames.skin: _WfNames.skin
+                },
+            )
+
+        if location == locations.nodal:
+            average_op = self._model.operator(name="to_nodal_fc")
+        elif location == locations.elemental:
+            average_op = self._model.operator(name="to_elemental_fc")
+        if average_op and forward:
+            average_op.connect(0, forward, 0)
+        else :
+            first_average_op = average_op
+        return (first_average_op, average_op)

@@ -33,7 +33,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
@@ -148,7 +148,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
         
         # Instantiate the main result operator
-        wf = self._build_result_workflow(
+        wf, result_op = self._build_result_workflow(
             name=base_name,
             location=location,
             force_elemental_nodal=force_elemental_nodal,
@@ -192,10 +192,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
 
-        average_wf = None
-        average_ops = None
+        average_op = None
         if force_elemental_nodal:
-            average_ops = self._create_averaging_operator(
+            average_op = self._create_averaging_operator(
                 location=location,
                 selection=selection
             )
@@ -206,17 +205,16 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
             if force_elemental_nodal:
-
-                average_wf.set_input_name(_WfNames.result, average_ops[0], 0)
-                principal_op.connect(0, average_ops[1])
+                average_op[0].connect(0, out)
+                principal_op.connect(0, average_op[1])
                 # Set as future output of the workflow
-                average_ops = None
+                average_op = None
             else:
-                average_wf.set_input_name(_WfNames.result, average_ops[0], 0)
                 principal_op.connect(0, out)
+            wf.add_operator(operator=principal_op)
             # Set as future output of the workflow
             if len(to_extract) == 1:
-                average_wf.set_output_name("out", getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}"))
+                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
             else:
                 raise NotImplementedError("Cannot combine principal results yet.")
                 # We need to define the behavior for storing different results in a DataFrame
@@ -225,23 +223,25 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
+            wf.add_operator(operator=equivalent_op)
             # If a strain result, change the location now
-            if average_ops is not None and category == ResultCategory.equivalent and base_name[0] == "E":
-                average_wf.set_input_name(_WfNames.result, equivalent_op, 0)
-                average_wf.set_output_name("out", average_ops.outputs.fields_container)
-                average_ops[0].connect(0, equivalent_op)
+            if force_elemental_nodal and category == ResultCategory.equivalent and base_name[0] == "E":
+                equivalent_op.connect(0, out)
+                average_op[0].connect(0, equivalent_op)
+                wf.add_operator(operator=average_op[1])
                 # Set as future output of the workflow
-            elif average_ops is not None:
-                average_wf.set_input_name(_WfNames.result, average_ops[0], 0)
-                average_wf.set_output_name("out", equivalent_op.outputs.fields_container)
-                equivalent_op.connect(0, average_ops[1])
+                out = average_op[1].outputs.fields_container
+            elif force_elemental_nodal:
+                average_op[0].connect(0, out)
+                equivalent_op.connect(0, average_op[1])
                 # Set as future output of the workflow
-            average_ops= None
+                out = equivalent_op.outputs.fields_container
+            average_op= None
             base_name += "_VM"
             
-        if average_ops is not None:
-            average_wf.set_input_name(_WfNames.result, average_ops[0], 0)
-            average_wf.set_output_name("out", average_ops[1], 0)
+        if average_op is not None:
+            average_op[0].connect(0, out)
+            out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (

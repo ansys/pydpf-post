@@ -42,6 +42,14 @@ class _WfNames:
     mesh = "mesh"
     external_layer = "external_layer"
     skin = "skin"
+    read_cyclic = "read_cyclic"
+    cyclic_sectors_to_expand = "cyclic_sectors_to_expand"
+    cyclic_phase = "cyclic_phase"
+    result = "result"
+
+
+def _is_model_cyclic(is_cyclic:str):
+    return is_cyclic in ["single_stage", "multi_stage"]
 
 
 class TimeFreqSelection:
@@ -277,7 +285,7 @@ class SpatialSelection:
         """Select the external layer of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this external layer are then used to
         display results and the nodes or elements of this submesh are used to scope result data
-        extraction
+        extraction.
 
         Parameters
         ----------
@@ -288,11 +296,14 @@ class SpatialSelection:
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model.
+        is_model_cyclic:
+            Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
+            be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
+            on the expanded mesh.
         """
-        if result_native_location is not None and is_model_cyclic and location != result_native_location:
+        if result_native_location is not None and _is_model_cyclic(is_model_cyclic) and location != result_native_location:
             location = result_native_location
         op = operators.mesh.external_layer(server=self._server)
-        forward_op = operators.utility.forward("external_layer")
         if elements is not None:
             if not isinstance(elements, Scoping):
                 elements = Scoping(server=self._server, ids=elements, location=locations.elemental)
@@ -310,7 +321,7 @@ class SpatialSelection:
             _WfNames.mesh, op.outputs.mesh
         )
         self._selection.set_output_name(
-            _WfNames.external_layer, forward_op, 0
+            _WfNames.external_layer, op.outputs.mesh
         )
         if location ==  locations.nodal:
             self._selection.set_output_name(_WfNames.scoping, op.outputs.nodes_mesh_scoping)
@@ -322,7 +333,8 @@ class SpatialSelection:
     def select_skin(
         self,
         location: Union[locations, str]= locations.elemental,
-        elements: Union[List[int], Scoping, None]=None
+        elements: Union[List[int], Scoping, None]=None,
+        is_model_cyclic: str = "not_cyclic"
     ) -> None:
         """Select the skin of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this skin are then used to
@@ -337,32 +349,63 @@ class SpatialSelection:
             `post.locations.elemental`.
         elements:
             List of elements to use to compute the external layer,
-            default is all the elements of the model.
+            default is all the elements of the model. Getting the skin on a selection of
+            elements for cyclic symmetry is not supported.
+        is_model_cyclic:
+            Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
+            be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
+            on the expanded mesh.
         """
         op = operators.mesh.skin(server=self._server)
-        forward_op = operators.utility.forward("skin")
-        if elements is not None:
+        mesh_input = op.inputs.mesh
+
+        if _is_model_cyclic(is_model_cyclic):
+            mesh_provider_cyc = operators.mesh.mesh_provider()
+            wf.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
+            wf.set_input_name(_WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18)
+            self._selection.set_input_name(
+                _WfNames.data_sources, mesh_provider_cyc.inputs.data_sources
+            )
+            self._selection.set_input_name(
+                _WfNames.streams, mesh_provider_cyc.inputs.streams_container
+            )
+            if elements is not None:
+                raise ValueError("Getting the skin an a selection of elements is not "
+                                 "supported for cyclic symmetry")
+                if not isinstance(elements, Scoping):
+                    elements = Scoping(server=self._server, ids=elements,
+                                       location=locations.elemental)
+                mesh_by_scop_op = operators.mesh.from_scoping(
+                    mesh=mesh_provider_cyc,
+                    scoping=elements,
+                    server=self._server,
+                )
+                op.inputs.mesh.connect(mesh_by_scop_op)
+            else:
+                op.inputs.mesh.connect(mesh_provider_cyc)
+            self._selection.set_input_name(
+                _WfNames.mesh, mesh_provider_cyc, 100
+            )  # hack
+            mesh_input = None
+
+        elif elements is not None:
             if not isinstance(elements, Scoping):
                 elements = Scoping(server=self._server, ids=elements, location=locations.elemental)
             mesh_by_scop_op = operators.mesh.from_scoping(scoping=elements, server=self._server)
-            self._selection.set_input_name(
-                _WfNames.mesh, mesh_by_scop_op.inputs.mesh
-            )
+            mesh_input = mesh_by_scop_op.inputs.mesh
             op.inputs.mesh.connect(mesh_by_scop_op)
-        else:
+
+        if mesh_input is not None:
             self._selection.set_input_name(
-                _WfNames.mesh, op.inputs.mesh
+                _WfNames.mesh, mesh_input
             )
-        
+            self._selection.set_output_name(
+                _WfNames.mesh, op.outputs.mesh
+            )
         self._selection.set_output_name(
-            _WfNames.mesh, op.outputs.mesh
+            _WfNames.skin, op.outputs.mesh
         )
-        self._selection.set_output_name(
-            _WfNames.skin, forward_op, 0
-        )
-        if location == locations.nodal:
-            self._selection.set_output_name(_WfNames.scoping, op.outputs.nodes_mesh_scoping)
-        else:
+        if location != locations.nodal or not self._server.meet_version("6.2"):
             transpose_op = operators.scoping.transpose(
                 mesh_scoping=op.outputs.nodes_mesh_scoping,
                 server=self._server)
@@ -370,6 +413,8 @@ class SpatialSelection:
                 _WfNames.mesh, transpose_op.inputs.meshed_region
             )
             self._selection.set_output_name(_WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping)
+        else:
+            self._selection.set_output_name(_WfNames.scoping, op.outputs.nodes_mesh_scoping)
 
         self._selection.add_operator(op)
 
@@ -702,7 +747,7 @@ class Selection:
         """Select the external layer of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this external layer are then used to
         display results and the nodes or elements of this submesh are used to scope result data
-        extraction
+        extraction.
 
         Parameters
         ----------
@@ -713,13 +758,18 @@ class Selection:
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model.
+        is_model_cyclic:
+            Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
+            be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
+            on the expanded mesh.
         """
         self._spatial_selection.select_external_layer(elements=elements, location=location,result_native_location=result_native_location, is_model_cyclic=is_model_cyclic)
 
     def select_skin(
             self,
             location: Union[locations, str] = locations.elemental,
-            elements: Union[List[int], Scoping, None] = None
+            elements: Union[List[int], Scoping, None] = None,
+            is_model_cyclic: str = "not_cyclic"
     ) -> None:
         """Select the skin of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this skin are then used to
@@ -734,9 +784,14 @@ class Selection:
             `post.locations.elemental`.
         elements:
             List of elements to use to compute the external layer,
-            default is all the elements of the model.
+            default is all the elements of the model. Getting the skin on a selection of
+            elements for cyclic symmetry is not supported.
+        is_model_cyclic:
+            Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
+            be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
+            on the expanded mesh.
         """
-        self._spatial_selection.select_skin(elements=elements, location=location)
+        self._spatial_selection.select_skin(elements=elements, location=location, is_model_cyclic=is_model_cyclic)
         
     @property
     def requires_mesh(self)->bool:
