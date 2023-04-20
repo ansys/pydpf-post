@@ -14,6 +14,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport
 from ansys.dpf.core.plotter import DpfPlotter
+from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.server_types import BaseServer
 import numpy as np
 
@@ -29,6 +30,7 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection
+from build.lib.ansys.dpf.gate.common import locations
 
 component_label_to_index = {
     "1": 0,
@@ -424,20 +426,18 @@ class Simulation(ABC):
         else:
             columns = [base_name + self._principal_names[i] for i in out]
         return out, columns
-
-    def _build_result_operator(
-        self,
-        name: str,
-        location: Union[locations, str],
-        force_elemental_nodal: bool,
-    ) -> dpf.Operator:
-        op = self._model.operator(name=name)
-        op.connect(7, self.mesh._meshed_region)
-        if force_elemental_nodal:
-            op.connect(9, "ElementalNodal")
-        else:
-            op.connect(9, location)
-        return op
+    
+    def _create_averaging_operator(
+            self,
+            location: str,
+            selection: Selection,
+        ):
+        average_op = None
+        if location == locations.nodal:
+            average_op = self._model.operator(name="to_nodal_fc")
+        elif location == locations.elemental:
+            average_op = self._model.operator(name="to_elemental_fc")
+        return average_op
 
     def _create_components(self, base_name, category, components):
         comp = None
@@ -653,6 +653,7 @@ class MechanicalSimulation(Simulation, ABC):
 
     def _build_selection(
         self,
+        base_name: str,
         selection: Union[Selection, None],
         set_ids: Union[int, List[int], None],
         times: Union[float, List[float], None],
@@ -664,6 +665,8 @@ class MechanicalSimulation(Simulation, ABC):
         element_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
+        external_layer: bool=False,
+        skin: Union[bool]=False,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -675,6 +678,14 @@ class MechanicalSimulation(Simulation, ABC):
             raise ValueError(
                 "Arguments selection, named_selections, element_ids, "
                 "and node_ids are mutually exclusive"
+            )
+        tot = (
+            (skin not in [None, False])
+            + (external_layer not in [None, False])
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments selection, skin, and external_layer are mutually exclusive"
             )
         if selection is not None:
             return selection
@@ -697,6 +708,19 @@ class MechanicalSimulation(Simulation, ABC):
                     "is equal to 'post.locations.nodal'."
                 )
             selection.select_nodes(nodes=node_ids)
+            
+        if external_layer not in [None, False] or skin not in [None, False]:
+
+            res = _result_properties[base_name] if base_name in _result_properties else None
+            if external_layer not in [None, False]:
+                selection.select_external_layer(
+                    location=location,
+                    result_native_location=res["location"] if res is not None else location,
+                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                )
+            else:
+                selection.select_skin(location=location)
+            
         # Create the TimeFreqSelection
         if all_sets:
             selection.time_freq_selection.select_with_scoping(
@@ -773,3 +797,31 @@ class MechanicalSimulation(Simulation, ABC):
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
         return selection
+
+    def _requires_manual_averaging(
+            self,
+            base_name: str,
+            location: str,
+            category: ResultCategory,
+            selection: Selection,
+    ):
+        res = _result_properties[base_name] if base_name in _result_properties else None
+        if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
+            return True
+        if res is not None:
+            return selection.requires_manual_averaging(location=location,result_native_location=res["location"], is_model_cyclic=self._model.operator("is_cyclic").eval())
+        return False
+
+    def _build_result_operator(
+        self,
+        name: str,
+        location: Union[locations, str],
+        force_elemental_nodal: bool,
+    ) -> dpf.Operator:
+        op = self._model.operator(name=name)
+        op.connect(7, self.mesh._meshed_region)
+        if force_elemental_nodal:
+            op.connect(9, locations.elemental_nodal)
+        else:
+            op.connect(9, location)
+        return op
