@@ -16,7 +16,6 @@ from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
-from build.lib.ansys.dpf.gate.common import locations
 import numpy as np
 
 from ansys.dpf.post import locations
