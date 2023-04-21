@@ -1,7 +1,6 @@
 import os.path
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core.operators.mesh import external_layer
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
