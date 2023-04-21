@@ -1847,9 +1847,10 @@ class TestModalMechanicalSimulation:
         )
 
     def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
-        assert len(result.index.mesh_index) == 11146
-        assert len(result.columns.set_ids) == 6
+        if frame_modal_simulation._model._server.meet_version("6.2"):
+            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+            assert len(result.index.mesh_index) == 11146
+            assert len(result.columns.set_ids) == 6
         result = frame_modal_simulation.stress_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
@@ -1881,14 +1882,15 @@ class TestModalMechanicalSimulation:
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        result = frame_modal_simulation.stress_principal_elemental(
-            all_sets=True, skin=True
-        )
-        assert len(result.index.mesh_index) == 11146
-        assert len(result.columns.set_ids) == 6
-        assert np.allclose(
-            result.select(set_ids=[1]).max(axis="element_ids").array, [1602.16293782]
-        )
+        if frame_modal_simulation._model._server.meet_version("6.2"):
+            result = frame_modal_simulation.stress_principal_elemental(
+                all_sets=True, skin=True
+            )
+            assert len(result.index.mesh_index) == 11146
+            assert len(result.columns.set_ids) == 6
+            assert np.allclose(
+                result.select(set_ids=[1]).max(axis="element_ids").array, [1602.16293782]
+            )
         result = frame_modal_simulation.stress_principal_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
@@ -2491,68 +2493,71 @@ class TestHarmonicMechanicalSimulation:
         assert len(result.columns.set_ids) == 1
 
     def test_disp_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.displacement(set_ids=[1], skin=True)
-        result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
-        assert len(result.index.mesh_index) == 4802
-        assert np.allclose(
-            result.select(complex=0).max(axis="node_ids").array,
-            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
-        )
-        result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 44
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.displacement(set_ids=[1], skin=True)
+            result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
+            assert len(result.index.mesh_index) == 4802
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array,
+                [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+            )
+            result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+            assert len(result.index.mesh_index) == 44
 
     def test_stress_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
-        assert len(result.index.mesh_index) == 3942
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_elemental(
-            set_ids=[1], skin=list(range(1, 100))
-        )
-        assert len(result.index.mesh_index) == 192
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_eqv_von_mises_nodal(
-            set_ids=[1], skin=list(range(1, 100))
-        )
-        assert len(result.index.mesh_index) == 530
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1], skin=True)
-        assert len(result.index.mesh_index) == 4802
-        assert len(result.columns.set_ids) == 1
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_elemental(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 192
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_eqv_von_mises_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1], skin=True)
+            assert len(result.index.mesh_index) == 4802
+            assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.stress_principal_elemental(
-            all_sets=True, skin=True
-        )
-        assert len(result.index.mesh_index) == 3942
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_principal_elemental(
-            set_ids=[1], skin=list(range(1, 100))
-        )
-        assert len(result.index.mesh_index) == 192
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-            set_ids=[1], skin=list(range(1, 100))
-        )
-        assert len(result.index.mesh_index) == 530
-        assert len(result.columns.set_ids) == 1
-        assert np.allclose(
-            result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06]
-        )
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-            set_ids=[1], skin=True
-        )
-        assert len(result.index.mesh_index) == 4802
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_principal_nodal(
-            set_ids=[1], skin=list(range(1, 100))
-        )
-        assert len(result.index.mesh_index) == 530
-        assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
-            set_ids=[1], skin=True
-        )
-        assert len(result.index.mesh_index) == 3942
-        assert len(result.columns.set_ids) == 1
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.stress_principal_elemental(
+                all_sets=True, skin=True
+            )
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_principal_elemental(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 192
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06]
+            )
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+                set_ids=[1], skin=True
+            )
+            assert len(result.index.mesh_index) == 4802
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_principal_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+                set_ids=[1], skin=True
+            )
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
 
 
 def test_elemental_ns_on_nodal_result(modal_frame):

@@ -52,12 +52,8 @@ displacement = simulation.displacement()  # default is skin=False
 displacement_skin.plot()
 displacement.plot()
 
-print(
-    f"number of nodes with skin=True: {len(displacement_skin.index.mesh_index)}"
-)
-print(
-    f"number of nodes with skin=False: {len(displacement.index.mesh_index)}"
-)
+print(f"number of nodes with skin=True: {len(displacement_skin.index.mesh_index)}")
+print(f"number of nodes with skin=False: {len(displacement.index.mesh_index)}")
 
 ###############################################################################
 # Extract stress/strain data
@@ -74,10 +70,7 @@ elemental_stress.plot()
 print(
     f"number of elements with skin=True: {len(elemental_stress_skin.index.mesh_index)}"
 )
-print(
-    f"number of elements with skin=False: {len(elemental_stress.index.mesh_index)}"
-)
-
+print(f"number of elements with skin=False: {len(elemental_stress.index.mesh_index)}")
 
 elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=True)
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
