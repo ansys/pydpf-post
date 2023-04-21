@@ -172,7 +172,6 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         # Initialize a workflow
         wf = dpf.Workflow(server=self._model._server)
-        wf.progress_bar = False
 
         force_elemental_nodal = self._requires_manual_averaging(
             base_name=base_name,
@@ -333,6 +332,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         # Set the workflow output
         wf.set_output_name("out", out)
+        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 

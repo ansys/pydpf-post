@@ -77,14 +77,3 @@ elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=Tru
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
 elastic_strain_eqv_skin.plot()
 elastic_strain_eqv.plot()
-
-###############################################################################
-# Extract the external layer on a selection of elements
-# -----------------------------------------------------
-
-all_elements = simulation.mesh.element_ids
-elements = []
-for i in range(0, int(all_elements.size / 2)):
-    elements.append(all_elements[i])
-elemental_stress_skin = simulation.stress_principal_elemental(skin=elements)
-elemental_stress_skin.plot()
