@@ -3,7 +3,7 @@
 
 Extract Data and Plot on Mesh Skin
 ==================================
-In this example, post-processing on a mesh skin for a static analysis is displayed.
+In this example, post-processing on a mesh skin for a cyclic modal analysis is displayed.
 The skin mesh is rebuilt with new surface elements connecting the nodes on the external skin
 of the solid mesh. These surface elements types are chosen with respect to the solid elements
 facets having all their nodes on the skin.
@@ -32,7 +32,7 @@ from ansys.dpf.post import examples
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
 
-example_path = examples.download_crankshaft()
+example_path = examples.download_modal_cyclic()
 simulation = post.load_simulation(example_path)
 
 # for no autocompletion, this line is equivalent to:
@@ -45,7 +45,7 @@ print(simulation)
 ###############################################################################
 # Extract displacement data
 # -------------------------
-# Extract displacement data over the entire mesh and on the external layer.
+# Extract displacement data over the entire mesh and on the skin.
 
 displacement_skin = simulation.displacement(skin=True)
 displacement = simulation.displacement()  # default is skin=False
@@ -58,9 +58,8 @@ print(f"number of nodes with skin=False: {len(displacement.index.mesh_index)}")
 ###############################################################################
 # Extract stress/strain data
 # --------------------------
-# Extract stress or elastic strain data over the entire mesh and on the external layer.
-# Averaging, and invariants computation can easily be done on the external layer since the
-# connectivity of the kept elements remains unchanged.
+# Extract stress or elastic strain data over the entire mesh and on the skin.
+# Averaging, and invariants computation are done through a solid to skin connectivity mapping.
 
 elemental_stress_skin = simulation.stress_principal_elemental(components=[1], skin=True)
 elemental_stress = simulation.stress_principal_elemental()
@@ -76,3 +75,15 @@ elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=Tru
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
 elastic_strain_eqv_skin.plot()
 elastic_strain_eqv.plot()
+
+###############################################################################
+# Get stress results on the first sector with a cyclic phase on the skin
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+stress_eqv_cyc_phase = simulation.stress_eqv_von_mises_nodal(
+    set_ids=[5],
+    expand_cyclic=[1],
+    phase_angle_cyclic=45.0,
+    skin=True,
+)
+stress_eqv_cyc_phase.plot()

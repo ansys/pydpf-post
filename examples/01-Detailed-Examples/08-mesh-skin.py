@@ -45,7 +45,7 @@ print(simulation)
 ###############################################################################
 # Extract displacement data
 # -------------------------
-# Extract displacement data over the entire mesh and on the external layer.
+# Extract displacement data over the entire mesh and on the skin.
 
 displacement_skin = simulation.displacement(skin=True)
 displacement = simulation.displacement()  # default is skin=False
@@ -58,9 +58,8 @@ print(f"number of nodes with skin=False: {len(displacement.index.mesh_index)}")
 ###############################################################################
 # Extract stress/strain data
 # --------------------------
-# Extract stress or elastic strain data over the entire mesh and on the external layer.
-# Averaging, and invariants computation can easily be done on the external layer since the
-# connectivity of the kept elements remains unchanged.
+# Extract stress or elastic strain data over the entire mesh and on the skin.
+# Averaging, and invariants computation are done through a solid to skin connectivity mapping.
 
 elemental_stress_skin = simulation.stress_principal_elemental(components=[1], skin=True)
 elemental_stress = simulation.stress_principal_elemental()

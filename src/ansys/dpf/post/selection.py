@@ -371,8 +371,10 @@ class SpatialSelection:
 
         if _is_model_cyclic(is_model_cyclic):
             mesh_provider_cyc = operators.mesh.mesh_provider()
-            wf.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
-            wf.set_input_name(_WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18)
+            self._selection.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
+            self._selection.set_input_name(
+                _WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18
+            )
             self._selection.set_input_name(
                 _WfNames.data_sources, mesh_provider_cyc.inputs.data_sources
             )
@@ -422,7 +424,7 @@ class SpatialSelection:
                 _WfNames.scoping, op.outputs.nodes_mesh_scoping
             )
 
-        elif (
+        elif not _is_model_cyclic(is_model_cyclic) and (
             result_native_location == locations.elemental
             or result_native_location == locations.elemental_nodal
         ):

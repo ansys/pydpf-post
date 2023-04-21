@@ -101,3 +101,15 @@ elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
 elastic_strain_eqv_ext.plot()
 elastic_strain_eqv.plot()
+
+##################################################################################
+# Get stress results on the first sector with a cyclic phase on the external layer
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+stress_eqv_cyc_phase = simulation.stress_eqv_von_mises_nodal(
+    set_ids=[5],
+    expand_cyclic=[1],
+    phase_angle_cyclic=45.0,
+    external_layer=True,
+)
+stress_eqv_cyc_phase.plot()
