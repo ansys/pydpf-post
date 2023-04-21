@@ -13,9 +13,10 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
-from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.available_result import _result_properties
+from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
+from build.lib.ansys.dpf.gate.common import locations
 import numpy as np
 
 from ansys.dpf.post import locations
@@ -30,7 +31,6 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.selection import Selection, _WfNames
-from build.lib.ansys.dpf.gate.common import locations
 
 component_label_to_index = {
     "1": 0,
@@ -604,7 +604,10 @@ class Simulation(ABC):
                         raise ValueError(
                             "Sector selection with 'expand_cyclic' starts at 1."
                         )
-                    result_wf.connect(_WfNames.cyclic_sectors_to_expand, [i - 1 for i in expand_cyclic])
+                    result_wf.connect(
+                        _WfNames.cyclic_sectors_to_expand,
+                        [i - 1 for i in expand_cyclic],
+                    )
                 # If any is a list, treat it as per stage num_sectors
                 elif any(
                     [
@@ -637,7 +640,9 @@ class Simulation(ABC):
                             {"stage": i},
                             dpf.Scoping(ids=[i - 1 for i in num_sectors_stage_i]),
                         )
-                    result_wf.connect(_WfNames.cyclic_sectors_to_expand, inpt=sectors_scopings)
+                    result_wf.connect(
+                        _WfNames.cyclic_sectors_to_expand, inpt=sectors_scopings
+                    )
             elif not isinstance(expand_cyclic, bool):
                 raise ValueError(
                     "'expand_cyclic' argument can only be a boolean or a list."
@@ -686,8 +691,8 @@ class MechanicalSimulation(Simulation, ABC):
         element_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
-        external_layer: bool=False,
-        skin: Union[bool]=False,
+        external_layer: bool = False,
+        skin: Union[bool] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (
@@ -701,10 +706,7 @@ class MechanicalSimulation(Simulation, ABC):
                 "Arguments selection, named_selections, element_ids, "
                 "and node_ids are mutually exclusive"
             )
-        tot = (
-            (skin not in [None, False])
-            + (external_layer not in [None, False])
-        )
+        tot = (skin not in [None, False]) + (external_layer not in [None, False])
         if tot > 1:
             raise ValueError(
                 "Arguments selection, skin, and external_layer are mutually exclusive"
@@ -714,6 +716,37 @@ class MechanicalSimulation(Simulation, ABC):
         else:
             selection = Selection(server=self._model._server)
         # Create the SpatialSelection
+
+        # First: the skin and the external layer to be able to have both a mesh scoping and
+        # the skin/external layer
+        if external_layer not in [None, False] or skin not in [None, False]:
+            res = (
+                _result_properties[base_name]
+                if base_name in _result_properties
+                else None
+            )
+            if external_layer not in [None, False]:
+                selection.select_external_layer(
+                    elements=external_layer if external_layer is not True else None,
+                    location=location,
+                    result_native_location=res["location"]
+                    if res is not None
+                    else location,
+                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                    if expand_cyclic is not False
+                    else "not_cyclic",
+                )
+            else:
+                selection.select_skin(
+                    elements=skin if skin is not True else None,
+                    location=location,
+                    result_native_location=res["location"]
+                    if res is not None
+                    else location,
+                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                    if expand_cyclic is not False
+                    else "not_cyclic",
+                )
         if named_selections:
             selection.select_named_selection(
                 named_selection=named_selections, location=location
@@ -730,24 +763,7 @@ class MechanicalSimulation(Simulation, ABC):
                     "is equal to 'post.locations.nodal'."
                 )
             selection.select_nodes(nodes=node_ids)
-            
-        if external_layer not in [None, False] or skin not in [None, False]:
 
-            res = _result_properties[base_name] if base_name in _result_properties else None
-            if external_layer not in [None, False]:
-                selection.select_external_layer(
-                    elements=external_layer if external_layer is not True else None,
-                    location=location,
-                    result_native_location=res["location"] if res is not None else location,
-                    is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
-                )
-            else:
-                selection.select_skin(
-                    elements=skin if skin is not True else None,
-                    location=location, 
-                    is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
-                )
-            
         # Create the TimeFreqSelection
         if all_sets:
             selection.time_freq_selection.select_with_scoping(
@@ -826,24 +842,28 @@ class MechanicalSimulation(Simulation, ABC):
         return selection
 
     def _requires_manual_averaging(
-            self,
-            base_name: str,
-            location: str,
-            category: ResultCategory,
-            selection: Selection,
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        selection: Selection,
     ):
         res = _result_properties[base_name] if base_name in _result_properties else None
         if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
             return True
         if res is not None:
-            return selection.requires_manual_averaging(location=location,result_native_location=res["location"], is_model_cyclic=self._model.operator("is_cyclic").eval())
+            return selection.requires_manual_averaging(
+                location=location,
+                result_native_location=res["location"],
+                is_model_cyclic=self._model.operator("is_cyclic").eval(),
+            )
         return False
 
     def _create_averaging_operator(
-            self,
-            location: str,
-            selection: Selection,
-        ):
+        self,
+        location: str,
+        selection: Selection,
+    ):
         average_op = None
         first_average_op = None
         forward = None
@@ -856,12 +876,12 @@ class MechanicalSimulation(Simulation, ABC):
                 forward = self._model.operator(name="forward_fc")
                 forward.connect(0, first_average_op, 0)
             average_wf = dpf.Workflow(server=self._model._server)
-            average_wf.set_input_name(_WfNames.skin, first_average_op.inputs.mesh_scoping)
+            average_wf.set_input_name(
+                _WfNames.skin, first_average_op.inputs.mesh_scoping
+            )
             average_wf.connect_with(
                 selection.spatial_selection._selection,
-                output_input_names={
-                    _WfNames.skin: _WfNames.skin
-                },
+                output_input_names={_WfNames.skin: _WfNames.skin},
             )
 
         if location == locations.nodal:
@@ -870,7 +890,7 @@ class MechanicalSimulation(Simulation, ABC):
             average_op = self._model.operator(name="to_elemental_fc")
         if average_op and forward:
             average_op.connect(0, forward, 0)
-        else :
+        else:
             first_average_op = average_op
 
         if first_average_op is not None and average_op is not None:

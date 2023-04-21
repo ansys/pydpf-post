@@ -34,7 +34,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -91,12 +91,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -146,9 +148,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             base_name=base_name,
             location=location,
             category=category,
-            selection=selection
+            selection=selection,
         )
-        
+
         # Instantiate the main result operator
         wf, result_op = self._build_result_workflow(
             name=base_name,
@@ -162,7 +164,6 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
         wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
 
-        
         wf.connect_with(
             selection.time_freq_selection._selection,
             output_input_names=("scoping", "time_scoping"),
@@ -173,15 +174,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             mesh_wf.set_output_name(_WfNames.mesh, self._model.metadata.mesh_provider)
             selection.spatial_selection._selection.connect_with(
                 mesh_wf,
-                output_input_names={
-                    _WfNames.mesh: _WfNames.mesh
-                },
+                output_input_names={_WfNames.mesh: _WfNames.initial_mesh},
             )
         wf.connect_with(
             selection.spatial_selection._selection,
             output_input_names={
-                "scoping":"mesh_scoping",
-                _WfNames.mesh:_WfNames.mesh
+                "scoping": "mesh_scoping",
+                _WfNames.mesh: _WfNames.mesh,
             },
         )
 
@@ -197,10 +196,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         average_op = None
         if force_elemental_nodal:
             average_op = self._create_averaging_operator(
-                location=location,
-                selection=selection
+                location=location, selection=selection
             )
-            
+
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
@@ -220,14 +218,17 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             else:
                 raise NotImplementedError("Cannot combine principal results yet.")
                 # We need to define the behavior for storing different results in a DataFrame
-            
-        
+
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
             wf.add_operator(operator=equivalent_op)
             # If a strain result, change the location now
-            if average_op is not None and category == ResultCategory.equivalent and base_name[0] == "E":
+            if (
+                average_op is not None
+                and category == ResultCategory.equivalent
+                and base_name[0] == "E"
+            ):
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
                 wf.add_operator(operator=average_op[1])
@@ -241,9 +242,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             else:
                 equivalent_op.connect(0, out)
                 out = equivalent_op.outputs.fields_container
-            average_op= None
+            average_op = None
             base_name += "_VM"
-            
+
         if average_op is not None:
             average_op[0].connect(0, out)
             out = average_op[1].outputs.fields_container
@@ -298,7 +299,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -344,12 +345,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -560,7 +563,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -612,12 +615,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -656,7 +661,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -698,12 +703,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -743,7 +750,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -787,12 +794,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -833,7 +842,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal stress results from the simulation.
 
@@ -884,12 +893,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -928,7 +939,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -969,12 +980,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1014,7 +1027,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -1057,12 +1070,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1102,7 +1117,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises stress results from the simulation.
 
@@ -1151,12 +1166,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1194,7 +1211,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises stress results from the simulation.
 
@@ -1233,12 +1250,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1277,7 +1296,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises stress results from the simulation.
 
@@ -1318,12 +1337,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1364,7 +1385,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elastic strain results from the simulation.
 
@@ -1416,12 +1437,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1461,7 +1484,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal elastic strain results from the simulation.
 
@@ -1505,12 +1528,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1549,7 +1574,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental elastic strain results from the simulation.
 
@@ -1591,12 +1616,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1637,7 +1664,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal elastic strain results from the simulation.
 
@@ -1688,12 +1715,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1733,7 +1762,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1776,12 +1805,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1820,7 +1851,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1861,12 +1892,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1906,7 +1939,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises elastic strain results from the simulation.
 
@@ -1955,12 +1988,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1998,7 +2033,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
@@ -2037,12 +2072,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2081,7 +2118,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
@@ -2122,12 +2159,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2167,7 +2206,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract plastic state variable results from the simulation.
 
@@ -2216,12 +2255,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2259,7 +2300,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -2298,12 +2339,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2342,7 +2385,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -2383,12 +2426,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2429,7 +2474,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract plastic strain results from the simulation.
 
@@ -2481,12 +2526,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2526,7 +2573,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
@@ -2570,12 +2617,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2614,7 +2663,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
@@ -2656,12 +2705,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2702,7 +2753,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal plastic strain results from the simulation.
 
@@ -2753,12 +2804,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2798,7 +2851,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -2841,12 +2894,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2885,7 +2940,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -2926,12 +2981,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2971,7 +3028,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent plastic strain results from the simulation.
 
@@ -3020,12 +3077,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3064,7 +3123,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -3105,12 +3164,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3148,7 +3209,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -3187,12 +3248,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3233,7 +3296,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -3279,12 +3342,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3323,7 +3388,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -3362,12 +3427,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3405,7 +3472,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -3444,12 +3511,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3487,7 +3556,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -3526,12 +3595,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3569,7 +3640,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -3608,12 +3679,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3653,7 +3726,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental nodal element orientations results from the simulation.
 
@@ -3702,12 +3775,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3745,7 +3820,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -3784,12 +3859,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3828,7 +3905,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -3869,12 +3946,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3914,7 +3993,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3963,12 +4042,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4007,7 +4088,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -4048,12 +4129,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4091,7 +4174,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -4130,12 +4213,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4177,7 +4262,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -4231,12 +4316,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4278,7 +4365,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -4324,12 +4411,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4370,7 +4459,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -4414,12 +4503,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4461,7 +4552,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -4507,12 +4598,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4554,7 +4647,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool] = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -4600,12 +4693,14 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  For cyclic problems, phase angle to apply (in degrees).
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer 
+                 of the mesh for plotting and data extraction. If a list is passed, the external layer
                  is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements.
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
