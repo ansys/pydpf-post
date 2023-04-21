@@ -186,7 +186,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             # Instantiate the required operator
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
-            if force_elemental_nodal:
+            if average_op is not None:
                 average_op[0].connect(0, out)
                 principal_op.connect(0, average_op[1])
                 # Set as future output of the workflow
@@ -203,21 +203,22 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
-            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
-            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
-            if force_elemental_nodal and category == ResultCategory.equivalent and base_name[
+            if average_op is not None and category == ResultCategory.equivalent and base_name[
                 0] == "E":
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
                 wf.add_operator(operator=average_op[1])
                 # Set as future output of the workflow
                 out = average_op[1].outputs.fields_container
-            elif force_elemental_nodal:
+            elif average_op is not None:
                 average_op[0].connect(0, out)
                 equivalent_op.connect(0, average_op[1])
                 # Set as future output of the workflow
+                out = equivalent_op.outputs.fields_container
+            else:
+                equivalent_op.connect(0, out)
                 out = equivalent_op.outputs.fields_container
             average_op = None
             base_name += "_VM"

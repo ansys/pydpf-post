@@ -736,14 +736,14 @@ class MechanicalSimulation(Simulation, ABC):
             res = _result_properties[base_name] if base_name in _result_properties else None
             if external_layer not in [None, False]:
                 selection.select_external_layer(
-                    elements=external_layer if external_layer is not False else None,
+                    elements=external_layer if external_layer is not True else None,
                     location=location,
                     result_native_location=res["location"] if res is not None else location,
                     is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
                 )
             else:
                 selection.select_skin(
-                    elements=skin if skin is not False else None,
+                    elements=skin if skin is not True else None,
                     location=location, 
                     is_model_cyclic=self._model.operator("is_cyclic").eval() if expand_cyclic is not False else "not_cyclic",
                 )
@@ -872,4 +872,6 @@ class MechanicalSimulation(Simulation, ABC):
             average_op.connect(0, forward, 0)
         else :
             first_average_op = average_op
-        return (first_average_op, average_op)
+
+        if first_average_op is not None and average_op is not None:
+            return (first_average_op, average_op)

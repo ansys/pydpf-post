@@ -101,8 +101,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements.
+
         Returns
-    )
         -------
             Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
@@ -166,10 +166,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         wf.connect_with(
             selection.time_freq_selection._selection,
-            output_input_names={
-                "scoping":"mesh_scoping",
-                _WfNames.mesh:_WfNames.mesh
-            },
+            output_input_names=("scoping", "time_scoping"),
         )
         if selection.requires_mesh:
             wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
@@ -183,7 +180,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             )
         wf.connect_with(
             selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
+            output_input_names={
+                "scoping": "mesh_scoping",
+                _WfNames.mesh: _WfNames.mesh
+            },
         )
 
         # Treat cyclic cases
@@ -208,7 +208,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
 
-            if force_elemental_nodal:
+            if average_op is not None:
                 average_op[0].connect(0, out)
                 principal_op.connect(0, average_op[1])
                 # Set as future output of the workflow
@@ -226,22 +226,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
-            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
-            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
-            if force_elemental_nodal and category == ResultCategory.equivalent and base_name[
+            if average_op is not None and category == ResultCategory.equivalent and base_name[
                 0] == "E":
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
                 wf.add_operator(operator=average_op[1])
                 # Set as future output of the workflow
                 out = average_op[1].outputs.fields_container
-            elif force_elemental_nodal:
+            elif average_op is not None:
                 average_op[0].connect(0, out)
                 equivalent_op.connect(0, average_op[1])
                 # Set as future output of the workflow
                 out = equivalent_op.outputs.fields_container
+            else:
+                equivalent_op.connect(0, out)
+                out = equivalent_op.outputs.fields_container
+
             average_op = None
             base_name += "_VM"
 
