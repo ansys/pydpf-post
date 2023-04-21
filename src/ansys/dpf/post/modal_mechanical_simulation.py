@@ -298,7 +298,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
@@ -562,7 +562,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
@@ -660,7 +660,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
@@ -749,7 +749,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
@@ -841,7 +841,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal stress results from the simulation.
@@ -938,7 +938,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
@@ -1026,7 +1026,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
@@ -1116,7 +1116,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises stress results from the simulation.
@@ -1210,7 +1210,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises stress results from the simulation.
@@ -1295,7 +1295,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises stress results from the simulation.
@@ -1384,7 +1384,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elastic strain results from the simulation.
@@ -1483,7 +1483,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal elastic strain results from the simulation.
@@ -1573,7 +1573,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental elastic strain results from the simulation.
@@ -1663,7 +1663,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal elastic strain results from the simulation.
@@ -1761,7 +1761,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
@@ -1850,7 +1850,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
@@ -1938,7 +1938,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent von Mises elastic strain results from the simulation.
@@ -2032,7 +2032,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises elastic strain results from the simulation.
@@ -2117,7 +2117,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises elastic strain results from the simulation.
@@ -2205,7 +2205,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract plastic state variable results from the simulation.
@@ -2299,7 +2299,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
@@ -2384,7 +2384,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
@@ -2473,7 +2473,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract plastic strain results from the simulation.
@@ -2572,7 +2572,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
@@ -2662,7 +2662,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
@@ -2752,7 +2752,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract principal plastic strain results from the simulation.
@@ -2850,7 +2850,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
@@ -2939,7 +2939,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
@@ -3027,7 +3027,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract equivalent plastic strain results from the simulation.
@@ -3122,7 +3122,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
@@ -3208,7 +3208,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
@@ -3295,7 +3295,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
@@ -3387,7 +3387,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
@@ -3471,7 +3471,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
@@ -3555,7 +3555,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
@@ -3639,7 +3639,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
@@ -3725,7 +3725,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental nodal element orientations results from the simulation.
@@ -3819,7 +3819,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
@@ -3904,7 +3904,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
@@ -3992,7 +3992,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
@@ -4087,7 +4087,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
@@ -4173,7 +4173,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
@@ -4261,7 +4261,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
@@ -4364,7 +4364,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
@@ -4458,7 +4458,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
@@ -4551,7 +4551,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
@@ -4646,7 +4646,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         all_sets: bool = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool] = False,
+        external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
