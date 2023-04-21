@@ -9,16 +9,18 @@ This example shows how to extract results from a modal cyclic symmetry model.
 
 """
 
-from ansys.dpf import core as dpf
 from ansys.dpf.core import examples
+
+from ansys.dpf import core as dpf
+from ansys.dpf import post
+from ansys.dpf.post import examples
+
 ###############################################################################
 # Perform required imports
 # ------------------------
 # This example uses a supplied file that you can
 # get using the ``examples`` module.
 
-from ansys.dpf import post
-from ansys.dpf.post import examples
 
 ###############################################################################
 # Get ``Simulation`` object
@@ -75,17 +77,23 @@ u_cyc = simulation.displacement(all_sets=True, expand_cyclic=[1])
 u_cyc.plot()
 
 # with phi=90°
-u_cyc = simulation.displacement(all_sets=True, expand_cyclic=[1], phase_angle_cyclic=90.0)
+u_cyc = simulation.displacement(
+    all_sets=True, expand_cyclic=[1], phase_angle_cyclic=90.0
+)
 u_cyc.plot()
 
 # with phi=45°
-u_cyc = simulation.displacement(all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0)
+u_cyc = simulation.displacement(
+    all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0
+)
 u_cyc.plot()
 
 ###############################################################################
 # Get nodal stress results on the first sector with a cyclic phase
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-s_cyc = simulation.stress_eqv_von_mises_nodal(all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0)
+s_cyc = simulation.stress_eqv_von_mises_nodal(
+    all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0
+)
 print(s_cyc)
 s_cyc.plot()
 
@@ -97,7 +105,9 @@ s_cyc = simulation.stress(set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.
 print(s_cyc)
 
 # To average the result for each element
-to_elemental = simulation.stress_elemental(set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.0)
+to_elemental = simulation.stress_elemental(
+    set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.0
+)
 print(to_elemental)
 to_elemental.plot()
 

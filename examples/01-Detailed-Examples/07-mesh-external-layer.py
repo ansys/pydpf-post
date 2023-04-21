@@ -46,8 +46,12 @@ displacement = simulation.displacement()  # default is external_layer=False
 displacement_ext.plot()
 displacement.plot()
 
-print(f"number of nodes with external_layer=True: {len(displacement_ext.index.mesh_index)}")
-print(f"number of nodes with external_layer=False: {len(displacement.index.mesh_index)}")
+print(
+    f"number of nodes with external_layer=True: {len(displacement_ext.index.mesh_index)}"
+)
+print(
+    f"number of nodes with external_layer=False: {len(displacement.index.mesh_index)}"
+)
 
 ###############################################################################
 # Extract stress/strain data

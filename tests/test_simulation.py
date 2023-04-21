@@ -117,11 +117,11 @@ class TestStaticMechanicalSimulation:
         _ = static_simulation.displacement(times=[1])
         _ = static_simulation.displacement(times=[1.0])
         with pytest.raises(
-                ValueError, match="Argument times must contain numeric values only."
+            ValueError, match="Argument times must contain numeric values only."
         ):
             _ = static_simulation.displacement(times=[0.0, 1, "test"])
         with pytest.raises(
-                TypeError, match="Argument times must be a number or a list of numbers."
+            TypeError, match="Argument times must be a number or a list of numbers."
         ):
             _ = static_simulation.displacement(times="test")
 
@@ -139,7 +139,7 @@ class TestStaticMechanicalSimulation:
 
     def test_raise_node_ids_elemental(self, static_simulation):
         with pytest.raises(
-                ValueError, match="Argument 'node_ids' can only be used if 'location'"
+            ValueError, match="Argument 'node_ids' can only be used if 'location'"
         ):
             _ = static_simulation.stress(
                 node_ids=[42], location=post.locations.elemental
@@ -163,7 +163,7 @@ class TestStaticMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
         with pytest.raises(
-                ValueError, match="Sub-step 2 of load-step 1 does not exist."
+            ValueError, match="Sub-step 2 of load-step 1 does not exist."
         ):
             _ = static_simulation.displacement(
                 components=["2"],
@@ -582,29 +582,39 @@ class TestStaticMechanicalSimulation:
     def test_external_layer(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.displacement(external_layer=True)
         assert len(result.index.mesh_index) == 81
-        assert np.allclose(result.max(axis="node_ids").array,
-                           [2.76941713e-09, 2.76940199e-09, 4.10914311e-10])
+        assert np.allclose(
+            result.max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
         result = static_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
         result = static_simulation.stress_principal_elemental(external_layer=[1, 2, 3])
         assert len(result.index.mesh_index) == 3
-        result = static_simulation.elastic_strain_eqv_von_mises_elemental(external_layer=[1, 2, 3])
+        result = static_simulation.elastic_strain_eqv_von_mises_elemental(
+            external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         result = static_simulation.stress_principal_nodal(external_layer=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
-        result = static_simulation.elastic_strain_eqv_von_mises_nodal(external_layer=[1, 2, 3])
+        result = static_simulation.elastic_strain_eqv_von_mises_nodal(
+            external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 44
 
     def test_skin_layer(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.displacement(skin=True)
         assert len(result.index.mesh_index) == 74
-        assert np.allclose(result.max(axis="node_ids").array,
-                           [2.76941713e-09, 2.76940199e-09, 4.10914311e-10])
+        assert np.allclose(
+            result.max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
         result = static_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
         result = static_simulation.stress_principal_elemental(skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 18
-        result = static_simulation.elastic_strain_eqv_von_mises_elemental(skin=[1, 2, 3])
+        result = static_simulation.elastic_strain_eqv_von_mises_elemental(
+            skin=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 18
         result = static_simulation.stress_principal_nodal(skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
@@ -622,7 +632,7 @@ class TestTransientMechanicalSimulation:
 
     def test_times_argument(self, transient_simulation, static_simulation):
         with pytest.raises(
-                ValueError, match="Could not find time=0.0s in the simulation."
+            ValueError, match="Could not find time=0.0s in the simulation."
         ):
             _ = transient_simulation.displacement(times=0.0)
 
@@ -643,7 +653,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
         # Test for times= just not near float
         with pytest.raises(
-                ValueError, match="Could not find time=0.1495s in the simulation."
+            ValueError, match="Could not find time=0.1495s in the simulation."
         ):
             _ = transient_simulation.displacement(components=["X"], times=0.1495)
 
@@ -1194,14 +1204,14 @@ class TestModalMechanicalSimulation:
         assert len(displacement.mesh_index) == 408
 
         with pytest.raises(
-                ValueError,
-                match="'phase_angle_cyclic' argument only accepts a single float value.",
+            ValueError,
+            match="'phase_angle_cyclic' argument only accepts a single float value.",
         ):
             _ = simulation.displacement(phase_angle_cyclic=[0.1])
 
         with pytest.raises(
-                ValueError,
-                match="Sector selection with 'expand_cyclic' starts at 1.",
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
         ):
             _ = simulation.displacement(expand_cyclic=[0])
 
@@ -1224,8 +1234,8 @@ class TestModalMechanicalSimulation:
         assert len(displacement.mesh_index) == 26742
 
         with pytest.raises(
-                ValueError,
-                match="Sector selection with 'expand_cyclic' starts at 1.",
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
         ):
             _ = simulation.displacement(expand_cyclic=[[0, 1], 1])
 
@@ -1246,13 +1256,13 @@ class TestModalMechanicalSimulation:
         assert len(displacement.mesh_index) == 6848
 
         with pytest.raises(
-                ValueError, match="'expand_cyclic' only accepts lists of int values >= 1."
+            ValueError, match="'expand_cyclic' only accepts lists of int values >= 1."
         ):
             _ = simulation.displacement(expand_cyclic=[[1, 2], [0.2, 2]])
 
         with pytest.raises(
-                ValueError,
-                match="'expand_cyclic' argument can only be a boolean or a list.",
+            ValueError,
+            match="'expand_cyclic' argument can only be a boolean or a list.",
         ):
             _ = simulation.displacement(expand_cyclic=1)
 
@@ -1655,66 +1665,116 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
-    def test_disp_external_layer(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+    def test_disp_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
         result = frame_modal_simulation.displacement(set_ids=[1], external_layer=True)
-        result_all = frame_modal_simulation.displacement(set_ids=[1], external_layer=False)
+        result_all = frame_modal_simulation.displacement(
+            set_ids=[1], external_layer=False
+        )
         assert len(result.index.mesh_index) == 5886
         assert len(result.index.mesh_index) == len(result_all.index.mesh_index)
-        assert np.allclose(result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671])
-        result = frame_modal_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
+        assert np.allclose(
+            result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
+        )
+        result = frame_modal_simulation.displacement(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 21
-        assert np.allclose(result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333])
+        assert np.allclose(
+            result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333]
+        )
 
-    def test_stress_external_layer(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        result = frame_modal_simulation.stress_elemental(all_sets=True, external_layer=True)
+    def test_stress_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.stress_elemental(
+            all_sets=True, external_layer=True
+        )
         assert len(result.index.mesh_index) == 2842
         assert len(result.columns.set_ids) == 6
-        assert np.allclose(result.select(set_ids=[3]).max(axis="element_ids").array, [
-            [464.27737236, 627.19576979, 1661.52572632, 285.47153473, 682.4336586, 501.27880096]])
-        result = frame_modal_simulation.stress_elemental(set_ids=[1], external_layer=[1, 2, 3])
+        assert np.allclose(
+            result.select(set_ids=[3]).max(axis="element_ids").array,
+            [
+                [
+                    464.27737236,
+                    627.19576979,
+                    1661.52572632,
+                    285.47153473,
+                    682.4336586,
+                    501.27880096,
+                ]
+            ],
+        )
+        result = frame_modal_simulation.stress_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.max(axis="element_ids").array, [
-            [-6.46462837, 1.80925381, 107.2106514, 2.10453892, 9.44412744, -2.84251213]])
-        result = frame_modal_simulation.stress_eqv_von_mises_nodal(set_ids=[1],
-                                                                   external_layer=[1, 2, 3])
+        assert np.allclose(
+            result.max(axis="element_ids").array,
+            [
+                [
+                    -6.46462837,
+                    1.80925381,
+                    107.2106514,
+                    2.10453892,
+                    9.44412744,
+                    -2.84251213,
+                ]
+            ],
+        )
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 21
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [298.15417461])
-        result = frame_modal_simulation.stress_eqv_von_mises_nodal(set_ids=[1], external_layer=True)
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 5886
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [1285.17926915])
 
-    def test_strain_external_layer(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        result = frame_modal_simulation.stress_principal_elemental(all_sets=True,
-                                                                   external_layer=True)
+    def test_strain_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.stress_principal_elemental(
+            all_sets=True, external_layer=True
+        )
         assert len(result.index.mesh_index) == 2842
         assert len(result.columns.set_ids) == 6
-        assert np.allclose(result.select(set_ids=[1]).max(axis="element_ids").array,
-                           [1282.65478454])
-        result = frame_modal_simulation.stress_principal_elemental(set_ids=[1],
-                                                                   external_layer=[1, 2, 3])
+        assert np.allclose(
+            result.select(set_ids=[1]).max(axis="element_ids").array, [1282.65478454]
+        )
+        result = frame_modal_simulation.stress_principal_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="element_ids").array, [123.69229739])
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                           external_layer=[1, 2, 3])
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 21
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [0.00149252])
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                           external_layer=True)
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 5886
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [0.00684776])
-        result = frame_modal_simulation.elastic_strain_principal_nodal(set_ids=[1],
-                                                                       external_layer=[1, 2, 3])
+        result = frame_modal_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 21
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [0.00138069])
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1],
-                                                                               external_layer=True)
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 2842
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="element_ids").array, [0.00620539])
@@ -1723,53 +1783,82 @@ class TestModalMechanicalSimulation:
         result = frame_modal_simulation.displacement(set_ids=[1], skin=True)
         result_all = frame_modal_simulation.displacement(set_ids=[1], skin=False)
         assert len(result.index.mesh_index) == 5828
-        assert np.allclose(result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671])
+        assert np.allclose(
+            result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
+        )
         result = frame_modal_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 21
-        assert np.allclose(result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333])
+        assert np.allclose(
+            result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333]
+        )
 
     def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
         assert len(result.index.mesh_index) == 11146
         assert len(result.columns.set_ids) == 6
-        result = frame_modal_simulation.stress_elemental(set_ids=[1], skin=list(range(1, 100)))
+        result = frame_modal_simulation.stress_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 110
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.max(axis="element_ids").array, [
-            [36.52192259, 58.73246002, 371.72294617, 25.97949378, 139.83338165, 69.25232569]])
-        result = frame_modal_simulation.stress_eqv_von_mises_nodal(set_ids=[1],
-                                                                   skin=list(range(1, 100)))
+        assert np.allclose(
+            result.max(axis="element_ids").array,
+            [
+                [
+                    36.52192259,
+                    58.73246002,
+                    371.72294617,
+                    25.97949378,
+                    139.83338165,
+                    69.25232569,
+                ]
+            ],
+        )
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 111
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [246.80761959])
-        result = frame_modal_simulation.stress_eqv_von_mises_nodal(set_ids=[1], skin=True)
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
         assert len(result.index.mesh_index) == 5828
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        result = frame_modal_simulation.stress_principal_elemental(all_sets=True, skin=True)
+        result = frame_modal_simulation.stress_principal_elemental(
+            all_sets=True, skin=True
+        )
         assert len(result.index.mesh_index) == 11146
         assert len(result.columns.set_ids) == 6
-        assert np.allclose(result.select(set_ids=[1]).max(axis="element_ids").array,
-                           [1602.16293782])
-        result = frame_modal_simulation.stress_principal_elemental(set_ids=[1],
-                                                                   skin=list(range(1, 100)))
+        assert np.allclose(
+            result.select(set_ids=[1]).max(axis="element_ids").array, [1602.16293782]
+        )
+        result = frame_modal_simulation.stress_principal_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 110
         assert len(result.columns.set_ids) == 1
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                           skin=list(range(1, 100)))
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 111
         assert len(result.columns.set_ids) == 1
         assert np.allclose(result.max(axis="node_ids").array, [0.00219503])
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1], skin=True)
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
         assert len(result.index.mesh_index) == 5828
         assert len(result.columns.set_ids) == 1
-        result = frame_modal_simulation.elastic_strain_principal_nodal(set_ids=[1],
-                                                                       skin=list(range(1, 100)))
+        result = frame_modal_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 111
         assert len(result.columns.set_ids) == 1
-        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1],
-                                                                               skin=True)
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], skin=True
+        )
         assert len(result.index.mesh_index) == 11146
         assert len(result.columns.set_ids) == 1
 
@@ -2264,59 +2353,86 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
-    def test_disp_external_layer(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
+    def test_disp_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
         result = harmonic_simulation.displacement(set_ids=[1], external_layer=True)
         result_all = harmonic_simulation.displacement(set_ids=[1], external_layer=False)
         assert len(result.index.mesh_index) == 4802
         assert len(result.index.mesh_index) == len(result_all.index.mesh_index)
-        assert np.allclose(result.select(complex=0).max(axis="node_ids").array,
-                           [2.76941713e-09, 2.76940199e-09, 4.10914311e-10])
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
         result = harmonic_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
-        assert np.allclose(result.select(complex=0).max(axis="node_ids").array,
-                           [-2.50180428e-09, -2.86357660e-10, 8.61977942e-11])
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [-2.50180428e-09, -2.86357660e-10, 8.61977942e-11],
+        )
 
-    def test_stress_external_layer(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.stress_elemental(all_sets=True, external_layer=True)
+    def test_stress_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.stress_elemental(
+            all_sets=True, external_layer=True
+        )
         assert len(result.index.mesh_index) == 657
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_elemental(set_ids=[1], external_layer=[1, 2, 3])
+        result = harmonic_simulation.stress_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1],
-                                                                external_layer=[1, 2, 3])
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 44
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.select(complex=0).max(axis="node_ids").array, [123936.68415042])
-        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1], external_layer=True)
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array, [123936.68415042]
+        )
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 4802
         assert len(result.columns.set_ids) == 1
 
-    def test_strain_external_layer(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.stress_principal_elemental(all_sets=True, external_layer=True)
+    def test_strain_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.stress_principal_elemental(
+            all_sets=True, external_layer=True
+        )
         assert len(result.index.mesh_index) == 657
         assert len(result.columns.set_ids) == 1
         assert np.allclose(
             result.select(complex=0).select(set_ids=[1]).max(axis="element_ids").array,
-            [1915.12412375])
-        result = harmonic_simulation.stress_principal_elemental(set_ids=[1],
-                                                                external_layer=[1, 2, 3])
+            [1915.12412375],
+        )
+        result = harmonic_simulation.stress_principal_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                        external_layer=[1, 2, 3])
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 44
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                        external_layer=True)
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 4802
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_principal_nodal(set_ids=[1],
-                                                                    external_layer=[1, 2, 3])
+        result = harmonic_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 44
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1],
-                                                                            external_layer=True)
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], external_layer=True
+        )
         assert len(result.index.mesh_index) == 657
         assert len(result.columns.set_ids) == 1
 
@@ -2324,8 +2440,10 @@ class TestHarmonicMechanicalSimulation:
         result = harmonic_simulation.displacement(set_ids=[1], skin=True)
         result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
         assert len(result.index.mesh_index) == 4802
-        assert np.allclose(result.select(complex=0).max(axis="node_ids").array,
-                           [2.76941713e-09, 2.76940199e-09, 4.10914311e-10])
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
         result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
 
@@ -2333,11 +2451,14 @@ class TestHarmonicMechanicalSimulation:
         result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
         assert len(result.index.mesh_index) == 3942
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_elemental(set_ids=[1], skin=list(range(1, 100)))
+        result = harmonic_simulation.stress_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 192
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1],
-                                                                skin=list(range(1, 100)))
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 530
         assert len(result.columns.set_ids) == 1
         result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1], skin=True)
@@ -2345,26 +2466,37 @@ class TestHarmonicMechanicalSimulation:
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        result = harmonic_simulation.stress_principal_elemental(all_sets=True, skin=True)
+        result = harmonic_simulation.stress_principal_elemental(
+            all_sets=True, skin=True
+        )
         assert len(result.index.mesh_index) == 3942
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.stress_principal_elemental(set_ids=[1],
-                                                                skin=list(range(1, 100)))
+        result = harmonic_simulation.stress_principal_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 192
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1],
-                                                                        skin=list(range(1, 100)))
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 530
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06])
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1], skin=True)
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06]
+        )
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
         assert len(result.index.mesh_index) == 4802
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_principal_nodal(set_ids=[1],
-                                                                    skin=list(range(1, 100)))
+        result = harmonic_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 530
         assert len(result.columns.set_ids) == 1
-        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1], skin=True)
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], skin=True
+        )
         assert len(result.index.mesh_index) == 3942
         assert len(result.columns.set_ids) == 1
 
