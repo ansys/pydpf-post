@@ -1177,7 +1177,9 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
-    def test_external_layer(self, transient_simulation: post.TransientMechanicalSimulation):
+    def test_external_layer(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
         result = transient_simulation.displacement(all_sets=True, external_layer=True)
         assert len(result.columns.set_ids) == 20
         assert len(result.index.mesh_index) == 393
@@ -1185,9 +1187,13 @@ class TestTransientMechanicalSimulation:
             result.select(set_ids=[2]).max(axis="node_ids").array,
             [5.14806800e-07, 1.63151192e-03, 9.78100326e-06],
         )
-        result = transient_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
+        result = transient_simulation.displacement(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 44
-        result = transient_simulation.stress_principal_elemental(external_layer=[1, 2, 3])
+        result = transient_simulation.stress_principal_elemental(
+            external_layer=[1, 2, 3]
+        )
         assert len(result.index.mesh_index) == 3
         result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
             external_layer=[1, 2, 3]
@@ -1210,15 +1216,19 @@ class TestTransientMechanicalSimulation:
         )
         result = transient_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 44
-        result = transient_simulation.stress_principal_elemental(skin=list(range(1,100)))
-        assert len(result.index.mesh_index) == 240
-        result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
-            skin=list(range(1,100))
+        result = transient_simulation.stress_principal_elemental(
+            skin=list(range(1, 100))
         )
         assert len(result.index.mesh_index) == 240
-        result = transient_simulation.stress_principal_nodal(skin=list(range(1,100)))
+        result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
+            skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 240
+        result = transient_simulation.stress_principal_nodal(skin=list(range(1, 100)))
         assert len(result.index.mesh_index) == 393
-        result = transient_simulation.elastic_strain_eqv_von_mises_nodal(skin=list(range(1,100)))
+        result = transient_simulation.elastic_strain_eqv_von_mises_nodal(
+            skin=list(range(1, 100))
+        )
         assert len(result.index.mesh_index) == 393
 
 

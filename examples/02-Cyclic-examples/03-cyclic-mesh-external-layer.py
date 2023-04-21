@@ -61,7 +61,9 @@ print(
 # for a cyclic expansion on a selected number of sectors.
 
 displacement_ext = simulation.displacement(external_layer=True, expand_cyclic=[1, 2, 3])
-displacement = simulation.displacement(expand_cyclic=[1, 2, 3])  # default is external_layer=False
+displacement = simulation.displacement(
+    expand_cyclic=[1, 2, 3]
+)  # default is external_layer=False
 displacement_ext.plot()
 displacement.plot()
 
