@@ -325,11 +325,14 @@ class SpatialSelection:
 
         self._selection.set_output_name(_WfNames.mesh, op.outputs.mesh)
         self._selection.set_output_name(_WfNames.external_layer, op.outputs.mesh)
-        if location == locations.nodal and self._server.meet_version("6.2"):
+        if location == locations.nodal and (
+            self._server.meet_version("6.2")
+            or result_native_location == locations.nodal
+        ):
             self._selection.set_output_name(
                 _WfNames.scoping, op.outputs.nodes_mesh_scoping
             )
-        else:
+        elif location == locations.elemental or location == locations.elemental_nodal:
             self._selection.set_output_name(
                 _WfNames.scoping, op.outputs.elements_mesh_scoping
             )
@@ -414,7 +417,15 @@ class SpatialSelection:
             if location == result_native_location:
                 self._selection.set_output_name(_WfNames.mesh, op.outputs.mesh)
         self._selection.set_output_name(_WfNames.skin, op.outputs.mesh)
-        if location != locations.nodal or not self._server.meet_version("6.2"):
+        if location == locations.nodal and result_native_location == locations.nodal:
+            self._selection.set_output_name(
+                _WfNames.scoping, op.outputs.nodes_mesh_scoping
+            )
+
+        elif (
+            result_native_location == locations.elemental
+            or result_native_location == locations.elemental_nodal
+        ):
             transpose_op = operators.scoping.transpose(
                 mesh_scoping=op.outputs.nodes_mesh_scoping, server=self._server
             )
@@ -423,10 +434,6 @@ class SpatialSelection:
             )
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
-            )
-        else:
-            self._selection.set_output_name(
-                _WfNames.scoping, op.outputs.nodes_mesh_scoping
             )
 
         self._selection.add_operator(op)

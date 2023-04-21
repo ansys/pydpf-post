@@ -705,7 +705,9 @@ class MechanicalSimulation(Simulation, ABC):
                 "Arguments selection, named_selections, element_ids, "
                 "and node_ids are mutually exclusive"
             )
-        tot = (skin not in [None, False]) + (external_layer not in [None, False])
+        tot = (skin is not None and skin is not False) + (
+            external_layer is not None and external_layer is not False
+        )
         if tot > 1:
             raise ValueError(
                 "Arguments selection, skin, and external_layer are mutually exclusive"
@@ -718,7 +720,9 @@ class MechanicalSimulation(Simulation, ABC):
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
         # the skin/external layer
-        if external_layer not in [None, False] or skin not in [None, False]:
+        if (skin is not None and skin is not False) or (
+            external_layer is not None and external_layer is not False
+        ):
             res = (
                 _result_properties[base_name]
                 if base_name in _result_properties
