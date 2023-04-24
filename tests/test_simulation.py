@@ -1812,7 +1812,7 @@ class TestModalMechanicalSimulation:
         )
         assert len(result.index.mesh_index) == 21
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.max(axis="node_ids").array, [298.15417461])
+        assert np.allclose(result.max(axis="node_ids").array, [280.45842315])
 
     def test_stress_external_layer2(
         self, frame_modal_simulation: post.ModalMechanicalSimulation
@@ -1862,7 +1862,7 @@ class TestModalMechanicalSimulation:
         )
         assert len(result.index.mesh_index) == 21
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.max(axis="node_ids").array, [0.00138069])
+        assert np.allclose(result.max(axis="node_ids").array, [0.00131161])
 
     def test_strain_external_layer3(
         self, frame_modal_simulation: post.ModalMechanicalSimulation
@@ -2494,7 +2494,7 @@ class TestHarmonicMechanicalSimulation:
         assert len(result.index.mesh_index) == 44
         assert len(result.columns.set_ids) == 1
         assert np.allclose(
-            result.select(complex=0).max(axis="node_ids").array, [123936.68415042]
+            result.select(complex=0).max(axis="node_ids").array, [123327.7207683]
         )
 
     def test_stress_external_layer2(

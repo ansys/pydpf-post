@@ -96,7 +96,6 @@ elemental_stress_ext.plot()
 # Extract the external layer on a selection of elements for nodal results
 # -----------------------------------------------------------------------
 
-simulation = post.StaticMechanicalSimulation(example_path)
 elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
     external_layer=elements
 )
@@ -106,7 +105,6 @@ elastic_strain_eqv_ext.plot()
 # Extract the external layer on a selection of elements and scope results
 # -----------------------------------------------------------------------
 
-simulation = post.StaticMechanicalSimulation(example_path)
 sub_elements = []
 for i in range(0, int(len(elements) / 2)):
     sub_elements.append(elements[i])

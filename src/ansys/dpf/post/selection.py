@@ -617,6 +617,11 @@ class SpatialSelection:
         """Whether the selection workflow requires a ``mesh`` as an input or not."""
         return _WfNames.initial_mesh in self._selection.input_names
 
+    @property
+    def outputs_mesh(self) -> bool:
+        """Whether the selection workflow as an output named ``mesh``."""
+        return _WfNames.mesh in self._selection.output_names
+
     def requires_manual_averaging(
         self,
         location: Union[str, locations],
@@ -860,8 +865,13 @@ class Selection:
 
     @property
     def requires_mesh(self) -> bool:
-        """Whether the selection workflow requires a ``mesh`` as an input or not."""
+        """Whether the selection workflow requires a ``initial_mesh`` as an input or not."""
         return self._spatial_selection.requires_mesh
+
+    @property
+    def outputs_mesh(self) -> bool:
+        """Whether the selection workflow as an output named ``mesh``."""
+        return self._spatial_selection.outputs_mesh
 
     def requires_manual_averaging(
         self,

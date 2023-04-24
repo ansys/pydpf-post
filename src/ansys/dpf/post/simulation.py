@@ -537,7 +537,9 @@ class Simulation(ABC):
 
         return disp_wf
 
-    def _create_dataframe(self, fc, location, columns, comp, base_name, disp_wf=None):
+    def _create_dataframe(
+        self, fc, location, columns, comp, base_name, disp_wf=None, submesh=None
+    ):
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
@@ -549,6 +551,12 @@ class Simulation(ABC):
         if len(fc) > 0:
             unit = fc[0].unit
             times = fc.get_available_ids_for_label("time")
+            if submesh is not None:
+                for i_field in range(len(fc)):
+                    bind_support_op = dpf.operators.utility.bind_support(
+                        fc[i_field], submesh
+                    )
+                    fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
         if unit == "":
             unit = None
         comp_index = None
@@ -679,6 +687,7 @@ class MechanicalSimulation(Simulation, ABC):
     def _build_selection(
         self,
         base_name: str,
+        category: ResultCategory,
         selection: Union[Selection, None],
         set_ids: Union[int, List[int], None],
         times: Union[float, List[float], None],
@@ -727,6 +736,11 @@ class MechanicalSimulation(Simulation, ABC):
                 _result_properties[base_name]
                 if base_name in _result_properties
                 else None
+            )
+            location = (
+                locations.elemental_nodal
+                if self._requires_manual_averaging(base_name, location, category, None)
+                else location
             )
             if external_layer not in [None, False]:
                 selection.select_external_layer(
@@ -854,7 +868,7 @@ class MechanicalSimulation(Simulation, ABC):
         res = _result_properties[base_name] if base_name in _result_properties else None
         if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
             return True
-        if res is not None:
+        if res is not None and selection is not None:
             return selection.requires_manual_averaging(
                 location=location,
                 result_native_location=res["location"],

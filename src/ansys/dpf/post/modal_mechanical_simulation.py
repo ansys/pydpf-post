@@ -123,6 +123,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         selection = self._build_selection(
             base_name=base_name,
+            category=category,
             selection=selection,
             set_ids=set_ids if set_ids else modes,
             times=frequencies,
@@ -168,18 +169,17 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             output_input_names=("scoping", "time_scoping"),
         )
         if selection.requires_mesh:
-            wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
             mesh_wf = dpf.Workflow(server=self._model._server)
             mesh_wf.set_output_name(_WfNames.mesh, self._model.metadata.mesh_provider)
             selection.spatial_selection._selection.connect_with(
                 mesh_wf,
                 output_input_names={_WfNames.mesh: _WfNames.initial_mesh},
             )
+
         wf.connect_with(
             selection.spatial_selection._selection,
             output_input_names={
                 "scoping": "mesh_scoping",
-                _WfNames.mesh: _WfNames.mesh,
             },
         )
 
@@ -282,7 +282,15 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
-        return self._create_dataframe(fc, location, columns, comp, base_name, disp_wf)
+        submesh = None
+        if selection.outputs_mesh:
+            submesh = selection.spatial_selection._selection.get_output(
+                _WfNames.mesh, dpf.types.meshed_region
+            )
+
+        return self._create_dataframe(
+            fc, location, columns, comp, base_name, disp_wf, submesh
+        )
 
     def displacement(
         self,

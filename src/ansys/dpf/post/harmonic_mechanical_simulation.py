@@ -153,6 +153,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         selection = self._build_selection(
             base_name=base_name,
+            category=category,
             selection=selection,
             set_ids=set_ids,
             times=frequencies,
@@ -198,18 +199,18 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             output_input_names=("scoping", "time_scoping"),
         )
         if selection.requires_mesh:
-            wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
+            # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
             mesh_wf = dpf.Workflow(server=self._model._server)
             mesh_wf.set_output_name(_WfNames.mesh, self._model.metadata.mesh_provider)
             selection.spatial_selection._selection.connect_with(
                 mesh_wf,
                 output_input_names={_WfNames.mesh: _WfNames.initial_mesh},
             )
+
         wf.connect_with(
             selection.spatial_selection._selection,
             output_input_names={
                 "scoping": "mesh_scoping",
-                _WfNames.mesh: _WfNames.mesh,
             },
         )
 
@@ -367,6 +368,16 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         row_index = MultiIndex(
             indexes=row_indexes,
         )
+
+        if selection.outputs_mesh:
+            submesh = selection.spatial_selection._selection.get_output(
+                _WfNames.mesh, dpf.types.meshed_region
+            )
+            for i_field in range(len(fc)):
+                bind_support_op = dpf.operators.utility.bind_support(
+                    fc[i_field], submesh
+                )
+                fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
 
         # Return the result wrapped in a DPF_Dataframe
         df = DataFrame(
