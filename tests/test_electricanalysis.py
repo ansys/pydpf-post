@@ -57,11 +57,18 @@ def test_electricfield_nodscoping(rth_electric):
     s = ef.vector
     assert s.num_fields == 1
     assert s[0].location == post.locations.elemental_nodal
-    assert len(s[0].data) == 8
-    assert len(s[0].data[0]) == 3
-    assert np.allclose(
-        s[0].data.tolist(), [2.63128894e-11, 1.95629520e01, 2.62733394e-11]
-    )
+    if len(s[0].data) == 8:  # bug before Ansys 2023R2: node_scoping taken as elements
+        assert len(s[0].data) == 8
+        assert len(s[0].data[0]) == 3
+        assert np.allclose(
+            s[0].data.tolist(), [2.63128894e-11, 1.95629520e01, 2.62733394e-11]
+        )
+    else:
+        assert len(s[0].data) == 64
+        assert len(s[0].data[0]) == 3
+        assert np.allclose(
+            s[0].data.tolist(), [2.63128894e-11, 1.95629520e01, 2.62733394e-11]
+        )
 
 
 @pytest.mark.skipif(
