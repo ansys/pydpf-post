@@ -262,14 +262,17 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 
+        disp_wf = self._generate_disp_workflow(fc, selection)
+
         submesh = None
         if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
             submesh = selection.spatial_selection._selection.get_output(
                 _WfNames.mesh, dpf.types.meshed_region
             )
 
         return self._create_dataframe(
-            fc, location, columns, comp, base_name, submesh=submesh
+            fc, location, columns, comp, base_name, disp_wf=disp_wf, submesh=submesh
         )
 
     def displacement(

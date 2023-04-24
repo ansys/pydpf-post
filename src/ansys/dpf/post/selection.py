@@ -313,7 +313,36 @@ class SpatialSelection:
         ):
             location = result_native_location
         op = operators.mesh.external_layer(server=self._server)
-        if elements is not None:
+
+        if _is_model_cyclic(is_model_cyclic):
+            mesh_provider_cyc = operators.mesh.mesh_provider()
+            self._selection.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
+            self._selection.set_input_name(
+                _WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18
+            )
+            self._selection.set_input_name(
+                _WfNames.data_sources, mesh_provider_cyc.inputs.data_sources
+            )
+            self._selection.set_input_name(
+                _WfNames.streams, mesh_provider_cyc.inputs.streams_container
+            )
+            if elements is not None:
+                if not isinstance(elements, Scoping):
+                    elements = Scoping(
+                        server=self._server, ids=elements, location=locations.elemental
+                    )
+                mesh_by_scop_op = operators.mesh.from_scoping(
+                    mesh=mesh_provider_cyc,
+                    scoping=elements,
+                    server=self._server,
+                )
+                op.inputs.mesh.connect(mesh_by_scop_op)
+            else:
+                op.inputs.mesh.connect(mesh_provider_cyc)
+            self._selection.set_input_name(
+                _WfNames.initial_mesh, mesh_provider_cyc, 100
+            )  # hack
+        elif elements is not None:
             if not isinstance(elements, Scoping):
                 elements = Scoping(
                     server=self._server, ids=elements, location=locations.elemental

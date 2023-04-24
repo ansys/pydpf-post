@@ -285,6 +285,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         disp_wf = self._generate_disp_workflow(fc, selection)
         submesh = None
         if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
             submesh = selection.spatial_selection._selection.get_output(
                 _WfNames.mesh, core.types.meshed_region
             )

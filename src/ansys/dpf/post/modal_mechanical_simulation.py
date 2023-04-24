@@ -170,10 +170,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
         if selection.requires_mesh:
             mesh_wf = dpf.Workflow(server=self._model._server)
-            mesh_wf.set_output_name(_WfNames.mesh, self._model.metadata.mesh_provider)
+            mesh_wf.set_output_name(
+                _WfNames.initial_mesh, self._model.metadata.mesh_provider
+            )
             selection.spatial_selection._selection.connect_with(
                 mesh_wf,
-                output_input_names={_WfNames.mesh: _WfNames.initial_mesh},
+                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
         wf.connect_with(
@@ -284,6 +286,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         submesh = None
         if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
             submesh = selection.spatial_selection._selection.get_output(
                 _WfNames.mesh, dpf.types.meshed_region
             )

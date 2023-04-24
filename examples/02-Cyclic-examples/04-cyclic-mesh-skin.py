@@ -36,7 +36,7 @@ example_path = examples.download_modal_cyclic()
 simulation = post.load_simulation(example_path)
 
 # for no autocompletion, this line is equivalent to:
-simulation = post.StaticMechanicalSimulation(example_path)
+simulation = post.ModalMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
 print(simulation)

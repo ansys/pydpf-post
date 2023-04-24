@@ -370,6 +370,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         )
 
         if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
             submesh = selection.spatial_selection._selection.get_output(
                 _WfNames.mesh, dpf.types.meshed_region
             )
