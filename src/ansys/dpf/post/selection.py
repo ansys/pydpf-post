@@ -359,10 +359,7 @@ class SpatialSelection:
 
         self._selection.set_output_name(_WfNames.mesh, op.outputs.mesh)
         self._selection.set_output_name(_WfNames.external_layer, op.outputs.mesh)
-        if location == locations.nodal and (
-            self._server.meet_version("6.2")
-            or result_native_location == locations.nodal
-        ):
+        if location == locations.nodal:
             self._selection.set_output_name(
                 _WfNames.scoping, op.outputs.nodes_mesh_scoping
             )
