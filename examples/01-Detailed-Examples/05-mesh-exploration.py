@@ -43,7 +43,7 @@ print(stress_df)
 mesh = simulation.mesh
 
 ###############################################################################
-# Query basic information about the mesh (available in PyDPF-Core)
+# Query basic information about the mesh
 # --------------------------------------
 
 # Node IDs
@@ -116,20 +116,20 @@ print(e_materials)
 # ----------------------------------------------
 
 # Get the nodes of an element
-mesh.elements[1].nodes
+mesh.elements[0].nodes
 
 # Get the node IDs of an element
-mesh.elements[1].node_ids
+mesh.elements[0].node_ids
 
 # Get the nodes of an element
-mesh.elements[1].n_nodes
+mesh.elements[0].n_nodes
 
 # Get the type of the element
-mesh.elements[1].type_info
-mesh.elements[1].type_id
+mesh.elements[0].type_info
+mesh.elements[0].type_id
 
 # Get the shape of the element
-mesh.elements[1].shape
+mesh.elements[0].shape
 
 ###############################################################################
 # Get the elemental connectivity
@@ -179,7 +179,7 @@ print(conn4[0])
 
 ###############################################################################
 # Splitting into meshes
-# --------
+# ---------------------
 
 # Plot the mesh
 mesh.plot()
@@ -199,11 +199,10 @@ meshes = simulation.split_mesh_by_properties(
     }
 )
 
-# Mesh<index=0, num_nodes=100, num_elem=1000>
 meshes.plot()
 
 # Select a specific Mesh in the Meshes, by index
-meshes[1].plot()
+meshes[0].plot()
 # or by property values
 meshes[{"mat": 1, "elshape": 0}].plot()
 
