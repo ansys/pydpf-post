@@ -122,8 +122,8 @@ jobs:
           wheel: false
           wheelhouse: false
           extra-pip-args: ${{ inputs.custom-wheels && format('--find-links {0}', inputs.custom-wheels) || '' }}
-          standalone_suffix: ${{ inputs.standalone_suffix }}
-          custom-requirements: '_test'
+          standalone_suffix: '_test'
+          custom-requirements: ${{ inputs.custom-requirements }}
 
       - name: "Setup headless display"
         uses: pyvista/setup-headless-display-action@v2
