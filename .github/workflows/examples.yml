@@ -16,7 +16,7 @@ on:
         description: "Suffix of the branch on standalone"
         required: false
         type: string
-        default: '.pre0'
+        default: '_test'
       custom-requirements:
         description: "Path to requirements.txt file to install"
         required: false
@@ -107,7 +107,7 @@ jobs:
           install_extras: plotting
           wheelhouse: false
           wheel: false
-          standalone_suffix: ${{ inputs.standalone_suffix }}
+          standalone_suffix: '_test'
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
