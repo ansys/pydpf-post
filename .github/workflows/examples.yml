@@ -107,7 +107,7 @@ jobs:
           install_extras: plotting
           wheelhouse: false
           wheel: false
-          standalone_suffix: ${{ inputs.standalone_suffix }}
+          standalone_suffix: '_test'
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
