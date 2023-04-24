@@ -107,7 +107,7 @@ jobs:
           install_extras: plotting
           wheelhouse: false
           wheel: false
-          standalone_suffix: '_test'
+          standalone_suffix: '_tpost'
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
