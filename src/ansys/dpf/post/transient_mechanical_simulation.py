@@ -321,8 +321,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -408,8 +408,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -495,8 +495,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -588,8 +588,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -668,8 +668,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -751,8 +751,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -842,8 +842,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -921,8 +921,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1003,8 +1003,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1091,8 +1091,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1167,8 +1167,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1246,8 +1246,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1338,8 +1338,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1421,8 +1421,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1501,8 +1501,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1592,8 +1592,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1674,8 +1674,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1753,8 +1753,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1841,8 +1841,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1917,8 +1917,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -1996,8 +1996,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2084,8 +2084,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2160,8 +2160,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2239,8 +2239,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2331,8 +2331,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2414,8 +2414,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2494,8 +2494,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2585,8 +2585,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2667,8 +2667,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2746,8 +2746,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2834,8 +2834,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2913,8 +2913,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -2989,8 +2989,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3075,8 +3075,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3152,8 +3152,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3228,8 +3228,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3304,8 +3304,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3380,8 +3380,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3456,8 +3456,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3544,8 +3544,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3620,8 +3620,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3699,8 +3699,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3775,8 +3775,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3851,8 +3851,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -3927,8 +3927,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4015,8 +4015,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4094,8 +4094,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4170,8 +4170,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4258,8 +4258,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4337,8 +4337,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4413,8 +4413,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4508,8 +4508,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 gives results with one value for each node.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4595,8 +4595,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4679,8 +4679,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4766,8 +4766,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
@@ -4853,8 +4853,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 A Selection defines both spatial and time-like criteria for filtering.
             external_layer:
                  Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external layer
-                 is computed over list of elements.
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
             skin:
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin

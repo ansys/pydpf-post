@@ -11,7 +11,7 @@ This feature is available for all types of MechanicalSimulation and allows you t
 of the mesh and of the extracted data to improve processing performances. Larger stress and strains
 being usually located on the skin of a model, computing results on the external layer gives
 equivalent maximum values in most cases. Post-processing of elemental or elemental nodal results
-requires element solid to skin mapping in order to get from a solid element result to a facet 
+requires element solid to skin mapping in order to get from a solid element result to a facet
 result.
 """
 

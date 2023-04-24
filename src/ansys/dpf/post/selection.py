@@ -282,7 +282,9 @@ class SpatialSelection:
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
     ) -> None:
-        """Select the external layer of the mesh (possibly on parts of the mesh scoped to the
+        """Select the external layer of the mesh.
+
+        Select the external layer of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this external layer are then used to
         display results and the nodes or elements of this submesh are used to scope result data
         extraction.
@@ -293,6 +295,9 @@ class SpatialSelection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        result_native_location:
+            Native (as found in the file) location of the output result. Used to pick
+            the location of the scoping.
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model.
@@ -346,7 +351,9 @@ class SpatialSelection:
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
     ) -> None:
-        """Select the skin of the mesh (possibly on parts of the mesh scoped to the
+        """Select the skin of the mesh.
+
+        Select the skin of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this skin are then used to
         display results and the nodes or elements of this submesh are used to scope result data
         extraction.
@@ -357,6 +364,9 @@ class SpatialSelection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        result_native_location:
+            Native (as found in the file) location of the output result. Used to pick
+            the location of the scoping.
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model. Getting the skin on a selection of
@@ -604,7 +614,7 @@ class SpatialSelection:
 
     @property
     def requires_mesh(self) -> bool:
-        "Whether the selection workflow requires a ``mesh`` as an input or not."
+        """Whether the selection workflow requires a ``mesh`` as an input or not."""
         return _WfNames.initial_mesh in self._selection.input_names
 
     def requires_manual_averaging(
@@ -613,7 +623,7 @@ class SpatialSelection:
         result_native_location: Union[str, locations],
         is_model_cyclic: str = "not_cyclic",
     ) -> bool:
-        "Whether the selection workflow requires to manually build the averaging workflow."
+        """Whether the selection workflow requires to manually build the averaging workflow."""
         output_names = self._selection.output_names
         is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
         if (
@@ -778,7 +788,9 @@ class Selection:
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
     ) -> None:
-        """Select the external layer of the mesh (possibly on parts of the mesh scoped to the
+        """Select the external layer of the mesh.
+
+        Select the external layer of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this external layer are then used to
         display results and the nodes or elements of this submesh are used to scope result data
         extraction.
@@ -789,6 +801,9 @@ class Selection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        result_native_location:
+            Native (as found in the file) location of the output result. Used to pick
+            the location of the scoping.
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model.
@@ -811,7 +826,9 @@ class Selection:
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
     ) -> None:
-        """Select the skin of the mesh (possibly on parts of the mesh scoped to the
+        """Select the skin of the mesh.
+
+        Select the skin of the mesh (possibly on parts of the mesh scoped to the
         ``elements`` input). The mesh corresponding to this skin are then used to
         display results and the nodes or elements of this submesh are used to scope result data
         extraction.
@@ -822,6 +839,9 @@ class Selection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        result_native_location:
+            Native (as found in the file) location of the output result. Used to pick
+            the location of the scoping.
         elements:
             List of elements to use to compute the external layer,
             default is all the elements of the model. Getting the skin on a selection of
@@ -840,7 +860,7 @@ class Selection:
 
     @property
     def requires_mesh(self) -> bool:
-        "Whether the selection workflow requires a ``mesh`` as an input or not."
+        """Whether the selection workflow requires a ``mesh`` as an input or not."""
         return self._spatial_selection.requires_mesh
 
     def requires_manual_averaging(
@@ -849,7 +869,7 @@ class Selection:
         result_native_location: Union[str, locations],
         is_model_cyclic: str = "not_cyclic",
     ) -> bool:
-        "Whether the selection workflow requires to manually build the averaging workflow."
+        """Whether the selection workflow requires to manually build the averaging workflow."""
         return self._spatial_selection.requires_manual_averaging(
             location=location,
             result_native_location=result_native_location,

@@ -9,9 +9,6 @@ This example shows how to extract results from a modal cyclic symmetry model.
 
 """
 
-from ansys.dpf.core import examples
-
-from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
