@@ -3,11 +3,11 @@
 
 Extract Data and Plot on Cyclic Expanded Mesh External Layer
 ============================================================
-In this example, post-processing on a mesh external layer for a cyclic modal analysis is displayed.
-This feature is available for all types of MechanicalSimulation supporting cyclic
+This example displays post-processing on a mesh external layer for a cyclic modal analysis.
+This feature is available for all types of Mechanical simulation supporting cyclic
 (or cyclic multistage) and allows you to reduce the size
-of the mesh and of the extracted data to improve processing performances.
-Larger stress and strains being usually located on the skin of a model,
+of the mesh and of the extracted data to improve processing performance.
+Since larger stress and strains are usually located on the skin of a model,
 computing results on the external layer gives equivalent maximum values in most cases.
 """
 
