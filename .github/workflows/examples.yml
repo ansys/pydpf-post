@@ -16,7 +16,7 @@ on:
         description: "Suffix of the branch on standalone"
         required: false
         type: string
-        default: '.pre0'
+        default: '_test'
       custom-requirements:
         description: "Path to requirements.txt file to install"
         required: false
