@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Collection, Iterator
 from typing import List, Union
 
 import ansys.dpf.core as dpf
 import ansys.dpf.core.elements as elements
 import ansys.dpf.core.nodes as nodes  # noqa: F401
 
-import ansys.dpf.post as post
-from ansys.dpf.post import index, locations
-from ansys.dpf.post.fields_container import PropertyFieldsContainer
 
 
 class ElementType(dpf.ElementDescriptor):
@@ -82,7 +79,7 @@ class Element:
         return self._resolve().nodes
 
     @property
-    def n_nodes(self) -> int:
+    def num_nodes(self) -> int:
         """See :py:meth:`ansys.dpf.core.elements.Element.n_nodes`."""
         return self._resolve().n_nodes
 
@@ -92,7 +89,7 @@ class Element:
         return ElementType(self._resolve().type.value)
 
     @property
-    def type_id(self) -> int:
+    def type(self) -> int:
         """Returns the ID of the Element Type."""
         return self._resolve().type.value
 
@@ -114,8 +111,23 @@ class Element:
         """Returns string representation of an Element."""
         return self._resolve().__str__()
 
+class ElementListIterator(Iterator):
+    def __init__(self, el_list: ElementListIdx):
+        self._el_list = el_list
+        self._idx = 0
 
-class ElementListIdx(Sequence):
+    def __next__(self) -> Element:
+        if self._idx >= self._el_list.__len__():
+            raise StopIteration
+
+        ret = self._el_list[self._idx]
+        self._idx += 1
+        return ret
+
+    def __iter__(self) -> Iterator:
+        return ElementListIterator(self._el_list)
+
+class ElementListIdx(Collection):
     """List of Elements."""
 
     def __init__(self, elements: elements.Elements):
@@ -125,6 +137,12 @@ class ElementListIdx(Sequence):
     def __getitem__(self, idx: int) -> Element:
         """Delegates to element_by_id() if by_id, otherwise to element_by_index()."""
         return Element(self._elements, idx)
+    
+    def __contains__(self, el: Element) -> bool:
+        return el.index >= 0 and el.index < self.__len__()
+
+    def __iter__(self) -> ElementListIterator:
+        return ElementListIterator(self)
 
     def __len__(self) -> int:
         """Returns the number of elements in the list."""
@@ -146,6 +164,12 @@ class ElementListById(ElementListIdx):
         """Access an Element with an ID."""
         idx = self._elements.scoping.index(id)
         return super().__getitem__(idx)
+
+    def __contains__(self, el: Element):
+        return el.id in self._elements.scoping.ids
+    
+    def __iter__(self) -> ElementListIterator:
+        return super().__iter__()
 
     def __len__(self) -> int:
         """Returns the number of elements in the list."""

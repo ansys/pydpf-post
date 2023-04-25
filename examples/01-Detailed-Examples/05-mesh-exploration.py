@@ -6,11 +6,6 @@ Explore the mesh
 In this script a static simulation is used as an example to show how to
 query mesh information such as connectivity, element IDs, element types and so on.
 """
-from __future__ import annotations
-
-from ansys.dpf import post
-from ansys.dpf.post import examples
-from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
 # Perform required imports
@@ -18,6 +13,9 @@ from ansys.dpf.post.common import elemental_properties
 # Perform required imports. # This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
+from ansys.dpf import post
+from ansys.dpf.post import examples
+from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
 # Get ``Simulation`` object
@@ -32,8 +30,6 @@ simulation = post.StaticMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
 print(simulation)
-stress_df = simulation.stress(components=["XX"])
-print(stress_df)
 
 ###############################################################################
 # Get the mesh
@@ -53,7 +49,7 @@ n_ids = mesh.node_ids
 e_ids = mesh.element_ids
 
 # Available named selection names
-named_selections = mesh.available_named_selections
+named_selections = mesh.named_selections.keys()
 
 # Number of nodes
 n_nodes = mesh.num_nodes
@@ -77,7 +73,7 @@ print(n_elements)
 ###############################################################################
 # Get Named Selections
 # --------------------
-ns_list     = mesh.available_named_selections
+ns_list     = mesh.named_selections.keys()
 first_key = ns_list[0]
 named_selection = mesh.named_selections[first_key]
 
@@ -122,11 +118,11 @@ mesh.elements[0].nodes
 mesh.elements[0].node_ids
 
 # Get the nodes of an element
-mesh.elements[0].n_nodes
+mesh.elements[0].num_nodes
 
 # Get the type of the element
 mesh.elements[0].type_info
-mesh.elements[0].type_id
+mesh.elements[0].type
 
 # Get the shape of the element
 mesh.elements[0].shape
@@ -136,10 +132,10 @@ mesh.elements[0].shape
 # ------------------------------
 
 # get node indices from element index
-conn1 = mesh.conn_elem_to_node
+conn1 = mesh.element_to_node_connectivity
 
 # get node IDs from element index
-conn2 = mesh.conn_elem_to_node_id
+conn2 = mesh.element_to_node_ids_connectivity
 
 el_idx_5 = mesh.elements[5]
 # get node IDS from element ID
@@ -166,8 +162,8 @@ print(mesh.coordinates)
 mesh.nodes[1].coordinates
 
 # Get Nodal connectivity
-conn3 = mesh.conn_node_to_elem
-conn4 = mesh.conn_node_to_elem_id
+conn3 = mesh.node_to_element_connectivity
+conn4 = mesh.node_to_element_ids_connectivity
 
 print(mesh.nodes[0])
 

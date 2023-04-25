@@ -10,13 +10,15 @@ from typing import List
 
 import ansys.dpf.core as dpf
 
+from ansys.dpf.core.nodes import Node
+
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
-from ansys.dpf.post.connectivity import ConnectivityList, Mode
-from ansys.dpf.post.elements import ElementListIdx
+from ansys.dpf.post.connectivity import ConnectivityListIdx, ReturnMode
+from ansys.dpf.post.elements import ElementListIdx, Element
+from ansys.dpf.post.nodes import NodeListIdx
 from ansys.dpf.post.fields_container import PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
-from ansys.dpf.post.nodes import NodeListIdx
 
 
 class Mesh:
@@ -31,13 +33,8 @@ class Mesh:
         return str(self._meshed_region).replace("Meshed Region", "Mesh")
 
     @property
-    def available_named_selections(self) -> List[str]:
-        """Returns the list of name of available named selections in the mesh."""
-        return self._meshed_region.available_named_selections
-
-    @property
     def named_selections(self) -> NamedSelectionsDict:
-        """Returns the list of named selections in the mesh."""
+        """Returns a mapping of scopings"""
         return NamedSelectionsDict(self._meshed_region)
 
     @property
@@ -64,11 +61,17 @@ class Mesh:
     def elements(self) -> ElementListIdx:
         """Returns a list of elements indexed by ID."""
         return ElementListIdx(self._meshed_region.elements)
+    
+    def get_element_by_id(self, id: int) -> Element:
+        return self.elements.by_id[id]
 
     @property
     def nodes(self) -> NodeListIdx:
         """Returns a list of nodes indexed by ID."""
         return NodeListIdx(self._meshed_region.nodes)
+
+    def get_node_by_id(self, id: int) -> Node:
+        return self.nodes.by_id[id]
 
     @property
     def element_types(self) -> post.DataFrame:
@@ -115,32 +118,32 @@ class Mesh:
         )
 
     @property
-    def conn_elem_to_node_id(self):
+    def element_to_node_ids_connectivity(self):
         """Returns a list of Node ID for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityList(conn_field, nodes_scoping, Mode.IDS_FROM_IDX)
+        return ConnectivityListIdx(conn_field, nodes_scoping, ReturnMode.IDS)
 
     @property
-    def conn_node_to_elem_id(self):
+    def node_to_element_ids_connectivity(self):
         """Returns a list of Element ID for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityList(conn_field, elems_scoping, Mode.IDS_FROM_IDX)
+        return ConnectivityListIdx(conn_field, elems_scoping, ReturnMode.IDS)
 
     @property
-    def conn_elem_to_node(self):
+    def element_to_node_connectivity(self):
         """Returns a list of Node index for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityList(conn_field, nodes_scoping, Mode.IDX_FROM_IDX)
+        return ConnectivityListIdx(conn_field, nodes_scoping, ReturnMode.IDX)
 
     @property
-    def conn_node_to_elem(self):
+    def node_to_element_connectivity(self):
         """Returns a list of Element index for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityList(conn_field, elems_scoping, Mode.IDX_FROM_IDX)
+        return ConnectivityListIdx(conn_field, elems_scoping, ReturnMode.IDX)
 
     @property
     def unit(self) -> str:

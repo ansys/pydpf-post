@@ -120,4 +120,4 @@ class NamedSelection:
 
     def __repr__(self) -> str:
         """Pretty print string of the NamedSelection."""
-        return f"NamedSelection '{self.name}' with scoping {self._scoping.__str__()}"
+        return f"NamedSelection '{self.name}'\n with {self._scoping.__str__()}"
