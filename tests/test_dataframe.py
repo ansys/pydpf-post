@@ -4,6 +4,7 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
+from ansys.dpf.post import examples
 from ansys.dpf.post.index import (
     CompIndex,
     LabelIndex,
@@ -19,6 +20,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 @fixture
 def df(static_rst):
     simulation = StaticMechanicalSimulation(static_rst)
+    print(simulation._model._server.version)
     return simulation.displacement()
 
 
@@ -116,8 +118,17 @@ def test_dataframe_iselect(df):
     print(df2)
 
 
-def test_dataframe_plot(df):
+def test_dataframe_plot(df, multi_stage_cyclic):
     df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+    simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+    # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
+    df2 = simulation.stress_nodal(expand_cyclic=False)
+    print(df2)
+    df2.plot()
+    df2.plot(stage=0)
+    with pytest.raises(ValueError, match="must be a single value"):
+        df2.plot(stage=[0, 1])
 
 
 def test_dataframe_plot_warn(df):
@@ -258,3 +269,38 @@ def test_dataframe_array_raise(transient_rst):
         ValueError, match="Can only export to array if the DataFrame contains a single"
     ):
         _ = df.array
+
+
+def test_dataframe_min_max():
+    simulation = post.TransientMechanicalSimulation(examples.download_crankshaft())
+    df = simulation.displacement(all_sets=True)
+    # Over the mesh entities
+    min_over_mesh = [[-0.00074732, -0.00040138, -0.00021555]]
+    assert np.all(np.isclose(df.min()._fc[0].data.tolist(), min_over_mesh))
+    assert np.all(np.isclose(df.min(axis=0)._fc[0].data.tolist(), min_over_mesh))
+    assert np.all(
+        np.isclose(df.min(axis="node_ids")._fc[0].data.tolist(), min_over_mesh)
+    )
+
+    max_over_mesh = [[0.00073303, 0.00139618, 0.00021567]]
+    assert np.all(np.isclose(df.max()._fc[0].data.tolist(), max_over_mesh))
+    assert np.all(np.isclose(df.max(axis=0)._fc[0].data.tolist(), max_over_mesh))
+    assert np.all(
+        np.isclose(df.max(axis="node_ids")._fc[0].data.tolist(), max_over_mesh)
+    )
+
+    # Over the SetIndex
+    min_over_time = [-3.41368775e-05, 5.16665595e-04, -4.13456506e-06]
+    assert np.all(np.isclose(df.min(axis=1)._fc[0].data[0].tolist(), min_over_time))
+    assert np.all(
+        np.isclose(df.min(axis="set_ids")._fc[0].data[0].tolist(), min_over_time)
+    )
+    max_over_time = [5.67807472e-06, 1.54174694e-03, -2.63976203e-06]
+    assert np.all(np.isclose(df.max(axis=1)._fc[0].data[0].tolist(), max_over_time))
+    assert np.all(
+        np.isclose(df.max(axis="set_ids")._fc[0].data[0].tolist(), max_over_time)
+    )
+
+    # Raise unrecognized axis
+    with pytest.raises(ValueError, match="is not an available axis value"):
+        df.max(axis="raises")

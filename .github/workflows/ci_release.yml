@@ -131,7 +131,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Set licensing if necessary"
-        if: env.ANSYS_VERSION > 231
+        if: matrix.ANSYS_VERSION > 231
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -141,7 +141,7 @@ jobs:
         uses: pyansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
@@ -153,6 +153,8 @@ jobs:
         shell: bash
         run: |
           pip install ansys-grpc-dpf==0.4.0
+          pip uninstall -y protobuf
+          pip install "protobuf<4.0"
         if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
@@ -177,7 +179,7 @@ jobs:
       - name: "Upload Test Results"
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ env.ANSYS_VERSION }}
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION }}
           path: tests/junit/test-results.xml
         if: always()
 

@@ -1,38 +1,37 @@
-# PyDPF-Post - Ansys Data Post-Processing Framework
+# PyDPF-Post - Ansys Data PostProcessing Framework
 [![PyAnsys](https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC)](https://docs.pyansys.com/)
 [![Python](https://img.shields.io/pypi/pyversions/ansys-dpf-post?logo=pypi)](https://pypi.org/project/ansys-dpf-post/)
 [![pypi](https://badge.fury.io/py/ansys-dpf-post.svg?logo=python&logoColor=white)](https://pypi.org/project/ansys-dpf-post)
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The Data Processing Framework (DPF) is designed to provide numerical
-simulation users/engineers with a toolbox for accessing and
+The Ansys Data Processing Framework (DPF) is designed to provide numerical
+simulation users and engineers with a toolbox for accessing and
 transforming simulation data.
 
-The Python `ansys-dpf-post` package provides a high level, physics oriented API for postprocessing.
+The Python `ansys-dpf-post` package provides a high-level, physics-oriented API for postprocessing.
 Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
-as results and apply postprocessing operations on it.
+as results and then apply postprocessing operations on it.
 
-This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package and can
-be found by visiting [PyDPF-Core
-GitHub](https://github.com/pyansys/pydpf-core).  Use ``ansys-dpf-core`` for
-building more advanced and customized workflows using Ansys DPF.
+This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
+available at [PyDPF-Core GitHub](https://github.com/pyansys/pydpf-core).
+Use the ``ansys-dpf-core`` package for building more advanced and customized workflows
+using Ansys DPF.
 
 ## Documentation
 
-Visit the [PyDPF-Post Documentation](https://postdocs.pyansys.com) for a
-detailed description of the package, or see the [Examples
-Gallery](https://postdocs.pyansys.com/examples/index.html) for more
-detailed examples.
+For comprehensive information on this package, see the [PyDPF-Post Documentation](https://postdocs.pyansys.com),
+For detailed how-to information, see the [Examples](https://postdocs.pyansys.com/examples/index.html)
+in the PyDPF-Post documentation.
 
 ## Installation
 
-Install this repository with:
+To install this package, use this command:
 
 ```
 pip install ansys-dpf-post
 ```
 
-You can also clone and install this repository with:
+You can also clone and install this package with this code:
 
 ```
 git clone https://github.com/pyansys/pydpf-post
@@ -40,11 +39,12 @@ cd pydpf-post
 pip install . --user
 ```
 
-## Brief Demo
+## Brief demo
 
-Provided you have ANSYS 2023 R1 installed, a DPF server starts
+Provided you have Ansys 2023 R1 installed, a DPF server starts
 automatically once you start using PyDPF-Post.
-Loading a simulation to extract and post-process results:
+
+To load a simulation to extract and postprocess results, use this code:
 
 ```pycon
 >>> from ansys.dpf import post
@@ -75,8 +75,8 @@ Loading a simulation to extract and post-process results:
 ```
 ![Example Stress plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
-To run PyDPF-Post with Ansys versions starting from 2021 R1 to 2022 R2, use the following legacy PyDPF-Post 
-tools:
+To run PyDPF-Post with Ansys versions 2021 R1 and 2022 R2, use this code to
+start the legacy PyDPF-Post tools::
 
 ```pycon
 >>> from ansys.dpf import post
@@ -89,5 +89,5 @@ tools:
 
 ## License
 
-``PyDPF-Post`` is licensed under the MIT license.  For more information, see the
+``PyDPF-Post`` is licensed under the MIT license. For more information, see the
 [LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE).

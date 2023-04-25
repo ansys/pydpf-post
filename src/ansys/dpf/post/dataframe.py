@@ -77,6 +77,8 @@ class DataFrame:
         self._last_display_width = display_width
         self._last_display_max_colwidth = display_max_colwidth
 
+        self._last_minmax: dict = {"axis": None, "min": None, "max": None}
+
     @property
     def columns(self) -> MultiIndex:
         """Returns the MultiIndex for the columns of the DataFrame."""
@@ -516,7 +518,7 @@ class DataFrame:
                 else empty
                 for i in range(len(combination))
             ]
-            to_append.append(empty)
+            to_append.append(empty)  # row where row index headers are
             if len(self._fc) == 0:
                 for i, _ in enumerate(to_append):
                     lines[i] = lines[i] + to_append[i]
@@ -677,6 +679,7 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        label_space = {}
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
             # Construct the associated label_space
@@ -690,22 +693,27 @@ class DataFrame:
                     )
                 )
                 return
+            labels = fc.labels
+            # TODO: treat complex label by taking amplitude
+            for label in labels:
+                if label == "time":
+                    value = fc.get_available_ids_for_label(label)[-1]
+                elif label == "frequencies":
+                    value = fc.get_available_ids_for_label(label)[0]
+                elif label in axis_kwargs.keys():
+                    value = axis_kwargs[label]
+                    if isinstance(value, list):
+                        raise ValueError(
+                            f"Plot argument '{label}' must be a single value."
+                        )
+                else:
+                    value = fc.get_available_ids_for_label(label)[0]
+                label_space[label] = value
         else:
             axis_kwargs = {}
             # If no kwarg was given, construct a default label_space
             fc = self._fc
-        labels = fc.labels
-        if "time" in labels:
-            label = "time"
-            value = fc.get_available_ids_for_label(label)[-1]
-            label_space = {label: value}
-        elif "frequencies" in labels:
-            label = "frequencies"
-            value = fc.get_available_ids_for_label(label)[0]
-            label_space = {label: value}
-        else:
             label_space = fc.get_label_space(0)
-        label_space = label_space
 
         for field in fc:
             # Treat multi-layer field
@@ -727,24 +735,42 @@ class DataFrame:
                 fc = changeOp.get_output(0, dpf.types.fields_container)
                 break
 
+        # Merge fields for all 'elshape' label values if none selected
         if "elshape" in self._fc.labels and "elshape" not in axis_kwargs.keys():
             merge_solids_shell_op = dpf.operators.logic.solid_shell_fields(fc)
             fc = merge_solids_shell_op.eval()
 
+        # Merge fields for all 'stage' label values if none selected
+        if "stage" in self._fc.labels and "stage" not in axis_kwargs.keys():
+            merge_stages_op = dpf.operators.utility.merge_fields_by_label(
+                fields_container=fc, label="stage"
+            )
+            fc = merge_stages_op.outputs.fields_container()
+            label_space.pop("stage")
+
         fields = fc.get_fields(label_space=label_space)
         plotter = DpfPlotter(**kwargs)
+        plotter.add_field(field=fields[0], **kwargs)
         # for field in fields:
         if len(fields) > 1:
-            warnings.warn(
-                UserWarning(
-                    "Plotting criteria resulted in incompatible data. "
-                    "Try narrowing down to specific values for each column."
-                )
+            # try:
+            #     for field in fields[1:]:
+            #         plotter.add_field(field=field, **kwargs)
+            # except Exception as e:
+            raise ValueError(
+                f"Plotting failed with filter {axis_kwargs} due to incompatible data."
             )
-            return None
-        plotter.add_field(field=fields[0], **kwargs)
+            # warnings.warn(
+            #     UserWarning(
+            #         "Plotting criteria resulted in incompatible data. "
+            #         "Try narrowing down to specific values for each column."
+            #     )
+            # )
+            # return None
         # field.plot(text="debug")
-        return plotter.show_figure(text=str(label_space), **kwargs)
+        return plotter.show_figure(
+            title=kwargs.pop("title", str(label_space)), **kwargs
+        )
 
     def animate(
         self,
@@ -843,3 +869,201 @@ class DataFrame:
         return fc.animate(
             save_as=save_as, deform_by=deform_by, scale_factor=scale_factor, **kwargs
         )
+
+    def min(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
+        """Return the minimum value over the requested axis.
+
+        Parameters
+        ----------
+        axis:
+          Axis to perform minimum across.
+          Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+          This computes the minimum across the mesh for each set.
+          Can also be the SetIndex (1), the column index containing set (time/frequency) IDs.
+          This computes the minimum across sets (time/frequency) for each mesh entity.
+
+        Returns
+        -------
+          A scalar if the result of the query is a single number,
+          or a DataFrame if several numbers along one or several axes.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.StaticMechanicalSimulation(examples.download_crankshaft())
+        >>> displacement = simulation.displacement(all_sets=True)
+        >>> # Compute the maximum displacement value for each component at each time-step
+        >>> minimum_over_mesh = displacement.min(axis="node_ids")
+        >>> print(minimum_over_mesh)  # doctest: +NORMALIZE_WHITESPACE
+           results       U (m)
+           set_ids           1           2           3
+        components
+                 X -7.4732e-04 -1.5081e-03 -2.2755e-03
+                 Y -4.0138e-04 -8.0316e-04 -1.2014e-03
+                 Z -2.1555e-04 -4.3299e-04 -6.5101e-04
+        >>> # Compute the maximum displacement for each node and component across time
+        >>> minimum_over_time = displacement.min(axis="set_ids")
+        >>> print(minimum_over_time)  # doctest: +NORMALIZE_WHITESPACE
+                   results       U (m)
+        node_ids  components
+          4872           X -3.4137e-05
+                         Y  5.1667e-04
+                         Z -4.1346e-06
+          9005           X -5.5625e-05
+                         Y  4.8445e-04
+                         Z -4.9795e-07
+                       ...
+        >>> # Compute the maximum displacement overall
+        >>> minimum_overall = minimum_over_time.min()
+        >>> print(minimum_overall)  # doctest: +NORMALIZE_WHITESPACE
+           results       U (m)
+        components
+                 X -2.2755e-03
+                 Y -1.2014e-03
+                 Z -6.5101e-04
+        """
+        self._query_min_max(axis)
+        return self._last_minmax["min"]
+
+    def max(self, axis: Union[int, str, None] = 0) -> Union[DataFrame, float]:
+        """Return the maximum value over the requested axis.
+
+        Parameters
+        ----------
+        axis:
+          Axis to perform maximum across.
+          Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+          This computes the maximum across the mesh for each set.
+          Can also be the SetIndex (1), the column index containing set (time/frequency) IDs.
+          This computes the maximum across sets (time/frequency) for each mesh entity.
+
+        Returns
+        -------
+          A scalar if the result of the query is a single number,
+          or a DataFrame if several numbers along one or several axes.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.StaticMechanicalSimulation(examples.download_crankshaft())
+        >>> displacement = simulation.displacement(all_sets=True)
+        >>> # Compute the maximum displacement value for each component at each time-step
+        >>> maximum_over_mesh = displacement.max(axis="node_ids")
+        >>> print(maximum_over_mesh)  # doctest: +NORMALIZE_WHITESPACE
+           results       U (m)
+           set_ids           1           2           3
+        components
+                 X  7.3303e-04  1.4495e-03  2.1441e-03
+                 Y  1.3962e-03  2.7884e-03  4.1656e-03
+                 Z  2.1567e-04  4.3321e-04  6.5135e-04
+        >>> # Compute the maximum displacement for each node and component across time
+        >>> maximum_over_time = displacement.max(axis="set_ids")
+        >>> print(maximum_over_time)  # doctest: +NORMALIZE_WHITESPACE
+                   results       U (m)
+        node_ids  components
+          4872           X  5.6781e-06
+                         Y  1.5417e-03
+                         Z -2.6398e-06
+          9005           X -2.6323e-06
+                         Y  1.4448e-03
+                         Z  5.3134e-06
+           ...
+        >>> # Compute the maximum displacement overall
+        >>> maximum_overall = maximum_over_time.max()
+        >>> print(maximum_overall)  # doctest: +NORMALIZE_WHITESPACE
+           results       U (m)
+        components
+                 X  2.1441e-03
+                 Y  4.1656e-03
+                 Z  6.5135e-04
+        """
+        self._query_min_max(axis)
+        return self._last_minmax["max"]
+
+    def _query_min_max(self, axis: Union[int, str, None]) -> None:
+        """Create a DPF workflow based on the query arguments for min/max."""
+        # Translate None query to empty dict
+        if axis in [None, 0, self.index.mesh_index.name]:
+            axis = 0
+        elif axis in [1, ref_labels.set_ids]:
+            axis = 1
+        else:
+            raise ValueError(f"'{axis}' is not an available axis value.")
+
+        # print(f"{axis=}")
+        # If same query as last and last is not None, do not change
+        if self._last_minmax["axis"] == axis and not self._last_minmax["axis"] is None:
+            return
+        # If in need of an update, create the appropriate workflow
+        wf = dpf.Workflow(server=self._fc._server)
+        wf.progress_bar = False
+
+        # If over mesh
+        if axis == 0:
+            min_max_op = dpf.operators.min_max.min_max_over_label_fc(
+                fields_container=self._fc,
+                label="time",
+                server=self._fc._server,
+            )
+            # Here the fields are located on the label ("time"), so we have to "transpose" it.
+            # Extract the data for each time (entity) from the field and create a fields_container
+
+            min_fc = dpf.FieldsContainer(server=self._fc._server)
+            min_fc.add_label(label="time")
+            min_field = min_max_op.outputs.field_min()
+            for i, time in enumerate(min_field.scoping.ids):
+                min_fc.add_field(
+                    label_space={"time": time},
+                    field=dpf.fields_factory.field_from_array(
+                        arr=min_field.get_entity_data(i),
+                        server=self._fc._server,
+                    ),
+                )
+
+            max_fc = dpf.FieldsContainer(server=self._fc._server)
+            max_fc.add_label(label="time")
+            max_field = min_max_op.outputs.field_max()
+            for i, time in enumerate(max_field.scoping.ids):
+                max_fc.add_field(
+                    label_space={"time": time},
+                    field=dpf.fields_factory.field_from_array(
+                        arr=max_field.get_entity_data(i),
+                        server=self._fc._server,
+                    ),
+                )
+
+            index = MultiIndex(
+                indexes=[i for i in self.index if i != self.index.mesh_index]
+            )
+            columns = self.columns
+
+        # If over time
+        else:
+            min_max_op = dpf.operators.min_max.min_max_over_time_by_entity(
+                fields_container=self._fc,
+                server=self._fc._server,
+            )
+            wf.set_output_name("min", min_max_op.outputs.min)
+            wf.set_output_name("max", min_max_op.outputs.max)
+
+            index = self.index
+            columns = MultiIndex(
+                indexes=[c for c in self.columns if c != self.columns.set_ids]
+            )
+
+            min_fc = wf.get_output("min", dpf.types.fields_container)
+            max_fc = wf.get_output("max", dpf.types.fields_container)
+
+        self._last_minmax["min"] = DataFrame(
+            data=min_fc,
+            index=index,
+            columns=columns,
+        )
+        self._last_minmax["max"] = DataFrame(
+            data=max_fc,
+            index=index,
+            columns=columns,
+        )
+        self._last_minmax["axis"] = axis

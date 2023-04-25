@@ -60,7 +60,7 @@ nodal_princ_strain_2.plot()
 
 
 ###############################################################################
-# Compute Von Mises eqv averaged and unaveraged on stress and strain
+# Compute von Mises eqv averaged and unaveraged on stress and strain
 # ------------------------------------------------------------------------
 
 stress_eqv = simulation.stress_eqv_von_mises(set_ids=[1])
