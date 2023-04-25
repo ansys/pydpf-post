@@ -73,7 +73,7 @@ print(n_elements)
 ###############################################################################
 # Get Named Selections
 # --------------------
-ns_list     = mesh.named_selections.keys()
+ns_list = mesh.named_selections.keys()
 first_key = ns_list[0]
 named_selection = mesh.named_selections[first_key]
 
@@ -201,5 +201,3 @@ meshes.plot()
 meshes[0].plot()
 # or by property values
 meshes[{"mat": 1, "elshape": 0}].plot()
-
-

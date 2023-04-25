@@ -21,24 +21,29 @@ def test_mesh_node_ids(mesh):
     assert len(n_ids) == 81
     assert all([isinstance(i, (int, np.integer)) for i in n_ids])
 
+
 def test_mesh_element_ids(mesh):
     e_ids = mesh.element_ids
     assert len(e_ids) == 8
     assert all([isinstance(i, (int, np.integer)) for i in e_ids])
 
+
 def test_mesh_num(mesh):
     assert mesh.num_nodes == 81
     assert mesh.num_elements == 8
+
 
 def test_mesh_named_selections(mesh):
     ns = mesh.named_selections.keys()
     assert len(ns) == 1
     assert all([isinstance(n, str) for n in ns])
-    assert ns[0] == '_FIXEDSU'
+    assert ns[0] == "_FIXEDSU"
     assert len(mesh.named_selections[ns[0]].ids) == 21
 
+
 def test_mesh_unit(mesh):
-    assert mesh.unit == 'm'
+    assert mesh.unit == "m"
+
 
 def test_mesh_nodes(mesh):
     node_idx_0 = mesh.nodes[0]
@@ -52,6 +57,7 @@ def test_mesh_nodes(mesh):
     assert np.array_equal([node.index for node in mesh.nodes], list(range(81)))
     assert mesh.get_node_by_id(node_idx_0.id).index == 0
 
+
 def test_mesh_elements(mesh):
     elem_idx_0 = mesh.elements[0]
     elem_id_8 = mesh.elements.by_id[8]
@@ -61,8 +67,9 @@ def test_mesh_elements(mesh):
     assert elem_id_8.id == 8
     assert elem_idx_0.num_nodes == 20
     assert elem_idx_0.type == dpf.element_types.Hex20.value
-    assert elem_idx_0.shape == 'solid'
+    assert elem_idx_0.shape == "solid"
     assert mesh.get_element_by_id(elem_idx_0.id).index == 0
+
 
 def test_mesh_nodal_connectivity(mesh):
     conn_node_get_idx = mesh.node_to_element_connectivity
@@ -76,6 +83,7 @@ def test_mesh_nodal_connectivity(mesh):
     assert np.array_equal(conn_idx, conn_node_get_idx[0])
     assert np.array_equal(conn_id, conn_node_get_id[0])
 
+
 def test_mesh_elemental_connectivity(mesh):
     conn_elem_get_idx = mesh.element_to_node_connectivity
     conn_elem_get_id = mesh.element_to_node_ids_connectivity
@@ -83,7 +91,7 @@ def test_mesh_elemental_connectivity(mesh):
     elem_idx_0 = mesh.elements[0]
     conn_idx = elem_idx_0.connectivity
     conn_id = [mesh.nodes[idx].id for idx in conn_idx]
-    
+
     assert len(conn_idx) == len(conn_id)
     assert np.array_equal(conn_idx, conn_elem_get_idx[0])
     assert np.array_equal(conn_id, conn_elem_get_id[0])

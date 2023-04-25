@@ -9,16 +9,15 @@ from __future__ import annotations
 from typing import List
 
 import ansys.dpf.core as dpf
-
 from ansys.dpf.core.nodes import Node
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListIdx, ReturnMode
-from ansys.dpf.post.elements import ElementListIdx, Element
-from ansys.dpf.post.nodes import NodeListIdx
+from ansys.dpf.post.elements import Element, ElementListIdx
 from ansys.dpf.post.fields_container import PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
+from ansys.dpf.post.nodes import NodeListIdx
 
 
 class Mesh:
@@ -34,7 +33,7 @@ class Mesh:
 
     @property
     def named_selections(self) -> NamedSelectionsDict:
-        """Returns a mapping of scopings"""
+        """Returns a mapping of scopings."""
         return NamedSelectionsDict(self._meshed_region)
 
     @property
@@ -61,8 +60,9 @@ class Mesh:
     def elements(self) -> ElementListIdx:
         """Returns a list of elements indexed by ID."""
         return ElementListIdx(self._meshed_region.elements)
-    
+
     def get_element_by_id(self, id: int) -> Element:
+        """Returns an element in the mesh from a given ID."""
         return self.elements.by_id[id]
 
     @property
@@ -71,6 +71,7 @@ class Mesh:
         return NodeListIdx(self._meshed_region.nodes)
 
     def get_node_by_id(self, id: int) -> Node:
+        """Returns a node of the mesh from a given ID."""
         return self.nodes.by_id[id]
 
     @property

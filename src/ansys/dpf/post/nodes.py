@@ -6,21 +6,28 @@ from collections.abc import Collection, Iterator
 
 import ansys.dpf.core.nodes as nodes
 
+
 class NodeListIterator(Iterator):
+    """Iterator object for NodeListIdx."""
+
     def __init__(self, nodes: NodeListIdx):
+        """Constructs an iterator from a Node List."""
         self._nodes = nodes
         self._idx = 0
 
     def __next__(self) -> nodes.Node:
+        """Returns the next Node in the list."""
         if self._idx >= self._nodes.__len__():
-            raise StopIteration	
-        
+            raise StopIteration
+
         ret = self._nodes[self._idx]
         self._idx += 1
         return ret
 
     def __iter__(self) -> NodeListIterator:
+        """Returns a new Iterator object."""
         return NodeListIterator(self._nodes)
+
 
 class NodeListIdx(Collection):
     """List of Node accessible by index."""
@@ -34,9 +41,11 @@ class NodeListIdx(Collection):
         return self._nodes.node_by_index(idx)
 
     def __contains__(self, node: nodes.Node) -> bool:
+        """Checks if given node is in the list."""
         return node.index >= 0 and node.index < self.__len__()
 
     def __iter__(self) -> NodeListIterator:
+        """Returns an iterator object on the list."""
         return NodeListIterator(self)
 
     def __len__(self) -> int:
@@ -61,9 +70,11 @@ class NodeListById(NodeListIdx):
         return self._nodes.node_by_id(id)
 
     def __contains__(self, node: nodes.Node) -> bool:
+        """Checks if the given node is in the list."""
         return node.id in self._nodes.scoping.ids
-    
+
     def __iter__(self) -> NodeListIterator:
+        """Returns an iterator object on the list."""
         return super().__iter__()
 
     def __len__(self) -> int:

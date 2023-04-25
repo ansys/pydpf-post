@@ -10,7 +10,6 @@ import ansys.dpf.core.elements as elements
 import ansys.dpf.core.nodes as nodes  # noqa: F401
 
 
-
 class ElementType(dpf.ElementDescriptor):
     """Wrapper type to instantiate an ElementDescriptor from an int."""
 
@@ -111,12 +110,17 @@ class Element:
         """Returns string representation of an Element."""
         return self._resolve().__str__()
 
+
 class ElementListIterator(Iterator):
+    """Iterator class for the ElementList."""
+
     def __init__(self, el_list: ElementListIdx):
+        """Constructs an Iterator from an element list."""
         self._el_list = el_list
         self._idx = 0
 
     def __next__(self) -> Element:
+        """Returns the next Element in the list."""
         if self._idx >= self._el_list.__len__():
             raise StopIteration
 
@@ -125,7 +129,9 @@ class ElementListIterator(Iterator):
         return ret
 
     def __iter__(self) -> Iterator:
+        """Returns a new Iterator object."""
         return ElementListIterator(self._el_list)
+
 
 class ElementListIdx(Collection):
     """List of Elements."""
@@ -137,11 +143,13 @@ class ElementListIdx(Collection):
     def __getitem__(self, idx: int) -> Element:
         """Delegates to element_by_id() if by_id, otherwise to element_by_index()."""
         return Element(self._elements, idx)
-    
+
     def __contains__(self, el: Element) -> bool:
+        """Checks if the given element in the list."""
         return el.index >= 0 and el.index < self.__len__()
 
     def __iter__(self) -> ElementListIterator:
+        """Returns an Iterator object on the list."""
         return ElementListIterator(self)
 
     def __len__(self) -> int:
@@ -152,6 +160,7 @@ class ElementListIdx(Collection):
     def by_id(self) -> ElementListById:
         """Returns an equivalent list accessible with ID instead of index."""
         return ElementListById(self._elements)
+
 
 class ElementListById(ElementListIdx):
     """Wrapper class for accessing Elements by ID instead of index."""
@@ -166,9 +175,11 @@ class ElementListById(ElementListIdx):
         return super().__getitem__(idx)
 
     def __contains__(self, el: Element):
+        """Checks if the given element is in the list."""
         return el.id in self._elements.scoping.ids
-    
+
     def __iter__(self) -> ElementListIterator:
+        """Returns an iterator object on the list."""
         return super().__iter__()
 
     def __len__(self) -> int:
