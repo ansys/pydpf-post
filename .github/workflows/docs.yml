@@ -122,7 +122,7 @@ jobs:
           wheel: false
           wheelhouse: false
           extra-pip-args: ${{ inputs.custom-wheels && format('--find-links {0}', inputs.custom-wheels) || '' }}
-          standalone_suffix: '_tpost'
+          standalone_suffix: ${{ inputs.standalone_suffix }}
           custom-requirements: ${{ inputs.custom-requirements }}
 
       - name: "Setup headless display"
