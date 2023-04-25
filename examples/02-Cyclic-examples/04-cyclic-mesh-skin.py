@@ -8,10 +8,10 @@ The skin mesh is rebuilt with new surface elements connecting the nodes on the e
 of the solid mesh. These surface elements types are chosen with respect to the solid elements
 facets having all their nodes on the skin.
 This feature is available for all types of Mechanical simulation, and allows you to reduce the size
-of the mesh and of the extracted data to improve processing performance. Since larger stress and strains
-are usually located on the skin of a model, computing results on the external layer gives
-equivalent maximum values in most cases. Post-processing of elemental or elemental nodal results
-requires element solid to skin mapping to get from a solid element result to a facet
+of the mesh and of the extracted data to improve processing performance. Since larger stress
+and strains are usually located on the skin of a model, computing results on the external layer
+gives equivalent maximum values in most cases. Post-processing of elemental or elemental nodal
+results requires element solid to skin mapping to get from a solid element result to a facet
 result.
 """
 
