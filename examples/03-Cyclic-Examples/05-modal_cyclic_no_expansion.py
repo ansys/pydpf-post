@@ -48,7 +48,7 @@ u_cyc = simulation.displacement(all_sets=True, expand_cyclic=False)
 ###############################################################################
 # The output dataframe print displays the organization of the data.
 # The label "base_sector" gives access to base sectors
-# results with base_sector=1 and duplicate sector with base_sector=0 for all
+# results with base_sector=True and duplicate sector with base_sector=False for all
 # modes.
 # The print also displays that there are no duplicate sectors for the first 6 modes.
 # Indeed, modes with harmonic index 0 have 0.0 displacement, stresses... on
