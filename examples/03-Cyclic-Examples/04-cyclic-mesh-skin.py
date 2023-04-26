@@ -67,7 +67,7 @@ elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=Tru
 elastic_strain_eqv_skin.plot()
 
 ###############################################################################
-# Get stress results on the first sector with a cyclic phase on the skin
+# Get stress results on the skin of the first sector with a cyclic phase
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 stress_eqv_cyc_phase = simulation.stress_eqv_von_mises_nodal(

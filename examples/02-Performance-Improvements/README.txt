@@ -2,5 +2,4 @@
 
 Improve performance
 ~~~~~~~~~~~~~~~~~~~
-These examples show how you can efficiently use PyDPF-Post to improve computation performance
-by reducing model size.
+These examples show how you can use PyDPF-Post mor efficiently to improve computation performance when necessary.

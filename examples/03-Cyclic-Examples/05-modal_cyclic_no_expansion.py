@@ -3,20 +3,19 @@
 .. _ref_basic_cyclic:
 
 Get base and duplicate sectors (real and imaginary) results for modal cyclic symmetry
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This example shows how to extract results from a modal cyclic symmetry model.
 
 """
-
-from ansys.dpf import post
-from ansys.dpf.post import examples
 
 ###############################################################################
 # Perform required imports
 # ------------------------
 # This example uses a supplied file that you can
 # get using the ``examples`` module.
+from ansys.dpf import post
+from ansys.dpf.post import examples
 
 
 ###############################################################################
@@ -51,7 +50,7 @@ u_cyc = simulation.displacement(all_sets=True, expand_cyclic=False)
 # The label "base_sector" gives access to base sectors
 # results with base_sector=1 and duplicate sector with base_sector=0 for all
 # modes.
-# The print also displays that there is no duplicate sectors for the first 6 modes.
+# The print also displays that there are no duplicate sectors for the first 6 modes.
 # Indeed, modes with harmonic index 0 have 0.0 displacement, stresses... on
 # duplicate sectors.
 
@@ -96,7 +95,7 @@ s_cyc.plot()
 
 ###############################################################################
 # Get elemental_nodal stress results on the first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Elemental nodal is the default result location for stress and strain.
 s_cyc = simulation.stress(set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.0)
 print(s_cyc)
