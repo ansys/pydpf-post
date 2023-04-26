@@ -42,7 +42,7 @@ class PropertyFieldsContainer(Sequence):
         # default constructor
         self._labels = []  # used by Dataframe
         self.scopings = []
-        self.server = None  # used by Dataframe
+        self._server = None  # used by Dataframe
 
         self.label_spaces = []
         self.ids = []
@@ -51,13 +51,13 @@ class PropertyFieldsContainer(Sequence):
         if fields_container is not None:
             self._labels = copy.deepcopy(fields_container.labels)
             self.scopings = copy.deepcopy(fields_container.scopings)
-            self.server = copy.deepcopy(fields_container.server)
+            self._server = copy.deepcopy(fields_container.server)
 
             self.label_spaces = copy.deepcopy(fields_container.label_spaces)
             self.ids = copy.deepcopy(fields_container.ids)
         # server copy
         if server is not None:
-            self.server = server
+            self._server = server
 
     # Collection
     def __str__(self):
@@ -113,7 +113,7 @@ class PropertyFieldsContainer(Sequence):
         new_id = self._new_id()
 
         if hasattr(value, "_server"):
-            self.server = value._server
+            self._server = value._server
 
         # add Label Space
         self.label_spaces.append(LabelSpaceKV(label_space, value))
@@ -173,7 +173,7 @@ class PropertyFieldsContainer(Sequence):
     # FieldsContainer
     def create_subtype(self, obj_by_copy):
         """Instantiate a PropertyField with given instance, using the server of the container."""
-        return PropertyField(property_field=obj_by_copy, server=self.server)
+        return PropertyField(property_field=obj_by_copy, server=self._server)
 
     def get_fields_by_time_complex_ids(self, timeid=None, complexid=None):
         """Returns fields at a requested time or complex ID."""
