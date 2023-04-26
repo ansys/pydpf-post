@@ -285,7 +285,7 @@ class SpatialSelection:
         """Select the external layer of the mesh.
 
         Select the external layer of the mesh (possibly on parts of the mesh scoped to the
-        ``elements`` input). The mesh corresponding to this external layer are then used to
+        ``elements`` input). The mesh corresponding to this external layer is then used to
         display results and the nodes or elements of this submesh are used to scope result data
         extraction.
 
