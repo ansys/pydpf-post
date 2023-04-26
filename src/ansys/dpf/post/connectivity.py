@@ -20,7 +20,7 @@ class ReturnMode(Enum):
 class ConnectivityListIterator(Iterator):
     """Iterator class for Connectivity Lists."""
 
-    def __init__(self, conn_list: ConnectivityList):
+    def __init__(self, conn_list: PropertyField):
         """Constructs an iterator from an existing list."""
         self._conn_list = conn_list
         self._idx = 0
@@ -30,7 +30,7 @@ class ConnectivityListIterator(Iterator):
         if self._idx >= self._conn_list.__len__():
             raise StopIteration
 
-        ret = self._conn_list[self._idx]
+        ret = self._conn_list.get_entity_data(self._idx)
         self._idx += 1
         return ret
 
@@ -50,12 +50,12 @@ class ConnectivityListIdx(Collection):
 
         self.local_scoping = None
 
-    def __getitem__(self, key: int) -> List[int]:
+    def __getitem__(self, idx: int) -> List[int]:
         """Returns a list of indexes or IDs for a given index, see ReturnMode Enum."""
         if self._mode == ReturnMode.IDS:
-            return self._get_ids_from_idx(key)
+            return self._get_ids_from_idx(idx)
         elif self._mode == ReturnMode.IDX:
-            return self._get_idx_from_idx(key)
+            return self._get_idx_from_idx(idx)
         raise ValueError(f"ReturnMode has an incorrect value")
 
     def _get_ids_from_idx(self, idx: int) -> List[int]:
@@ -85,12 +85,35 @@ class ConnectivityListIdx(Collection):
 
     def __iter__(self) -> ConnectivityListIterator:
         """Returns an iterator object on the list."""
-        return ConnectivityListIterator(self)
+        return ConnectivityListIterator(self._field)
 
     def __len__(self) -> int:
         """Returns the number of entities."""
         return len(self._field._get_data_pointer())
-
+    
+    def _short_list(self) -> str:
+        _str = "["
+        if self.__len__() > 3:
+            _fst = self._field.get_entity_data(0)
+            _lst = self._field.get_entity_data(self.__len__()-1)
+            if self._mode == ReturnMode.IDS:
+                _fst = self._to_ids(_fst)
+                _lst = self._to_ids(_lst)
+            _str += f"{_fst}, ..., {_lst}"
+        else:
+            conn_list = [self._field.get_entity_data(idx) for idx in range(self.__len__())]
+            if self._mode == ReturnMode.IDS:
+                conn_list = list(map(self._to_ids, conn_list))
+            _str += ", ".join(map(lambda l: str(l), conn_list))
+        _str += "]"
+        return _str
+    
+    def __str__(self) -> str:
+        return self._short_list()
+    
+    def __repr__(self) -> str:
+        return f"ConnectivityListIdx({self.__str__()},__len__={self.__len__()})"
+    
 
 class ConnectivityListById(ConnectivityListIdx):
     """Connectivity List indexed by ID."""
@@ -99,21 +122,10 @@ class ConnectivityListById(ConnectivityListIdx):
         """Constructs a Connectivity list from a given PropertyField."""
         super().__init__(field, scoping, mode)
 
-    def __getitem__(self, key: int) -> List[int]:
+    def __getitem__(self, id: int) -> List[int]:
         """Returns a list of indexes or IDs for a given ID, see ReturnMode Enum."""
-        if self._mode == ReturnMode.IDS:
-            return self._get_ids_from_id(key)
-        elif self._mode == ReturnMode.IDX:
-            return self._get_idx_from_id(key)
-        raise ValueError(f"ReturnMode has an incorrect value")
-
-    def _get_ids_from_id(self, id: int) -> List[int]:
-        """Helper method to retrieve list of IDs from a given ID."""
-        return self._to_ids(self._get_idx_from_id(id))
-
-    def _get_idx_from_id(self, id: int) -> List[int]:
-        """Helper method to retrieve list of indexes from a given ID."""
-        return self._field.get_entity_data_by_id(id)
+        idx = self._field.scoping.index(id)
+        return super().__getitem__(idx)
 
     def __contains__(self, l: List[int]) -> bool:
         """Not Implemented."""
@@ -126,3 +138,6 @@ class ConnectivityListById(ConnectivityListIdx):
     def __len__(self) -> int:
         """Returns the number of entities."""
         return len(self._field._get_data_pointer())
+
+    def __repr__(self) -> str:
+        return f"ConnectivityListById({super().__str__()}, __len__={self.__len__()})"
