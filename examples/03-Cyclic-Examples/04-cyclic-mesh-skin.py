@@ -1,18 +1,21 @@
 """
-.. _ref_mesh_skin_example:
+.. _ref_cyclic_mesh_skin_example:
 
-Extract Data and Plot on Mesh Skin
-==================================
+Reduce Cyclic Model Size by using Mesh Skin for Result and Mesh extraction
+==========================================================================
 This example displays post-processing on a mesh skin for a cyclic modal analysis.
 The skin mesh is rebuilt with new surface elements connecting the nodes on the external skin
 of the solid mesh. These surface elements types are chosen with respect to the solid elements
 facets having all their nodes on the skin.
-This feature is available for all types of Mechanical simulation, and allows you to reduce the size
-of the mesh and of the extracted data to improve processing performance. Since larger stress
-and strains are usually located on the skin of a model, computing results on the external layer
-gives equivalent maximum values in most cases. Post-processing of elemental or elemental nodal
-results requires element solid to skin mapping to get from a solid element result to a facet
-result.
+This feature is available for all types of Mechanical simulation supporting cyclic
+(or cyclic multistage) and allows you to reduce the size
+of the mesh and of the extracted data to improve processing performance. Since larger stress and
+strains are usually located on the skin of a model, computing results on the skin gives
+equivalent maximum values in most cases. Post-processing of elemental or elemental nodal results
+requires element solid to skin mapping to get from a solid element result to a facet
+result. The connectivity of the new surface elements built on the skin being different from
+the connectivity of the solid elements, small differences can be found after result averaging.
+To plot cyclic expanded results, the skin mesh is expanded.
 """
 
 ###############################################################################
@@ -45,15 +48,11 @@ print(simulation)
 ###############################################################################
 # Extract displacement data
 # -------------------------
-# Extract displacement data over the entire mesh and on the skin.
+# Extract displacement data on the skin.
 
 displacement_skin = simulation.displacement(skin=True)
-displacement = simulation.displacement()  # default is skin=False
 displacement_skin.plot()
-displacement.plot()
 
-print(f"number of nodes with skin=True: {len(displacement_skin.index.mesh_index)}")
-print(f"number of nodes with skin=False: {len(displacement.index.mesh_index)}")
 
 ###############################################################################
 # Extract stress/strain data
@@ -62,19 +61,10 @@ print(f"number of nodes with skin=False: {len(displacement.index.mesh_index)}")
 # Averaging, and invariants computation are done through a solid to skin connectivity mapping.
 
 elemental_stress_skin = simulation.stress_principal_elemental(components=[1], skin=True)
-elemental_stress = simulation.stress_principal_elemental()
 elemental_stress_skin.plot()
-elemental_stress.plot()
-
-print(
-    f"number of elements with skin=True: {len(elemental_stress_skin.index.mesh_index)}"
-)
-print(f"number of elements with skin=False: {len(elemental_stress.index.mesh_index)}")
 
 elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=True)
-elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
 elastic_strain_eqv_skin.plot()
-elastic_strain_eqv.plot()
 
 ###############################################################################
 # Get stress results on the first sector with a cyclic phase on the skin

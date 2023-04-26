@@ -1,14 +1,15 @@
 """
-.. _ref_cyclic_mesh_external_layer_example:
+.. _ref_mesh_external_layer_compare_example:
 
-Extract Data and Plot on Cyclic Expanded Mesh External Layer
-============================================================
-This example displays post-processing on a mesh external layer for a cyclic modal analysis.
-This feature is available for all types of Mechanical simulation supporting cyclic
-(or cyclic multistage) and allows you to reduce the size
+Validate External Layer results with full Mesh
+==============================================
+This example displays post-processing on a mesh external layer for a static analysis.
+The external layer is the layer of solid elements with at least one facet facing the outside of
+the geometry.
+This feature is available for all types of Mechanical simulation, and allows you to reduce the size
 of the mesh and of the extracted data to improve processing performance.
 Since larger stress and strains are usually located on the skin of a model,
-computing results on the external layer gives equivalent maximum values in most cases.
+computing the results on the external layer provides equivalent maximum values in most cases.
 """
 
 ###############################################################################
@@ -28,11 +29,11 @@ from ansys.dpf.post import examples
 # ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
 # on Linux.
 
-example_path = examples.download_modal_cyclic()
+example_path = examples.download_crankshaft()
 simulation = post.load_simulation(example_path)
 
 # for no autocompletion, this line is equivalent to:
-simulation = post.ModalMechanicalSimulation(example_path)
+simulation = post.StaticMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
 print(simulation)
@@ -44,26 +45,6 @@ print(simulation)
 
 displacement_ext = simulation.displacement(external_layer=True)
 displacement = simulation.displacement()  # default is external_layer=False
-displacement_ext.plot()
-displacement.plot()
-
-print(
-    f"number of nodes with external_layer=True: {len(displacement_ext.index.mesh_index)}"
-)
-print(
-    f"number of nodes with external_layer=False: {len(displacement.index.mesh_index)}"
-)
-
-###############################################################################
-# Extract displacement data
-# -------------------------
-# Extract displacement data over the entire mesh and on the external layer
-# for a cyclic expansion on a selected number of sectors.
-
-displacement_ext = simulation.displacement(external_layer=True, expand_cyclic=[1, 2, 3])
-displacement = simulation.displacement(
-    expand_cyclic=[1, 2, 3]
-)  # default is external_layer=False
 displacement_ext.plot()
 displacement.plot()
 
@@ -101,15 +82,3 @@ elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
 elastic_strain_eqv_ext.plot()
 elastic_strain_eqv.plot()
-
-##################################################################################
-# Get stress results on the first sector with a cyclic phase on the external layer
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-stress_eqv_cyc_phase = simulation.stress_eqv_von_mises_nodal(
-    set_ids=[5],
-    expand_cyclic=[1],
-    phase_angle_cyclic=45.0,
-    external_layer=True,
-)
-stress_eqv_cyc_phase.plot()
