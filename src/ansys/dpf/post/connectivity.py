@@ -90,30 +90,34 @@ class ConnectivityListIdx(Collection):
     def __len__(self) -> int:
         """Returns the number of entities."""
         return len(self._field._get_data_pointer())
-    
+
     def _short_list(self) -> str:
         _str = "["
         if self.__len__() > 3:
             _fst = self._field.get_entity_data(0)
-            _lst = self._field.get_entity_data(self.__len__()-1)
+            _lst = self._field.get_entity_data(self.__len__() - 1)
             if self._mode == ReturnMode.IDS:
                 _fst = self._to_ids(_fst)
                 _lst = self._to_ids(_lst)
             _str += f"{_fst}, ..., {_lst}"
         else:
-            conn_list = [self._field.get_entity_data(idx) for idx in range(self.__len__())]
+            conn_list = [
+                self._field.get_entity_data(idx) for idx in range(self.__len__())
+            ]
             if self._mode == ReturnMode.IDS:
                 conn_list = list(map(self._to_ids, conn_list))
             _str += ", ".join(map(lambda l: str(l), conn_list))
         _str += "]"
         return _str
-    
+
     def __str__(self) -> str:
+        """Returns string representation of ConnectivityListIdx."""
         return self._short_list()
-    
+
     def __repr__(self) -> str:
+        """Returns string representation of ConnectivityListIdx."""
         return f"ConnectivityListIdx({self.__str__()},__len__={self.__len__()})"
-    
+
 
 class ConnectivityListById(ConnectivityListIdx):
     """Connectivity List indexed by ID."""
@@ -140,4 +144,5 @@ class ConnectivityListById(ConnectivityListIdx):
         return len(self._field._get_data_pointer())
 
     def __repr__(self) -> str:
+        """String representation of ConnectivityListById."""
         return f"ConnectivityListById({super().__str__()}, __len__={self.__len__()})"

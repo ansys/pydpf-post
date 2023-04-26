@@ -15,7 +15,6 @@ class ElementType:
 
     def __init__(self, arg: Union[dpf.ElementDescriptor, int]):
         """Constructs an ElementType from an existing descriptor or enum id."""
-
         self._el_desc = arg
         if isinstance(arg, int):
             self._el_desc = dpf.element_types.descriptor(arg)
@@ -23,54 +22,66 @@ class ElementType:
         if not isinstance(self._el_desc, dpf.ElementDescriptor):
             raise TypeError(f"Given argument is not an int nor an ElementDescriptor")
 
-
     @property
     def enum_id(self) -> int:
+        """Id of the Element type in the element_types enum."""
         return self._el_desc.enum_id
 
     @property
     def description(self) -> str:
+        """Specifies the element geometry and integration order."""
         return self._el_desc.description
-    
+
     @property
     def name(self) -> str:
+        """Short name of the element type."""
         return self._el_desc.name
-    
+
     @property
     def shape(self) -> str:
+        """Can be ``"solid"``,``"shell"`` or ``"beam"``."""
         return self._el_desc.shape
-    
+
     @property
     def num_corner_nodes(self) -> int:
+        """Returns the number of corner nodes."""
         return self._el_desc.n_corner_nodes
-    
+
     @property
     def num_mid_nodes(self) -> int:
+        """Returns the number of middle nodes."""
         return self._el_desc.n_mid_nodes
-    
+
     @property
     def num_nodes(self) -> int:
+        """Returns the total number of nodes."""
         return self._el_desc.n_nodes
-    
+
     @property
     def is_solid(self) -> bool:
+        """Whether the element is a solid."""
         return self._el_desc.is_solid
-    
+
     @property
     def is_shell(self) -> bool:
+        """Whether the element is a shell."""
         return self._el_desc.is_shell
-    
+
     @property
     def is_beam(self) -> bool:
+        """Whether the element is a beam."""
         return self._el_desc.is_beam
 
     @property
     def is_quadratic(self) -> bool:
+        """Whether the element is quadratic."""
         return self._el_desc.is_quadratic
 
     def __str__(self) -> str:
         """Returns a string representation of the Element Type."""
-        return self._el_desc.__str__().replace("Element descriptor\n------------------", "Element Type\n------------")
+        return self._el_desc.__str__().replace(
+            "Element descriptor\n------------------", "Element Type\n------------"
+        )
 
     def __repr__(self):
         """Returns a string representation of the Element Type."""
@@ -120,7 +131,7 @@ class Element:
         return ElementType(self._resolve().type.value)
 
     @property
-    def type(self) -> dpf.element_types:
+    def type(self) -> int:
         """Returns the ID of the Element Type."""
         return self._resolve().type
 
@@ -192,12 +203,12 @@ class ElementListIdx(Collection):
     def by_id(self) -> ElementListById:
         """Returns an equivalent list accessible with ID instead of index."""
         return ElementListById(self._elements)
-    
+
     def _short_list(self) -> str:
         _str = "["
         if self.__len__() > 3:
             _fst = Element(self._elements, 0).type_info.name
-            _lst = Element(self._elements, self.__len__()-1).type_info.name
+            _lst = Element(self._elements, self.__len__() - 1).type_info.name
             _str += f"{_fst}, ..., {_lst}"
         else:
             el_list = [Element(self._elements, idx) for idx in range(self.__len__())]
@@ -206,9 +217,11 @@ class ElementListIdx(Collection):
         return _str
 
     def __str__(self) -> str:
+        """Returns a string representation of ElementListIdx."""
         return self._short_list()
 
     def __repr__(self) -> str:
+        """Returns a string representation of ElementListIdx."""
         return f"ElementListIdx({self.__str__()}, __len__={self.__len__()})"
 
 
@@ -237,4 +250,5 @@ class ElementListById(ElementListIdx):
         return self._elements.n_elements
 
     def __repr__(self):
+        """Returns a string representation of ElementListById."""
         return f"ElementListById({super().__str__()}, __len__={self.__len__()})"
