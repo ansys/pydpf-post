@@ -17,7 +17,6 @@ This example shows how to extract results from a modal cyclic symmetry model.
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
-
 ###############################################################################
 # Get ``Simulation`` object
 # -------------------------
