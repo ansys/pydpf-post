@@ -80,7 +80,7 @@ jobs:
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ".pre0"
+          standalone_suffix: ".pre1"
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
@@ -191,14 +191,14 @@ jobs:
     with:
       ANSYS_VERSION: "232"
       python_versions: '["3.10"]'
-      standalone_suffix: ".pre0"
+      standalone_suffix: ".pre1"
     secrets: inherit
 
   docs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: "232"
-      standalone_suffix: ".pre0"
+      standalone_suffix: ".pre1"
       event_name: ${{ github.event_name }}
     secrets: inherit
 
