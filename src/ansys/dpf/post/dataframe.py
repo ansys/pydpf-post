@@ -284,13 +284,16 @@ class DataFrame:
                     f"Selection on a DataFrame with index "
                     f"'{mesh_index_name}' is not yet supported"
                 )
-            rescope_fc = dpf.operators.scoping.rescope_fc(
-                fields_container=input_fc,
-                mesh_scoping=mesh_scoping,
-                server=server,
-            )
-            out = rescope_fc.outputs.fields_container
-            mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
+            if isinstance(input_fc, PropertyFieldsContainer):
+                fc = input_fc.rescope(mesh_scoping)
+            else:
+                rescope_fc = dpf.operators.scoping.rescope_fc(
+                    fields_container=input_fc,
+                    mesh_scoping=mesh_scoping,
+                    server=server,
+                )
+                out = rescope_fc.outputs.fields_container
+                mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
         elif (
             mesh_index_name in axis_kwargs.keys()
             and mesh_index.location == locations.elemental_nodal
@@ -300,7 +303,6 @@ class DataFrame:
                 "is not yet supported"
             )
 
-        if out is not None:
             wf.set_output_name("out", out)
             fc = wf.get_output("out", dpf.FieldsContainer)
 
@@ -320,6 +322,9 @@ class DataFrame:
             results_index,
             set_index,
         ]
+        if isinstance(fc, PropertyFieldsContainer):
+            column_indexes = [results_index]
+
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
@@ -618,6 +623,8 @@ class DataFrame:
             for value in values[: len(lines) - (num_column_indexes + 1)]:
                 if value is not None:
                     value_string = f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
+                    if np.issubdtype(type(value), np.integer):
+                        value_string = f"{value}".rjust(max_colwidth)
                 else:
                     value_string = empty
                 value_strings.append(value_string)

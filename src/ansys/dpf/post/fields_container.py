@@ -8,6 +8,7 @@ from typing import Dict
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core.property_field import PropertyField
+import numpy as np
 
 from ansys import dpf
 
@@ -20,13 +21,19 @@ class LabelSpaceKV:
         self._dict = _dict
         self._field = _field
 
+    @property
     def dict(self):
         """Returns the associated dictionary."""
         return self._dict
 
+    @property
     def field(self):
         """Returns the associated field."""
         return self._field
+
+    @field.setter
+    def field(self, value):
+        self._field = value
 
     def __str__(self):
         """Returns a string representationf of the association."""
@@ -50,11 +57,14 @@ class PropertyFieldsContainer(Sequence):
         # PropertyFieldsContainer copy
         if fields_container is not None:
             self._labels = copy.deepcopy(fields_container.labels)
-            self.scopings = copy.deepcopy(fields_container.scopings)
-            self._server = copy.deepcopy(fields_container.server)
+            # self.scopings = copy.deepcopy(fields_container.scopings)
+            self._server = copy.deepcopy(fields_container._server)
 
-            self.label_spaces = copy.deepcopy(fields_container.label_spaces)
-            self.ids = copy.deepcopy(fields_container.ids)
+            # self.ids = copy.deepcopy(fields_container.ids)
+
+            for ls in fields_container.label_spaces:
+                self.add_entry(copy.deepcopy(ls.dict), ls.field.as_local_field())
+
         # server copy
         if server is not None:
             self._server = server
@@ -130,7 +140,7 @@ class PropertyFieldsContainer(Sequence):
         """Returns a list of fields from a complete or partial specification of a dictionary."""
         if isinstance(label_space_or_index, int):
             idx: int = label_space_or_index
-            return [self.label_spaces[idx].field()]
+            return [self.label_spaces[idx].field]
         else:
             _dict: Dict[str, int] = label_space_or_index
             are_keys_in_labels = [key in self.labels for key in _dict.keys()]
@@ -141,11 +151,11 @@ class PropertyFieldsContainer(Sequence):
                     to_remove = set()
                     for idx in remaining:
                         ls = self.label_spaces[idx]
-                        if ls.dict()[key] != val:
+                        if ls.dict[key] != val:
                             to_remove.add(idx)
                     remaining = remaining.difference(to_remove)
 
-                idx_to_field = lambda idx: self.label_spaces[idx].field()
+                idx_to_field = lambda idx: self.label_spaces[idx].field
                 return list(map(idx_to_field, remaining))
             else:
                 bad_idx = are_keys_in_labels.index(False)
@@ -287,3 +297,18 @@ class PropertyFieldsContainer(Sequence):
     def __mul__(self, value):
         """Not implemented."""
         raise NotImplementedError
+
+    def _set_field(self, ls_idx, field):
+        self.label_spaces[ls_idx].field = field
+
+    def rescope(self, scoping: dpf.Scoping):
+        """Helper function to reproduce functionality of rescope_fc Operator."""
+        copy_fc = PropertyFieldsContainer(self, server=None)
+        for idx, label_space in enumerate(copy_fc.label_spaces):
+            pfield = PropertyField(location=label_space.field.location)
+            pfield.data = np.ravel(
+                [label_space._field.get_entity_data_by_id(id) for id in scoping.ids]
+            )
+            pfield.scoping.ids = scoping.ids
+            copy_fc._set_field(idx, pfield)
+        return copy_fc
