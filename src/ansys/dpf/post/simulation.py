@@ -12,9 +12,11 @@ from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
+from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
+from ansys.dpf.core.server_types import BaseServer
 import numpy as np
 
 from ansys.dpf.post import locations
@@ -29,7 +31,7 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 
 component_label_to_index = {
     "1": 0,
@@ -522,6 +524,25 @@ class Simulation(ABC):
             op.connect(9, location)
         return op
 
+    def _build_result_workflow(
+        self,
+        name: str,
+        location: Union[locations, str],
+        force_elemental_nodal: bool,
+    ) -> (dpf.Workflow, dpf.Operator):
+        op = self._model.operator(name=name)
+        op.connect(7, self.mesh._meshed_region)
+        if force_elemental_nodal:
+            op.connect(9, "ElementalNodal")
+        else:
+            op.connect(9, location)
+        wf = Workflow(server=self._model._server)
+        wf.set_input_name(_WfNames.read_cyclic, op, 14)
+        wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
+        wf.set_input_name(_WfNames.cyclic_phase, op, 19)
+        wf.set_output_name(_WfNames.result, op, 0)
+        return wf, op
+
     def _create_components(self, base_name, category, components):
         comp = None
         # Build the list of requested results
@@ -600,14 +621,28 @@ class Simulation(ABC):
 
         return disp_wf
 
-    def _create_dataframe(self, fc, location, columns, comp, base_name, disp_wf=None):
+    def _create_dataframe(
+        self, fc, location, columns, comp, base_name, disp_wf=None, submesh=None
+    ):
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
             warnings.warn(
                 message=f"Returned Dataframe with columns {columns} is empty.",
                 category=UserWarning,
             )
-        unit = fc[0].unit
+        unit = None
+        times = [""]
+        if len(fc) > 0:
+            unit = fc[0].unit
+            times = fc.get_available_ids_for_label("time")
+            if submesh is not None:
+                for i_field in range(len(fc)):
+                    bind_support_op = dpf.operators.utility.bind_support(
+                        fc[i_field], submesh
+                    )
+                    fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
+        if unit == "":
+            unit = None
         comp_index = None
         if comp is not None:
             comp_index = CompIndex(values=comp)
@@ -616,14 +651,16 @@ class Simulation(ABC):
             row_indexes.append(comp_index)
         column_indexes = [
             ResultsIndex(values=[base_name], units=[unit]),
-            SetIndex(values=fc.get_available_ids_for_label("time")),
+            SetIndex(values=times),
         ]
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
-                label_indexes.append(
-                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                )
+                if len(fc) > 0:
+                    values = fc.get_available_ids_for_label(label)
+                else:
+                    values = [""]
+                label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
@@ -642,6 +679,78 @@ class Simulation(ABC):
         # Return the result wrapped in a DPF_Dataframe
         return df
 
+    @staticmethod
+    def _treat_cyclic(expand_cyclic, phase_angle_cyclic, result_wf):
+        if expand_cyclic is not False:
+            # If expand_cyclic is a list
+            if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
+                # If a list of sector numbers, directly connect it to the num_sectors pin
+                if all(
+                    [
+                        isinstance(expand_cyclic_i, int)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    if any([i < 1 for i in expand_cyclic]):
+                        raise ValueError(
+                            "Sector selection with 'expand_cyclic' starts at 1."
+                        )
+                    result_wf.connect(
+                        _WfNames.cyclic_sectors_to_expand,
+                        [i - 1 for i in expand_cyclic],
+                    )
+                # If any is a list, treat it as per stage num_sectors
+                elif any(
+                    [
+                        isinstance(expand_cyclic_i, list)
+                        for expand_cyclic_i in expand_cyclic
+                    ]
+                ):
+                    # Create a ScopingsContainer to fill
+                    sectors_scopings = dpf.ScopingsContainer()
+                    sectors_scopings.labels = ["stage"]
+                    # For each potential num_sectors, check either an int or a list of ints
+                    for i, num_sectors_stage_i in enumerate(expand_cyclic):
+                        # Prepare num_sectors data
+                        if isinstance(num_sectors_stage_i, int):
+                            num_sectors_stage_i = [num_sectors_stage_i]
+                        elif isinstance(num_sectors_stage_i, list):
+                            if not all(
+                                [isinstance(n, int) for n in num_sectors_stage_i]
+                            ):
+                                raise ValueError(
+                                    "'expand_cyclic' only accepts lists of int values >= 1."
+                                )
+                        # num_sectors_stage_i is now a list of int,
+                        # add an equivalent Scoping with the correct 'stage' label value
+                        if any([i < 1 for i in num_sectors_stage_i]):
+                            raise ValueError(
+                                "Sector selection with 'expand_cyclic' starts at 1."
+                            )
+                        sectors_scopings.add_scoping(
+                            {"stage": i},
+                            dpf.Scoping(ids=[i - 1 for i in num_sectors_stage_i]),
+                        )
+                    result_wf.connect(
+                        _WfNames.cyclic_sectors_to_expand, inpt=sectors_scopings
+                    )
+            elif not isinstance(expand_cyclic, bool):
+                raise ValueError(
+                    "'expand_cyclic' argument can only be a boolean or a list."
+                )
+            result_wf.connect(_WfNames.read_cyclic, 3)  # Connect the read_cyclic pin
+        else:
+            result_wf.connect(_WfNames.read_cyclic, 1)  # Connect the read_cyclic pin
+        if phase_angle_cyclic is not None:
+            if isinstance(phase_angle_cyclic, int):
+                phase_angle_cyclic = float(phase_angle_cyclic)
+            if not isinstance(phase_angle_cyclic, float):
+                raise ValueError(
+                    "'phase_angle_cyclic' argument only accepts a single float value."
+                )
+            result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
+        return result_wf
+
 
 class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
@@ -649,14 +758,20 @@ class MechanicalSimulation(Simulation, ABC):
     This class provides common methods and properties for all mechanical type simulations.
     """
 
-    def __init__(self, result_file: Union[PathLike, str]):
+    def __init__(
+        self,
+        result_file: Union[PathLike, str, DataSources],
+        server: Union[BaseServer, None] = None,
+    ):
         """Instantiate a mechanical type simulation."""
-        model = dpf.Model(result_file)
+        model = dpf.Model(result_file, server=server)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
 
     def _build_selection(
         self,
+        base_name: str,
+        category: ResultCategory,
         selection: Union[Selection, None],
         set_ids: Union[int, List[int], None],
         times: Union[float, List[float], None],
@@ -668,6 +783,9 @@ class MechanicalSimulation(Simulation, ABC):
         element_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
+        external_layer: bool = False,
+        skin: Union[bool] = False,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -680,11 +798,56 @@ class MechanicalSimulation(Simulation, ABC):
                 "Arguments selection, named_selections, element_ids, "
                 "and node_ids are mutually exclusive"
             )
+        tot = (skin is not None and skin is not False) + (
+            external_layer is not None and external_layer is not False
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments selection, skin, and external_layer are mutually exclusive"
+            )
         if selection is not None:
             return selection
         else:
             selection = Selection(server=self._model._server)
         # Create the SpatialSelection
+
+        # First: the skin and the external layer to be able to have both a mesh scoping and
+        # the skin/external layer
+        if (skin is not None and skin is not False) or (
+            external_layer is not None and external_layer is not False
+        ):
+            res = (
+                _result_properties[base_name]
+                if base_name in _result_properties
+                else None
+            )
+            location = (
+                locations.elemental_nodal
+                if self._requires_manual_averaging(base_name, location, category, None)
+                else location
+            )
+            if external_layer not in [None, False]:
+                selection.select_external_layer(
+                    elements=external_layer if external_layer is not True else None,
+                    location=location,
+                    result_native_location=res["location"]
+                    if res is not None
+                    else location,
+                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                    if expand_cyclic is not False
+                    else "not_cyclic",
+                )
+            else:
+                selection.select_skin(
+                    elements=skin if skin is not True else None,
+                    location=location,
+                    result_native_location=res["location"]
+                    if res is not None
+                    else location,
+                    is_model_cyclic=self._model.operator("is_cyclic").eval()
+                    if expand_cyclic is not False
+                    else "not_cyclic",
+                )
         if named_selections:
             selection.select_named_selection(
                 named_selection=named_selections, location=location
@@ -701,6 +864,7 @@ class MechanicalSimulation(Simulation, ABC):
                     "is equal to 'post.locations.nodal'."
                 )
             selection.select_nodes(nodes=node_ids)
+
         # Create the TimeFreqSelection
         if all_sets:
             selection.time_freq_selection.select_with_scoping(
@@ -777,3 +941,58 @@ class MechanicalSimulation(Simulation, ABC):
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
         return selection
+
+    def _requires_manual_averaging(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        selection: Selection,
+    ):
+        res = _result_properties[base_name] if base_name in _result_properties else None
+        if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
+            return True
+        if res is not None and selection is not None:
+            return selection.requires_manual_averaging(
+                location=location,
+                result_native_location=res["location"],
+                is_model_cyclic=self._model.operator("is_cyclic").eval(),
+            )
+        return False
+
+    def _create_averaging_operator(
+        self,
+        location: str,
+        selection: Selection,
+    ):
+        average_op = None
+        first_average_op = None
+        forward = None
+        if _WfNames.skin in selection.spatial_selection._selection.output_names:
+            if self._model._server.meet_version("6.2"):
+                first_average_op = self._model.operator(name="solid_to_skin_fc")
+                forward = first_average_op
+            else:
+                first_average_op = self._model.operator(name="solid_to_skin")
+                forward = self._model.operator(name="forward_fc")
+                forward.connect(0, first_average_op, 0)
+            average_wf = dpf.Workflow(server=self._model._server)
+            average_wf.set_input_name(
+                _WfNames.skin, first_average_op.inputs.mesh_scoping
+            )
+            average_wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={_WfNames.skin: _WfNames.skin},
+            )
+
+        if location == locations.nodal:
+            average_op = self._model.operator(name="to_nodal_fc")
+        elif location == locations.elemental:
+            average_op = self._model.operator(name="to_elemental_fc")
+        if average_op and forward:
+            average_op.connect(0, forward, 0)
+        else:
+            first_average_op = average_op
+
+        if first_average_op is not None and average_op is not None:
+            return (first_average_op, average_op)

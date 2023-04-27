@@ -1,6 +1,10 @@
 import os.path
 
-import ansys.dpf.core as core
+import ansys.dpf.core as dpf
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+)
 import numpy as np
 import pytest
 from pytest import fixture
@@ -28,6 +32,17 @@ def test_simulation_init(static_rst):
     assert simulation is not None
     simulation = post.HarmonicMechanicalSimulation(static_rst)
     assert simulation is not None
+
+
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    reason="Available starting DPF 4.0",
+)
+def test_simulation_init_with_server(static_rst, grpc_server):
+    simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
+    assert simulation is not None
+    assert simulation._model._server != dpf.SERVER
+    assert simulation._model._server == grpc_server
 
 
 def test_simulation_results(static_simulation):
@@ -110,6 +125,26 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
 
 
 class TestStaticMechanicalSimulation:
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.StaticMechanicalSimulation(simple_cyclic)
+        result = simulation.stress(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        result = simulation.stress(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.StaticMechanicalSimulation(multi_stage_cyclic)
+        result = simulation.stress(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        assert "stage" in result.columns.names
+        result = simulation.stress(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+        assert "stage" not in result.columns.names
+
     def test_times_argument(self, static_simulation):
         _ = static_simulation.displacement(times=1)
         _ = static_simulation.displacement(times=1.0)
@@ -152,7 +187,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_x._fc.get_time_scoping().ids == [1]
         field = displacement_x._fc[0]
         op = static_simulation._model.operator("UX")
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [42, 43, 44], server=static_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -179,7 +214,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_y._fc.get_time_scoping().ids == [1]
         field = displacement_y._fc[0]
         op = static_simulation._model.operator("UY")
-        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.named_selection_scoping(
             static_simulation.named_selections[0],
             server=static_simulation._model._server,
             model=static_simulation._model,
@@ -199,7 +234,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
-        mesh_scoping = core.mesh_scoping_factory.named_selection_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.named_selection_scoping(
             static_simulation.named_selections[0],
             server=static_simulation._model._server,
             model=static_simulation._model,
@@ -219,11 +254,11 @@ class TestStaticMechanicalSimulation:
         assert displacement_z._fc.get_time_scoping().ids == [1]
         field = displacement_z._fc[0]
         op = static_simulation._model.operator("UZ")
-        mesh_scoping = core.mesh_scoping_factory.elemental_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.elemental_scoping(
             element_ids=[1, 2, 3],
             server=static_simulation._model._server,
         )
-        mesh_scoping = core.operators.scoping.transpose(
+        mesh_scoping = dpf.operators.scoping.transpose(
             mesh_scoping=mesh_scoping,
             meshed_region=static_simulation.mesh._meshed_region,
             inclusive=1,
@@ -242,7 +277,7 @@ class TestStaticMechanicalSimulation:
         assert displacement_norm._fc.get_time_scoping().ids == [1]
         field = displacement_norm._fc[0]
         op = static_simulation._model.operator("U")
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [42, 43, 44], server=static_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -465,6 +500,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces()
@@ -477,6 +516,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (103766, 3)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_nodal()
@@ -490,6 +533,10 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (14982, 3)
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
         element_nodal_forces = static_simulation.element_nodal_forces_elemental()
@@ -509,7 +556,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -526,7 +573,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -545,7 +592,7 @@ class TestStaticMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = static_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=static_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -566,6 +613,58 @@ class TestStaticMechanicalSimulation:
         result.plot(screenshot=d / "stress.png")
         os.path.exists(d / "stress.png")
 
+    def test_external_layer(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.displacement(external_layer=True)
+        assert len(result.index.mesh_index) == 81
+        assert np.allclose(
+            result.max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
+        result = static_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+        result = static_simulation.stress_principal_elemental(external_layer=[1, 2, 3])
+        assert len(result.index.mesh_index) == 3
+        result = static_simulation.elastic_strain_eqv_von_mises_elemental(
+            external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        result = static_simulation.stress_principal_nodal(external_layer=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+        result = static_simulation.elastic_strain_eqv_von_mises_nodal(
+            external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.displacement(skin=True)
+        assert len(result.index.mesh_index) == 74
+        assert np.allclose(
+            result.max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
+
+    def test_skin_layer2(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer3(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.elastic_strain_eqv_von_mises_elemental(
+            skin=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 18
+
+    def test_skin_layer4(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.stress_principal_nodal(skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer5(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.elastic_strain_eqv_von_mises_nodal(skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer6(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.stress_principal_elemental(skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 18
+
 
 class TestTransientMechanicalSimulation:
     @fixture
@@ -583,7 +682,7 @@ class TestTransientMechanicalSimulation:
 
         # Get reference field at t=0.15s
         op = transient_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             15, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -615,11 +714,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [20]
         field = result._fc[0]
         op = transient_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             20, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -647,11 +746,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("VX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -668,11 +767,11 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("AX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=transient_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -687,7 +786,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -702,7 +801,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -717,7 +816,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -732,7 +831,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -747,7 +846,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -764,7 +863,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -779,7 +878,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -794,7 +893,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -809,7 +908,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -824,7 +923,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -841,7 +940,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -856,7 +955,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -873,7 +972,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -892,7 +991,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -911,7 +1010,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1009,6 +1108,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1023,6 +1126,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1038,6 +1145,10 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         transient_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1059,7 +1170,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1076,7 +1187,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1097,7 +1208,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=transient_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1110,6 +1221,80 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
+    def test_external_layer(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.displacement(all_sets=True, external_layer=True)
+        assert len(result.columns.set_ids) == 20
+        assert len(result.index.mesh_index) == 393
+        assert np.allclose(
+            result.select(set_ids=[2]).max(axis="node_ids").array,
+            [5.14806800e-07, 1.63151192e-03, 9.78100326e-06],
+        )
+        result = transient_simulation.displacement(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+        result = transient_simulation.stress_principal_elemental(
+            external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
+            external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        result = transient_simulation.stress_principal_nodal(external_layer=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+        result = transient_simulation.elastic_strain_eqv_von_mises_nodal(
+            external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer(self, transient_simulation: post.TransientMechanicalSimulation):
+        result = transient_simulation.displacement(all_sets=True, skin=True)
+        assert len(result.columns.set_ids) == 20
+        assert len(result.index.mesh_index) == 393
+        assert np.allclose(
+            result.select(set_ids=[2]).max(axis="node_ids").array,
+            [5.14806800e-07, 1.63151192e-03, 9.78100326e-06],
+        )
+
+    def test_skin_layer2(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+
+    def test_skin_layer3(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.stress_principal_elemental(
+            skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 240
+
+    def test_skin_layer4(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
+            skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 240
+
+    def test_skin_layer5(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.stress_principal_nodal(skin=list(range(1, 100)))
+        assert len(result.index.mesh_index) == 393
+
+    def test_skin_layer6(
+        self, transient_simulation: post.TransientMechanicalSimulation
+    ):
+        result = transient_simulation.elastic_strain_eqv_von_mises_nodal(
+            skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 393
+
 
 class TestModalMechanicalSimulation:
     @fixture
@@ -1118,6 +1303,86 @@ class TestModalMechanicalSimulation:
             data_sources=modalallkindofcomplexity,
             simulation_type=AvailableSimulationTypes.modal_mechanical,
         )
+
+    @fixture
+    def frame_modal_simulation(self, modalframe):
+        return post.load_simulation(
+            data_sources=modalframe,
+            simulation_type=AvailableSimulationTypes.modal_mechanical,
+        )
+
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.ModalMechanicalSimulation(simple_cyclic)
+        displacement = simulation.displacement(expand_cyclic=False)
+        assert "base_sector" in displacement.columns.names
+        assert len(displacement.mesh_index) == 51
+
+        displacement = simulation.displacement(expand_cyclic=True)
+        assert "base_sector" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 408
+
+        with pytest.raises(
+            ValueError,
+            match="'phase_angle_cyclic' argument only accepts a single float value.",
+        ):
+            _ = simulation.displacement(phase_angle_cyclic=[0.1])
+
+        with pytest.raises(
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
+        ):
+            _ = simulation.displacement(expand_cyclic=[0])
+
+        displacement = simulation.displacement(phase_angle_cyclic=90)
+        assert displacement
+        displacement = simulation.displacement(phase_angle_cyclic=90.0)
+        assert displacement
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+
+        displacement = simulation.displacement(expand_cyclic=False)
+        assert "base_sector" in displacement.columns.names
+        assert "stage" in displacement.columns.names
+        assert len(displacement.mesh_index) == 3595
+
+        displacement = simulation.displacement(expand_cyclic=True)
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 26742
+
+        with pytest.raises(
+            ValueError,
+            match="Sector selection with 'expand_cyclic' starts at 1.",
+        ):
+            _ = simulation.displacement(expand_cyclic=[[0, 1], 1])
+
+        displacement = simulation.displacement(expand_cyclic=[1, 2])
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 18717
+
+        displacement = simulation.displacement(expand_cyclic=[[1, 2], 1])
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 5644
+
+        displacement = simulation.displacement(expand_cyclic=[[1, 2], [1, 2]])
+        print(displacement)
+        assert "base_sector" not in displacement.columns.names
+        assert "stage" not in displacement.columns.names
+        assert len(displacement.mesh_index) == 6848
+
+        with pytest.raises(
+            ValueError, match="'expand_cyclic' only accepts lists of int values >= 1."
+        ):
+            _ = simulation.displacement(expand_cyclic=[[1, 2], [0.2, 2]])
+
+        with pytest.raises(
+            ValueError,
+            match="'expand_cyclic' argument can only be a boolean or a list.",
+        ):
+            _ = simulation.displacement(expand_cyclic=1)
 
     def test_displacement(self, modal_simulation):
         print(modal_simulation)
@@ -1134,11 +1399,11 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=modal_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -1161,6 +1426,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1175,6 +1444,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1190,6 +1463,10 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         modal_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1211,7 +1488,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1226,7 +1503,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1241,7 +1518,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1256,7 +1533,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1271,7 +1548,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1286,7 +1563,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1301,7 +1578,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1316,7 +1593,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1331,7 +1608,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1357,7 +1634,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1372,7 +1649,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1387,7 +1664,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1402,7 +1679,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1421,7 +1698,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1440,7 +1717,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             2, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1457,7 +1734,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1474,7 +1751,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1493,7 +1770,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=modal_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1506,6 +1783,224 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
+    def test_disp_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.displacement(set_ids=[1], external_layer=True)
+        result_all = frame_modal_simulation.displacement(
+            set_ids=[1], external_layer=False
+        )
+        assert len(result.index.mesh_index) == 5886
+        assert len(result.index.mesh_index) == len(result_all.index.mesh_index)
+        assert np.allclose(
+            result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
+        )
+        result = frame_modal_simulation.displacement(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 21
+        assert np.allclose(
+            result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333]
+        )
+
+    def test_stress_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.stress_elemental(
+            all_sets=True, external_layer=True
+        )
+        assert len(result.index.mesh_index) == 2842
+        assert len(result.columns.set_ids) == 6
+        assert np.allclose(
+            result.select(set_ids=[3]).max(axis="element_ids").array,
+            [
+                [
+                    464.27737236,
+                    627.19576979,
+                    1661.52572632,
+                    285.47153473,
+                    682.4336586,
+                    501.27880096,
+                ]
+            ],
+        )
+        result = frame_modal_simulation.stress_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(
+            result.max(axis="element_ids").array,
+            [
+                [
+                    -6.46462837,
+                    1.80925381,
+                    107.2106514,
+                    2.10453892,
+                    9.44412744,
+                    -2.84251213,
+                ]
+            ],
+        )
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 21
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [280.45842315])
+
+    def test_stress_external_layer2(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 5886
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [1285.17926915])
+
+    def test_strain_external_layer(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.stress_principal_elemental(
+            all_sets=True, external_layer=True
+        )
+        assert len(result.index.mesh_index) == 2842
+        assert len(result.columns.set_ids) == 6
+        assert np.allclose(
+            result.select(set_ids=[1]).max(axis="element_ids").array, [1282.65478454]
+        )
+        result = frame_modal_simulation.stress_principal_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="element_ids").array, [123.69229739])
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 21
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [0.00149252])
+
+    def test_strain_external_layer2(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 5886
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [0.00684776])
+        result = frame_modal_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 21
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [0.00131161])
+
+    def test_strain_external_layer3(
+        self, frame_modal_simulation: post.ModalMechanicalSimulation
+    ):
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 2842
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="element_ids").array, [0.00620539])
+
+    def test_disp_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        result = frame_modal_simulation.displacement(set_ids=[1], skin=True)
+        result_all = frame_modal_simulation.displacement(set_ids=[1], skin=False)
+        assert len(result.index.mesh_index) == 5828
+        assert np.allclose(
+            result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
+        )
+        result = frame_modal_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 21
+        assert np.allclose(
+            result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333]
+        )
+
+    def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        if frame_modal_simulation._model._server.meet_version("6.2"):
+            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+            assert len(result.index.mesh_index) == 11146
+            assert len(result.columns.set_ids) == 6
+        result = frame_modal_simulation.stress_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 110
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(
+            result.max(axis="element_ids").array,
+            [
+                [
+                    36.52192259,
+                    58.73246002,
+                    371.72294617,
+                    25.97949378,
+                    139.83338165,
+                    69.25232569,
+                ]
+            ],
+        )
+
+    def test_stress_skin2(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
+        )
+        assert len(result.index.mesh_index) == 5828
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [1285.17926915])
+        result = frame_modal_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
+        assert len(result.index.mesh_index) == 5828
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        if frame_modal_simulation._model._server.meet_version("6.2"):
+            result = frame_modal_simulation.stress_principal_elemental(
+                all_sets=True, skin=True
+            )
+            assert len(result.index.mesh_index) == 11146
+            assert len(result.columns.set_ids) == 6
+            assert np.allclose(
+                result.select(set_ids=[1]).max(axis="element_ids").array,
+                [1602.16293782],
+            )
+        result = frame_modal_simulation.stress_principal_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
+        assert len(result.index.mesh_index) == 110
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_skin2(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
+        )
+        assert len(result.index.mesh_index) == 5828
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(result.max(axis="node_ids").array, [0.00684776])
+
+    def test_strain_skin3(self, frame_modal_simulation: post.ModalMechanicalSimulation):
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
+        assert len(result.index.mesh_index) == 5828
+        assert len(result.columns.set_ids) == 1
+        result = frame_modal_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
+        )
+        assert len(result.index.mesh_index) == 5828
+        assert len(result.columns.set_ids) == 1
+        result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], skin=True
+        )
+        assert len(result.index.mesh_index) == 11146
+        assert len(result.columns.set_ids) == 1
+
 
 class TestHarmonicMechanicalSimulation:
     @fixture
@@ -1515,6 +2010,26 @@ class TestHarmonicMechanicalSimulation:
             simulation_type=AvailableSimulationTypes.harmonic_mechanical,
         )
 
+    def test_cyclic(self, simple_cyclic):
+        simulation = post.HarmonicMechanicalSimulation(simple_cyclic)
+        result = simulation.displacement(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        result = simulation.displacement(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+
+    def test_multi_stage(self, multi_stage_cyclic):
+        simulation = post.HarmonicMechanicalSimulation(multi_stage_cyclic)
+        result = simulation.displacement(expand_cyclic=False)
+        print(result)
+        assert "base_sector" in result.columns.names
+        assert "stage" in result.columns.names
+        result = simulation.displacement(expand_cyclic=True)
+        print(result)
+        assert "base_sector" not in result.columns.names
+        assert "stage" not in result.columns.names
+
     def test_displacement(self, harmonic_simulation):
         print(harmonic_simulation)
 
@@ -1523,11 +2038,11 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("UX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
-        mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+        mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
             [2, 3, 4], server=harmonic_simulation._model._server
         )
         op.connect(1, mesh_scoping)
@@ -1545,11 +2060,11 @@ class TestHarmonicMechanicalSimulation:
     #     field = result._fc[0]
     #
     #     op = harmonic_simulation._model.operator("UX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1569,11 +2084,11 @@ class TestHarmonicMechanicalSimulation:
     #     assert result._fc.get_time_scoping().ids == [1]
     #     field = result._fc[0]
     #     op = harmonic_simulation._model.operator("VX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1590,11 +2105,11 @@ class TestHarmonicMechanicalSimulation:
     #     assert result._fc.get_time_scoping().ids == [1]
     #     field = result._fc[0]
     #     op = harmonic_simulation._model.operator("AX")
-    #     time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+    #     time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
     #         1, server=harmonic_simulation._model._server
     #     )
     #     op.connect(0, time_scoping)
-    #     mesh_scoping = core.mesh_scoping_factory.nodal_scoping(
+    #     mesh_scoping = dpf.mesh_scoping_factory.nodal_scoping(
     #         [2, 3, 4], server=harmonic_simulation._model._server
     #     )
     #     op.connect(1, mesh_scoping)
@@ -1617,6 +2132,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1631,6 +2150,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_nodal(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1646,6 +2169,10 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+        reason="Available starting DPF 5.0",
+    )
     def test_element_nodal_forces_elemental(self, allkindofcomplexity):
         harmonic_simulation = post.load_simulation(
             data_sources=allkindofcomplexity,
@@ -1668,7 +2195,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1683,7 +2210,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1698,7 +2225,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("SX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1713,7 +2240,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S1")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1728,7 +2255,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S2")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1745,7 +2272,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S3")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1760,7 +2287,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1775,7 +2302,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1790,7 +2317,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("S_eqv")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1816,7 +2343,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1831,7 +2358,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1846,7 +2373,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPELX")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1861,7 +2388,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1880,7 +2407,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1899,7 +2426,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1916,7 +2443,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1933,7 +2460,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1952,7 +2479,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("EPEL")
-        time_scoping = core.time_freq_scoping_factory.scoping_by_set(
+        time_scoping = dpf.time_freq_scoping_factory.scoping_by_set(
             1, server=harmonic_simulation._model._server
         )
         op.connect(0, time_scoping)
@@ -1964,6 +2491,174 @@ class TestHarmonicMechanicalSimulation:
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
+
+    def test_disp_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.displacement(set_ids=[1], external_layer=True)
+        result_all = harmonic_simulation.displacement(set_ids=[1], external_layer=False)
+        assert len(result.index.mesh_index) == 4802
+        assert len(result.index.mesh_index) == len(result_all.index.mesh_index)
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
+        result = harmonic_simulation.displacement(set_ids=[1], external_layer=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [-2.50180428e-09, -2.86357660e-10, 8.61977942e-11],
+        )
+
+    def test_stress_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.stress_elemental(
+            all_sets=True, external_layer=True
+        )
+        assert len(result.index.mesh_index) == 657
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array, [123327.7207683]
+        )
+
+    def test_stress_external_layer2(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 4802
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_external_layer(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.stress_principal_elemental(
+            all_sets=True, external_layer=True
+        )
+        assert len(result.index.mesh_index) == 657
+        assert len(result.columns.set_ids) == 1
+        assert np.allclose(
+            result.select(complex=0).select(set_ids=[1]).max(axis="element_ids").array,
+            [1915.12412375],
+        )
+        result = harmonic_simulation.stress_principal_elemental(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 3
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_external_layer2(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 4802
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_external_layer3(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], external_layer=[1, 2, 3]
+        )
+        assert len(result.index.mesh_index) == 44
+        assert len(result.columns.set_ids) == 1
+
+    def test_strain_external_layer4(
+        self, harmonic_simulation: post.HarmonicMechanicalSimulation
+    ):
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1], external_layer=True
+        )
+        assert len(result.index.mesh_index) == 657
+        assert len(result.columns.set_ids) == 1
+
+    def test_disp_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.displacement(set_ids=[1], skin=True)
+            result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
+            assert len(result.index.mesh_index) == 4802
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array,
+                [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+            )
+            result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+            assert len(result.index.mesh_index) == 44
+
+    def test_stress_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_elemental(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 192
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_eqv_von_mises_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_eqv_von_mises_nodal(
+                set_ids=[1], skin=True
+            )
+            assert len(result.index.mesh_index) == 4802
+            assert len(result.columns.set_ids) == 1
+
+    def test_strain_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
+        if harmonic_simulation._model._server.meet_version("6.2"):
+            result = harmonic_simulation.stress_principal_elemental(
+                all_sets=True, skin=True
+            )
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.stress_principal_elemental(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 192
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06]
+            )
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+                set_ids=[1], skin=True
+            )
+            assert len(result.index.mesh_index) == 4802
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_principal_nodal(
+                set_ids=[1], skin=list(range(1, 100))
+            )
+            assert len(result.index.mesh_index) == 530
+            assert len(result.columns.set_ids) == 1
+            result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+                set_ids=[1], skin=True
+            )
+            assert len(result.index.mesh_index) == 3942
+            assert len(result.columns.set_ids) == 1
 
 
 def test_elemental_ns_on_nodal_result(modal_frame):

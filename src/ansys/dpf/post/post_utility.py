@@ -9,6 +9,7 @@ from typing import TypeVar, Union
 import warnings
 
 from ansys.dpf.core.model import Model
+from ansys.dpf.core.server_types import BaseServer
 
 from ansys.dpf.post.common import (
     AvailableSimulationTypes,
@@ -117,6 +118,7 @@ SimulationType = TypeVar("SimulationType", bound=Simulation)
 def load_simulation(
     data_sources,
     simulation_type: Union[AvailableSimulationTypes, str] = None,
+    server: Union[BaseServer, None] = None,
 ) -> SimulationType:
     """Loads a simulation and returns a :class:`ansys.dpf.post.simulation.Simulation` object.
 
@@ -142,6 +144,8 @@ def load_simulation(
         The best practice is to define this parameter to select the right post-processing context.
         Options are given in
         :class:`<AvailableSimulationTypes> ansys.dpf.post.common.AvailableSimulationTypes`.
+    server:
+        DPF server connected to a remote or local instance.
 
     Returns
     -------
@@ -159,7 +163,7 @@ def load_simulation(
     >>> from ansys.dpf.post import examples
     >>> simulation = post.load_simulation(examples.static_rst)
     """
-    _model = Model(data_sources)
+    _model = Model(data_sources, server=server)
     data_sources = _model.metadata.data_sources
 
     if not simulation_type:
@@ -218,7 +222,9 @@ def load_simulation(
     if simulation_type in [
         getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
     ]:
-        return simulation_type_str_to_class[simulation_type](data_sources)
+        return simulation_type_str_to_class[simulation_type](
+            data_sources, server=_model._server
+        )
     else:
         raise ValueError(
             f"Simulation type '{simulation_type}' is not a recognized simulation type."

@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
@@ -33,6 +33,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -103,6 +105,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             )
 
         selection = self._build_selection(
+            base_name=base_name,
+            category=category,
             selection=selection,
             set_ids=set_ids,
             times=times,
@@ -112,6 +116,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             element_ids=element_ids,
             named_selections=named_selections,
             location=location,
+            external_layer=external_layer,
+            skin=skin,
         )
 
         comp, to_extract, columns = self._create_components(
@@ -120,15 +126,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         # Initialize a workflow
         wf = dpf.Workflow(server=self._model._server)
-        wf.progress_bar = False
 
-        if category == ResultCategory.equivalent and base_name[0] == "E":
-            force_elemental_nodal = True
-        else:
-            force_elemental_nodal = False
+        force_elemental_nodal = self._requires_manual_averaging(
+            base_name=base_name,
+            location=location,
+            category=category,
+            selection=selection,
+        )
 
         # Instantiate the main result operator
-        result_op = self._build_result_operator(
+        wf, result_op = self._build_result_workflow(
             name=base_name,
             location=location,
             force_elemental_nodal=force_elemental_nodal,
@@ -143,9 +150,21 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection.time_freq_selection._selection,
             output_input_names=("scoping", "time_scoping"),
         )
+        if selection.requires_mesh:
+            # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
+            mesh_wf = dpf.Workflow(server=self._model._server)
+            mesh_wf.set_output_name(
+                _WfNames.initial_mesh, self._model.metadata.mesh_provider
+            )
+            selection.spatial_selection._selection.connect_with(
+                mesh_wf,
+                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
+            )
         wf.connect_with(
             selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
+            output_input_names={
+                "scoping": "mesh_scoping",
+            },
         )
 
         # Connect data_sources and streams_container inputs of selection if necessary
@@ -154,13 +173,24 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
 
+        average_op = None
+        if force_elemental_nodal:
+            average_op = self._create_averaging_operator(
+                location=location, selection=selection
+            )
+
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
-            principal_op.connect(0, out)
-            wf.add_operator(operator=principal_op)
+            if average_op is not None:
+                average_op[0].connect(0, out)
+                principal_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                average_op = None
+            else:
+                principal_op.connect(0, out)
             # Set as future output of the workflow
             if len(to_extract) == 1:
                 out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
@@ -171,22 +201,32 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
-            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
-            # Set as future output of the workflow
-            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
-            if force_elemental_nodal:
-                average_op = None
-                if location == locations.nodal:
-                    average_op = self._model.operator(name="to_nodal_fc")
-                elif location == locations.elemental:
-                    average_op = self._model.operator(name="to_elemental_fc")
-                if average_op is not None:
-                    average_op.connect(0, out)
-                    wf.add_operator(operator=average_op)
-                    # Set as future output of the workflow
-                    out = average_op.outputs.fields_container
+            if (
+                average_op is not None
+                and category == ResultCategory.equivalent
+                and base_name[0] == "E"
+            ):
+                equivalent_op.connect(0, out)
+                average_op[0].connect(0, equivalent_op)
+                wf.add_operator(operator=average_op[1])
+                # Set as future output of the workflow
+                out = average_op[1].outputs.fields_container
+            elif average_op is not None:
+                average_op[0].connect(0, out)
+                equivalent_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                out = equivalent_op.outputs.fields_container
+            else:
+                equivalent_op.connect(0, out)
+                out = equivalent_op.outputs.fields_container
+            average_op = None
+            base_name += "_VM"
+
+        if average_op is not None:
+            average_op[0].connect(0, out)
+            out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (
@@ -205,6 +245,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
 
         # Add an optional norm operation if requested
         if norm:
@@ -213,21 +256,26 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
             comp = None
-
-        extract_scoping = self._model.operator(name="extract_scoping")
-        extract_scoping.connect(0, out)
-        merge_scopings = self._model.operator(name="merge::scoping")
-        merge_scopings.connect(0, extract_scoping.outputs.mesh_scoping_as_scoping)
-        wf.set_output_name("scoping", merge_scopings.outputs.merged_scoping)
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
+        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
-        return self._create_dataframe(fc, location, columns, comp, base_name, disp_wf)
+        submesh = None
+        if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
+            submesh = selection.spatial_selection._selection.get_output(
+                _WfNames.mesh, dpf.types.meshed_region
+            )
+
+        return self._create_dataframe(
+            fc, location, columns, comp, base_name, disp_wf=disp_wf, submesh=submesh
+        )
 
     def displacement(
         self,
@@ -243,6 +291,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -280,6 +330,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -300,6 +360,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def velocity(
@@ -316,6 +378,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract velocity results from the simulation.
 
@@ -353,6 +417,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -373,6 +447,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def acceleration(
@@ -389,6 +465,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract acceleration results from the simulation.
 
@@ -426,6 +504,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -446,6 +534,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress(
@@ -462,8 +552,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -505,6 +597,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -524,6 +626,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_elemental(
@@ -538,6 +642,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -571,6 +677,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -590,6 +706,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_nodal(
@@ -605,6 +723,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -640,6 +760,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -659,6 +789,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal(
@@ -675,8 +807,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -717,6 +851,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -736,6 +880,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_elemental(
@@ -750,6 +896,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -782,6 +930,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -801,6 +959,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_nodal(
@@ -816,6 +976,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -850,6 +1012,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -869,6 +1041,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises(
@@ -884,8 +1058,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -924,6 +1100,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -943,6 +1129,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -956,8 +1144,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -986,6 +1176,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1005,6 +1205,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -1019,8 +1221,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1051,6 +1255,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1070,6 +1284,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain(
@@ -1086,6 +1302,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1129,6 +1347,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1148,6 +1376,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_nodal(
@@ -1163,6 +1393,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1198,6 +1430,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1217,6 +1459,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_elemental(
@@ -1231,6 +1475,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1264,6 +1510,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1283,6 +1539,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal(
@@ -1299,8 +1557,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1341,6 +1601,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1360,6 +1630,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_nodal(
@@ -1375,6 +1647,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1409,6 +1683,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1428,6 +1712,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_elemental(
@@ -1442,6 +1728,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1474,6 +1762,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1493,6 +1791,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises(
@@ -1508,8 +1808,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1548,6 +1850,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1567,6 +1879,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_elemental(
@@ -1580,8 +1894,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1610,6 +1926,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1629,6 +1955,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_nodal(
@@ -1643,8 +1971,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1675,6 +2005,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1694,6 +2034,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable(
@@ -1709,8 +2051,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal plastic state variable results from the simulation.
+        """Extract plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1749,6 +2093,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1768,6 +2122,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_elemental(
@@ -1781,6 +2137,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1811,6 +2169,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1830,6 +2198,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_nodal(
@@ -1844,6 +2214,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1876,6 +2248,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1895,6 +2277,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain(
@@ -1911,8 +2295,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal plastic strain results from the simulation.
+        """Extract plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1954,6 +2340,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1973,6 +2369,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_nodal(
@@ -1988,6 +2386,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
@@ -2023,6 +2423,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2042,6 +2452,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_elemental(
@@ -2056,6 +2468,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
@@ -2089,6 +2503,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2108,6 +2532,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal(
@@ -2124,8 +2550,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal plastic strain results from the simulation.
+        """Extract principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2166,6 +2594,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2185,6 +2623,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_nodal(
@@ -2200,6 +2640,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -2234,6 +2676,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2253,6 +2705,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_elemental(
@@ -2267,6 +2721,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -2299,6 +2755,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2318,6 +2784,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv(
@@ -2333,8 +2801,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent plastic strain results from the simulation.
+        """Extract equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2373,6 +2843,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2392,6 +2872,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_nodal(
@@ -2406,6 +2888,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -2438,6 +2922,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2457,6 +2951,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_elemental(
@@ -2470,6 +2966,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -2500,6 +2998,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2519,6 +3027,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def reaction_force(
@@ -2535,6 +3045,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -2572,6 +3084,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2592,6 +3114,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_volume(
@@ -2605,6 +3129,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -2635,6 +3161,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2654,6 +3190,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_mass(
@@ -2667,6 +3205,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -2697,6 +3237,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2716,6 +3266,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_heat_generation(
@@ -2729,6 +3281,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental heat generation results from the simulation.
 
@@ -2759,6 +3313,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2778,6 +3342,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_centroids(
@@ -2791,6 +3357,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -2821,6 +3389,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2840,6 +3418,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thickness(
@@ -2853,6 +3433,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -2883,6 +3465,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2902,6 +3494,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations(
@@ -2917,8 +3511,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal element orientations results from the simulation.
+        """Extract element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2957,6 +3553,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2976,6 +3582,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_elemental(
@@ -2989,6 +3597,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -3019,6 +3629,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3038,6 +3658,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_nodal(
@@ -3052,6 +3674,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -3084,6 +3708,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3103,6 +3737,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def artificial_hourglass_energy(
@@ -3116,6 +3752,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -3146,6 +3784,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3165,6 +3813,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thermal_dissipation_energy(
@@ -3178,6 +3828,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -3208,6 +3860,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3227,6 +3889,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def kinetic_energy(
@@ -3240,6 +3904,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract kinetic energy results from the simulation.
 
@@ -3270,6 +3936,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3289,6 +3965,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure(
@@ -3304,6 +3982,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3344,6 +4024,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3363,6 +4053,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_nodal(
@@ -3377,6 +4069,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -3409,6 +4103,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3428,6 +4132,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_elemental(
@@ -3441,6 +4147,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -3471,6 +4179,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3490,6 +4208,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature(
@@ -3505,6 +4225,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -3545,6 +4267,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3564,6 +4296,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_nodal(
@@ -3578,6 +4312,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature nodal results from the simulation.
 
@@ -3610,6 +4346,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3629,6 +4375,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_elemental(
@@ -3642,6 +4390,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature elemental results from the simulation.
 
@@ -3672,6 +4422,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3691,6 +4451,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces(
@@ -3708,6 +4470,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -3753,6 +4517,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3773,6 +4547,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_nodal(
@@ -3789,6 +4565,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -3826,6 +4604,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3846,6 +4634,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_elemental(
@@ -3861,6 +4651,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -3896,6 +4688,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3916,6 +4718,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_force(
@@ -3932,6 +4736,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -3969,6 +4775,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3989,6 +4805,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_moment(
@@ -4005,6 +4823,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -4042,6 +4862,16 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4062,4 +4892,6 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
         )

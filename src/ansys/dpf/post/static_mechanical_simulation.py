@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 
 
@@ -33,6 +33,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         node_ids: Union[List[int], None] = None,
         element_ids: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -81,6 +85,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -102,6 +124,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             )
 
         selection = self._build_selection(
+            base_name=base_name,
+            category=category,
             selection=selection,
             set_ids=set_ids,
             times=times,
@@ -111,6 +135,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             element_ids=element_ids,
             named_selections=named_selections,
             location=location,
+            external_layer=external_layer,
+            skin=skin,
         )
 
         comp, to_extract, columns = self._create_components(
@@ -119,19 +145,21 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # Initialize a workflow
         wf = core.Workflow(server=self._model._server)
-        wf.progress_bar = False
 
-        if category == ResultCategory.equivalent and base_name[0] == "E":
-            force_elemental_nodal = True
-        else:
-            force_elemental_nodal = False
+        force_elemental_nodal = self._requires_manual_averaging(
+            base_name=base_name,
+            location=location,
+            category=category,
+            selection=selection,
+        )
 
         # Instantiate the main result operator
-        result_op = self._build_result_operator(
+        wf, result_op = self._build_result_workflow(
             name=base_name,
             location=location,
             force_elemental_nodal=force_elemental_nodal,
         )
+
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
@@ -142,10 +170,23 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection.time_freq_selection._selection,
             output_input_names=("scoping", "time_scoping"),
         )
+        if selection.requires_mesh:
+            mesh_wf = core.Workflow(server=self._model._server)
+            mesh_wf.set_output_name(
+                _WfNames.initial_mesh, self._model.metadata.mesh_provider
+            )
+            selection.spatial_selection._selection.connect_with(
+                mesh_wf,
+                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
+            )
+
         wf.connect_with(
             selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
+            output_input_names={"scoping": "mesh_scoping"},
         )
+
+        # Treat cyclic cases
+        wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, wf)
 
         # Connect data_sources and streams_container inputs of selection if necessary
         if "streams" in wf.input_names:
@@ -153,12 +194,25 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
 
+        average_op = None
+        if force_elemental_nodal:
+            average_op = self._create_averaging_operator(
+                location=location, selection=selection
+            )
+
         # Add a step to compute principal invariants if result is principal
         if category == ResultCategory.principal:
             # Instantiate the required operator
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
-            principal_op.connect(0, out)
+
+            if average_op is not None:
+                average_op[0].connect(0, out)
+                principal_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                average_op = None
+            else:
+                principal_op.connect(0, out)
             wf.add_operator(operator=principal_op)
             # Set as future output of the workflow
             if len(to_extract) == 1:
@@ -170,22 +224,33 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Add a step to compute equivalent if result is equivalent
         elif category == ResultCategory.equivalent:
             equivalent_op = self._model.operator(name="eqv_fc")
-            equivalent_op.connect(0, out)
             wf.add_operator(operator=equivalent_op)
-            # Set as future output of the workflow
-            out = equivalent_op.outputs.fields_container
             # If a strain result, change the location now
-            if force_elemental_nodal:
-                average_op = None
-                if location == locations.nodal:
-                    average_op = self._model.operator(name="to_nodal_fc")
-                elif location == locations.elemental:
-                    average_op = self._model.operator(name="to_elemental_fc")
-                if average_op is not None:
-                    average_op.connect(0, out)
-                    wf.add_operator(operator=average_op)
-                    # Set as future output of the workflow
-                    out = average_op.outputs.fields_container
+            if (
+                average_op is not None
+                and category == ResultCategory.equivalent
+                and base_name[0] == "E"
+            ):
+                equivalent_op.connect(0, out)
+                average_op[0].connect(0, equivalent_op)
+                wf.add_operator(operator=average_op[1])
+                # Set as future output of the workflow
+                out = average_op[1].outputs.fields_container
+            elif average_op is not None:
+                average_op[0].connect(0, out)
+                equivalent_op.connect(0, average_op[1])
+                # Set as future output of the workflow
+                out = equivalent_op.outputs.fields_container
+            else:
+                equivalent_op.connect(0, out)
+                out = equivalent_op.outputs.fields_container
+
+            average_op = None
+            base_name += "_VM"
+
+        if average_op is not None:
+            average_op[0].connect(0, out)
+            out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
@@ -200,6 +265,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
 
         # Add an optional norm operation if requested
         if norm:
@@ -207,15 +275,26 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+            comp = None
+            base_name += "_N"
 
         # Set the workflow output
         wf.set_output_name("out", out)
+        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", core.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
+        submesh = None
+        if selection.outputs_mesh:
+            selection.spatial_selection._selection.progress_bar = False
+            submesh = selection.spatial_selection._selection.get_output(
+                _WfNames.mesh, core.types.meshed_region
+            )
 
-        return self._create_dataframe(fc, location, columns, comp, base_name, disp_wf)
+        return self._create_dataframe(
+            fc, location, columns, comp, base_name, disp_wf, submesh
+        )
 
     def displacement(
         self,
@@ -231,6 +310,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -268,6 +351,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers,
+                ordered by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting
+                 the skin on more that one result (several time freq sets, split data...) is
+                 only supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -288,6 +389,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress(
@@ -304,8 +409,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal stress results from the simulation.
+        """Extract stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -347,6 +456,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -366,6 +493,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_elemental(
@@ -380,6 +511,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental stress results from the simulation.
 
@@ -413,6 +548,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -432,6 +585,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_nodal(
@@ -447,6 +604,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -482,6 +643,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -501,6 +680,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal(
@@ -517,8 +700,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal stress results from the simulation.
+        """Extract principal stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -560,6 +747,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -579,6 +784,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_elemental(
@@ -593,6 +802,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal stress results from the simulation.
 
@@ -625,6 +838,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -644,6 +875,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_principal_nodal(
@@ -659,6 +894,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal stress results from the simulation.
 
@@ -693,6 +932,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -712,6 +969,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises(
@@ -727,8 +988,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises stress results from the simulation.
+        """Extract equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -767,6 +1032,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -786,6 +1069,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -799,8 +1086,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises stress results from the simulation.
+        """Extract elemental equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -829,6 +1120,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -848,6 +1157,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stress_eqv_von_mises_nodal(
@@ -862,8 +1175,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises stress results from the simulation.
+        """Extract nodal equivalent von Mises stress results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -894,6 +1211,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -913,6 +1248,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain(
@@ -929,6 +1268,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -972,6 +1315,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -991,6 +1352,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_nodal(
@@ -1006,6 +1371,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1041,6 +1410,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1060,6 +1447,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_elemental(
@@ -1074,6 +1465,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1107,6 +1502,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1126,6 +1539,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal(
@@ -1142,8 +1559,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal elastic strain results from the simulation.
+        """Extract principal elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1184,6 +1605,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1203,6 +1642,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_nodal(
@@ -1218,6 +1661,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal elastic strain results from the simulation.
 
@@ -1252,6 +1699,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1271,6 +1736,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_principal_elemental(
@@ -1285,6 +1754,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal elastic strain results from the simulation.
 
@@ -1317,6 +1790,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1336,6 +1827,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises(
@@ -1351,8 +1846,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1391,6 +1890,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1410,6 +1927,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_elemental(
@@ -1423,8 +1944,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental equivalent Von Mises elastic strain results from the simulation.
+        """Extract elemental equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1453,6 +1978,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1472,6 +2015,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elastic_strain_eqv_von_mises_nodal(
@@ -1486,8 +2033,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract nodal equivalent Von Mises elastic strain results from the simulation.
+        """Extract nodal equivalent von Mises elastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1518,6 +2069,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1537,6 +2106,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable(
@@ -1552,8 +2125,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal plastic state variable results from the simulation.
+        """Extract plastic state variable results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1592,6 +2169,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1611,6 +2206,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_elemental(
@@ -1624,6 +2223,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic state variable results from the simulation.
 
@@ -1654,6 +2257,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1673,6 +2294,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_state_variable_nodal(
@@ -1687,6 +2312,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic state variable results from the simulation.
 
@@ -1719,6 +2348,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1738,6 +2385,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain(
@@ -1754,8 +2405,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal plastic strain results from the simulation.
+        """Extract plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -1797,6 +2452,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1816,6 +2489,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_nodal(
@@ -1831,6 +2508,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal plastic strain results from the simulation.
 
@@ -1866,6 +2547,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1885,6 +2584,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_elemental(
@@ -1899,6 +2602,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental plastic strain results from the simulation.
 
@@ -1932,6 +2639,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1951,6 +2676,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal(
@@ -1967,8 +2696,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal plastic strain results from the simulation.
+        """Extract principal plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2009,6 +2742,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2028,6 +2779,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_nodal(
@@ -2043,6 +2798,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal plastic strain results from the simulation.
 
@@ -2077,6 +2836,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2096,6 +2873,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_principal_elemental(
@@ -2110,6 +2891,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal plastic strain results from the simulation.
 
@@ -2142,6 +2927,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2161,6 +2964,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv(
@@ -2176,8 +2983,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent plastic strain results from the simulation.
+        """Extract equivalent plastic strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2216,6 +3027,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2235,6 +3064,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_nodal(
@@ -2249,6 +3082,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent plastic strain results from the simulation.
 
@@ -2281,6 +3118,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2300,6 +3155,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def plastic_strain_eqv_elemental(
@@ -2313,6 +3172,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent plastic strain results from the simulation.
 
@@ -2343,6 +3206,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2362,6 +3243,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain(
@@ -2378,8 +3263,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal creep strain results from the simulation.
+        """Extract creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2421,6 +3310,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2440,6 +3347,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_nodal(
@@ -2455,6 +3366,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal creep strain results from the simulation.
 
@@ -2490,6 +3405,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2509,6 +3442,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_elemental(
@@ -2523,6 +3460,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental creep strain results from the simulation.
 
@@ -2556,6 +3497,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2575,6 +3534,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_principal(
@@ -2591,8 +3554,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal principal creep strain results from the simulation.
+        """Extract principal creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2633,6 +3600,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2652,6 +3637,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_principal_nodal(
@@ -2667,6 +3656,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal principal creep strain results from the simulation.
 
@@ -2701,6 +3694,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2720,6 +3731,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_principal_elemental(
@@ -2734,6 +3749,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental principal creep strain results from the simulation.
 
@@ -2766,6 +3785,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2785,6 +3822,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_eqv(
@@ -2800,8 +3841,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal equivalent creep strain results from the simulation.
+        """Extract equivalent creep strain results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -2840,6 +3885,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2859,6 +3922,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_equivalent_nodal(
@@ -2873,6 +3940,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal equivalent creep strain results from the simulation.
 
@@ -2905,6 +3976,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2924,6 +4013,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def creep_strain_equivalent_elemental(
@@ -2937,6 +4030,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent creep strain results from the simulation.
 
@@ -2967,6 +4064,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2986,6 +4101,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def reaction_force(
@@ -3002,6 +4121,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract reaction force results from the simulation.
 
@@ -3039,6 +4162,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3059,6 +4200,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_volume(
@@ -3073,6 +4218,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental volume results from the simulation.
 
@@ -3105,6 +4254,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3124,6 +4291,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_mass(
@@ -3137,6 +4308,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental mass results from the simulation.
 
@@ -3167,6 +4342,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3186,6 +4379,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def elemental_heat_generation(
@@ -3199,6 +4396,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental heat generation results from the simulation.
 
@@ -3229,6 +4430,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3248,6 +4467,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_centroids(
@@ -3261,6 +4484,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element centroids results from the simulation.
 
@@ -3291,6 +4518,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3310,6 +4555,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thickness(
@@ -3323,6 +4572,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element thickness results from the simulation.
 
@@ -3353,6 +4606,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3372,6 +4643,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations(
@@ -3387,8 +4662,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
-        """Extract elemental nodal element orientations results from the simulation.
+        """Extract element orientations results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -3427,6 +4706,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3446,6 +4743,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_elemental(
@@ -3459,6 +4760,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental element orientations results from the simulation.
 
@@ -3489,6 +4794,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3508,6 +4831,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_orientations_nodal(
@@ -3522,6 +4849,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal element orientations results from the simulation.
 
@@ -3554,6 +4885,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3573,6 +4922,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def stiffness_matrix_energy(
@@ -3586,6 +4939,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract stiffness matrix energy results from the simulation.
 
@@ -3616,6 +4973,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3635,6 +5010,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def artificial_hourglass_energy(
@@ -3648,6 +5027,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract artificial hourglass energy results from the simulation.
 
@@ -3678,6 +5061,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3697,6 +5098,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def thermal_dissipation_energy(
@@ -3710,6 +5115,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract thermal dissipation energy results from the simulation.
 
@@ -3740,6 +5149,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3759,6 +5186,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def kinetic_energy(
@@ -3772,6 +5203,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract kinetic energy results from the simulation.
 
@@ -3802,6 +5237,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3821,6 +5274,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure(
@@ -3836,6 +5293,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure element nodal results from the simulation.
 
@@ -3868,6 +5329,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3887,6 +5366,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_nodal(
@@ -3901,6 +5384,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure nodal results from the simulation.
 
@@ -3933,6 +5420,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3952,6 +5457,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def hydrostatic_pressure_elemental(
@@ -3965,6 +5474,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract hydrostatic pressure elemental results from the simulation.
 
@@ -3995,6 +5508,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4014,6 +5545,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature(
@@ -4029,6 +5564,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature element nodal results from the simulation.
 
@@ -4069,6 +5608,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4088,6 +5645,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_nodal(
@@ -4102,6 +5663,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature nodal results from the simulation.
 
@@ -4134,6 +5699,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4153,6 +5736,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def structural_temperature_elemental(
@@ -4166,6 +5753,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract structural temperature elemental results from the simulation.
 
@@ -4196,6 +5787,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4215,6 +5824,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces(
@@ -4232,6 +5845,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         location: Union[locations, str] = locations.elemental_nodal,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces results from the simulation.
 
@@ -4277,6 +5894,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4297,6 +5932,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_nodal(
@@ -4313,6 +5952,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces nodal results from the simulation.
 
@@ -4350,6 +5993,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4370,6 +6031,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def element_nodal_forces_elemental(
@@ -4385,6 +6050,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract element nodal forces elemental results from the simulation.
 
@@ -4420,6 +6089,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4440,6 +6127,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=None,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_force(
@@ -4456,6 +6147,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal force results from the simulation.
 
@@ -4493,6 +6188,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4513,6 +6226,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )
 
     def nodal_moment(
@@ -4529,6 +6246,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract nodal moment results from the simulation.
 
@@ -4566,6 +6287,24 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection:
                 Selection to get results for.
                 A Selection defines both spatial and time-like criteria for filtering.
+            expand_cyclic:
+                For cyclic problems, whether to expand the sectors.
+                Can take a list of sector numbers to select specific sectors to expand
+                (one-based indexing).
+                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+                by stage.
+            phase_angle_cyclic:
+                 For cyclic problems, phase angle to apply (in degrees).
+            external_layer:
+                 Select the external layer (last layer of solid elements under the skin)
+                 of the mesh for plotting and data extraction. If a list is passed, the external
+                 layer is computed over list of elements.
+            skin:
+                 Select the skin (creates new 2D elements connecting the external nodes)
+                 of the mesh for plotting and data extraction. If a list is passed, the skin
+                 is computed over list of elements (not supported for cyclic symmetry). Getting the
+                 skin on more that one result (several time freq sets, split data...) is only
+                 supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4586,4 +6325,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             node_ids=node_ids,
             element_ids=element_ids,
             named_selections=named_selections,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
         )

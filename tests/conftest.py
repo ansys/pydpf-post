@@ -72,6 +72,24 @@ def allkindofcomplexity():
 
 
 @pytest.fixture()
+def modalframe():
+    """Resolve the path of the "download_modal_frame" result file."""
+    return examples.download_modal_frame()
+
+
+@pytest.fixture()
+def simple_cyclic():
+    """Resolve the path of the "simple_cyclic.rst" result file."""
+    return examples.simple_cyclic
+
+
+@pytest.fixture()
+def multi_stage_cyclic():
+    """Resolve the path of the "multi_stage.rst" result file."""
+    return examples.download_multi_stage_cyclic_result()
+
+
+@pytest.fixture()
 def modalallkindofcomplexity():
     """Resolve the path of the "allKindOfComplexity.rst" result file."""
     return examples.download_all_kinds_of_complexity_modal()
@@ -157,15 +175,25 @@ def cleanup(request):
     request.addfinalizer(close_servers)
 
 
+@pytest.fixture
+def grpc_server():
+    """Starts up a temporary gRPC server"""
+
+    server = core.start_local_server(
+        as_global=False, config=core.AvailableServerConfigs.GrpcServer
+    )
+    yield server
+    server.shutdown()
+
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
     get_server_version(core._global_server()), "6.0"
 )
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0 = meets_version(
+    get_server_version(core._global_server()), "5.0"
+)
 
-# to call at the end
-if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
-    core.server.shutdown_all_session_servers()
-    try:
-        core.set_default_server_context(core.AvailableServerContexts.premium)
-    except core.errors.DpfVersionNotSupported:
-        pass
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0 = meets_version(
+    get_server_version(core._global_server()), "4.0"
+)
