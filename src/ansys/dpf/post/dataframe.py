@@ -303,6 +303,7 @@ class DataFrame:
                 "is not yet supported"
             )
 
+        if out is not None:
             wf.set_output_name("out", out)
             fc = wf.get_output("out", dpf.FieldsContainer)
 
