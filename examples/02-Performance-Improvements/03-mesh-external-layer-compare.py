@@ -3,7 +3,9 @@
 
 Validate External Layer results with full Mesh
 ==============================================
-This example displays post-processing on a mesh external layer for a static analysis.
+This example displays post-processing comparisons between:
+ - results and mesh extracted only on external layer.
+ - results and mesh extracted on the entire mesh.
 The external layer is the layer of solid elements with at least one facet facing the outside of
 the geometry.
 This feature is available for all types of Mechanical simulation, and allows you to reduce the size
