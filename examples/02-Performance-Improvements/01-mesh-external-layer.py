@@ -32,7 +32,7 @@ from ansys.dpf.post import examples
 example_path = examples.download_crankshaft()
 simulation = post.load_simulation(example_path)
 
-# for no autocompletion, this line is equivalent to:
+# for auto-completion, this line is equivalent to:
 simulation = post.StaticMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available
