@@ -3,6 +3,7 @@
 ## P0: Load a fluid analysis result, print zones, list species and phases (tree)
 ### Server-side
 - Improve print of MeshesContainer to mimic FieldsContainer, of MeshedRegion to print faces
+- Add hierarchy between cell to face zones
 
 
 ### Pseudo-code
