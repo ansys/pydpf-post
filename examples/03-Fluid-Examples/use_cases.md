@@ -4,6 +4,7 @@
 ### Server-side
 - Improve print of MeshesContainer to mimic FieldsContainer, of MeshedRegion to print faces
 - Add hierarchy between cell to face zones
+- Verify vectorization of results
 
 
 ### Pseudo-code
