@@ -36,7 +36,7 @@ class Node:
         return self._resolve().coordinates
 
     @property
-    def nodal_connectivity(self) -> List[int]:
+    def to_element_connectivity(self) -> List[int]:
         """Elements indices connected to the node."""
         return self._resolve().nodal_connectivity
 

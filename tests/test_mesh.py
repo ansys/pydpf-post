@@ -66,7 +66,7 @@ def test_mesh_elements(mesh):
     assert elem_idx_0.index == 0
     assert elem_id_8.id == 8
     assert elem_idx_0.num_nodes == 20
-    assert elem_idx_0.type == dpf.element_types.Hex20.value
+    assert elem_idx_0.type == dpf.element_types.Hex20
     assert elem_idx_0.shape == "solid"
     assert mesh.get_element_by_id(elem_idx_0.id).index == 0
 
@@ -76,7 +76,7 @@ def test_mesh_nodal_connectivity(mesh):
     conn_node_get_id = mesh.node_to_element_ids_connectivity
 
     node_idx_0 = mesh.nodes[0]
-    conn_idx = node_idx_0.nodal_connectivity
+    conn_idx = node_idx_0.to_element_connectivity
     conn_id = [mesh.elements[idx].id for idx in conn_idx]
 
     assert len(conn_idx) == len(conn_id)
@@ -89,7 +89,7 @@ def test_mesh_elemental_connectivity(mesh):
     conn_elem_get_id = mesh.element_to_node_ids_connectivity
 
     elem_idx_0 = mesh.elements[0]
-    conn_idx = elem_idx_0.connectivity
+    conn_idx = elem_idx_0.to_node_connectivity
     conn_id = [mesh.nodes[idx].id for idx in conn_idx]
 
     assert len(conn_idx) == len(conn_id)

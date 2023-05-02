@@ -141,7 +141,7 @@ class Element:
         return self._resolve().shape
 
     @property
-    def connectivity(self) -> List[int]:
+    def to_node_connectivity(self) -> List[int]:
         """See :py:meth:`ansys.dpf.core.elements.Element.connectivity`."""
         return self._resolve().connectivity
 
