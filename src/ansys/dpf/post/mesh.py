@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import List
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.common import types
 from ansys.dpf.core.nodes import Node
 
 import ansys.dpf.post as post
@@ -18,6 +19,7 @@ from ansys.dpf.post.elements import Element, ElementListIdx
 from ansys.dpf.post.fields_container import PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
+from ansys.dpf.post.selection import SpatialSelection, _WfNames
 
 
 class Mesh:
@@ -154,6 +156,19 @@ class Mesh:
     @unit.setter
     def unit(self, value: str):
         self._meshed_region.unit = value
+
+    def skin(self) -> Mesh:
+        """Returns the skin mesh of the current mesh."""
+        selection = SpatialSelection(server=self._meshed_region._server)
+        selection.select_skin()
+        selection._selection.progress_bar = False
+        if selection.requires_mesh:
+            selection._selection.connect(_WfNames.initial_mesh, self._core_object)
+
+        meshed_region = selection._selection.get_output(
+            _WfNames.skin, types.meshed_region
+        )
+        return Mesh(meshed_region)
 
     @property
     def _core_object(self):
