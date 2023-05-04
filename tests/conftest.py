@@ -72,6 +72,12 @@ def allkindofcomplexity():
 
 
 @pytest.fixture()
+def modalframe():
+    """Resolve the path of the "download_modal_frame" result file."""
+    return examples.download_modal_frame()
+
+
+@pytest.fixture()
 def simple_cyclic():
     """Resolve the path of the "simple_cyclic.rst" result file."""
     return examples.simple_cyclic
