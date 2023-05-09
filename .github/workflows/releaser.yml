@@ -36,7 +36,7 @@ jobs:
     steps:
 
       - name: "Download Release Asset - HTML"
-        uses: dsaltares/fetch-gh-release-asset@1.1.0
+        uses: dsaltares/fetch-gh-release-asset@1.1.1
         with:
           file: HTML-doc-ansys-dpf-post
           token: ${{ secrets.GITHUB_TOKEN }}
