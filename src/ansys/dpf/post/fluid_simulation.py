@@ -15,7 +15,7 @@ from ansys.dpf.post.simulation import ResultCategory, Simulation
 
 # Load the CFF plugin
 dpf.core.load_library(
-    r"D:\ANSYSDev\dpf_standalone\cff_fixes\v232\ansys\dpf\server_2023_2_pre1\dpf\plugins\Ans.Dpf.CFF.dll",  # noqa
+    r"D:\ANSYSDev\dpf_standalone\cff_fixes\v232\ansys\dpf\server_2023_2_pre2\dpf\plugins\dpf_cff\Ans.Dpf.CFF.dll",  # noqa
     "cff_ops",
 )
 
