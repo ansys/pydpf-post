@@ -145,6 +145,16 @@ Available Qualifiers:
 
 ### Pseudo-code
 ```pycon
+>>> from ansys.dpf import post
+>>> simulation = post.FluidSimulation(r"D:\ANSYSDev\Sandbox\plugins\Ans.Dpf.CFF\source\Ans.Dpf.CFFTest\test_models\FLPRJ\axial_comp\axial_comp_reduced.flprj")
+>>> # Extract results of interest
+>>> pressure = simulation.pressure()
+>>> velocity = simulation.velocity()
+>>> iso_surface = post.iso_surface(result=pressure)
+>>> print(iso_surface)
+VizualizationMesh
+>>> mapped_velocity = post.map(result=velocity, onto=iso_surface)
+>>> mapped_velocity.plot()
 ```
 
 ## P0: Extract result data from a multi-phases / combustion analysis, plot and animate the flame-front as an iso-contour of species/phases
