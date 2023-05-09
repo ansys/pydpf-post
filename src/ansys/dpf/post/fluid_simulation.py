@@ -10,8 +10,11 @@ from typing import List, Tuple, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.phase import Phases
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import ResultCategory, Simulation
+from ansys.dpf.post.species import SpeciesList
+from ansys.dpf.post.zone import Zones
 
 # Load the CFF plugin
 dpf.core.load_library(
@@ -31,6 +34,21 @@ class FluidSimulation(Simulation):
         model = dpf.Model(result_file)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
+
+    @property
+    def zones(self):
+        """Return the list of Zones in the simulation."""
+        return Zones()
+
+    @property
+    def species(self):
+        """Return the list of Species in the simulation."""
+        return SpeciesList()
+
+    @property
+    def phases(self):
+        """Return the list of Phases in the simulation."""
+        return Phases()
 
     def _get_result(
         self,
