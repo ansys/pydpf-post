@@ -123,6 +123,22 @@ Available Qualifiers:
 
 ### Pseudo-code
 ```pycon
+>>> from ansys.dpf import post
+>>> simulation = post.FluidSimulation(r"D:\ANSYSDev\Sandbox\plugins\Ans.Dpf.CFF\source\Ans.Dpf.CFFTest\test_models\FLPRJ\axial_comp\axial_comp_reduced.flprj")
+>>> # Create the section support
+>>> plane = Plane(center=[0., 0., 0.], normal=[1., 0., 0.])
+
+>>> # # v1: result extraction on section selection
+>>> selection = post.selection.Selection()
+>>> selection.select_section(plane)
+>>> section_pressure = simulation.pressure(selection=selection)
+>>> section_pressure.animate()
+
+>>> # # v2: global result extraction -> mapping on section
+>>> # Extract result of interest
+>>> pressure = simulation.pressure()
+>>> mapped_pressure = post.map(result=pressure, onto=plane)
+>>> mapped_pressure.animate()
 ```
 
 ## P0: Create an iso-surface of pressure and plot velocity contour on it
