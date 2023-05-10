@@ -12,9 +12,10 @@ from ansys.dpf import post
 simulation = post.FluidSimulation(
     r"D:\ANSYSDev\Sandbox\plugins\Ans.Dpf.CFF\source\Ans.Dpf.CFFTest\test_models\FLPRJ\axial_comp\axial_comp_reduced.flprj"  # noqa
 )
-print(simulation)
+print(dir(simulation.result_info))
+print(simulation.result_info.available_qualifier_labels)
 
-print(simulation.mesh)
+# print(simulation.mesh)
 # print(simulation.zones)
 # print(simulation.species)
 # print(simulation.phases)
