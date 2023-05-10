@@ -110,6 +110,11 @@ class Simulation(ABC):
         ]
 
     @property
+    def result_info(self):
+        """Return information concerning the available results."""
+        return self._model.metadata.result_info
+
+    @property
     def geometries(self):
         """List of constructed geometries in the simulation.
 
