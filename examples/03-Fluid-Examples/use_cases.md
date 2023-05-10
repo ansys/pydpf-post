@@ -103,6 +103,27 @@ on a whole volume mesh / on a selection of zones for steady and unsteady analyse
 ```pycon
 >>> from ansys.dpf import post
 >>> simulation = post.FluidSimulation(r"D:\ANSYSDev\Sandbox\plugins\Ans.Dpf.CFF\source\Ans.Dpf.CFFTest\test_models\FLPRJ\axial_comp\axial_comp_reduced.flprj")
+>>> simulation.result_info
+DPF Result Info 
+  Analysis: unknown 
+  Physics Type: unknown 
+  Unit system: MKS: m, kg, N, s, V, A, degC 
+  Available results: 
+    density (Density) :Density 
+    enthalpy (Enthalpy) :Enthalpy 
+    mass_flow_rate (Mass Flow Rate) :Mass Flow Rate 
+    mean_x_velocity (Mean X Velocity) :Mean X Velocity 
+    mean_y_velocity (Mean Y Velocity) :Mean Y Velocity 
+    mean_z_velocity (Mean Z Velocity) :Mean Z Velocity 
+    rms_x_velocity (Rms X Velocity) :RMS X Velocity 
+    rms_y_velocity (Rms Y Velocity) :RMS Y Velocity 
+    rms_z_velocity (Rms Z Velocity) :RMS Z Velocity 
+    static_pressure (Static Pressure) :Static Pressure 
+    static_temperature (Static Temperature) :Static Temperature 
+    velocity (Velocity) :SV_VELOCITY
+  Available Qualifiers Labels:
+    - phases: water (1), oil (2)
+    - species: O2 (1), H2O (2)
 >>> simulation.result_info.density
 Available Qualifiers:
   {"phase": 1, "species":1}
