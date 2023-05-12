@@ -4,6 +4,7 @@ import ansys.dpf.core as dpf
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
 )
 import numpy as np
 import pytest
@@ -369,7 +370,10 @@ class TestStaticMechanicalSimulation:
         op = static_simulation._model.operator("RF")
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (21, 3)
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+            assert field.data.shape == (21, 3)
+        else:
+            assert field.data.shape == (81, 3)
         assert np.allclose(field.data, field_ref.data)
 
     def test_elemental_volume(self, static_simulation):
