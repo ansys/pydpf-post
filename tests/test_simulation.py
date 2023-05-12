@@ -369,7 +369,7 @@ class TestStaticMechanicalSimulation:
         op = static_simulation._model.operator("RF")
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (81, 3)
+        assert field.data.shape == (21, 3)
         assert np.allclose(field.data, field_ref.data)
 
     def test_elemental_volume(self, static_simulation):
