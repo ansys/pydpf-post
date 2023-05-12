@@ -476,9 +476,10 @@ class TestStaticMechanicalSimulation:
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (103766, 3)
+        assert field.data.shape == (103750, 3)
         assert np.allclose(field.data, field_ref.data)
 
     @pytest.mark.skipif(
@@ -492,6 +493,7 @@ class TestStaticMechanicalSimulation:
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -509,6 +511,7 @@ class TestStaticMechanicalSimulation:
         assert element_nodal_forces._fc.get_time_scoping().ids == [1]
         field = element_nodal_forces._fc[0]
         op = static_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -1087,6 +1090,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
@@ -1105,6 +1109,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -1124,6 +1129,7 @@ class TestTransientMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = transient_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -1405,6 +1411,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
@@ -1423,6 +1430,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -1442,6 +1450,7 @@ class TestModalMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -2111,6 +2120,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         field_ref = op.eval()[0]
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
@@ -2129,6 +2139,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
@@ -2148,6 +2159,7 @@ class TestHarmonicMechanicalSimulation:
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = harmonic_simulation._model.operator("ENF")
+        op.inputs.bool_rotate_to_global.connect(False)
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
