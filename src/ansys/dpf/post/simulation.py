@@ -452,6 +452,11 @@ class Simulation(ABC):
             op.connect(9, "ElementalNodal")
         else:
             op.connect(9, location)
+
+        # Treat ENF
+        if name == "ENF":
+            op.inputs.bool_rotate_to_global.connect(False)
+
         wf = Workflow(server=self._model._server)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
         wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
