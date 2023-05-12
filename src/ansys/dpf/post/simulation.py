@@ -781,6 +781,12 @@ class MechanicalSimulation(Simulation, ABC):
                 )
             selection.select_nodes(nodes=node_ids)
 
+        # Treat for now the case of ENF with no scoping
+        # -> scope on "all" elements for DPF to filter-out contact elements as rotation to global
+        # cannot work for those
+        if (base_name == "ENF") and (element_ids is None):
+            selection.select_elements(elements=self.mesh.element_ids)
+
         # Create the TimeFreqSelection
         if all_sets:
             selection.time_freq_selection.select_with_scoping(
