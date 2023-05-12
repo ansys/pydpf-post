@@ -97,7 +97,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -362,7 +362,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -632,7 +632,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -720,7 +720,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -811,7 +811,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -910,7 +910,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -997,7 +997,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1087,7 +1087,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1183,7 +1183,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1267,7 +1267,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1354,7 +1354,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1454,7 +1454,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1545,7 +1545,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1633,7 +1633,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1732,7 +1732,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1822,7 +1822,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -1909,7 +1909,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2005,7 +2005,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2089,7 +2089,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2176,7 +2176,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2272,7 +2272,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2356,7 +2356,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2443,7 +2443,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2543,7 +2543,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2634,7 +2634,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2722,7 +2722,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2821,7 +2821,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2911,7 +2911,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -2998,7 +2998,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3094,7 +3094,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3181,7 +3181,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3265,7 +3265,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3359,7 +3359,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3444,7 +3444,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3528,7 +3528,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3612,7 +3612,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3696,7 +3696,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3792,7 +3792,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3876,7 +3876,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -3963,7 +3963,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4059,7 +4059,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4146,7 +4146,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4230,7 +4230,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4333,7 +4333,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4428,7 +4428,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4520,7 +4520,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4615,7 +4615,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
@@ -4710,7 +4710,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                  Select the skin (creates new 2D elements connecting the external nodes)
                  of the mesh for plotting and data extraction. If a list is passed, the skin
                  is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more that one result (several time freq sets, split data...) is only
+                 skin on more than one result (several time freq sets, split data...) is only
                  supported starting with Ansys 2023R2.
 
         Returns
