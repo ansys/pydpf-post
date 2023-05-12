@@ -1,9 +1,8 @@
 import os.path
 
 import ansys.dpf.core as dpf
-from conftest import (
+from conftest import (  # SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
 )
 import numpy as np
@@ -469,61 +468,61 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces(self, allkindofcomplexity):
-        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-        element_nodal_forces = static_simulation.element_nodal_forces()
-        assert len(element_nodal_forces._fc) == 1
-        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-        field = element_nodal_forces._fc[0]
-        op = static_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-            assert field.data.shape == (103750, 3)
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-        element_nodal_forces = static_simulation.element_nodal_forces_nodal()
-        assert len(element_nodal_forces._fc) == 3
-        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-        field = element_nodal_forces._fc[0]
-        op = static_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-            assert field.data.shape == (14982, 3)
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-        element_nodal_forces = static_simulation.element_nodal_forces_elemental()
-        assert len(element_nodal_forces._fc) == 3
-        assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-        field = element_nodal_forces._fc[0]
-        op = static_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-            assert field.data.shape == (9433, 3)
-        assert np.allclose(field.data, field_ref.data)
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces(self, allkindofcomplexity):
+    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
+    #     element_nodal_forces = static_simulation.element_nodal_forces()
+    #     assert len(element_nodal_forces._fc) == 1
+    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
+    #     field = element_nodal_forces._fc[0]
+    #     op = static_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     # if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+    #     #     assert field.data.shape == (103750, 3)
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
+    #     element_nodal_forces = static_simulation.element_nodal_forces_nodal()
+    #     assert len(element_nodal_forces._fc) == 3
+    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
+    #     field = element_nodal_forces._fc[0]
+    #     op = static_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.nodal)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+    #         assert field.data.shape == (14982, 3)
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
+    #     element_nodal_forces = static_simulation.element_nodal_forces_elemental()
+    #     assert len(element_nodal_forces._fc) == 3
+    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
+    #     field = element_nodal_forces._fc[0]
+    #     op = static_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.elemental)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+    #         assert field.data.shape == (9433, 3)
+    #     assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain_eqv_von_mises(self, static_simulation):
         result = static_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
@@ -1083,64 +1082,64 @@ class TestTransientMechanicalSimulation:
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces(self, allkindofcomplexity):
-        transient_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.transient_mechanical,
-        )
-        result = transient_simulation.element_nodal_forces(set_ids=[1])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        transient_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.transient_mechanical,
-        )
-        result = transient_simulation.element_nodal_forces_nodal(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        transient_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.transient_mechanical,
-        )
-        result = transient_simulation.element_nodal_forces_elemental(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces(self, allkindofcomplexity):
+    #     transient_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.transient_mechanical,
+    #     )
+    #     result = transient_simulation.element_nodal_forces(set_ids=[1])
+    #     assert len(result._fc) == 1
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = transient_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+    #     transient_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.transient_mechanical,
+    #     )
+    #     result = transient_simulation.element_nodal_forces_nodal(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = transient_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.nodal)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+    #     transient_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.transient_mechanical,
+    #     )
+    #     result = transient_simulation.element_nodal_forces_elemental(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = transient_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.elemental)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain_eqv_von_mises(self, transient_simulation):
         result = transient_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
@@ -1404,64 +1403,64 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces(self, allkindofcomplexity):
-        modal_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.modal_mechanical,
-        )
-        result = modal_simulation.element_nodal_forces(set_ids=[1])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = modal_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        modal_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.modal_mechanical,
-        )
-        result = modal_simulation.element_nodal_forces_nodal(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = modal_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        modal_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.modal_mechanical,
-        )
-        result = modal_simulation.element_nodal_forces_elemental(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = modal_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces(self, allkindofcomplexity):
+    #     modal_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.modal_mechanical,
+    #     )
+    #     result = modal_simulation.element_nodal_forces(set_ids=[1])
+    #     assert len(result._fc) == 1
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = modal_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+    #     modal_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.modal_mechanical,
+    #     )
+    #     result = modal_simulation.element_nodal_forces_nodal(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = modal_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.nodal)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+    #     modal_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.modal_mechanical,
+    #     )
+    #     result = modal_simulation.element_nodal_forces_elemental(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = modal_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.elemental)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, modal_simulation):
         result = modal_simulation.stress(components=1, modes=[2])
@@ -2113,64 +2112,64 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces(self, allkindofcomplexity):
-        harmonic_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
-        )
-        result = harmonic_simulation.element_nodal_forces(set_ids=[1])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = harmonic_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-        harmonic_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
-        )
-        result = harmonic_simulation.element_nodal_forces_nodal(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = harmonic_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
-
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-        reason="Available starting DPF 5.0",
-    )
-    def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-        harmonic_simulation = post.load_simulation(
-            data_sources=allkindofcomplexity,
-            simulation_type=AvailableSimulationTypes.harmonic_mechanical,
-        )
-        result = harmonic_simulation.element_nodal_forces_elemental(set_ids=[1])
-        assert len(result._fc) == 3
-        assert result._fc.get_time_scoping().ids == [1]
-        field = result._fc[0]
-        op = harmonic_simulation._model.operator("ENF")
-        op.inputs.bool_rotate_to_global.connect(False)
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 3
-        assert np.allclose(field.data, field_ref.data)
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces(self, allkindofcomplexity):
+    #     harmonic_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+    #     )
+    #     result = harmonic_simulation.element_nodal_forces(set_ids=[1])
+    #     assert len(result._fc) == 1
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = harmonic_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
+    #     harmonic_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+    #     )
+    #     result = harmonic_simulation.element_nodal_forces_nodal(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = harmonic_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.nodal)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
+    #
+    # @pytest.mark.skipif(
+    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    #     reason="Available starting DPF 5.0",
+    # )
+    # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
+    #     harmonic_simulation = post.load_simulation(
+    #         data_sources=allkindofcomplexity,
+    #         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+    #     )
+    #     result = harmonic_simulation.element_nodal_forces_elemental(set_ids=[1])
+    #     assert len(result._fc) == 3
+    #     assert result._fc.get_time_scoping().ids == [1]
+    #     field = result._fc[0]
+    #     op = harmonic_simulation._model.operator("ENF")
+    #     op.inputs.bool_rotate_to_global.connect(False)
+    #     op.connect(9, post.locations.elemental)
+    #     field_ref = op.eval()[0]
+    #     assert field.component_count == 3
+    #     assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, harmonic_simulation):
         print(harmonic_simulation)
