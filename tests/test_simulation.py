@@ -483,7 +483,8 @@ class TestStaticMechanicalSimulation:
         op.inputs.bool_rotate_to_global.connect(False)
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (103750, 3)
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+            assert field.data.shape == (103750, 3)
         assert np.allclose(field.data, field_ref.data)
 
     @pytest.mark.skipif(
@@ -501,7 +502,8 @@ class TestStaticMechanicalSimulation:
         op.connect(9, post.locations.nodal)
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (14982, 3)
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+            assert field.data.shape == (14982, 3)
         assert np.allclose(field.data, field_ref.data)
 
     @pytest.mark.skipif(
@@ -519,7 +521,8 @@ class TestStaticMechanicalSimulation:
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        assert field.data.shape == (9433, 3)
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+            assert field.data.shape == (9433, 3)
         assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain_eqv_von_mises(self, static_simulation):
