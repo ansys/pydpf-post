@@ -186,6 +186,10 @@ def grpc_server():
     server.shutdown()
 
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2 = meets_version(
+    get_server_version(core._global_server()), "6.2"
+)
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
     get_server_version(core._global_server()), "6.0"
 )
