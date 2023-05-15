@@ -17,7 +17,7 @@ from ansys.dpf.core.plotter import DpfPlotter
 import numpy as np
 
 from ansys.dpf.post import locations, shell_layers
-from ansys.dpf.post.fields_container import PropertyFieldsContainer
+from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 from ansys.dpf.post.index import (
     CompIndex,
     Index,
@@ -39,7 +39,7 @@ class DataFrame:
 
     def __init__(
         self,
-        data: Union[dpf.FieldsContainer, PropertyFieldsContainer],
+        data: Union[dpf.FieldsContainer, _PropertyFieldsContainer],
         index: Union[MultiIndex, Index, List[int]],
         columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
@@ -56,7 +56,7 @@ class DataFrame:
         """
         self._index = index
         if isinstance(data, dpf.FieldsContainer) or isinstance(
-            data, PropertyFieldsContainer
+            data, _PropertyFieldsContainer
         ):
             self._fc = data
             # if index is None:
@@ -286,7 +286,7 @@ class DataFrame:
                     f"Selection on a DataFrame with index "
                     f"'{mesh_index_name}' is not yet supported"
                 )
-            if isinstance(input_fc, PropertyFieldsContainer):
+            if isinstance(input_fc, _PropertyFieldsContainer):
                 fc = input_fc.rescope(mesh_scoping)
             else:
                 rescope_fc = dpf.operators.scoping.rescope_fc(
@@ -325,7 +325,7 @@ class DataFrame:
             results_index,
             set_index,
         ]
-        if isinstance(fc, PropertyFieldsContainer):
+        if isinstance(fc, _PropertyFieldsContainer):
             column_indexes = [results_index]
 
         label_indexes = []

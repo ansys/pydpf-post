@@ -15,7 +15,7 @@ import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListIdx, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListIdx
-from ansys.dpf.post.fields_container import PropertyFieldsContainer
+from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
 
@@ -78,7 +78,7 @@ class Mesh:
     def element_types(self) -> post.DataFrame:
         """Returns a DataFrame containing element types ID."""
         label = "elem_type_id"
-        fields_container = PropertyFieldsContainer()
+        fields_container = _PropertyFieldsContainer()
         field = self._meshed_region.elements.element_types_field
         fields_container.add_field(label_space={}, field=field)
 
@@ -100,7 +100,7 @@ class Mesh:
     def materials(self) -> post.DataFrame:
         """Returns a DataFrame containing element materials ID."""
         label = "material_id"
-        fields_container = PropertyFieldsContainer()
+        fields_container = _PropertyFieldsContainer()
         field = self._meshed_region.elements.materials_field
         fields_container.add_field(label_space={}, field=field)
 

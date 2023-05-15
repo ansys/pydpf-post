@@ -13,7 +13,7 @@ import numpy as np
 from ansys import dpf
 
 
-class LabelSpaceKV:
+class _LabelSpaceKV:
     """Class for internal use to associate a label space with a field."""
 
     def __init__(self, _dict: Dict[str, int], _field):
@@ -41,7 +41,7 @@ class LabelSpaceKV:
         return f"Label Space: {self._dict} with field {field_str}"
 
 
-class PropertyFieldsContainer(Sequence):
+class _PropertyFieldsContainer(Sequence):
     """Minimal implementation of a FieldsContainer specialized for PropertyFieldsContainer."""
 
     def __init__(self, fields_container=None, server=None):
@@ -126,7 +126,7 @@ class PropertyFieldsContainer(Sequence):
             self._server = value._server
 
         # add Label Space
-        self.label_spaces.append(LabelSpaceKV(label_space, value))
+        self.label_spaces.append(_LabelSpaceKV(label_space, value))
 
         # Update IDs
         self.ids.append(new_id)
@@ -303,7 +303,7 @@ class PropertyFieldsContainer(Sequence):
 
     def rescope(self, scoping: dpf.Scoping):
         """Helper function to reproduce functionality of rescope_fc Operator."""
-        copy_fc = PropertyFieldsContainer(self, server=None)
+        copy_fc = _PropertyFieldsContainer(self, server=None)
         for idx, label_space in enumerate(copy_fc.label_spaces):
             pfield = PropertyField(location=label_space.field.location)
             pfield.data = np.ravel(
