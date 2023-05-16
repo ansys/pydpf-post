@@ -269,7 +269,7 @@ class FluidSimulation(Simulation):
 
         """
         return self._get_result(
-            base_name="cff::cas::sv_density",
+            base_name="RHO",
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
