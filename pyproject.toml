@@ -17,7 +17,7 @@ maintainers = [
     {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"},
 ]
 dependencies = [
-    "ansys-dpf-core @ git+https://git@github.com/pyansys/pydpf-core.git",
+    "ansys-dpf-core @ git+https://git@github.com/ansys/pydpf-core.git",
     "scooby",
 ]
 classifiers = [
@@ -38,7 +38,7 @@ classifiers = [
 name = "ansys.dpf.post"
 
 [project.urls]
-Source = "https://github.com/pyansys/pydpf-post"
+Source = "https://github.com/ansys/pydpf-post"
 
 [project.optional-dependencies]
 plotting = [

@@ -25,7 +25,7 @@ development mode, run:
 Post issues
 -----------
 
-Use the `PyDPF-Post Issues <https://github.com/pyansys/pydpf-post/issues>`_
+Use the `PyDPF-Post Issues <https://github.com/ansys/pydpf-post/issues>`_
 page to submit questions, report bugs, and request new features.
 
 To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
