@@ -13,7 +13,7 @@ Loading a simulation (defined by its result files) allows you to extract simulat
 as results and then apply postprocessing operations on it.
 
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
-available at [PyDPF-Core GitHub](https://github.com/pyansys/pydpf-core).
+available at [PyDPF-Core GitHub](https://github.com/ansys/pydpf-core).
 Use the ``ansys-dpf-core`` package for building more advanced and customized workflows
 using Ansys DPF.
 
@@ -34,7 +34,7 @@ pip install ansys-dpf-post
 You can also clone and install this package with this code:
 
 ```
-git clone https://github.com/pyansys/pydpf-post
+git clone https://github.com/ansys/pydpf-post
 cd pydpf-post
 pip install . --user
 ```
@@ -68,12 +68,12 @@ To load a simulation to extract and postprocess results, use this code:
 ```pycon
 >>> displacement.plot()
 ```
-![Example Displacement plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_disp.png)
+![Example Displacement plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_disp.png)
 ```pycon
 >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
 >>> stress_eqv.plot()
 ```
-![Example Stress plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
+![Example Stress plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
 To run PyDPF-Post with Ansys versions 2021 R1 and 2022 R2, use this code to
 start the legacy PyDPF-Post tools::
@@ -85,9 +85,9 @@ start the legacy PyDPF-Post tools::
 >>> stress = solution.stress()
 >>> stress.eqv.plot_contour(show_edges=False)
 ```
-![Example Stress plot Crankshaft](https://github.com/pyansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
+![Example Stress plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
 ## License
 
 ``PyDPF-Post`` is licensed under the MIT license. For more information, see the
-[LICENSE](https://github.com/pyansys/dpf-post/raw/master/LICENSE).
+[LICENSE](https://github.com/ansys/dpf-post/raw/master/LICENSE).

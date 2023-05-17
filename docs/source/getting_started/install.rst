@@ -32,7 +32,7 @@ Install without internet
 If you are unable to install PyDPF-Post on the host machine using ``pip`` due to
 network isolation, you can download the wheelhouse corresponding to your platform
 and Python interpreter version. To obtain the latest release, go to the **Assets** section
-for the `latest PyDPF-Post release <https://github.com/pyansys/pydpf-post/releases/latest>`_ on GitHub.
+for the `latest PyDPF-Post release <https://github.com/ansys/pydpf-post/releases/latest>`_ on GitHub.
 
 The wheelhouse is a ZIP file containing Python wheels for all the packages PyDPF-Post requires to run.
 To install PyDPF-Post using the downloaded wheelhouse, unzip the wheelhouse to a local directory and
