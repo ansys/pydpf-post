@@ -16,12 +16,6 @@ from ansys.dpf.post.simulation import ResultCategory, Simulation
 from ansys.dpf.post.species import SpeciesList
 from ansys.dpf.post.zone import Zones
 
-# Load the CFF plugin
-dpf.core.load_library(
-    r"D:\ANSYSDev\dpf_standalone\cff_fixes\2023.2.pre2\ansys\dpf\server_2023_2_pre2\dpf\plugins\dpf_cff\Ans.Dpf.CFF.dll",  # noqa
-    "cff_ops",
-)
-
 
 class FluidSimulation(Simulation):
     """Base class for fluid type simulations.
@@ -156,7 +150,7 @@ class FluidSimulation(Simulation):
             )
         return selection
 
-    def __init__(self, result_file: Union[PathLike, str]):
+    def __init__(self, result_file: Union[PathLike, str, dpf.DataSources]):
         """Instantiate a mechanical type simulation."""
         model = dpf.Model(result_file)
         data_sources = model.metadata.data_sources
@@ -352,7 +346,7 @@ class FluidSimulation(Simulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract displacement results from the simulation.
+        """Extract density results from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
         exclusive.
@@ -396,6 +390,2162 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="RHO",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def dynamic_viscosity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract dynamic viscosity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="MU",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def enthalpy(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract enthalpy results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="H_S",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def entropy(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract entropy results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="S_S",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def epsilon(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract epsilon results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="EPS",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mach_number(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mach number results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="MACH",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mass_flow_rate(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mass flow rate results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="MDOT",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mass_fraction(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mass fraction results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="Y",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mean_static_pressure(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mean static pressure results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="P_SA",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mean_temperature(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mean temperature results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="TEMP_A",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def mean_velocity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract mean velocity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="V_A",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def omega(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract omega results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="OME",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def rms_static_pressure(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract RMS static pressure results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="P_SRMS",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def rms_temperature(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract RMS temperature results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="TEMP_RMS",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def rms_velocity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract RMS velocity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="V_RMS",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def specific_heat(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract specific heat results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="CP",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def static_pressure(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract static pressure results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="P_S",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def superficial_velocity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract superficial velocity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="V_SUP",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def surface_heat_rate(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract surface heat rate results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="Q",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def temperature(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract temperature results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="TEMP",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def thermal_conductivity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract thermal conductivity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="KT",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def total_pressure(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract total pressure results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="P_TOT",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def total_temperature(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract total temperature results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="TEMP_TOT",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def turbulent_kinetic_energy(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract turbulent kinetic energy results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="K",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def turbulent_viscosity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract turbulent viscosity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="MUT",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def velocity(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract velocity results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="V",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=components,
+            norm=norm,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def volume_fraction(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract volume fraction results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="VOF",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def wall_shear_stress(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract wall shear stress results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="TAU",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def y_plus(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract y+ results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            element_ids:
+                List of IDs of elements whose nodes to get results for.
+            times:
+                List of time values to get results for.
+            components:
+                Components to get results for. Available components are "X", "Y", "Z",
+                and their respective equivalents 1, 2, 3.
+            norm:
+                Whether to return the norm of the results.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="YPLUS",
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
