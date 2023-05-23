@@ -321,9 +321,6 @@ class FluidSimulation(Simulation):
         wf.set_output_name("out", out)
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
-        # print(fc)
-
-        # disp_wf = self._generate_disp_workflow(fc, selection)
 
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
@@ -336,8 +333,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -363,11 +358,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -413,8 +403,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -440,11 +428,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -490,8 +473,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -517,11 +498,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -567,8 +543,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -594,11 +568,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -644,8 +613,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -671,11 +638,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -721,8 +683,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -748,11 +708,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -798,8 +753,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -825,11 +778,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -875,8 +823,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -902,11 +848,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -952,8 +893,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -979,11 +918,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1029,8 +963,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1056,11 +988,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1161,9 +1088,9 @@ class FluidSimulation(Simulation):
         return self._get_result(
             base_name="V_A",
             location=locations.nodal,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
+            category=ResultCategory.vector,
+            components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1183,8 +1110,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1210,11 +1135,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1260,8 +1180,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1287,11 +1205,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1337,8 +1250,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1364,11 +1275,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1469,9 +1375,9 @@ class FluidSimulation(Simulation):
         return self._get_result(
             base_name="V_RMS",
             location=locations.nodal,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
+            category=ResultCategory.vector,
+            components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1491,8 +1397,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1518,11 +1422,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1568,8 +1467,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1595,11 +1492,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1700,9 +1592,9 @@ class FluidSimulation(Simulation):
         return self._get_result(
             base_name="V_SUP",
             location=locations.nodal,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
+            category=ResultCategory.vector,
+            components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -1722,8 +1614,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1749,11 +1639,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1799,8 +1684,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1826,11 +1709,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1876,8 +1754,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1903,11 +1779,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -1953,8 +1824,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -1980,11 +1849,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2030,8 +1894,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -2057,11 +1919,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2107,8 +1964,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -2134,11 +1989,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2184,8 +2034,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -2211,11 +2059,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2316,7 +2159,7 @@ class FluidSimulation(Simulation):
         return self._get_result(
             base_name="V",
             location=locations.nodal,
-            category=ResultCategory.scalar,
+            category=ResultCategory.vector,
             components=components,
             norm=norm,
             selection=selection,
@@ -2338,8 +2181,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -2365,11 +2206,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
@@ -2470,9 +2306,9 @@ class FluidSimulation(Simulation):
         return self._get_result(
             base_name="TAU",
             location=locations.nodal,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
+            category=ResultCategory.vector,
+            components=components,
+            norm=norm,
             selection=selection,
             times=times,
             set_ids=set_ids,
@@ -2492,8 +2328,6 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
-        components: Union[str, List[str], int, List[int], None] = None,
-        norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
         load_steps: Union[
@@ -2519,11 +2353,6 @@ class FluidSimulation(Simulation):
                 List of IDs of elements whose nodes to get results for.
             times:
                 List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
             set_ids:
                 Sets to get results for.
                 A set is defined as a unique combination of {time, load step, sub-step}.
