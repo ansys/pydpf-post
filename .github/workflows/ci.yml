@@ -84,6 +84,8 @@ jobs:
           wheel: true
           wheelhouse: true
           standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
+          extra-pip-args: ${{ './dpf-standalone/v232/dist' && format('--find-links {0}', './dpf-standalone/v232/dist')}}
+          custom-requirements: requirements/requirements_dev.txt
 
       - name: "Prepare Testing Environment"
         uses: pyansys/pydpf-actions/prepare_tests@v2.3
