@@ -198,7 +198,7 @@ jobs:
       ANSYS_VERSION: "232"
       python_versions: '["3.10"]'
       standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
-      custom-wheels: ${{ './dpf-standalone/v232/dist' && format('--find-links {0}', './dpf-standalone/v232/dist')}}
+      custom-wheels: ./dpf-standalone/v232/dist
       custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
@@ -209,7 +209,7 @@ jobs:
       ANSYS_VERSION: "232"
       standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
       event_name: ${{ github.event_name }}
-      custom-wheels: ${{ './dpf-standalone/v232/dist' && format('--find-links {0}', './dpf-standalone/v232/dist')}}
+      custom-wheels: ./dpf-standalone/v232/dist
       custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
