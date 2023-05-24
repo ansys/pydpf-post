@@ -23,7 +23,7 @@ concurrency:
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
-  ANSYS_VERSION: '232'
+  ANSYS_VERSION: '241'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
 
@@ -83,8 +83,8 @@ jobs:
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
-          extra-pip-args: ${{ './dpf-standalone/v232/dist' && format('--find-links {0}', './dpf-standalone/v232/dist')}}
+          standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
+          extra-pip-args: ${{ './dpf-standalone/v241/dist' && format('--find-links {0}', './dpf-standalone/v241/dist')}}
           custom-requirements: requirements/requirements_dev.txt
 
       - name: "Prepare Testing Environment"
@@ -131,7 +131,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["231", "222", "221"]
+        ANSYS_VERSION: ["232", "231", "222"]
 
     steps:
       - uses: actions/checkout@v3
@@ -195,10 +195,10 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: "232"
+      ANSYS_VERSION: "241"
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
-      custom-wheels: ${{ format('--find-links {0}', './dpf-standalone/v232/dist')}}
+      standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
+      custom-wheels: ${{ format('--find-links {0}', './dpf-standalone/v241/dist')}}
       custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
@@ -206,10 +206,10 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: "232"
-      standalone_suffix: ${{ inputs.standalone_suffix || '_paul_cff'}}
+      ANSYS_VERSION: "241"
+      standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
       event_name: ${{ github.event_name }}
-      custom-wheels: ./dpf-standalone/v232/dist
+      custom-wheels: ./dpf-standalone/v241/dist
       custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
