@@ -775,7 +775,7 @@ class Selection:
     def select_nodes(self, nodes: Union[List[int], Scoping]) -> None:
         """Select a mesh scoping with its node IDs.
 
-        Select a mesh scoping corresponding to a named selection.
+        Select a mesh scoping corresponding to a list of node IDs.
 
         Parameters
         ----------
@@ -785,9 +785,9 @@ class Selection:
         self._spatial_selection.select_nodes(nodes)
 
     def select_elements(self, elements: Union[List[int], Scoping]) -> None:
-        """Select a mesh scoping with its node Ids.
+        """Select a mesh scoping with its element IDs.
 
-        Select a mesh scoping corresponding to a named selection.
+        Select a mesh scoping corresponding to a list of element IDs.
 
         Parameters
         ----------
