@@ -99,7 +99,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v4.2.0
+        uses: actions/setup-python@v4.6.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: "Build Package"
         id: build-package
-        uses: pyansys/pydpf-actions/build_package@v2.3
+        uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ inputs.python_version }}
           ANSYS_VERSION: ${{inputs.ANSYS_VERSION}}
@@ -218,5 +218,5 @@ jobs:
           path: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Kill all servers"
-        uses: pyansys/pydpf-actions/kill-dpf-servers@v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@v2.3
         if: always()

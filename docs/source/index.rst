@@ -12,7 +12,7 @@ to extract simulation metadata as well as results and then apply postprocessing
 operations on it.
 
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
-available at `PyDPF-Core GitHub <https://github.com/pyansys/pydpf-core>`_.
+available at `PyDPF-Core GitHub <https://github.com/ansys/pydpf-core>`_.
 Use the ``ansys-dpf-core`` package for building more advanced and customized
 workflows using DPF.
 
@@ -102,7 +102,7 @@ The PyDPF-Post API automates the use of chained DPF operators to make
 postprocessing easier. The PyDPF-Post documentation describes how you can
 use operators to compute results. This allows you to build your own custom,
 low-level scripts to enable fast postprocessing of potentially multi-gigabyte
-models using `PyDPF-Core <https://github.com/pyansys/pydpf-core>`_.
+models using `PyDPF-Core <https://github.com/ansys/pydpf-core>`_.
 
 
 .. toctree::
