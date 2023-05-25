@@ -1,5 +1,5 @@
 from ansys.dpf.core import examples
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import pytest
 from pytest import fixture
 
@@ -8,8 +8,7 @@ from ansys.dpf import post
 
 
 @pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0,
-    # TODO: change to SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
 )
 class TestFluidSimulation:
