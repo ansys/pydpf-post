@@ -35,19 +35,21 @@ class FluidSimulation(Simulation):
         ] = None,
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
-        element_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         node_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
     ) -> Selection:
         tot = (
             (node_ids is not None)
-            + (element_ids is not None)
+            + (face_ids is not None)
+            + (cell_ids is not None)
             + (named_selections is not None)
             + (selection is not None)
         )
         if tot > 1:
             raise ValueError(
-                "Arguments selection, named_selections, element_ids, "
+                "Arguments selection, named_selections, cell_ids, "
                 "and node_ids are mutually exclusive"
             )
         if selection is not None:
@@ -60,11 +62,16 @@ class FluidSimulation(Simulation):
             selection.select_named_selection(
                 named_selection=named_selections, location=location
             )
-        elif element_ids is not None:
+        elif cell_ids is not None:
             if location == locations.nodal:
-                selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
+                selection.select_nodes_of_elements(elements=cell_ids, mesh=self.mesh)
             else:
-                selection.select_elements(elements=element_ids)
+                selection.select_elements(elements=cell_ids)
+        elif face_ids is not None:
+            if location == locations.nodal:
+                selection.select_nodes_of_elements(elements=face_ids, mesh=self.mesh)
+            else:
+                selection.select_elements(elements=face_ids)
         elif node_ids is not None:
             if location != locations.nodal:
                 raise ValueError(
@@ -186,7 +193,8 @@ class FluidSimulation(Simulation):
             int, List[int], Tuple[int, Union[int, List[int]]], None
         ] = None,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
@@ -197,8 +205,8 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
@@ -234,7 +242,7 @@ class FluidSimulation(Simulation):
                 (load-step, sub-step number or list of sub-step numbers).
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
+            cell_ids:
                 List of IDs of elements to get results for.
             named_selections:
                 Named selection or list of named selections to get results for.
@@ -267,7 +275,8 @@ class FluidSimulation(Simulation):
             load_steps=load_steps,
             all_sets=all_sets,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             named_selections=named_selections,
             location=location,
         )
@@ -329,7 +338,8 @@ class FluidSimulation(Simulation):
     def density(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -347,15 +357,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -390,7 +404,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -399,7 +414,8 @@ class FluidSimulation(Simulation):
     def dynamic_viscosity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -417,15 +433,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -460,7 +480,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -469,7 +490,8 @@ class FluidSimulation(Simulation):
     def enthalpy(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -487,15 +509,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -530,7 +556,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -539,7 +566,8 @@ class FluidSimulation(Simulation):
     def entropy(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -557,15 +585,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -600,7 +632,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -609,7 +642,8 @@ class FluidSimulation(Simulation):
     def epsilon(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -627,15 +661,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -670,7 +708,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -679,7 +718,8 @@ class FluidSimulation(Simulation):
     def mach_number(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -697,15 +737,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -740,7 +784,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -749,7 +794,8 @@ class FluidSimulation(Simulation):
     def mass_flow_rate(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -767,15 +813,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -810,7 +860,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -819,7 +870,8 @@ class FluidSimulation(Simulation):
     def mass_fraction(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -837,15 +889,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -880,7 +936,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -889,7 +946,8 @@ class FluidSimulation(Simulation):
     def mean_static_pressure(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -907,15 +965,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -950,7 +1012,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -959,7 +1022,8 @@ class FluidSimulation(Simulation):
     def mean_temperature(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -977,15 +1041,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1020,7 +1088,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1029,7 +1098,8 @@ class FluidSimulation(Simulation):
     def mean_velocity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1049,15 +1119,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -1097,7 +1171,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1106,7 +1181,8 @@ class FluidSimulation(Simulation):
     def omega(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1124,15 +1200,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1167,7 +1247,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1176,7 +1257,8 @@ class FluidSimulation(Simulation):
     def rms_static_pressure(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1194,15 +1276,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1237,7 +1323,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1246,7 +1333,8 @@ class FluidSimulation(Simulation):
     def rms_temperature(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1264,15 +1352,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1307,7 +1399,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1316,7 +1409,8 @@ class FluidSimulation(Simulation):
     def rms_velocity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1336,15 +1430,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -1384,7 +1482,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1393,7 +1492,8 @@ class FluidSimulation(Simulation):
     def specific_heat(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1411,15 +1511,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1454,7 +1558,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1463,7 +1568,8 @@ class FluidSimulation(Simulation):
     def static_pressure(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1481,15 +1587,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1524,7 +1634,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1533,7 +1644,8 @@ class FluidSimulation(Simulation):
     def superficial_velocity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1553,15 +1665,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -1601,7 +1717,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1610,7 +1727,8 @@ class FluidSimulation(Simulation):
     def surface_heat_rate(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1628,15 +1746,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1661,7 +1783,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="Q",
-            location=locations.nodal,
+            location="face",
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1671,7 +1793,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1680,7 +1803,8 @@ class FluidSimulation(Simulation):
     def temperature(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1698,15 +1822,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1741,7 +1869,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1750,7 +1879,8 @@ class FluidSimulation(Simulation):
     def thermal_conductivity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1768,15 +1898,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1811,7 +1945,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1820,7 +1955,8 @@ class FluidSimulation(Simulation):
     def total_pressure(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1838,15 +1974,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1881,7 +2021,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1890,7 +2031,8 @@ class FluidSimulation(Simulation):
     def total_temperature(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1908,15 +2050,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1951,7 +2097,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -1960,7 +2107,8 @@ class FluidSimulation(Simulation):
     def turbulent_kinetic_energy(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -1978,15 +2126,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2021,7 +2173,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -2030,7 +2183,8 @@ class FluidSimulation(Simulation):
     def turbulent_viscosity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -2048,15 +2202,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2091,7 +2249,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -2100,7 +2259,8 @@ class FluidSimulation(Simulation):
     def velocity(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -2120,15 +2280,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -2168,7 +2332,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -2177,7 +2342,8 @@ class FluidSimulation(Simulation):
     def volume_fraction(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -2195,15 +2361,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2238,7 +2408,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -2247,7 +2418,8 @@ class FluidSimulation(Simulation):
     def wall_shear_stress(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -2267,15 +2439,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -2315,7 +2491,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
@@ -2324,7 +2501,8 @@ class FluidSimulation(Simulation):
     def y_plus(
         self,
         node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
@@ -2342,15 +2520,19 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2385,7 +2567,8 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             load_steps=load_steps,
             node_ids=node_ids,
-            element_ids=element_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
             named_selections=named_selections,
