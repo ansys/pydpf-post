@@ -8123,6 +8123,225 @@ class FluidSimulation(Simulation):
             named_selections=named_selections,
         )
 
+    def volume_fraction_on_nodes(
+        self,
+        node_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract volume fraction results on nodes from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        are mutually exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            node_ids:
+                List of IDs of nodes to get results for.
+            face_ids:
+                List of IDs of faces which nodes to get results for.
+            cell_ids:
+                List of IDs of cells which nodes to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="VOF",
+            location=locations.nodal,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def volume_fraction_on_faces(
+        self,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract volume fraction results on faces from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        are mutually exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            face_ids:
+                List of IDs of faces to get results for.
+            cell_ids:
+                List of IDs of cells which faces to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="VOF",
+            location="face",
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
+    def volume_fraction_on_cells(
+        self,
+        cell_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract volume fraction results on cells from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `cell_ids`
+        are mutually exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Args:
+            cell_ids:
+                List of IDs of cells to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
+            times:
+                List of time values to get results for.
+            set_ids:
+                Sets to get results for.
+                A set is defined as a unique combination of {time, load step, sub-step}.
+            all_sets:
+                Whether to get results for all sets.
+            load_steps:
+                Load step number or list of load step numbers to get results for.
+                One can specify sub-steps of a load step with a tuple of format:
+                (load-step, sub-step number or list of sub-step numbers).
+            named_selections:
+                Named selection or list of named selections to get results for.
+            selection:
+                Selection to get results for.
+                A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="VOF",
+            location=locations.elemental,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            face_ids=None,
+            cell_ids=cell_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            named_selections=named_selections,
+        )
+
     def wall_shear_stress(
         self,
         node_ids: Union[List[int], None] = None,
