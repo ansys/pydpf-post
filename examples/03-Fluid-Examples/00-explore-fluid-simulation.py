@@ -41,14 +41,25 @@ print(simulation.result_info)
 
 # # print(simulation.result_info.available_qualifier_labels)  # Requires new gate
 
+# # density_op = model.operator("RHO")
+# # density = density_op.outputs.fields_container()
 density = simulation.density()
-# density_op = model.operator("RHO")
-# density = density_op.outputs.fields_container()
 print(density)
 
-velocity = simulation.velocity()
-print(velocity)
+density_on_nodes = simulation.density_on_nodes()
+print(density_on_nodes)
 
+density_on_faces = simulation.density_on_faces()
+print(density_on_faces)
+
+density_on_cells = simulation.density_on_cells()
+print(density_on_cells)
+
+# velocity = simulation.velocity()
+# print(velocity)
+
+# surface_heat_rate = simulation.surface_heat_rate()
+# print(surface_heat_rate)
 # # print(simulation.mesh_info)
 # # print(simulation.zones)
 # # print(simulation.species)
