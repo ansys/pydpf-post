@@ -28,8 +28,8 @@ ds.add_file_path(
 simulation = post.FluidSimulation(ds)
 print(simulation)
 
-mesh = simulation.mesh
-print(mesh)
+# mesh = simulation.mesh
+# print(mesh)
 # mesh.plot()
 
 # Explore the structure of the results
