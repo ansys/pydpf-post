@@ -572,12 +572,9 @@ class Simulation(ABC):
             row_indexes.append(comp_index)
         if len(fc) > 0:
             times = fc.get_available_ids_for_label("time")
-        else:
-            times = [""]
-        column_indexes = [
-            ResultsIndex(values=[base_name], units=[unit]),
-            SetIndex(values=times),
-        ]
+        column_indexes = [ResultsIndex(values=[base_name], units=[unit])]
+        if times:
+            column_indexes.append(SetIndex(values=times))
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
