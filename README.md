@@ -90,4 +90,4 @@ start the legacy PyDPF-Post tools::
 ## License
 
 ``PyDPF-Post`` is licensed under the MIT license. For more information, see the
-[LICENSE](https://github.com/ansys/dpf-post/raw/master/LICENSE).
+[LICENSE](https://github.com/ansys/pydpf-post/raw/master/LICENSE).
