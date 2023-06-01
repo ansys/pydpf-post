@@ -81,9 +81,17 @@ class Simulation(ABC):
         self._active_selection = None
         self._named_selections = None
         self._mesh = None
+        try:
+            time_unit = self.time_freq_support.time_frequencies.unit
+        except AttributeError:
+            time_unit = ""
+        try:
+            length_unit = self._model.metadata.meshed_region.unit
+        except AttributeError:
+            length_unit = ""
         self._units = {
-            "time/frequency": self.time_freq_support.time_frequencies.unit,
-            "distance": self._model.metadata.meshed_region.unit,
+            "time/frequency": time_unit,
+            "distance": length_unit,
         }
         self._time_freq_precision = None
 
