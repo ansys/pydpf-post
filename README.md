@@ -19,8 +19,8 @@ using Ansys DPF.
 
 ## Documentation
 
-For comprehensive information on this package, see the [PyDPF-Post Documentation](https://postdocs.pyansys.com),
-For detailed how-to information, see the [Examples](https://postdocs.pyansys.com/examples/index.html)
+For comprehensive information on this package, see the [PyDPF-Post Documentation](https://post.docs.pyansys.com),
+For detailed how-to information, see the [Examples](https://post.docs.pyansys.com/version/stable/examples/index.html)
 in the PyDPF-Post documentation.
 
 ## Installation
@@ -68,12 +68,12 @@ To load a simulation to extract and postprocess results, use this code:
 ```pycon
 >>> displacement.plot()
 ```
-![Example Displacement plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_disp.png)
+![Example Displacement plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_disp.png)
 ```pycon
 >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
 >>> stress_eqv.plot()
 ```
-![Example Stress plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
+![Example Stress plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
 To run PyDPF-Post with Ansys versions 2021 R1 and 2022 R2, use this code to
 start the legacy PyDPF-Post tools::
@@ -85,7 +85,7 @@ start the legacy PyDPF-Post tools::
 >>> stress = solution.stress()
 >>> stress.eqv.plot_contour(show_edges=False)
 ```
-![Example Stress plot Crankshaft](https://github.com/ansys/dpf-post/raw/master/docs/source/images/crankshaft_stress.png)
+![Example Stress plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
 ## License
 
