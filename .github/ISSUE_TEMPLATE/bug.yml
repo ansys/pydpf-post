@@ -54,6 +54,24 @@ body:
        - 'Linux'
     validations:
       required: true
+   
+  - type: dropdown
+    id: dpf-server-version
+    attributes:
+      label: Which DPF/Ansys version are you using?
+      multiple: false
+      options:
+       - 'Ansys 2024 R1'
+       - 'Ansys 2023 R2'
+       - 'DPF Server 2023.2.pre1'
+       - 'DPF Server 2023.2.pre0'
+       - 'Ansys 2023 R1'
+       - 'Ansys 2022 R2'
+       - 'Ansys 2022 R1'
+       - 'Ansys 2021 R2'
+       - 'Ansys 2021 R1'
+    validations:
+      required: true
 
   - type: dropdown
     id: python-version
