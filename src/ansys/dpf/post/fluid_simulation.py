@@ -197,6 +197,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
@@ -372,6 +373,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -400,6 +402,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -438,6 +444,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -448,6 +455,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -475,7 +483,11 @@ class FluidSimulation(Simulation):
             cell_ids:
                 List of IDs of cells which nodes to get results for.
             zone_ids:
-                List of IDs of zones which nodes to get results for.
+                List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -514,6 +526,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -523,6 +536,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -548,7 +562,11 @@ class FluidSimulation(Simulation):
             cell_ids:
                 List of IDs of cells which faces to get results for.
             zone_ids:
-                List of IDs of face zones to get results for.
+                List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -587,6 +605,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -595,6 +614,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -618,7 +638,11 @@ class FluidSimulation(Simulation):
             cell_ids:
                 List of IDs of cells to get results for.
             zone_ids:
-                List of IDs of cell zones to get results for.
+                List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -657,6 +681,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -667,6 +692,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -695,6 +721,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -733,6 +763,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -743,6 +774,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -771,6 +803,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -809,6 +845,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -818,6 +855,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -844,6 +882,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -882,6 +924,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -890,6 +933,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -952,6 +996,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -962,6 +1007,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -990,6 +1036,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1028,6 +1078,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1038,6 +1089,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1066,6 +1118,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1104,6 +1160,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1113,6 +1170,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1139,6 +1197,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1177,6 +1239,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1185,6 +1248,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1247,6 +1311,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1257,6 +1322,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1285,6 +1351,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1323,6 +1393,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1333,6 +1404,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1361,6 +1433,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1399,6 +1475,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1408,6 +1485,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1434,6 +1512,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1472,6 +1554,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1480,6 +1563,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1504,6 +1588,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1542,6 +1630,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1552,6 +1641,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1580,6 +1670,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1618,6 +1712,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1628,6 +1723,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1656,6 +1752,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1694,6 +1794,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1703,6 +1804,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1729,6 +1831,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1767,6 +1873,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1775,6 +1882,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1799,6 +1907,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1837,6 +1949,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1847,6 +1960,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1875,6 +1989,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1913,6 +2031,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1923,6 +2042,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1951,6 +2071,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1989,6 +2113,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -1998,6 +2123,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2024,6 +2150,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2062,6 +2192,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2070,6 +2201,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2094,6 +2226,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2132,6 +2268,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2142,6 +2279,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2170,6 +2308,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2208,6 +2350,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2218,6 +2361,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2246,6 +2390,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2284,6 +2432,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2293,6 +2442,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2319,6 +2469,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2357,6 +2511,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2365,6 +2520,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2389,6 +2545,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2427,6 +2587,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2437,6 +2598,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2465,6 +2627,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2503,6 +2669,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2513,6 +2680,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2541,6 +2709,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2579,6 +2751,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2588,6 +2761,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2614,6 +2788,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2652,6 +2830,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2660,6 +2839,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2684,6 +2864,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2722,6 +2906,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2732,6 +2917,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2760,6 +2946,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2798,6 +2988,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2808,6 +2999,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2836,6 +3028,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2874,6 +3070,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2883,6 +3080,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2909,6 +3107,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2947,6 +3149,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -2955,6 +3158,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2979,6 +3183,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3017,6 +3225,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3027,6 +3236,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3055,6 +3265,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3093,6 +3307,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3103,6 +3318,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3131,6 +3347,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3169,6 +3389,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3178,6 +3399,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3204,6 +3426,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3242,6 +3468,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3250,6 +3477,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3274,6 +3502,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3312,6 +3544,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3322,6 +3555,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3352,6 +3586,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -3395,6 +3633,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3405,6 +3644,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3435,6 +3675,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -3478,6 +3722,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3487,6 +3732,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3515,6 +3761,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -3558,6 +3808,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3566,6 +3817,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3592,6 +3844,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -3635,6 +3891,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3645,6 +3902,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3673,6 +3931,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3711,6 +3973,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3721,6 +3984,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3749,6 +4013,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3787,6 +4055,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3796,6 +4065,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3822,6 +4092,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3860,6 +4134,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3868,6 +4143,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3892,6 +4168,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3930,6 +4210,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -3940,6 +4221,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3968,6 +4250,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4006,6 +4292,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4016,6 +4303,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4044,6 +4332,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4082,6 +4374,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4091,6 +4384,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4117,6 +4411,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4155,6 +4453,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4163,6 +4462,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4187,6 +4487,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4225,6 +4529,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4235,6 +4540,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4263,6 +4569,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4301,6 +4611,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4311,6 +4622,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4339,6 +4651,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4377,6 +4693,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4386,6 +4703,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4412,6 +4730,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4450,6 +4772,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4458,6 +4781,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4482,6 +4806,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4520,6 +4848,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4530,6 +4859,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4560,6 +4890,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -4603,6 +4937,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4613,6 +4948,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4643,6 +4979,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -4686,6 +5026,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4695,6 +5036,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4723,6 +5065,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -4766,6 +5112,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4774,6 +5121,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4800,6 +5148,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -4843,6 +5195,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4853,6 +5206,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4881,6 +5235,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4919,6 +5277,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -4929,6 +5288,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4957,6 +5317,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4995,6 +5359,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5004,6 +5369,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5030,6 +5396,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5068,6 +5438,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5076,6 +5447,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5100,6 +5472,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5138,6 +5514,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5148,6 +5525,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5176,6 +5554,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5214,6 +5596,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5224,6 +5607,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5252,6 +5636,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5290,6 +5678,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5299,6 +5688,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5325,6 +5715,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5363,6 +5757,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5371,6 +5766,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5395,6 +5791,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5433,6 +5833,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5443,6 +5844,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5473,6 +5875,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -5516,6 +5922,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5526,6 +5933,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5556,6 +5964,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -5599,6 +6011,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5608,6 +6021,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5636,6 +6050,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -5679,6 +6097,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5687,6 +6106,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5713,6 +6133,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -5756,6 +6180,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5766,6 +6191,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5794,6 +6220,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5832,6 +6262,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5842,6 +6273,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5870,6 +6302,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5908,6 +6344,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5917,6 +6354,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5943,6 +6381,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5981,6 +6423,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -5991,6 +6434,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6019,6 +6463,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6057,6 +6505,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6067,6 +6516,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6095,6 +6545,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6133,6 +6587,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6142,6 +6597,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6168,6 +6624,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6206,6 +6666,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6214,6 +6675,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6238,6 +6700,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6276,6 +6742,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6286,6 +6753,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6314,6 +6782,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6352,6 +6824,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6362,6 +6835,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6390,6 +6864,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6428,6 +6906,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6437,6 +6916,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6463,6 +6943,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6501,6 +6985,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6509,6 +6994,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6533,6 +7019,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6571,6 +7061,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6581,6 +7072,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6609,6 +7101,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6647,6 +7143,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6657,6 +7154,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6685,6 +7183,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6723,6 +7225,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6732,6 +7235,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6758,6 +7262,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6796,6 +7304,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6804,6 +7313,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6828,6 +7338,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6866,6 +7380,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6876,6 +7391,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6904,6 +7420,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6942,6 +7462,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -6952,6 +7473,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6980,6 +7502,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7018,6 +7544,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7027,6 +7554,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7053,6 +7581,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7091,6 +7623,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7099,6 +7632,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7123,6 +7657,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7161,6 +7699,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7171,6 +7710,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7199,6 +7739,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7237,6 +7781,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7247,6 +7792,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7275,6 +7821,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7313,6 +7863,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7322,6 +7873,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7348,6 +7900,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7386,6 +7942,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7394,6 +7951,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7418,6 +7976,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7456,6 +8018,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7466,6 +8029,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7494,6 +8058,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7532,6 +8100,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7542,6 +8111,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7570,6 +8140,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7608,6 +8182,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7617,6 +8192,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7643,6 +8219,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7681,6 +8261,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7689,6 +8270,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7713,6 +8295,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7751,6 +8337,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7761,6 +8348,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7791,6 +8379,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -7834,6 +8426,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7844,6 +8437,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7874,6 +8468,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -7917,6 +8515,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -7926,6 +8525,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7954,6 +8554,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -7997,6 +8601,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8005,6 +8610,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8031,6 +8637,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -8074,6 +8684,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8084,6 +8695,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8112,6 +8724,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8150,6 +8766,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8160,6 +8777,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8188,6 +8806,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8226,6 +8848,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8235,6 +8858,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8261,6 +8885,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8299,6 +8927,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8307,6 +8936,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8331,6 +8961,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8369,6 +9003,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8379,6 +9014,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8409,6 +9045,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -8452,6 +9092,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8462,6 +9103,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8492,6 +9134,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -8535,6 +9181,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8544,6 +9191,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8572,6 +9220,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             components:
@@ -8615,6 +9267,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8625,6 +9278,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8653,6 +9307,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8691,6 +9349,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8701,6 +9360,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8729,6 +9389,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which nodes to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8767,6 +9431,7 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
 
@@ -8776,6 +9441,7 @@ class FluidSimulation(Simulation):
         cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[int], None] = None,
+        species: Union[List[int], None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8802,6 +9468,10 @@ class FluidSimulation(Simulation):
                 List of IDs of cells which faces to get results for.
             zone_ids:
                 List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8840,5 +9510,6 @@ class FluidSimulation(Simulation):
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             phases=phases,
+            species=species,
             named_selections=named_selections,
         )
