@@ -291,11 +291,38 @@ class FluidSimulation(Simulation):
             location=location,
             force_elemental_nodal=False,
         )
+        lists = []
+        lists_labels = []
+        # if zone_ids is None:
+        #     zone_ids = [zone.id for zone in self.zones]
+        # else:
+        #     result_op.connect(25, zone_ids)
         if zone_ids:
-            result_op.connect(25, zone_ids)
+            lists.append(zone_ids)
+            lists_labels.append("zone")
+        # if phases is None:
+        #     phases = [phase.id for phase in self.phases]
+        # else:
+        #     label_space = {"phase": phases[0]}
+        #     result_op.connect(1000, label_space)
         if phases:
-            label_space = {"phase": phases[0]}
-            result_op.connect(1000, label_space)
+            lists.append(phases)
+            lists_labels.append("phase")
+        # if species is None:
+        #     species = [species_i.id for species_i in self.species]
+        if species:
+            lists.append(species)
+            lists_labels.append("species")
+
+        if lists:
+            import itertools
+
+            for i, c in enumerate(itertools.product(*lists)):
+                label_space = {}
+                for j, label in enumerate(lists_labels):
+                    label_space[label] = c[j]
+                result_op.connect(1000 + i, label_space)
+
         # Its output is selected as future workflow output for now
         # print(result_op)
 
