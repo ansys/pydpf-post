@@ -171,7 +171,7 @@ class FluidSimulation(Simulation):
     @property
     def species(self):
         """Return the list of Species in the simulation."""
-        return SpeciesList()
+        return SpeciesList(self)
 
     @property
     def phases(self):
