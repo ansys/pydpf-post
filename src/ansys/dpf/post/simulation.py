@@ -463,7 +463,7 @@ class Simulation(ABC):
         op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
             op.connect(9, "ElementalNodal")
-        else:
+        elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)

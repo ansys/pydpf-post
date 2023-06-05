@@ -181,8 +181,8 @@ class FluidSimulation(Simulation):
     def _get_result(
         self,
         base_name: str,
-        location: str,
         category: ResultCategory,
+        location: Union[str, None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
@@ -212,6 +212,8 @@ class FluidSimulation(Simulation):
         Args:
             base_name:
                 Base name for the requested result.
+            category:
+                Type of result requested. See the :class:`ResultCategory` class.
             location:
                 Location to extract results at. Available locations are listed in
                 class:`post.locations` and are: `post.locations.nodal`,
@@ -220,8 +222,6 @@ class FluidSimulation(Simulation):
                 for every node at each element. Similarly, using `post.locations.elemental`
                 gives results with one value for each element, while using `post.locations.nodal`
                 gives results with one value for each node.
-            category:
-                Type of result requested. See the :class:`ResultCategory` class.
             components:
                 Components to get results for.
             norm:
@@ -328,9 +328,12 @@ class FluidSimulation(Simulation):
 
         # Set the workflow output
         wf.set_output_name("out", out)
+        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
-
+        print(fc)
+        if location is None:
+            location = fc[0].location
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
         )
@@ -394,7 +397,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="RHO",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -689,7 +692,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MU",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -984,7 +987,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="H_S",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1279,7 +1282,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="S_S",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1574,7 +1577,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="EPS",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1869,7 +1872,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MACH",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2164,7 +2167,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MDOT",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2459,7 +2462,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="Y",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2754,7 +2757,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_SA",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -3049,7 +3052,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_A",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -3351,7 +3354,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_A",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3434,7 +3437,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_A",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3667,7 +3670,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="OME",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -3962,7 +3965,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_SRMS",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -4257,7 +4260,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_RMS",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -4559,7 +4562,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_RMS",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -4875,7 +4878,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="CP",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -5170,7 +5173,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_S",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -5472,7 +5475,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_SUP",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -6013,7 +6016,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -6308,7 +6311,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="KT",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -6603,7 +6606,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_TOT",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -6898,7 +6901,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_TOT",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7193,7 +7196,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="K",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7488,7 +7491,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MUT",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7790,7 +7793,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -8106,7 +8109,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="VOF",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -8408,7 +8411,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TAU",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -8647,7 +8650,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="YPLUS",
-            location=locations.nodal,
+            location=None,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
