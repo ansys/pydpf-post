@@ -176,7 +176,7 @@ class FluidSimulation(Simulation):
     @property
     def phases(self):
         """Return the list of Phases in the simulation."""
-        return Phases()
+        return Phases(self)
 
     def _get_result(
         self,
