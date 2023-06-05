@@ -38,6 +38,7 @@ location_to_label = {
     dpf.locations.overall: ref_labels.overall,
     dpf.locations.time_freq_step: ref_labels.step,
     dpf.locations.time_freq: ref_labels.set_ids,
+    None: "unknown",
 }
 
 
