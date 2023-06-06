@@ -5,7 +5,7 @@ FluidSimulation
 
 """
 from os import PathLike
-from typing import List, Tuple, Union
+from typing import List, Union
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
@@ -30,9 +30,6 @@ class FluidSimulation(Simulation):
         selection: Union[Selection, None],
         set_ids: Union[int, List[int], None],
         times: Union[float, List[float], None],
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         cell_ids: Union[List[int], None] = None,
@@ -122,34 +119,6 @@ class FluidSimulation(Simulation):
                 time_freq_sets=available_times_to_extract_set_ids
             )
 
-        # else from load_steps
-        elif load_steps is not None:
-            # If load_steps and sub_steps
-            if len(load_steps) == 2:
-                # Translate to cumulative indices (set IDs)
-                set_ids = []
-                sub_steps = load_steps[1]
-                if not isinstance(sub_steps, list):
-                    sub_steps = [sub_steps]
-                set_id_0 = self._model.metadata.time_freq_support.get_cumulative_index(
-                    step=load_steps[0] - 1, substep=sub_steps[0] - 1
-                )
-                if set_id_0 == -1:
-                    raise ValueError(
-                        f"Sub-step {sub_steps[0]} of load-step {load_steps[0]} "
-                        f"does not exist."
-                    )
-                else:
-                    set_id_0 += 1
-                set_ids.extend([set_id_0 + i for i in range(len(sub_steps))])
-                selection.select_time_freq_sets(time_freq_sets=set_ids)
-
-            else:
-                if isinstance(load_steps, int):
-                    load_steps = [load_steps]
-                selection.time_freq_selection.select_load_steps(load_steps=load_steps)
-            return selection
-
         else:
             # Otherwise, no argument was given, create a time_freq_scoping of the last set only
             selection.select_time_freq_sets(
@@ -189,9 +158,6 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         node_ids: Union[List[int], None] = None,
         face_ids: Union[List[int], None] = None,
         cell_ids: Union[List[int], None] = None,
@@ -202,7 +168,7 @@ class FluidSimulation(Simulation):
     ) -> DataFrame:
         """Extract results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -237,10 +203,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             node_ids:
                 List of IDs of nodes to get results for.
             cell_ids:
@@ -258,13 +220,12 @@ class FluidSimulation(Simulation):
             (set_ids is not None)
             + (all_sets is True)
             + (times is not None)
-            + (load_steps is not None)
             + (selection is not None)
         )
         if tot > 1:
             raise ValueError(
-                "Arguments all_sets, selection, set_ids, times, "
-                "and load_steps are mutually exclusive."
+                "Arguments all_sets, selection, set_ids, and times "
+                "are mutually exclusive."
             )
 
         selection = self._build_selection(
@@ -273,7 +234,6 @@ class FluidSimulation(Simulation):
             selection=selection,
             set_ids=set_ids,
             times=times,
-            load_steps=load_steps,
             all_sets=all_sets,
             node_ids=node_ids,
             face_ids=face_ids,
@@ -377,15 +337,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract density results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -413,10 +370,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -438,7 +391,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -459,15 +411,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract density results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -495,10 +444,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -520,7 +465,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -540,15 +484,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract density results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -574,10 +515,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -599,7 +536,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -618,15 +554,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract density results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -650,10 +583,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -675,7 +604,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -696,15 +624,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract dynamic viscosity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -732,10 +657,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -757,7 +678,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -778,15 +698,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract dynamic viscosity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -814,10 +731,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -839,7 +752,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -859,15 +771,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract dynamic viscosity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -893,10 +802,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -918,7 +823,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -937,15 +841,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract dynamic viscosity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -965,10 +866,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -990,7 +887,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -1011,15 +907,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract enthalpy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1047,10 +940,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1072,7 +961,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1093,15 +981,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract enthalpy results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1129,10 +1014,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1154,7 +1035,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1174,15 +1054,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract enthalpy results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1208,10 +1085,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1233,7 +1106,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1252,15 +1124,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract enthalpy results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1280,10 +1149,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1305,7 +1170,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -1326,15 +1190,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract entropy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1362,10 +1223,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1387,7 +1244,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1408,15 +1264,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract entropy results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1444,10 +1297,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1469,7 +1318,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1489,15 +1337,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract entropy results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1523,10 +1368,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1548,7 +1389,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1567,15 +1407,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract entropy results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1599,10 +1436,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1624,7 +1457,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -1645,15 +1477,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract epsilon results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1681,10 +1510,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1706,7 +1531,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1727,15 +1551,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract epsilon results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1763,10 +1584,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1788,7 +1605,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1808,15 +1624,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract epsilon results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1842,10 +1655,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1867,7 +1676,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -1886,15 +1694,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract epsilon results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -1918,10 +1723,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -1943,7 +1744,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -1964,15 +1764,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mach number results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2000,10 +1797,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2025,7 +1818,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2046,15 +1838,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mach number results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2082,10 +1871,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2107,7 +1892,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2127,15 +1911,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mach number results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2161,10 +1942,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2186,7 +1963,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2205,15 +1981,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mach number results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2237,10 +2010,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2262,7 +2031,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -2283,15 +2051,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2319,10 +2084,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2344,7 +2105,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2365,15 +2125,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2401,10 +2158,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2426,7 +2179,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2446,15 +2198,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2480,10 +2229,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2505,7 +2250,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2524,15 +2268,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2556,10 +2297,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2581,7 +2318,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -2602,15 +2338,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass fraction results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2638,10 +2371,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2663,7 +2392,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2684,15 +2412,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass fraction results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2720,10 +2445,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2745,7 +2466,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2765,15 +2485,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass fraction results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2799,10 +2516,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2824,7 +2537,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -2843,15 +2555,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass fraction results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2875,10 +2584,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2900,7 +2605,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -2921,15 +2625,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean static pressure results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -2957,10 +2658,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -2982,7 +2679,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3003,15 +2699,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean static pressure results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3039,10 +2732,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3064,7 +2753,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3084,15 +2772,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean static pressure results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3118,10 +2803,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3143,7 +2824,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3162,15 +2842,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean static pressure results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3194,10 +2871,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3219,7 +2892,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -3240,15 +2912,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean temperature results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3276,10 +2945,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3301,7 +2966,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3322,15 +2986,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean temperature results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3358,10 +3019,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3383,7 +3040,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3403,15 +3059,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean temperature results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3437,10 +3090,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3462,7 +3111,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3481,15 +3129,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean temperature results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3513,10 +3158,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3538,7 +3179,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -3561,15 +3201,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean velocity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3602,10 +3239,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3627,7 +3260,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3650,15 +3282,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean velocity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3691,10 +3320,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3716,7 +3341,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3738,15 +3362,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean velocity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3777,10 +3398,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3802,7 +3419,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3823,15 +3439,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mean velocity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3860,10 +3473,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3885,7 +3494,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -3906,15 +3514,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract omega results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -3942,10 +3547,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -3967,7 +3568,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -3988,15 +3588,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract omega results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4024,10 +3621,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4049,7 +3642,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4069,15 +3661,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract omega results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4103,10 +3692,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4128,7 +3713,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4147,15 +3731,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract omega results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4179,10 +3760,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4204,7 +3781,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -4225,15 +3801,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS static pressure results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4261,10 +3834,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4286,7 +3855,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4307,15 +3875,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS static pressure results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4343,10 +3908,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4368,7 +3929,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4388,15 +3948,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS static pressure results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4422,10 +3979,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4447,7 +4000,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4466,15 +4018,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS static pressure results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4498,10 +4047,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4523,7 +4068,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -4544,15 +4088,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS temperature results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4580,10 +4121,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4605,7 +4142,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4626,15 +4162,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS temperature results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4662,10 +4195,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4687,7 +4216,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4707,15 +4235,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS temperature results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4741,10 +4266,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4766,7 +4287,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4785,15 +4305,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS temperature results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4817,10 +4334,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4842,7 +4355,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -4865,15 +4377,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS velocity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4906,10 +4415,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -4931,7 +4436,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -4954,15 +4458,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS velocity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -4995,10 +4496,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5020,7 +4517,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5042,15 +4538,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS velocity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5081,10 +4574,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5106,7 +4595,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5127,15 +4615,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract RMS velocity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5164,10 +4649,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5189,7 +4670,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -5210,15 +4690,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract specific heat results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5246,10 +4723,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5271,7 +4744,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5292,15 +4764,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract specific heat results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5328,10 +4797,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5353,7 +4818,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5373,15 +4837,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract specific heat results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5407,10 +4868,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5432,7 +4889,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5451,15 +4907,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract specific heat results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5483,10 +4936,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5508,7 +4957,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -5529,15 +4977,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract static pressure results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5565,10 +5010,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5590,7 +5031,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5611,15 +5051,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract static pressure results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5647,10 +5084,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5672,7 +5105,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5692,15 +5124,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract static pressure results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5726,10 +5155,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5751,7 +5176,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5770,15 +5194,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract static pressure results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5802,10 +5223,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5827,7 +5244,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -5850,15 +5266,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract superficial velocity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5891,10 +5304,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -5916,7 +5325,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -5939,15 +5347,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract superficial velocity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -5980,10 +5385,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6005,7 +5406,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6027,15 +5427,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract superficial velocity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6066,10 +5463,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6091,7 +5484,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6112,15 +5504,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract superficial velocity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6149,10 +5538,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6174,7 +5559,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -6195,15 +5579,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6231,10 +5612,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6256,7 +5633,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6277,15 +5653,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6313,10 +5686,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6338,7 +5707,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6358,15 +5726,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6392,10 +5757,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6417,7 +5778,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6438,15 +5798,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract temperature results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6474,10 +5831,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6499,7 +5852,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6520,15 +5872,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract temperature results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6556,10 +5905,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6581,7 +5926,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6601,15 +5945,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract temperature results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6635,10 +5976,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6660,7 +5997,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6679,15 +6015,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract temperature results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6711,10 +6044,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6736,7 +6065,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -6757,15 +6085,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract thermal conductivity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6793,10 +6118,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6818,7 +6139,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6839,15 +6159,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract thermal conductivity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6875,10 +6192,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6900,7 +6213,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6920,15 +6232,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract thermal conductivity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -6954,10 +6263,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -6979,7 +6284,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -6998,15 +6302,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract thermal conductivity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7030,10 +6331,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7055,7 +6352,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -7076,15 +6372,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total pressure results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7112,10 +6405,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7137,7 +6426,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7158,15 +6446,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total pressure results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7194,10 +6479,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7219,7 +6500,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7239,15 +6519,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total pressure results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7273,10 +6550,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7298,7 +6571,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7317,15 +6589,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total pressure results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7349,10 +6618,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7374,7 +6639,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -7395,15 +6659,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total temperature results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7431,10 +6692,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7456,7 +6713,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7477,15 +6733,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total temperature results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7513,10 +6766,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7538,7 +6787,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7558,15 +6806,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total temperature results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7592,10 +6837,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7617,7 +6858,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7636,15 +6876,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract total temperature results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7668,10 +6905,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7693,7 +6926,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -7714,15 +6946,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent kinetic energy results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7750,10 +6979,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7775,7 +7000,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7796,15 +7020,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent kinetic energy results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7832,10 +7053,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7857,7 +7074,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7877,15 +7093,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent kinetic energy results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7911,10 +7124,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -7936,7 +7145,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -7955,15 +7163,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent kinetic energy results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -7987,10 +7192,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8012,7 +7213,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -8033,15 +7233,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent viscosity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8069,10 +7266,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8094,7 +7287,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8115,15 +7307,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent viscosity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8151,10 +7340,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8176,7 +7361,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8196,15 +7380,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent viscosity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8230,10 +7411,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8255,7 +7432,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8274,15 +7450,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract turbulent viscosity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8306,10 +7479,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8331,7 +7500,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -8354,15 +7522,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract velocity results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8395,10 +7560,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8420,7 +7581,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8443,15 +7603,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract velocity results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8484,10 +7641,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8509,7 +7662,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8531,15 +7683,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract velocity results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8570,10 +7719,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8595,7 +7740,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8616,15 +7760,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract velocity results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8653,10 +7794,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8678,7 +7815,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -8699,15 +7835,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract volume fraction results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8735,10 +7868,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8760,7 +7889,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8781,15 +7909,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract volume fraction results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8817,10 +7942,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8842,7 +7963,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8862,15 +7982,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract volume fraction results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8896,10 +8013,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8921,7 +8034,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -8940,15 +8052,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract volume fraction results on cells from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -8972,10 +8081,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -8997,7 +8102,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=None,
             cell_ids=cell_ids,
@@ -9020,15 +8124,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract wall shear stress results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9061,10 +8162,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9086,7 +8183,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -9109,15 +8205,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract wall shear stress results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9150,10 +8243,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9175,7 +8264,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -9197,15 +8285,12 @@ class FluidSimulation(Simulation):
         norm: bool = False,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract wall shear stress results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9236,10 +8321,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9261,7 +8342,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -9282,15 +8362,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract y+ results from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9318,10 +8395,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9343,7 +8416,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -9364,15 +8436,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract y+ results on nodes from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9400,10 +8469,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9425,7 +8490,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=node_ids,
             face_ids=face_ids,
             cell_ids=cell_ids,
@@ -9445,15 +8509,12 @@ class FluidSimulation(Simulation):
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract y+ results on faces from the simulation.
 
-        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
         If none of the above is given, only the last result will be returned.
 
@@ -9479,10 +8540,6 @@ class FluidSimulation(Simulation):
                 A set is defined as a unique combination of {time, load step, sub-step}.
             all_sets:
                 Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
             named_selections:
                 Named selection or list of named selections to get results for.
             selection:
@@ -9504,7 +8561,6 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            load_steps=load_steps,
             node_ids=None,
             face_ids=face_ids,
             cell_ids=cell_ids,
