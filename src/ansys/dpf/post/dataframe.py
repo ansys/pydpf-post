@@ -749,6 +749,28 @@ class DataFrame:
             label_space.pop("stage")
 
         fields = fc.get_fields(label_space=label_space)
+        # for field in fields:
+        if len(fields) > 1:
+            # try:
+            #     for field in fields[1:]:
+            #         plotter.add_field(field=field, **kwargs)
+            # except Exception as e:
+            raise ValueError(
+                f"Plotting failed with filter {axis_kwargs} due to incompatible data."
+            )
+            # warnings.warn(
+            #     UserWarning(
+            #         "Plotting criteria resulted in incompatible data. "
+            #         "Try narrowing down to specific values for each column."
+            #     )
+            # )
+            # return None
+        field_to_plot = fields[0]
+        # If multi-component, take the norm
+        if field_to_plot.component_count > 1:
+            field_to_plot = dpf.operators.math.norm(
+                field_to_plot, server=field_to_plot._server
+            ).eval()
         plotter = DpfPlotter(**kwargs)
         plotter.add_field(field=fields[0], **kwargs)
         # for field in fields:
