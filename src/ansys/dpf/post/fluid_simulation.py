@@ -126,9 +126,44 @@ class FluidSimulation(Simulation):
             )
         return selection
 
-    def __init__(self, result_file: Union[PathLike, str, dpf.DataSources]):
+    def __init__(
+        self,
+        result_file: Union[PathLike, str, dpf.DataSources, None] = None,
+        cas: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+        dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+        flprj: Union[PathLike, str, None] = None,
+    ):
         """Instantiate a mechanical type simulation."""
-        model = dpf.Model(result_file)
+        tot = (
+            (result_file is not None)
+            + (cas is not None and dat is not None)
+            + (flprj is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Argument result_file, cas and dat, and flprj are mutually exclusive."
+            )
+        elif tot < 1:
+            raise ValueError(
+                "One of result_file, cas and dat, or flprj argument must be set."
+            )
+        if result_file:
+            ds = result_file
+        else:
+            ds = dpf.DataSources()
+            if flprj:
+                raise NotImplementedError("flprj input not accepted yet")
+            if cas:
+                if not isinstance(cas, list):
+                    cas = [cas]
+                for c in cas:
+                    ds.set_result_file_path(c, "cas")
+            if dat:
+                if not isinstance(dat, list):
+                    dat = [dat]
+                for d in dat:
+                    ds.add_file_path(d, "dat")
+        model = dpf.Model(ds)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
 
