@@ -644,6 +644,21 @@ class DataFrame:
         txt = "\n" + "".join([line + "\n" for line in lines])
         self._str = txt
 
+    @staticmethod
+    def _format_cells(cells: List[List[str]]) -> str:
+        """Format the data cells into one string.
+
+        Argument cells is a list of column data, each one itself a list of row data.
+        """
+        n_lines = len(cells[0])
+        lines = [""] * n_lines
+        for column in cells:
+            max_length = max(map(len, column))
+            for i in range(n_lines):
+                lines[i] += column[i].rjust(max_length + 1)
+        lines = [line + "\n" for line in lines]
+        return "".join(lines)
+
     def _first_n_ids_first_field(self, n: int) -> List[int]:
         """Return the n first entity IDs of the first field in the underlying FieldsContainer."""
         if len(self._fc) > 0:
