@@ -64,6 +64,7 @@ class Index(ABC):
         self._dtype = None
         self._len = None
         self._scoping_ref = None
+        self._data_fmt = None
         # if scoping is None and values is None:
         #     raise ValueError("Arguments 'values' and 'scoping' cannot both be None.")
         if scoping is not None:
@@ -112,6 +113,16 @@ class Index(ABC):
         """Evaluates the values of the Index."""
         if self._scoping_ref is not None:
             self._values = self._scoping_ref().ids
+
+    @property
+    def data_format(self):
+        """Gets the data string formatting for this Index."""
+        return self._data_fmt
+
+    @data_format.setter
+    def data_format(self, fmt: str):
+        """Sets the data string formatting for this Index."""
+        self._data_fmt = fmt
 
 
 class MeshIndex(Index):
