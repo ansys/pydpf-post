@@ -38,20 +38,6 @@ location_to_label = {
     dpf.locations.time_freq: ref_labels.set_ids,
 }
 
-label_default_format = {
-    ref_labels.results: ":.3e",
-    ref_labels.time: ":.3e",
-    ref_labels.modes: ":.0f",
-    ref_labels.set_ids: ":.0f",
-    ref_labels.step: ":.0f",
-    ref_labels.components: "",
-    ref_labels.element_ids: ":.0f",
-    ref_labels.node_ids: ":.0f",
-    ref_labels.elemental_nodal: ":.0f",
-    ref_labels.frequencies: ":.3e",
-    ref_labels.overall: "",
-}
-
 
 class Index(ABC):
     """A Pandas style API to manipulate indexes."""
@@ -61,7 +47,6 @@ class Index(ABC):
         name: str,
         values: Union[List, None] = None,
         scoping: Union[dpf.Scoping, None] = None,
-        fmt: str = None,
     ):
         """Creates an Index object to use in a DataFrame.
 
@@ -73,18 +58,13 @@ class Index(ABC):
             Values taken by the Index.
         scoping:
             Scoping corresponding to this index to keep a weak reference.
-        fmt:
-            Data string formatting for this index.
         """
         self._name = name.replace(" ", "_")
         self._values = values
         self._dtype = None
         self._len = None
         self._scoping_ref = None
-        if fmt:
-            self._data_fmt = fmt
-        else:
-            self._data_fmt = label_default_format[self._name]
+        self._data_fmt = None
         # if scoping is None and values is None:
         #     raise ValueError("Arguments 'values' and 'scoping' cannot both be None.")
         if scoping is not None:
