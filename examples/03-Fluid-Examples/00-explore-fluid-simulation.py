@@ -12,47 +12,30 @@ from ansys.dpf.core.dpf_operator import available_operator_names
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 
-# fluid_example = examples.download_fluent_multi_species()  # -> mach_number
-# ds = dpf.DataSources()
-# ds.set_result_file_path(fluid_example["cas"], "cas")
-# ds.add_file_path(fluid_example["dat"], "dat")
-
-# # -> works for all results (no mach_number or mass_flow_rate)
+# # # -> works for all results (no mach_number or mass_flow_rate)
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/cfx_tutr/i1361675.html
 # fluid_example = examples.download_cfx_heating_coil()
-# ds = dpf.DataSources()
-# ds.set_result_file_path(fluid_example["cas"], "cas")
-# ds.add_file_path(fluid_example["dat"], "dat")
 
 # # -> works for all results (no mach_number or mass_flow_rate)
-# fluid_example = examples.download_cfx_mixing_elbow()
-# ds = dpf.DataSources()
-# ds.set_result_file_path(fluid_example["cas"], "cas")
-# ds.add_file_path(fluid_example["dat"], "dat")
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/cfx_tutr/i1308373.html
+fluid_example = examples.download_cfx_mixing_elbow()
 
-# fluid_example = examples.download_fluent_mixing_elbow_steady_state()  # -> mach_number
-# ds = dpf.DataSources()
-# ds.set_result_file_path(fluid_example["cas"][0], "cas")
-# ds.add_file_path(fluid_example["dat"][0], "dat")
+# # -> does not work for mach_number, mass_flow_rate, surface_heat_rate, y_plus
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/flu_tg/flu_tg_elbow_mesh_wtc.html
+# fluid_example = examples.download_fluent_mixing_elbow_steady_state()
 
-fluid_example = examples.download_fluent_mixing_elbow_transient()  # -> mach_number
-ds = dpf.DataSources()
-ds.set_result_file_path(fluid_example["cas"][0], "cas")
-ds.add_file_path(fluid_example["dat"][0], "dat")
+# # # -> does not work for mach_number, mass_flow_rate, surface_heat_rate, y_plus
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/flu_tg/flu_tg_elbow_mesh_wtc.html
+# fluid_example = examples.download_fluent_mixing_elbow_transient()
 
-# fluid_example = examples.download_fluent_axial_comp()  # -> mass_flow_rate fails
-# print(fluid_example)
-# ds = dpf.DataSources()
-# ds.set_result_file_path(fluid_example["cas"][0], "cas")
-# ds.add_file_path(fluid_example["dat"][0], "dat")
+# # -> does not work for mass_flow_rate, surface_heat_rate
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/flu_tg/flu_tg_rotor_stator.html
+# fluid_example = examples.download_fluent_axial_comp()
+# opacity = 0.01
 
-# ds.set_result_file_path(
-#     fluid_example_files["cas"],
-#     key="cas",
-# )
-# ds.add_file_path(
-#     fluid_example_files["dat"],
-#     key="dat",
-# )
+# # -> does not work for mach_number
+# https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v231/en/flu_tg/flu_tg_magnus.html
+# fluid_example = examples.download_fluent_multi_species()
 
 server = dpf.SERVER
 print(server.version)
@@ -63,7 +46,9 @@ print(cff_operators)
 print("============================================================")
 
 # Load the fluid analysis result
-simulation = post.FluidSimulation(ds)
+cas = fluid_example["cas"]
+dat = fluid_example["dat"]
+simulation = post.FluidSimulation(cas=cas, dat=dat)
 print(simulation)
 
 # print(simulation.results)
@@ -78,14 +63,23 @@ print(simulation)
 result_info = simulation.result_info
 # print(result_info)
 
-# print(simulation.phases)
-# print(simulation.species)
+print(simulation.phases)
+print(simulation.species)
+print(simulation.zones)
 
 for available_result in result_info.available_results:
+    if available_result.name in [
+        "mach_number",
+        "mass_flow_rate",
+        "surface_heat_rate",
+        "y_plus",
+    ]:
+        continue
     print(available_result)
-    print(getattr(simulation, available_result.name)(zone_ids=[1]))
+    result = getattr(simulation, available_result.name)()
+    print(result)
 
-# getattr(simulation, available_result.name)().plot(opacity=0.5)
+    # result.plot()
 # print(dir(result_info))
 # print(result_info.available_qualifier_labels)
 # print(result_info.qualifier_label_support)
