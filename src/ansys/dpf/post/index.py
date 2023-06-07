@@ -27,7 +27,6 @@ class ref_labels:
     elemental_nodal = "element_ids"
     step = "step_ids"
     overall = "overall"
-    base_sector = "base_sector"
 
 
 location_to_label = {
@@ -40,7 +39,6 @@ location_to_label = {
 }
 
 label_default_format = {
-    "default": "",
     ref_labels.results: ":.3e",
     ref_labels.time: ":.3e",
     ref_labels.modes: ":.0f",
@@ -52,7 +50,6 @@ label_default_format = {
     ref_labels.elemental_nodal: ":.0f",
     ref_labels.frequencies: ":.3e",
     ref_labels.overall: "",
-    ref_labels.base_sector: "",
 }
 
 
@@ -87,10 +84,7 @@ class Index(ABC):
         if fmt:
             self._data_fmt = fmt
         else:
-            try:
-                self._data_fmt = label_default_format[self._name]
-            except KeyError:
-                self._data_fmt = label_default_format["default"]
+            self._data_fmt = label_default_format[self._name]
         # if scoping is None and values is None:
         #     raise ValueError("Arguments 'values' and 'scoping' cannot both be None.")
         if scoping is not None:
