@@ -775,10 +775,23 @@ class DataFrame:
                 field_to_plot, server=field_to_plot._server
             ).eval()
         plotter = DpfPlotter(**kwargs)
-        if kwargs.pop("volume", None):
-            plotter.add_volume(field=field_to_plot, **kwargs)
-        else:
-            plotter.add_field(field=field_to_plot, **kwargs)
+        plotter.add_field(field=fields[0], **kwargs)
+        # for field in fields:
+        if len(fields) > 1:
+            # try:
+            #     for field in fields[1:]:
+            #         plotter.add_field(field=field, **kwargs)
+            # except Exception as e:
+            raise ValueError(
+                f"Plotting failed with filter {axis_kwargs} due to incompatible data."
+            )
+            # warnings.warn(
+            #     UserWarning(
+            #         "Plotting criteria resulted in incompatible data. "
+            #         "Try narrowing down to specific values for each column."
+            #     )
+            # )
+            # return None
         # field.plot(text="debug")
         return plotter.show_figure(
             title=kwargs.pop("title", str(label_space)), **kwargs
