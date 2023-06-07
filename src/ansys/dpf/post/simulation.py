@@ -588,6 +588,17 @@ class Simulation(ABC):
             if label not in ["time"]:
                 if len(fc) > 0:
                     values = fc.get_available_ids_for_label(label)
+                    try:
+                        label_support = self.result_info.qualifier_label_support(label)
+                        names_field = label_support.string_field_support_by_property(
+                            "names"
+                        )
+                        values = [
+                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                            for value in values
+                        ]
+                    except ValueError:
+                        pass
                 else:
                     values = [""]
                 label_indexes.append(LabelIndex(name=label, values=values))
