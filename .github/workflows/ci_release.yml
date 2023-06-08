@@ -20,8 +20,6 @@ on:
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
-  ANSYS_VERSION: '241'
-  STANDALONE_SUFFIX: ''
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
 
@@ -74,14 +72,14 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION: '241'
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{env.STANDALONE_SUFFIX}}
+          standalone_suffix: ''
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -190,16 +188,16 @@ jobs:
   examples:
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+      ANSYS_VERSION: '241'
       python_versions: '["3.10"]'
-      standalone_suffix: ${{env.STANDALONE_SUFFIX}}
+      standalone_suffix: ''
     secrets: inherit
 
   docs:
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: ${{env.ANSYS_VERSION}}
-      standalone_suffix: ${{env.STANDALONE_SUFFIX}}
+      ANSYS_VERSION: '241'
+      standalone_suffix: ''
       event_name: ${{ github.event_name }}
     secrets: inherit
 
