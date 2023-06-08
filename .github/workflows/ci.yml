@@ -25,6 +25,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  ANSYS_VERSION: '241'
 
 jobs:
   debug:
