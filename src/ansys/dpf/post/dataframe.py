@@ -19,6 +19,7 @@ import numpy as np
 from ansys.dpf.post import locations, shell_layers
 from ansys.dpf.post.index import (
     CompIndex,
+    ElementNodeIndex,
     Index,
     LabelIndex,
     MeshIndex,
@@ -31,33 +32,6 @@ from ansys.dpf.post.index import (
 display_width = 100
 display_max_colwidth = 12
 display_max_lines = 6
-
-
-def _flatten_list(arr):
-    """Return a flat version of a nested list."""
-    new_arr = []
-    for item in arr:
-        if isinstance(item, list):
-            new_arr.extend(_flatten_list(item))
-        else:
-            new_arr.append(item)
-    return new_arr
-
-
-def _treat_elemental_nodal(treat_lines, pos, n_comp, n_ent, n_lines, max_colwidth):
-    """Update the string representation when Elemental Nodal data is present."""
-    # Update row headers
-    elem_headers = treat_lines[pos : pos + n_comp]
-    new_elem_headers = []
-    for i_ent in range(1, n_ent + 1):
-        for header in elem_headers:
-            new_elem_header = [
-                header[:max_colwidth] + header[max_colwidth + 4 :] + f" ({i_ent})"
-            ]
-            # elem_header_i.extend(elem_headers[1:])
-            new_elem_headers.extend(new_elem_header)
-        treat_lines = treat_lines[:pos] + new_elem_headers + treat_lines[pos:]
-    return treat_lines[:n_lines]
 
 
 class DataFrame:
@@ -97,6 +71,13 @@ class DataFrame:
             self._columns = columns
         else:
             self._columns = None
+
+        # If MeshIndex is elemental nodal, update columns
+        for i in self.index:
+            if isinstance(i, MeshIndex):
+                if i.location == locations.elemental_nodal:
+                    # Update columns with a dynamic node index
+                    self.columns.indexes.append(ElementNodeIndex())
 
         self._disp_wf = None
 
@@ -432,6 +413,7 @@ class DataFrame:
         truncated_str = "..."
         max_n_col = 8
         max_n_rows = display_max_lines
+        element_node_offset = 0
 
         # Create cells with row labels and values
         num_column_indexes = len(self.columns)
@@ -505,7 +487,7 @@ class DataFrame:
         previous_combination = [None] * len(lists)
         for combination in row_combinations:
             [
-                cells[i].append(
+                cells[i + element_node_offset].append(
                     str(combination[i])
                     if combination[i] != previous_combination[i]
                     else empty
@@ -542,26 +524,58 @@ class DataFrame:
             n_values = 0
             # Loop over asked entities
             for entity_id in entity_ids:
-                values_list = []
+                values = []
                 # Look for data for this entity in each field
                 for field in fields:
                     try:
                         # Try getting data for this entity ID in the current field
                         data = field.get_entity_data_by_id(entity_id).tolist()
-                        # Flatten obtained data and format to strings
-                        values_list = [f"{x:.4e}" for x in _flatten_list(data)]
-                        # Update number of values found
-                        n_values += len(values_list)
-                        # If already found enough values to print
-                        if n_values >= max_n_rows:
-                            # Add to cells
-                            cells[i_c + num_rows_indexes].extend(
-                                values_list[:max_n_rows]
+                        n_values_per_entity = len(data)
+                        # Update max number of node per element in case of elemental nodal
+                        if field.location == locations.elemental_nodal:
+                            # Update the cells table if more nodes per element than previously
+                            if n_values_per_entity > element_node_offset:
+                                for i_n in range(
+                                    element_node_offset + 1, n_values_per_entity
+                                ):
+                                    to_append = [empty] * (num_column_indexes - 1)
+                                    to_append.append(str(i_n + 1))
+                                    to_append.append(empty)
+                                    cells.append(to_append)
+                            element_node_offset = max(
+                                element_node_offset, n_values_per_entity
                             )
-                            # Exit the loop on fields
-                            break
+                        # Update number of values found to add per column
+                        if isinstance(data[0], list):
+                            n_values += len(data[0])
                         else:
-                            cells[i_c + num_rows_indexes].extend(values_list)
+                            n_values += 1
+                        # # Flatten obtained data and format to string
+                        # values_list = [f"{x:.4e}" for y in data for x in y]
+                        break_loop = False
+                        # Loop over the number of node columns to fill
+                        for i_n in range(max(element_node_offset, 1)):
+                            # Build list of str values to append to current column
+                            if i_n < n_values_per_entity:
+                                values = data[i_n]
+                                if isinstance(values, list):
+                                    values = [f"{x:.4e}" for x in values]
+                                else:
+                                    values = [f"{values:.4e}"]
+                            else:
+                                values = [empty] * max_n_rows
+                            # If already found enough values to print
+                            if n_values >= max_n_rows:
+                                # Add to cells
+                                cells[i_c + i_n + num_rows_indexes].extend(
+                                    values[:max_n_rows]
+                                )
+                                # Exit the loop on fields
+                                break_loop = True
+                            else:
+                                cells[i_c + i_n + num_rows_indexes].extend(values)
+                        if break_loop:
+                            break
                     except Exception:
                         # If entity data not found in this field, try next field
                         continue
@@ -569,125 +583,11 @@ class DataFrame:
                 if n_values >= max_n_rows:
                     # Exit the loop on entity IDs
                     break
-                if not values_list:
+                if not values:
                     # If no data found for this entity ID, add empty cells
-                    values_list = [[empty] * len(comp_values)]
-                    n_values += len(values_list)
-                    cells[i_c + num_rows_indexes].extend(*values_list)
-
-        #     # Get data in the FieldsContainer for those positions
-        #     # Create label_space from combination
-        #     label_space = {}
-        #     for label_name in self.labels:
-        #         value = combination[label_positions_in_combinations[label_name]]
-        #         if label_name == ref_labels.set_ids:
-        #             label_name = ref_labels.time
-        #         label_space[label_name] = value
-        #     fields = self._fc.get_fields(label_space=label_space)
-        #     values = []
-        #     if entity_ids is None:
-        #         for field in fields:
-        #             array_values = []
-        #             position = len(column_headers) + 1
-        #             for k in list(range(num_mesh_entities_to_ask)):
-        #                 try:
-        #                     values_list = field.get_entity_data(k).tolist()
-        #                 except Exception:
-        #                     values_list = [[None] * len(comp_values)]
-        #                 num_entities = len(values_list)
-        #                 if isinstance(values_list[0], list):
-        #                     num_components = len(values_list[0])
-        #                 else:
-        #                     num_components = 1
-        #                 current_number_lines = len(lines)
-        #                 # Detect number of nodes when elemental nodal and update headers to
-        #                 # repeat for each node (do not print their ID for now)
-        #                 if (
-        #                     i_c == 0
-        #                     and field.location == locations.elemental_nodal
-        #                     and len(values_list) != 0
-        #                 ):
-        #                     lines = treat_elemental_nodal(
-        #                         lines,
-        #                         position,
-        #                         num_components,
-        #                         num_entities,
-        #                         current_number_lines,
-        #                         max_colwidth
-        #                     )
-        #                 array_values.append(values_list)
-        #                 if (
-        #                     position + num_entities * num_components
-        #                     >= current_number_lines + len(column_headers) + 1
-        #                 ):
-        #                     if k < num_mesh_entities_to_ask:
-        #                         truncated = True
-        #                 if position >= current_number_lines:
-        #                     break
-        #                 position += num_entities * num_components
-        #             if array_values:
-        #                 array_values = flatten_list(array_values)
-        #                 values.extend(array_values)
-        #     else:
-        #         array_values = []
-        #         position = len(column_headers) + 1
-        #         for entity_id in entity_ids:
-        #             for field in fields:
-        #                 try:
-        #                     values_list = field.get_entity_data_by_id(
-        #                         entity_id
-        #                     ).tolist()
-        #                 except Exception:
-        #                     values_list = [[None] * len(comp_values)]
-        #                 num_entities = len(values_list)
-        #                 num_components = len(values_list[0])
-        #                 current_number_lines = len(lines)
-        #                 # Detect number of nodes when elemental nodal and update headers to
-        #                 # repeat for each node (do not print their ID for now)
-        #                 if (
-        #                     i_c == 0
-        #                     and field.location == locations.elemental_nodal
-        #                     and len(values_list) != 0
-        #                 ):
-        #                     lines = treat_elemental_nodal(
-        #                         lines,
-        #                         position,
-        #                         num_components,
-        #                         num_entities,
-        #                         current_number_lines,
-        #                         max_colwidth
-        #                     )
-        #                 array_values.append(values_list)
-        #                 if (
-        #                     position + num_entities * num_components
-        #                     >= current_number_lines + len(column_headers) + 1
-        #                 ):
-        #                     if k < num_mesh_entities_to_ask:
-        #                         truncated = True
-        #                 if position >= current_number_lines:
-        #                     break
-        #                 position += num_entities * num_components
-        #                 if array_values:
-        #                     array_values = flatten_list(array_values)
-        #                     values.extend(array_values)
-        #
-        #     # take_comp_map = [True] * len(values)
-        #     # if comp_values is not None:
-        #
-        #     value_strings = []
-        #     for value in values[: len(lines) - (num_column_indexes + 1)]:
-        #         if value is not None:
-        #             value_string = f"{value:.{max_colwidth - 8}e}".rjust(max_colwidth)
-        #         else:
-        #             value_string = empty
-        #         value_strings.append(value_string)
-        #     to_append.extend(value_strings)
-        #     previous_combination = combination
-        #     # print(to_append)
-        #     # print(len(to_append))
-        #     # print(len(lines))
-        #     for i, _ in enumerate(lines):
-        #         lines[i] = lines[i] + to_append[i]
+                    values = [[empty] * len(comp_values)]
+                    n_values += len(values)
+                    cells[i_c + num_rows_indexes].extend(*values)
 
         if truncated_columns:
             cells.append([truncated_str] * len(cells[0]))

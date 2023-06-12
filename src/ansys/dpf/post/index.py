@@ -27,6 +27,7 @@ class ref_labels:
     elemental_nodal = "element_ids"
     step = "step_ids"
     overall = "overall"
+    element_node = "node"
 
 
 location_to_label = {
@@ -294,6 +295,17 @@ class CompIndex(Index):
         super().__init__(name=ref_labels.components, values=values)
 
 
+class ElementNodeIndex(Index):
+    """Index class specific to elemental nodal results."""
+
+    def __init__(
+        self,
+    ):
+        """Initiate this class."""
+        # We know there will be at least one node value per element.
+        super().__init__(name=ref_labels.element_node, values=[1])
+
+
 class MultiIndex:
     """A Pandas style API to manipulate multi-indexes."""
 
@@ -314,6 +326,11 @@ class MultiIndex:
         # self._result_names = None
         for _, index in enumerate(self._indexes):
             setattr(self, index.name, index)
+
+    @property
+    def indexes(self) -> List[Index]:
+        """Returns the list of Index in the MultiIndex."""
+        return self._indexes
 
     # @property
     # def labels(self):
