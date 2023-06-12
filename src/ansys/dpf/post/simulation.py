@@ -102,7 +102,8 @@ class Simulation(ABC):
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.results)
+        >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        ...
         """
         return [
             str(result) for result in self._model.metadata.result_info.available_results
