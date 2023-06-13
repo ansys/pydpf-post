@@ -495,11 +495,14 @@ class DataFrame:
                 for i in range(len(combination))
             ]
             previous_combination = combination
-        global_element_node_offset = 0
+
+        combination_index = num_rows_indexes
         # For each column combination
         previous_combination = [None] * len(lists)
         for i_c, combination in enumerate(column_combinations[:max_n_col]):
-            element_node_offset = 0
+            if combination_index > max_n_col + num_rows_indexes:
+                break
+            max_n_values_per_entity = 1
             # ## Fill the label values
             labels = [
                 str(combination[i])
@@ -535,18 +538,17 @@ class DataFrame:
                         # Update max number of node per element in case of elemental nodal
                         if field.location == locations.elemental_nodal:
                             # Update the cells table if more nodes per element than previously
-                            if n_values_per_entity > element_node_offset:
+                            if n_values_per_entity > max_n_values_per_entity:
                                 for i_n in range(
-                                    element_node_offset + 1, n_values_per_entity
+                                    max_n_values_per_entity, n_values_per_entity
                                 ):
                                     to_append = [empty] * (num_column_indexes - 1)
                                     to_append.append(str(i_n))
                                     to_append.append(empty)
                                     cells.append(to_append)
-                            element_node_offset = max(
-                                element_node_offset, n_values_per_entity
+                            max_n_values_per_entity = max(
+                                max_n_values_per_entity, n_values_per_entity
                             )
-                            global_element_node_offset += element_node_offset
                         # Update number of values found to add per column
                         if isinstance(data[0], list):
                             n_values += len(data[0])
@@ -556,7 +558,7 @@ class DataFrame:
                         # values_list = [f"{x:.4e}" for y in data for x in y]
                         break_loop = False
                         # Loop over the number of node columns to fill
-                        for i_n in range(max(element_node_offset, 1)):
+                        for i_n in range(max(max_n_values_per_entity, 1)):
                             # Build list of str values to append to current column
                             if i_n < n_values_per_entity:
                                 values = data[i_n]
@@ -569,23 +571,13 @@ class DataFrame:
                             # If already found enough values to print
                             if n_values >= max_n_rows:
                                 # Add to cells
-                                cells[
-                                    i_c
-                                    + global_element_node_offset
-                                    - element_node_offset
-                                    + i_n
-                                    + num_rows_indexes
-                                ].extend(values[:max_n_rows])
+                                cells[combination_index + i_n].extend(
+                                    values[:max_n_rows]
+                                )
                                 # Exit the loop on fields
                                 break_loop = True
                             else:
-                                cells[
-                                    i_c
-                                    + global_element_node_offset
-                                    - element_node_offset
-                                    + i_n
-                                    + num_rows_indexes
-                                ].extend(values)
+                                cells[combination_index + i_n].extend(values)
                         if break_loop:
                             break
                     except Exception:
@@ -599,7 +591,9 @@ class DataFrame:
                     # If no data found for this entity ID, add empty cells
                     values = [[empty] * len(comp_values)]
                     n_values += len(values)
-                    cells[i_c + num_rows_indexes].extend(*values)
+                    cells[combination_index].extend(*values)
+
+            combination_index += max_n_values_per_entity
 
         if truncated_columns:
             cells.append([truncated_str] * len(cells[0]))
