@@ -232,6 +232,9 @@ def test_dataframe_str(transient_rst):
 """  # noqa: W291, E501
     assert str(df2) == ref
 
+    df = simulation.stress(all_sets=True)
+    print(df)
+
 
 def test_dataframe_str_comp(df):
     # 3D str

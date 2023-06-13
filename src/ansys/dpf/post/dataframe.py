@@ -495,10 +495,11 @@ class DataFrame:
                 for i in range(len(combination))
             ]
             previous_combination = combination
-
+        global_element_node_offset = 0
         # For each column combination
         previous_combination = [None] * len(lists)
         for i_c, combination in enumerate(column_combinations[:max_n_col]):
+            element_node_offset = 0
             # ## Fill the label values
             labels = [
                 str(combination[i])
@@ -545,6 +546,7 @@ class DataFrame:
                             element_node_offset = max(
                                 element_node_offset, n_values_per_entity
                             )
+                            global_element_node_offset += element_node_offset
                         # Update number of values found to add per column
                         if isinstance(data[0], list):
                             n_values += len(data[0])
@@ -567,13 +569,23 @@ class DataFrame:
                             # If already found enough values to print
                             if n_values >= max_n_rows:
                                 # Add to cells
-                                cells[i_c + i_n + num_rows_indexes].extend(
-                                    values[:max_n_rows]
-                                )
+                                cells[
+                                    i_c
+                                    + global_element_node_offset
+                                    - element_node_offset
+                                    + i_n
+                                    + num_rows_indexes
+                                ].extend(values[:max_n_rows])
                                 # Exit the loop on fields
                                 break_loop = True
                             else:
-                                cells[i_c + i_n + num_rows_indexes].extend(values)
+                                cells[
+                                    i_c
+                                    + global_element_node_offset
+                                    - element_node_offset
+                                    + i_n
+                                    + num_rows_indexes
+                                ].extend(values)
                         if break_loop:
                             break
                     except Exception:
