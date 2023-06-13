@@ -220,7 +220,7 @@ def test_dataframe_str(transient_rst):
     ref = """
                 results      S (Pa)                                                                                  
                 set_ids          35                                                                                  
-                   node           1           2           3           4           5           6          7          8
+                   node           0           1           2           3           4           5          6          7
  element_ids components                                                                                              
          391         YY  1.3601e+06  1.2931e+06 -3.5347e+07 -2.7237e+07  2.8319e+07  5.2558e+06 8.1524e+07 8.7034e+07
          456             1.9918e+05 -8.0343e+06 -1.6874e+07 -3.3505e+07  5.8703e+06  1.9095e+06 3.5591e+07 8.8593e+07
