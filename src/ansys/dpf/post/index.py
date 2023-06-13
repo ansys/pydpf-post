@@ -303,7 +303,7 @@ class ElementNodeIndex(Index):
     ):
         """Initiate this class."""
         # We know there will be at least one node value per element.
-        super().__init__(name=ref_labels.element_node, values=[1])
+        super().__init__(name=ref_labels.element_node, values=[0])
 
 
 class MultiIndex:

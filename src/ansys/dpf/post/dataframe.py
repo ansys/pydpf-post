@@ -540,7 +540,7 @@ class DataFrame:
                                     element_node_offset + 1, n_values_per_entity
                                 ):
                                     to_append = [empty] * (num_column_indexes - 1)
-                                    to_append.append(str(i_n + 1))
+                                    to_append.append(str(i_n))
                                     to_append.append(empty)
                                     cells.append(to_append)
                             element_node_offset = max(
