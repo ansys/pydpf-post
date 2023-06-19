@@ -13,7 +13,7 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: '.pre1'
+        default: ''
 
 
 concurrency:
@@ -23,9 +23,9 @@ concurrency:
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
-  ANSYS_VERSION: '232'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  ANSYS_VERSION: '241'
 
 jobs:
   debug:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: "Setup Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v4.6.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -73,20 +73,20 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@v2.3
+        uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION: '241'
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ inputs.standalone_suffix }}
+          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
 
       - name: "Prepare Testing Environment"
-        uses: pyansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@v2.3
         with:
           DEBUG: true
 
@@ -95,7 +95,7 @@ jobs:
         run: pip list
 
       - name: "Test Docstrings"
-        uses: pyansys/pydpf-actions/test_docstrings@v2.3
+        uses: ansys/pydpf-actions/test_docstrings@v2.3
         with:
           MODULE: ${{env.MODULE}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
@@ -108,7 +108,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: pyansys/pydpf-actions/kill-dpf-servers@v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@v2.3
         if: always()
 
       - name: "Upload Test Results"
@@ -129,7 +129,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["231", "222", "221"]
+        ANSYS_VERSION: ["232", "231", "222", "221"]
 
     steps:
       - uses: actions/checkout@v3
@@ -142,7 +142,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: "Build Package"
-        uses: pyansys/pydpf-actions/build_package@v2.3
+        uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
@@ -162,7 +162,7 @@ jobs:
         if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
-        uses: pyansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@v2.3
         with:
           DEBUG: true
 
@@ -177,7 +177,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: pyansys/pydpf-actions/kill-dpf-servers@v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@v2.3
         if: always()
 
       - name: "Upload Test Results"
@@ -194,17 +194,17 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: "232"
+      ANSYS_VERSION: '241'
       python_versions: '["3.10"]'
-      standalone_suffix: ".pre1"
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
     secrets: inherit
 
   docs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: "232"
-      standalone_suffix: ".pre1"
+      ANSYS_VERSION: '241'
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
       event_name: ${{ github.event_name }}
     secrets: inherit
 
@@ -214,7 +214,7 @@ jobs:
     needs: [docs]
     steps:
       - name: "Upload development documentation"
-        uses: pyansys/actions/doc-deploy-dev@v4
+        uses: ansys/actions/doc-deploy-dev@v4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -158,7 +158,7 @@ html_theme = "ansys_sphinx_theme"
 html_logo = pyansys_logo_black
 html_facivon = ansys_favicon
 html_theme_options = {
-    "github_url": "https://github.com/pyansys/pydpf-post",
+    "github_url": "https://github.com/ansys/pydpf-post",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [

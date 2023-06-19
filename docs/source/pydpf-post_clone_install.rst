@@ -1,5 +1,5 @@
 .. code::
 
-    git clone https://github.com/pyansys/pydpf-post
+    git clone https://github.com/ansys/pydpf-post
     cd pydpf-post
     pip install -e .
