@@ -50,6 +50,7 @@ def test_simulation_units(static_simulation):
     assert static_simulation.units["time/frequency"] == "s"
     assert static_simulation.units["distance"] == "m"
 
+
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
