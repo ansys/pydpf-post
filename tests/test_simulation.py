@@ -44,6 +44,13 @@ def test_simulation_init_with_server(static_rst, grpc_server):
     assert simulation._model._server == grpc_server
 
 
+def test_simulation_units(static_simulation):
+    assert static_simulation._units is None
+    assert static_simulation.units is not None
+    assert static_simulation.units["time/frequency"] == "s"
+    assert static_simulation.units["distance"] == "m"
+
+
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
