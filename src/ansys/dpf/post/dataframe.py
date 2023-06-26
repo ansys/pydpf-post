@@ -535,13 +535,15 @@ class DataFrame:
                         # Try getting data for this entity ID in the current field
                         data = field.get_entity_data_by_id(entity_id).tolist()
                         n_values_per_entity = len(data)
+                        to_add = 1
                         # Update max number of node per element in case of elemental nodal
                         if field.location == locations.elemental_nodal:
                             # Update the cells table if more nodes per element than previously
                             if n_values_per_entity > max_n_values_per_entity:
-                                for i_n in range(
-                                    max_n_values_per_entity, n_values_per_entity
-                                ):
+                                to_add = max(
+                                    n_values_per_entity, max_n_col - num_rows_indexes
+                                )
+                                for i_n in range(max_n_values_per_entity, to_add):
                                     to_append = [empty] * (num_column_indexes - 1)
                                     to_append.append(str(i_n))
                                     to_append.append(empty)
@@ -558,7 +560,7 @@ class DataFrame:
                         # values_list = [f"{x:.4e}" for y in data for x in y]
                         break_loop = False
                         # Loop over the number of node columns to fill
-                        for i_n in range(max(max_n_values_per_entity, 1)):
+                        for i_n in range(to_add):
                             # Build list of str values to append to current column
                             if i_n < n_values_per_entity:
                                 values = data[i_n]
