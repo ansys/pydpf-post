@@ -29,10 +29,8 @@ from ansys.dpf.post.index import (
     ref_labels,
 )
 
-display_width = 100
-display_max_colwidth = 12
-display_max_columns = 6
-display_max_lines = 6
+default_display_max_columns = 6
+default_display_max_rows = 6
 
 
 class DataFrame:
@@ -83,10 +81,32 @@ class DataFrame:
         self._disp_wf = None
 
         self._str = None
-        self._last_display_width = display_width
-        self._last_display_max_colwidth = display_max_colwidth
+        self._display_max_columns = default_display_max_columns
+        self._display_max_rows = default_display_max_rows
+        self._last_display_max_columns = self._display_max_columns
+        self._last_display_max_rows = self._display_max_rows
 
         self._last_minmax: dict = {"axis": None, "min": None, "max": None}
+
+    @property
+    def display_max_columns(self) -> int:
+        """Returns the current maximum number of columns to display for this Dataframe."""
+        return self._display_max_columns
+
+    @display_max_columns.setter
+    def display_max_columns(self, max_columns: int):
+        """Sets a new maximum number of value columns to display for this Dataframe."""
+        self._display_max_columns = max_columns
+
+    @property
+    def display_max_rows(self) -> int:
+        """Returns the current maximum number of rows to display for this Dataframe."""
+        return self._display_max_rows
+
+    @display_max_rows.setter
+    def display_max_rows(self, max_rows: int):
+        """Sets a new maximum number of value rows to display for this Dataframe."""
+        self._display_max_rows = max_rows
 
     @property
     def columns(self) -> MultiIndex:
@@ -386,15 +406,17 @@ class DataFrame:
         """String representation of the DataFrame."""
         if (
             (self._str is None)
-            or (self._last_display_width != display_width)
-            or (self._last_display_max_colwidth != display_max_colwidth)
+            or (self._last_display_max_columns != self.display_max_columns)
+            or (self._last_display_max_rows != self.display_max_rows)
         ):
-            self._update_str(width=display_width, max_colwidth=display_max_colwidth)
-            self._last_display_width = display_width
-            self._last_display_max_colwidth = display_max_colwidth
+            self._update_str(
+                max_columns=self.display_max_columns, max_rows=self.display_max_rows
+            )
+            self._last_display_max_columns = self.display_max_columns
+            self._last_display_max_rows = self.display_max_rows
         return self._str
 
-    def _update_str(self, width: int, max_colwidth: int):
+    def _update_str(self, max_columns: int, max_rows: int):
         """Updates the DataFrame string representation using given display options.
 
         The string representation is limited to five lines, meaning any DataFrame with more than
@@ -402,18 +424,16 @@ class DataFrame:
 
         Parameters
         ----------
-        width:
-            Number of characters to use for the total width.
-        max_colwidth:
-            Maximum number of characters to use for each column.
+        max_columns:
+            Maximum number of value columns to show.
+        max_rows:
+            Maximum number of value rows to show.
         """
         cells = []
         lines = []
         # Static
         empty = ""
         truncated_str = "..."
-        max_n_col = display_max_columns
-        max_n_row = display_max_lines
         element_node_offset = 0
 
         # Create cells with row labels and values
@@ -433,9 +453,9 @@ class DataFrame:
             num_mesh_entities_to_ask = self._fc[0].size
         else:
             num_mesh_entities_to_ask = 0
-        if num_mesh_entities_to_ask > max_n_row:
-            num_mesh_entities_to_ask = max_n_row
-            truncate_row = max_n_row + num_column_indexes
+        if num_mesh_entities_to_ask > max_rows:
+            num_mesh_entities_to_ask = max_rows
+            truncate_row = max_rows + num_column_indexes
 
         comp_values = [1]
         entity_ids = None
@@ -455,7 +475,7 @@ class DataFrame:
             else:
                 values = index.values
             lists.append(values)
-        row_combinations = [p for p in itertools.product(*lists)][:max_n_row]
+        row_combinations = [p for p in itertools.product(*lists)][:max_rows]
 
         # Create column label values combinations
         lists = []
@@ -479,11 +499,11 @@ class DataFrame:
 
         # Find out whether columns will be truncated
         truncate_col = 0
-        if len(column_combinations) > max_n_col:
-            truncate_col = max_n_col + num_rows_indexes
-            column_combinations = column_combinations[:max_n_col]
+        if len(column_combinations) > max_columns:
+            truncate_col = max_columns + num_rows_indexes
+            column_combinations = column_combinations[:max_columns]
 
-        # Add row labels for the first max_n_row combinations
+        # Add row labels for the first max_rows combinations
         previous_combination = [None] * len(lists)
         for combination in row_combinations:
             [
@@ -499,9 +519,9 @@ class DataFrame:
         combination_index = num_rows_indexes
         # For each column combination
         previous_combination = [None] * len(lists)
-        for i_c, combination in enumerate(column_combinations[:max_n_col]):
-            if combination_index > max_n_col + num_rows_indexes:
-                truncate_col = max_n_col + num_rows_indexes
+        for i_c, combination in enumerate(column_combinations[:max_columns]):
+            if combination_index > max_columns + num_rows_indexes:
+                truncate_col = max_columns + num_rows_indexes
                 break
             max_n_col_per_entity = 1
             # ## Fill the label values
@@ -553,8 +573,8 @@ class DataFrame:
                             max_n_col_per_entity = max(
                                 max_n_col_per_entity, n_col_per_entity
                             )
-                        if n_col_per_entity > max_n_col:
-                            truncate_col = max_n_col + num_rows_indexes
+                        if n_col_per_entity > max_columns:
+                            truncate_col = max_columns + num_rows_indexes
                         # Update number of values found to add per column
                         if isinstance(data[0], list):
                             n_values += len(data[0])
@@ -573,10 +593,10 @@ class DataFrame:
                                 else:
                                     values = [f"{values:.4e}"]
                             else:
-                                values = [empty] * max_n_row
+                                values = [empty] * max_rows
                             cells[combination_index + i_n].extend(values)
                             # If already found enough values to print
-                            if n_values >= max_n_row:
+                            if n_values >= max_rows:
                                 # Exit the loop on fields
                                 break_loop = True
                         if break_loop:
@@ -585,7 +605,7 @@ class DataFrame:
                         # If entity data not found in this field, try next field
                         continue
                 # If already found enough values to print
-                if n_values >= max_n_row:
+                if n_values >= max_rows:
                     # Exit the loop on entity IDs
                     break
                 if not values:
