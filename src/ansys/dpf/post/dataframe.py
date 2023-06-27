@@ -458,7 +458,7 @@ class DataFrame:
             truncate_row = max_rows + num_column_indexes
 
         comp_values = [1]
-        entity_ids = None
+        entity_ids = [1]
 
         # Create row label values combinations
         lists = []
