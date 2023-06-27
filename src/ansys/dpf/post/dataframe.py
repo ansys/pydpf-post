@@ -31,6 +31,7 @@ from ansys.dpf.post.index import (
 
 display_width = 100
 display_max_colwidth = 12
+display_max_columns = 6
 display_max_lines = 6
 
 
@@ -411,14 +412,13 @@ class DataFrame:
         # Static
         empty = ""
         truncated_str = "..."
-        max_n_col = 8
-        max_n_rows = display_max_lines
+        max_n_col = display_max_columns
+        max_n_row = display_max_lines
         element_node_offset = 0
 
         # Create cells with row labels and values
         num_column_indexes = len(self.columns)
         num_rows_indexes = len(self.index)
-        max_n_col = max_n_col - num_rows_indexes
 
         # Add top-left empty space above row headers
         cells.extend([[empty] * num_column_indexes] * (num_rows_indexes - 1))
@@ -428,14 +428,14 @@ class DataFrame:
         [cells[i].append(row.name) for i, row in enumerate(self._index)]
 
         # Find out whether rows will be truncated
-        truncated = False
+        truncate_row = 0
         if len(self._fc) > 0:
             num_mesh_entities_to_ask = self._fc[0].size
         else:
             num_mesh_entities_to_ask = 0
-        if num_mesh_entities_to_ask > max_n_rows:
-            num_mesh_entities_to_ask = max_n_rows
-            truncated = True
+        if num_mesh_entities_to_ask > max_n_row:
+            num_mesh_entities_to_ask = max_n_row
+            truncate_row = max_n_row + num_column_indexes
 
         comp_values = [1]
         entity_ids = None
@@ -455,7 +455,7 @@ class DataFrame:
             else:
                 values = index.values
             lists.append(values)
-        row_combinations = [p for p in itertools.product(*lists)][:max_n_rows]
+        row_combinations = [p for p in itertools.product(*lists)][:max_n_row]
 
         # Create column label values combinations
         lists = []
@@ -478,12 +478,12 @@ class DataFrame:
         column_combinations = [p for p in itertools.product(*lists)]
 
         # Find out whether columns will be truncated
-        truncated_columns = False
+        truncate_col = 0
         if len(column_combinations) > max_n_col:
-            truncated_columns = True
+            truncate_col = max_n_col + num_rows_indexes
             column_combinations = column_combinations[:max_n_col]
 
-        # Add row labels for the first max_n_rows combinations
+        # Add row labels for the first max_n_row combinations
         previous_combination = [None] * len(lists)
         for combination in row_combinations:
             [
@@ -501,8 +501,9 @@ class DataFrame:
         previous_combination = [None] * len(lists)
         for i_c, combination in enumerate(column_combinations[:max_n_col]):
             if combination_index > max_n_col + num_rows_indexes:
+                truncate_col = max_n_col + num_rows_indexes
                 break
-            max_n_values_per_entity = 1
+            max_n_col_per_entity = 1
             # ## Fill the label values
             labels = [
                 str(combination[i])
@@ -527,30 +528,33 @@ class DataFrame:
             # Start counting values found
             n_values = 0
             # Loop over asked entities
-            for entity_id in entity_ids:
+            for e, entity_id in enumerate(entity_ids):
                 values = []
                 # Look for data for this entity in each field
                 for field in fields:
                     try:
                         # Try getting data for this entity ID in the current field
                         data = field.get_entity_data_by_id(entity_id).tolist()
-                        n_values_per_entity = len(data)
-                        to_add = 1
+                        n_col_per_entity = len(data)
                         # Update max number of node per element in case of elemental nodal
                         if field.location == locations.elemental_nodal:
                             # Update the cells table if more nodes per element than previously
-                            if n_values_per_entity > max_n_values_per_entity:
-                                to_add = max(
-                                    n_values_per_entity, max_n_col - num_rows_indexes
-                                )
-                                for i_n in range(max_n_values_per_entity, to_add):
+                            if n_col_per_entity > max_n_col_per_entity:
+                                for i_n in range(
+                                    max_n_col_per_entity, n_col_per_entity
+                                ):
                                     to_append = [empty] * (num_column_indexes - 1)
                                     to_append.append(str(i_n))
                                     to_append.append(empty)
+                                    to_append.extend(
+                                        [empty] * e
+                                    )  # Pad previous entity lines
                                     cells.append(to_append)
-                            max_n_values_per_entity = max(
-                                max_n_values_per_entity, n_values_per_entity
+                            max_n_col_per_entity = max(
+                                max_n_col_per_entity, n_col_per_entity
                             )
+                        if n_col_per_entity > max_n_col:
+                            truncate_col = max_n_col + num_rows_indexes
                         # Update number of values found to add per column
                         if isinstance(data[0], list):
                             n_values += len(data[0])
@@ -560,33 +564,28 @@ class DataFrame:
                         # values_list = [f"{x:.4e}" for y in data for x in y]
                         break_loop = False
                         # Loop over the number of node columns to fill
-                        for i_n in range(to_add):
+                        for i_n in range(n_col_per_entity):
                             # Build list of str values to append to current column
-                            if i_n < n_values_per_entity:
+                            if i_n < n_col_per_entity:
                                 values = data[i_n]
                                 if isinstance(values, list):
                                     values = [f"{x:.4e}" for x in values]
                                 else:
                                     values = [f"{values:.4e}"]
                             else:
-                                values = [empty] * max_n_rows
+                                values = [empty] * max_n_row
+                            cells[combination_index + i_n].extend(values)
                             # If already found enough values to print
-                            if n_values >= max_n_rows:
-                                # Add to cells
-                                cells[combination_index + i_n].extend(
-                                    values[:max_n_rows]
-                                )
+                            if n_values >= max_n_row:
                                 # Exit the loop on fields
                                 break_loop = True
-                            else:
-                                cells[combination_index + i_n].extend(values)
                         if break_loop:
                             break
                     except Exception:
                         # If entity data not found in this field, try next field
                         continue
                 # If already found enough values to print
-                if n_values >= max_n_rows:
+                if n_values >= max_n_row:
                     # Exit the loop on entity IDs
                     break
                 if not values:
@@ -595,26 +594,43 @@ class DataFrame:
                     n_values += len(values)
                     cells[combination_index].extend(*values)
 
-            combination_index += max_n_values_per_entity
+            combination_index += max_n_col_per_entity
 
-        if truncated_columns:
-            cells.append([truncated_str] * len(cells[0]))
-
-        if truncated:
-            for column in cells:
-                column.append(truncated_str)
-
-        self._str = self._format_cells(cells=cells)
+        self._str = self._format_cells(
+            cells=cells, truncate_col=truncate_col, truncate_row=truncate_row
+        )
 
     @staticmethod
-    def _format_cells(cells: List[List[str]]) -> str:
+    def _format_cells(
+        cells: List[List[str]],
+        truncate_col: int = 0,
+        truncate_row: int = 0,
+    ) -> str:
         """Format the data cells into one string.
 
         Argument cells is a list of column data, each one itself a list of row data.
         """
+        truncated_str = "..."
+
+        # Truncate columns
+        if truncate_col:
+            cells = cells[:truncate_col]
+            cells.append([truncated_str] * len(cells[0]))
+
+        # Truncate rows
+        if truncate_row:
+            for i in range(len(cells)):
+                cells[i] = cells[i][: truncate_row + 1]
+                cells[i].append(truncated_str)
         n_lines = len(cells[0])
+
         lines = [""] * n_lines
-        for column in cells:
+        for c, column in enumerate(cells):
+            if len(column) != n_lines:
+                print(cells)
+                raise ValueError(
+                    f"Column {c} has {len(column)} lines instead of {n_lines}!"
+                )
             max_length = max(map(len, column))
             for i in range(n_lines):
                 lines[i] += column[i].rjust(max_length + 1)
