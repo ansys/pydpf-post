@@ -477,6 +477,19 @@ class DataFrame:
             lists.append(values)
         row_combinations = [p for p in itertools.product(*lists)][:max_rows]
 
+        # Add row labels for the first max_rows combinations
+        previous_combination = [None] * len(lists)
+        for combination in row_combinations:
+            [
+                cells[i + element_node_offset].append(
+                    str(combination[i])
+                    if combination[i] != previous_combination[i]
+                    else empty
+                )
+                for i in range(len(combination))
+            ]
+            previous_combination = combination
+
         # Create column label values combinations
         lists = []
         label_positions_in_combinations = {}
@@ -502,19 +515,6 @@ class DataFrame:
         if len(column_combinations) > max_columns:
             truncate_col = max_columns + num_rows_indexes
             column_combinations = column_combinations[:max_columns]
-
-        # Add row labels for the first max_rows combinations
-        previous_combination = [None] * len(lists)
-        for combination in row_combinations:
-            [
-                cells[i + element_node_offset].append(
-                    str(combination[i])
-                    if combination[i] != previous_combination[i]
-                    else empty
-                )
-                for i in range(len(combination))
-            ]
-            previous_combination = combination
 
         combination_index = num_rows_indexes
         # For each column combination
