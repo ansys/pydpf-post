@@ -75,12 +75,12 @@ class Index(ABC):
 
     def __repr__(self):
         """Representation of the Index."""
-        return f'Index<name="{self._name}", dtype={self._dtype}>'
+        return f'{type(self).__name__}<name="{self._name}", dtype={self._dtype}>'
 
     def __str__(self):
         """String representation of the Index."""
         return (
-            f'Index "{self._name}" with '
+            f'{type(self).__name__} "{self._name}" with '
             f"{len(self._values) if self._values is not None else 'uncounted'} "
             f"values of {self._dtype if self._dtype is not None else 'undetermined'} type"
         )
