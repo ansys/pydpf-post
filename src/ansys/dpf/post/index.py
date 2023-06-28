@@ -135,10 +135,7 @@ class MeshIndex(Index):
         if fc is not None:
             self._fc = weakref.ref(fc)
         super().__init__(name=name, values=values, scoping=scoping)
-
-    def __repr__(self):
-        """Representation of the MeshIndex."""
-        return f'MeshIndex<name="{self._name}", dtype={int}>'
+        self._dtype = int
 
     def _evaluate_values(self):
         """Evaluates the values of the MeshIndex."""
