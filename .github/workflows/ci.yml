@@ -13,7 +13,7 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: '.pre1'
+        default: ''
 
 
 concurrency:
@@ -23,9 +23,9 @@ concurrency:
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
-  ANSYS_VERSION: '232'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  ANSYS_VERSION: '241'
 
 jobs:
   debug:
@@ -76,14 +76,14 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION: '241'
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ inputs.standalone_suffix }}
+          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -129,7 +129,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["231", "222", "221"]
+        ANSYS_VERSION: ["232", "231", "222", "221"]
 
     steps:
       - uses: actions/checkout@v3
@@ -194,17 +194,17 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: "232"
+      ANSYS_VERSION: '241'
       python_versions: '["3.10"]'
-      standalone_suffix: ".pre1"
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
     secrets: inherit
 
   docs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: "232"
-      standalone_suffix: ".pre1"
+      ANSYS_VERSION: '241'
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
       event_name: ${{ github.event_name }}
     secrets: inherit
 
