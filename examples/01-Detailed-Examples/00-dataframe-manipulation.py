@@ -77,17 +77,17 @@ print(displacement_dataframe.index[0])
 # IMPORTANT: Note that the mesh entity IDs ordered based on the internal data storage structure,
 # they are not by ascending order by default!
 
-# A ``CompIndex`` defines the result components for which data is available
+# A ``CompIndex`` defines the result components for which data is available.
 print(displacement_dataframe.index[1])
 print(displacement_dataframe.index[1].values)
 
 # Change the Dataframe print
 # --------------------------
 # Options exist to configure the way a Dataframe is displayed.
-# You can change the number of data rows displayed
+# You can change the number of data rows displayed with:
 displacement_dataframe.display_max_rows = 9
 print(displacement_dataframe)
-# Or the number of data columns displayed
+# Or the number of data columns displayed with:
 displacement_dataframe.display_max_columns = 2
 print(displacement_dataframe)
 # Notice that the ``...`` symbols specify that the Dataframe is truncated in that direction.
@@ -99,4 +99,32 @@ print(displacement_dataframe)
 # element's connectivity.
 stress = simulation.stress()
 print(stress)
-print(stress.columns)
+print(stress.columns[2])
+
+# Plot the Dataframe
+# ------------------
+# displacement_dataframe.plot()
+
+# Data selection
+# --------------
+# To select specific columns or rows, use the index names as arguments for the ``DataFrame.select``
+# method, taking lists of values:
+disp_X_1 = displacement_dataframe.select(
+    set_ids=[1], node_ids=[4872, 9005], components=["X"]
+)
+print(disp_X_1)
+
+# You can also select along an index using a zero-based position with ``Dataframe.iselect``:
+disp_Y_9005_3 = displacement_dataframe.iselect(
+    set_ids=[2], node_ids=[1], components=[1]
+)
+print(disp_Y_9005_3)
+
+# Extract data
+# ------------
+# Once the Dataframe contains the specific data you require, extract it as an array with:
+print(disp_X_1.array)
+# IMPORTANT: Note that for the extraction of the Dataframe's data as an array to make sense,
+# you must first filter the columns label values to a unique combination of values.
+# The exception is for ElementalNodal data, which is returned as a 2D array.
+print(stress.array.shape)
