@@ -153,7 +153,7 @@ def test_dataframe_repr(df):
         "DataFrame<"
         "index=MultiIndex<["
         "MeshIndex<name=\"node_ids\", dtype=<class 'int'>>, "
-        "Index<name=\"components\", dtype=<class 'str'>>"
+        "CompIndex<name=\"components\", dtype=<class 'str'>>"
         "]>, "
         "columns=MultiIndex<["
         "ResultIndex<['U (m)']>, "
