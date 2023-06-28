@@ -14,6 +14,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 from ansys.dpf.core.plotter import DpfPlotter
+import ansys.dpf.gate.errors
 import numpy as np
 
 from ansys.dpf.post import locations, shell_layers
@@ -554,55 +555,56 @@ class DataFrame:
                     try:
                         # Try getting data for this entity ID in the current field
                         data = field.get_entity_data_by_id(entity_id).tolist()
-                        n_col_per_entity = len(data)
-                        # Update max number of node per element in case of elemental nodal
-                        if field.location == locations.elemental_nodal:
-                            # Update the cells table if more nodes per element than previously
-                            if n_col_per_entity > max_n_col_per_entity:
-                                for i_n in range(
-                                    max_n_col_per_entity, n_col_per_entity
-                                ):
-                                    to_append = [empty] * (num_column_indexes - 1)
-                                    to_append.append(str(i_n))
-                                    to_append.append(empty)
-                                    to_append.extend(
-                                        [empty] * e
-                                    )  # Pad previous entity lines
-                                    cells.append(to_append)
-                            max_n_col_per_entity = max(
-                                max_n_col_per_entity, n_col_per_entity
-                            )
-                        if n_col_per_entity > max_columns:
-                            truncate_col = max_columns + num_rows_indexes
-                        # Update number of values found to add per column
-                        if isinstance(data[0], list):
-                            n_values += len(data[0])
-                        else:
-                            n_values += 1
-                        # # Flatten obtained data and format to string
-                        # values_list = [f"{x:.4e}" for y in data for x in y]
-                        break_loop = False
-                        # Loop over the number of node columns to fill
-                        for i_n in range(n_col_per_entity):
-                            # Build list of str values to append to current column
-                            if i_n < n_col_per_entity:
-                                values = data[i_n]
-                                if isinstance(values, list):
-                                    values = [f"{x:.4e}" for x in values]
-                                else:
-                                    values = [f"{values:.4e}"]
-                            else:
-                                values = [empty] * max_rows
-                            cells[combination_index + i_n].extend(values)
-                            # If already found enough values to print
-                            if n_values >= max_rows:
-                                # Exit the loop on fields
-                                break_loop = True
-                        if break_loop:
-                            break
-                    except Exception:
+                    except ansys.dpf.gate.errors.DPFServerException as e:
                         # If entity data not found in this field, try next field
-                        continue
+                        if "Field_GetEntityDataById" in str(e):
+                            continue
+                        else:
+                            raise e
+                    n_col_per_entity = len(data)
+                    # Update max number of node per element in case of elemental nodal
+                    if field.location == locations.elemental_nodal:
+                        # Update the cells table if more nodes per element than previously
+                        if n_col_per_entity > max_n_col_per_entity:
+                            for i_n in range(max_n_col_per_entity, n_col_per_entity):
+                                to_append = [empty] * (num_column_indexes - 1)
+                                to_append.append(str(i_n))
+                                to_append.append(empty)
+                                to_append.extend(
+                                    [empty] * e
+                                )  # Pad previous entity lines
+                                cells.append(to_append)
+                        max_n_col_per_entity = max(
+                            max_n_col_per_entity, n_col_per_entity
+                        )
+                    if n_col_per_entity > max_columns:
+                        truncate_col = max_columns + num_rows_indexes
+                    # Update number of values found to add per column
+                    if isinstance(data[0], list):
+                        n_values += len(data[0])
+                    else:
+                        n_values += 1
+                    # # Flatten obtained data and format to string
+                    # values_list = [f"{x:.4e}" for y in data for x in y]
+                    break_loop = False
+                    # Loop over the number of node columns to fill
+                    for i_n in range(n_col_per_entity):
+                        # Build list of str values to append to current column
+                        if i_n < n_col_per_entity:
+                            values = data[i_n]
+                            if isinstance(values, list):
+                                values = [f"{x:.4e}" for x in values]
+                            else:
+                                values = [f"{values:.4e}"]
+                        else:
+                            values = [empty] * max_rows
+                        cells[combination_index + i_n].extend(values)
+                        # If already found enough values to print
+                        if n_values >= max_rows:
+                            # Exit the loop on fields
+                            break_loop = True
+                    if break_loop:
+                        break
                 # If already found enough values to print
                 if n_values >= max_rows:
                     # Exit the loop on entity IDs
