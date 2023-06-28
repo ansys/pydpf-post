@@ -101,10 +101,6 @@ stress = simulation.stress()
 print(stress)
 print(stress.columns[2])
 
-# Plot the Dataframe
-# ------------------
-# displacement_dataframe.plot()
-
 # Data selection
 # --------------
 # To select specific columns or rows, use the index names as arguments for the ``DataFrame.select``
@@ -128,3 +124,11 @@ print(disp_X_1.array)
 # you must first filter the columns label values to a unique combination of values.
 # The exception is for ElementalNodal data, which is returned as a 2D array.
 print(stress.array.shape)
+
+# Plot a Dataframe
+# ------------------
+displacement_dataframe.plot()
+
+# Animate a transient Dataframe
+# -----------------------------
+displacement_dataframe.animate()
