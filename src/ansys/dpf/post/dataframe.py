@@ -433,7 +433,6 @@ class DataFrame:
         lines = []
         # Static
         empty = ""
-        truncated_str = "..."
         element_node_offset = 0
 
         # Create cells with row labels and values
@@ -445,7 +444,7 @@ class DataFrame:
         # Add column headers cells
         cells.append([c.name for c in self.columns])
         # Add row headers
-        [cells[i].append(row.name) for i, row in enumerate(self._index)]
+        _ = [cells[i].append(row.name) for i, row in enumerate(self._index)]
 
         # Find out whether rows will be truncated
         truncate_row = 0
@@ -519,7 +518,7 @@ class DataFrame:
         combination_index = num_rows_indexes
         # For each column combination
         previous_combination = [None] * len(lists)
-        for i_c, combination in enumerate(column_combinations[:max_columns]):
+        for combination in column_combinations[:max_columns]:
             if combination_index > max_columns + num_rows_indexes:
                 truncate_col = max_columns + num_rows_indexes
                 break
@@ -639,7 +638,7 @@ class DataFrame:
 
         # Truncate rows
         if truncate_row:
-            for i in range(len(cells)):
+            for i, _ in enumerate(cells):
                 cells[i] = cells[i][: truncate_row + 1]
                 cells[i].append(truncated_str)
         n_lines = len(cells[0])
