@@ -207,11 +207,14 @@ def test_get_scoping_at_field(plate_msup):
 
 def test_print(plate_msup):
     result = post.load_solution(plate_msup)
-    print(result)
+    # print(result)
+    str(result)
     d = result.displacement(time_scoping=[1, 2, 4])
-    print(d)
+    # print(d)
+    str(d)
     disp = d.vector
-    print(disp)
+    # print(disp)
+    str(disp)
 
 
 def test_plot_chart(plate_msup):

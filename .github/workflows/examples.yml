@@ -11,12 +11,12 @@ on:
       ANSYS_VERSION:
         required: false
         type: string
-        default: "232"
+        default: "241"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
         required: false
         type: string
-        default: '.pre1'
+        default: ''
       custom-requirements:
         description: "Path to requirements.txt file to install"
         required: false
@@ -39,12 +39,12 @@ on:
         description: "ANSYS version to run."
         required: true
         type: string
-        default: "232"
+        default: "241"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
         required: false
         type: string
-        default: '.pre1'
+        default: ''
       custom-requirements:
         description: "Path to requirements.txt file to install"
         required: false

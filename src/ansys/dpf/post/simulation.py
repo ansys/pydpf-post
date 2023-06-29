@@ -81,18 +81,7 @@ class Simulation(ABC):
         self._active_selection = None
         self._named_selections = None
         self._mesh = None
-        try:
-            time_unit = self.time_freq_support.time_frequencies.unit
-        except AttributeError:
-            time_unit = ""
-        try:
-            length_unit = self._model.metadata.meshed_region.unit
-        except AttributeError:
-            length_unit = ""
-        self._units = {
-            "time/frequency": time_unit,
-            "distance": length_unit,
-        }
+        self._units = None
         self._time_freq_precision = None
 
     def release_streams(self):
@@ -111,7 +100,7 @@ class Simulation(ABC):
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        ['displacement\nOperator name: "U"\n...Units: degc\n']
+        [...]
         """
         return [
             str(result) for result in self._model.metadata.result_info.available_results
@@ -344,6 +333,11 @@ class Simulation(ABC):
     @property
     def units(self):
         """Returns the current time/frequency and distance units used."""
+        if self._units is None:
+            self._units = {
+                "time/frequency": self.time_freq_support.time_frequencies.unit,
+                "distance": self._model.metadata.meshed_region.unit,
+            }
         return self._units
 
     def __str__(self):

@@ -28,6 +28,7 @@ class ref_labels:
     elemental_nodal = "element_ids"
     step = "step_ids"
     overall = "overall"
+    element_node = "node"
 
 
 location_to_label = {
@@ -77,12 +78,12 @@ class Index(ABC):
 
     def __repr__(self):
         """Representation of the Index."""
-        return f'Index<name="{self._name}", dtype={self._dtype}>'
+        return f'{type(self).__name__}<name="{self._name}", dtype={self._dtype}>'
 
     def __str__(self):
         """String representation of the Index."""
         return (
-            f'Index "{self._name}" with '
+            f'{type(self).__name__} "{self._name}" with '
             f"{len(self._values) if self._values is not None else 'uncounted'} "
             f"values of {self._dtype if self._dtype is not None else 'undetermined'} type"
         )
@@ -137,10 +138,7 @@ class MeshIndex(Index):
         if fc is not None:
             self._fc = weakref.ref(fc)
         super().__init__(name=name, values=values, scoping=scoping)
-
-    def __repr__(self):
-        """Representation of the MeshIndex."""
-        return f'MeshIndex<name="{self._name}", dtype={int}>'
+        self._dtype = int
 
     def _evaluate_values(self):
         """Evaluates the values of the MeshIndex."""
@@ -297,6 +295,17 @@ class CompIndex(Index):
         super().__init__(name=ref_labels.components, values=values)
 
 
+class ElementNodeIndex(Index):
+    """Index class specific to elemental nodal results."""
+
+    def __init__(
+        self,
+    ):
+        """Initiate this class."""
+        # We know there will be at least one node value per element.
+        super().__init__(name=ref_labels.element_node, values=[0])
+
+
 class MultiIndex:
     """A Pandas style API to manipulate multi-indexes."""
 
@@ -317,6 +326,11 @@ class MultiIndex:
         # self._result_names = None
         for _, index in enumerate(self._indexes):
             setattr(self, index.name, index)
+
+    @property
+    def indexes(self) -> List[Index]:
+        """Returns the list of Index in the MultiIndex."""
+        return self._indexes
 
     # @property
     # def labels(self):
