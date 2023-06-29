@@ -344,7 +344,7 @@ def test_raise_displacement_elemental_location(allkindofcomplexity):
 def test_displacement(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     vector = solution.displacement()
-    print(vector)
+    # print(vector)
     assert vector._operator_name == "U"
     value = vector.vector
     assert np.isclose(value[0].data[3][0], 9.805953798104982e-06)
@@ -380,7 +380,7 @@ def test_displacement(allkindofcomplexity):
 def test_displacement_complex(complex_model):
     solution = post.load_solution(complex_model)
     vector = solution.displacement()
-    print(vector)
+    # print(vector)
     assert vector._operator_name == "U"
     value = vector.vector
     assert np.allclose(
@@ -476,7 +476,7 @@ def test_stress(allkindofcomplexity):
 def test_stress_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.stress()
-    print(tensor)
+    # print(tensor)
     assert tensor._operator_name == "S"
     value = tensor.tensor
     assert np.allclose(
@@ -561,21 +561,21 @@ def test_stress_complex(complex_model):
 def test_plastic_strain(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     tensor = solution.plastic_strain()
-    print(tensor)
+    # print(tensor)
     assert tensor._operator_name == "EPPL"
 
 
 def test_plastic_strain_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.plastic_strain()
-    print(tensor)
+    # print(tensor)
     assert tensor._operator_name == "EPPL"
 
 
 def test_elastic_strain(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     tensor = solution.elastic_strain()
-    print(tensor)
+    # print(tensor)
     assert tensor._operator_name == "EPEL"
     value = tensor.tensor
     assert value[0].data[3][0]
@@ -624,7 +624,7 @@ def test_elastic_strain(allkindofcomplexity):
 def test_elastic_strain_complex(complex_model):
     solution = post.load_solution(complex_model)
     tensor = solution.elastic_strain()
-    print(tensor)
+    # print(tensor)
     assert tensor._operator_name == "EPEL"
     value = tensor.tensor
     assert np.allclose(
@@ -670,7 +670,7 @@ def test_elastic_strain_complex(complex_model):
 def test_temperature(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     temp = solution.structural_temperature()
-    print(temp)
+    # print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
     assert value.num_fields == 2
@@ -706,7 +706,7 @@ def test_temperature(allkindofcomplexity):
 def test_temperature_complex(complex_model):
     solution = post.load_solution(complex_model)
     temp = solution.structural_temperature()
-    print(temp)
+    # print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
     assert value.num_fields == 2
