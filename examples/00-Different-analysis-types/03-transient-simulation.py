@@ -26,9 +26,10 @@ from ansys.dpf.post import examples
 # on Linux.
 
 example_path = examples.find_msup_transient()
+# to automatically detect the simulation type, use:
 simulation = post.load_simulation(example_path)
 
-# for no autocompletion, this line is equivalent to:
+# to enable auto-completion, use the equivalent:
 simulation = post.TransientMechanicalSimulation(example_path)
 
 # print the simulation to get an overview of what's available

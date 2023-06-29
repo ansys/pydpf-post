@@ -13,7 +13,7 @@ def test_resultdefinition_init(allkindofcomplexity):
     stress2 = solution.stress(
         node_scoping=2, time_scoping=1, grouping=post.grouping.by_material
     )
-    print(stress2)
+    # print(stress2)
     definition2 = stress2.definition
     assert definition2.node_scoping == 2
     assert definition2.time_scoping == 1
@@ -22,13 +22,13 @@ def test_resultdefinition_init(allkindofcomplexity):
     stress3 = solution.stress(
         element_scoping=2, time=0.1, location=post.locations.elemental
     )
-    print(stress3)
+    # print(stress3)
     definition3 = stress3.definition
     assert definition3.element_scoping == 2
     assert definition3.time == 0.1
     assert definition3.location == post.locations.elemental
     stress4 = solution.stress(named_selection="SELECTION", set=1)
-    print(stress4)
+    # print(stress4)
     definition4 = stress4.definition
     assert definition4.named_selection == "SELECTION"
     assert definition4.set == 1
