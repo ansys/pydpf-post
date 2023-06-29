@@ -20,7 +20,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 @fixture
 def df(static_rst):
     simulation = StaticMechanicalSimulation(static_rst)
-    print(simulation._model._server.version)
+    # print(simulation._model._server.version)
     return simulation.displacement()
 
 
@@ -81,14 +81,18 @@ def test_dataframe_from_error():
 
 def test_dataframe_columns(df):
     columns = df.columns
-    print(repr(columns))
-    print(columns)
+    repr(columns)
+    # print(repr(columns))
+    str(columns)
+    # print(columns)
 
 
 def test_dataframe_index(df):
     index = df.index
-    print(repr(index))
-    print(index)
+    # print(repr(index))
+    repr(index)
+    # print(index)
+    str(index)
 
 
 def test_dataframe_select_raise(df, transient_rst):
@@ -115,7 +119,7 @@ def test_dataframe_iselect(df):
     assert all(df2.mesh_index.values == [1, 26])
     assert df2.index.components.values == ["X"]
     assert df2.columns.set_ids.values == [1]
-    print(df2)
+    # print(df2)
 
 
 def test_dataframe_plot(df, multi_stage_cyclic):
@@ -124,7 +128,7 @@ def test_dataframe_plot(df, multi_stage_cyclic):
     simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
     # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
     df2 = simulation.stress_nodal(expand_cyclic=False)
-    print(df2)
+    # print(df2)
     df2.plot()
     df2.plot(stage=0)
     with pytest.raises(ValueError, match="must be a single value"):
@@ -166,7 +170,7 @@ def test_dataframe_repr(df):
 def test_dataframe_str(transient_rst):
     simulation = TransientMechanicalSimulation(transient_rst)
     df = simulation.displacement(all_sets=True)
-    print(df)
+    # print(df)
     ref = """
              results      U (m)                                                             ...
              set_ids          1           2           3           4           5           6 ...
@@ -181,7 +185,7 @@ def test_dataframe_str(transient_rst):
 """  # noqa: W291, E501
     assert str(df) == ref
     df2 = df.select(node_ids=525)
-    print(df2)
+    # print(df2)
     ref = """
              results      U (m)                                                             ...
              set_ids          1           2           3           4           5           6 ...
@@ -193,7 +197,7 @@ def test_dataframe_str(transient_rst):
     assert str(df2) == ref
 
     df = simulation.stress()
-    print(df)
+    # print(df)
     # print(df._fc[0].get_entity_data_by_id(391))
     ref = """
                 results      S (Pa)                                                             ...
@@ -216,7 +220,7 @@ def test_dataframe_str(transient_rst):
     # print(df._fc[0].get_entity_data_by_id(261)[0][1])
     # print(df._fc[0].get_entity_data_by_id(66)[0][1])
     df2 = df.select(components="YY")
-    print(df2)
+    # print(df2)
     ref = """
                 results      S (Pa)                                                             ...
                 set_ids          35                                                             ...
@@ -233,7 +237,7 @@ def test_dataframe_str(transient_rst):
     assert str(df2) == ref
 
     df = simulation.stress(all_sets=True)
-    print(df)
+    # print(df)
     ref = """
                 results     S (Pa)                                                        ...
                 set_ids          1                                                        ...
