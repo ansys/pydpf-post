@@ -53,9 +53,9 @@ server = dpf.SERVER
 print(server.version)
 available_operators = available_operator_names(server=server)
 cff_operators = [operator for operator in available_operators if "cff::" in operator]
-print("CFF operators ==============================================")
+print("CFF operators =============================================")
 print(cff_operators)
-print("============================================================")
+print("===========================================================")
 
 # Load the fluid analysis result
 cas = fluid_example["cas"]
