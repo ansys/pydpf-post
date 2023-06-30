@@ -13,7 +13,7 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: '.pre1'
+        default: ''
 
 
 concurrency:
@@ -23,9 +23,9 @@ concurrency:
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
-  ANSYS_VERSION: '241'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  ANSYS_VERSION: '241'
 
 jobs:
   debug:
@@ -83,7 +83,7 @@ jobs:
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
+          standalone_suffix: ${{ inputs.standalone_suffix || ''}}
           extra-pip-args: ${{ './dpf-standalone/v241/dist' && format('--find-links {0}', './dpf-standalone/v241/dist')}}
           custom-requirements: requirements/requirements_dev.txt
 
@@ -131,7 +131,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["232", "231", "222"]
+        ANSYS_VERSION: ["232", "231", "222", "221"]
 
     steps:
       - uses: actions/checkout@v3
@@ -197,7 +197,7 @@ jobs:
     with:
       ANSYS_VERSION: "241"
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       custom-wheels: ${{ format('--find-links {0}', './dpf-standalone/v241/dist')}}
       custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
@@ -207,7 +207,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: "241"
-      standalone_suffix: ${{ inputs.standalone_suffix || '_test'}}
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
       custom-wheels: ./dpf-standalone/v241/dist
       custom-requirements: requirements/requirements_dev.txt
