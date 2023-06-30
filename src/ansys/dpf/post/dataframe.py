@@ -545,9 +545,10 @@ class DataFrame:
                 if label_name == ref_labels.set_ids:
                     label_name = ref_labels.time
                 try:
-                    label_space[label_name] = value.split("(")[1].split(")")[0]
+                    value = value.split("(")[1].split(")")[0]
                 except AttributeError:
-                    label_space[label_name] = value
+                    pass
+                label_space[label_name] = int(value)
             fields = self._fc.get_fields(label_space=label_space)
 
             # Start counting values found
