@@ -1,4 +1,5 @@
 import ansys.dpf.core as core
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -114,6 +115,10 @@ def test_dataframe_select(df):
     # print(df2)
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
+)
 def test_dataframe_select_cells():
     simulation = post.FluidSimulation(examples.fluid_axial_model())
     df = simulation.enthalpy()
