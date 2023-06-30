@@ -567,6 +567,8 @@ class DataFrame:
                             continue
                         else:
                             raise e
+                    except ValueError:
+                        continue
                     n_col_per_entity = len(data)
                     # Update max number of node per element in case of elemental nodal
                     if field.location == locations.elemental_nodal:
