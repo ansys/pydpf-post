@@ -544,10 +544,10 @@ class DataFrame:
                 value = combination[label_positions_in_combinations[label_name]]
                 if label_name == ref_labels.set_ids:
                     label_name = ref_labels.time
-                    try:
-                        label_space[label_name] = value.split("(")[1].split(")")[0]
-                    except AttributeError:
-                        label_space[label_name] = value
+                try:
+                    label_space[label_name] = value.split("(")[1].split(")")[0]
+                except AttributeError:
+                    label_space[label_name] = value
             fields = self._fc.get_fields(label_space=label_space)
 
             # Start counting values found
