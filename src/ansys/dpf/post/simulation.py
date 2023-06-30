@@ -12,7 +12,7 @@ from typing import List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
@@ -576,24 +576,29 @@ class Simulation(ABC):
         if times:
             column_indexes.append(SetIndex(values=times))
         label_indexes = []
+        # Get the label name values for each label
         for label in fc.labels:
-            if label not in ["time"]:
-                if len(fc) > 0:
-                    values = fc.get_available_ids_for_label(label)
-                    try:
-                        label_support = self.result_info.qualifier_label_support(label)
-                        names_field = label_support.string_field_support_by_property(
-                            "names"
-                        )
-                        values = [
-                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
-                            for value in values
-                        ]
-                    except ValueError:
-                        pass
-                else:
-                    values = [""]
-                label_indexes.append(LabelIndex(name=label, values=values))
+            # Do not treat time
+            if label in ["time"]:
+                continue
+            if len(fc) > 0:
+                # Get ID values for this label
+                values = fc.get_available_ids_for_label(label)
+                # Then try to gather the correspond string values for display
+                try:
+                    label_support = self.result_info.qualifier_label_support(label)
+                    names_field = label_support.string_field_support_by_property(
+                        "names"
+                    )
+                    values = [
+                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                        for value in values
+                    ]
+                except (ValueError, errors.DPFServerException):
+                    pass
+            else:
+                values = [""]
+            label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
