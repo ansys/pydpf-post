@@ -34,6 +34,9 @@ from ansys.dpf.post.transient_analysis import (
 def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
+    .. deprecated:: 3.0
+       Use :func:`load_simulation` instead.
+
     This class provides information on a given set on a given scoping.
 
     Parameters
@@ -49,9 +52,6 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
-
-    .. deprecated:: 3.0
-       Use :func:`load_simulation` instead.
 
     Examples
     --------
