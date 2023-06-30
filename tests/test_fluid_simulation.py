@@ -17,11 +17,11 @@ class TestFluidSimulation:
         fluid_example_files = examples.download_fluent_axial_comp()
         ds = dpf.DataSources()
         ds.set_result_file_path(
-            fluid_example_files["cas"],
+            fluid_example_files["cas"][0],
             key="cas",
         )
         ds.add_file_path(
-            fluid_example_files["dat"],
+            fluid_example_files["dat"][0],
             key="dat",
         )
         return post.FluidSimulation(ds)  # noqa
@@ -32,4 +32,4 @@ class TestFluidSimulation:
     def test_density(self, fluid_simulation):
         result = fluid_simulation.density()
         assert result is not None
-        print(result)
+        # print(result)
