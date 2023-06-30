@@ -14,7 +14,7 @@ from ansys.dpf import post
 class TestFluidSimulation:
     @fixture
     def fluid_simulation(self):
-        fluid_example_files = examples.download_fluent_files()
+        fluid_example_files = examples.download_fluent_axial_comp()
         ds = dpf.DataSources()
         ds.set_result_file_path(
             fluid_example_files["cas"],
