@@ -25,7 +25,7 @@ older than ``67.0.0`` using the command below:
 
 .. code::
 
-    pip uninstall -y setuptools; pip install setuptools<67.0.0
+    pip uninstall -y setuptools; pip install "setuptools<67.0.0"
 
 
 Auto-completion
