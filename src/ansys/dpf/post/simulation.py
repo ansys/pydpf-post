@@ -594,7 +594,11 @@ class Simulation(ABC):
                         names_field.get_entity_data_by_id(value)[0] + f" ({value})"
                         for value in values
                     ]
-                except (ValueError, errors.DPFServerException):
+                except (
+                    ValueError,
+                    errors.DPFServerException,
+                    errors.DpfVersionNotSupported,
+                ):
                     pass
             else:
                 values = [""]
