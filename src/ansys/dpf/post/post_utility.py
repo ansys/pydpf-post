@@ -217,9 +217,9 @@ def load_simulation(
                     f"Unknown analysis type '{analysis_type}' for {physics_type}."
                 )
         elif physics_type == _PhysicsType.fluid:
-            if analysis_type == _AnalysisType.steady:
+            if analysis_type in [_AnalysisType.steady, _AnalysisType.static]:
                 simulation_type = AvailableSimulationTypes.steady_fluid
-            elif analysis_type == _AnalysisType.unsteady:
+            elif analysis_type in [_AnalysisType.unsteady, _AnalysisType.transient]:
                 simulation_type = AvailableSimulationTypes.unsteady_fluid
             else:
                 raise ValueError(

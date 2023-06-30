@@ -1,9 +1,13 @@
 import ansys.dpf.core as dpf
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+)
 import pytest
 
 from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes
+from ansys.dpf.post.fluid_simulation import FluidSimulation
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
@@ -48,6 +52,46 @@ def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
     )
     assert isinstance(simulation, HarmonicMechanicalSimulation)
+
+
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
+)
+def test_load_simulation_static_fluid(fluid_fluent_elbow_steady_state, simple_bar):
+    ds = dpf.DataSources()
+    ds.set_result_file_path(fluid_fluent_elbow_steady_state["cas"][0], key="cas")
+    ds.add_file_path(
+        fluid_fluent_elbow_steady_state["dat"][0],
+        key="dat",
+    )
+    simulation = post.load_simulation(ds)
+    assert type(simulation) == FluidSimulation
+    simulation = post.load_simulation(
+        data_sources=simple_bar,
+        simulation_type=AvailableSimulationTypes.steady_fluid,
+    )
+    assert isinstance(simulation, FluidSimulation)
+
+
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
+)
+def test_load_simulation_transient_fluid(fluid_fluent_elbow_transient, simple_bar):
+    ds = dpf.DataSources()
+    ds.set_result_file_path(fluid_fluent_elbow_transient["cas"][0], key="cas")
+    ds.add_file_path(
+        fluid_fluent_elbow_transient["dat"][0],
+        key="dat",
+    )
+    simulation = post.load_simulation(ds)
+    assert type(simulation) == FluidSimulation
+    simulation = post.load_simulation(
+        data_sources=simple_bar,
+        simulation_type=AvailableSimulationTypes.unsteady_fluid,
+    )
+    assert isinstance(simulation, FluidSimulation)
 
 
 def test_load_simulation_raise_simulation_type(simple_bar):
