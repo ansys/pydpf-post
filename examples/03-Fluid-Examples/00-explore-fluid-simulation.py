@@ -68,13 +68,13 @@ print(simulation.species)
 print(simulation.zones)
 
 for available_result in result_info.available_results:
-    if available_result.name in [
-        "mach_number",
-        "mass_flow_rate",
-        "surface_heat_rate",
-        "y_plus",
-    ]:
-        continue
+    # if available_result.name in [
+    #     "mach_number",
+    #     "mass_flow_rate",
+    #     "surface_heat_rate",
+    #     "y_plus",
+    # ]:
+    #     continue
     print(available_result)
     result = getattr(simulation, available_result.name)()
     print(result)
