@@ -132,6 +132,7 @@ class FluidSimulation(Simulation):
         cas: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         flprj: Union[PathLike, str, None] = None,
+        server: Union[dpf.server_types.BaseServer, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
         tot = (
@@ -163,7 +164,7 @@ class FluidSimulation(Simulation):
                     dat = [dat]
                 for d in dat:
                     ds.add_file_path(d, "dat")
-        model = dpf.Model(ds)
+        model = dpf.Model(ds, server=server)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
 
