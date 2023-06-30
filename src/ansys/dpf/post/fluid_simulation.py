@@ -354,7 +354,7 @@ class FluidSimulation(Simulation):
         wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
-        print(fc)
+        # print(fc)
         if location is None and len(fc) > 0:
             location = fc[0].location
         return self._create_dataframe(
