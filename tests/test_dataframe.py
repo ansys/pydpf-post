@@ -114,6 +114,12 @@ def test_dataframe_select(df):
     # print(df2)
 
 
+def test_dataframe_select_cells():
+    simulation = post.FluidSimulation(examples.fluid_axial_model())
+    df = simulation.enthalpy()
+    df.select(cell_ids=[1])
+
+
 def test_dataframe_iselect(df):
     df2 = df.iselect(node_ids=[0, 1], set_ids=[0], components=0)
     assert all(df2.mesh_index.values == [1, 26])

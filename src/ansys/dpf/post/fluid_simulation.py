@@ -357,6 +357,8 @@ class FluidSimulation(Simulation):
         # print(fc)
         if location is None and len(fc) > 0:
             location = fc[0].location
+        if location == locations.elemental:
+            location = "cells"
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
         )

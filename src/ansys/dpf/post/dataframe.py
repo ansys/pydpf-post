@@ -300,7 +300,9 @@ class DataFrame:
                     node_ids=node_ids,
                     server=server,
                 )
-            elif ref_labels.element_ids in mesh_index_name:
+            elif ref_labels.element_ids or ref_labels.cell_ids in mesh_index_name:
+                if ref_labels.cell_ids in mesh_index_name:
+                    location = "cells"
                 element_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]

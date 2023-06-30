@@ -25,6 +25,7 @@ class ref_labels:
     node_ids = "node_ids"
     face_ids = "face_ids"
     element_ids = "element_ids"
+    cell_ids = "cell_ids"
     elemental_nodal = "element_ids"
     step = "step_ids"
     overall = "overall"
@@ -33,7 +34,8 @@ class ref_labels:
 
 location_to_label = {
     dpf.locations.nodal: ref_labels.node_ids,
-    "face": ref_labels.face_ids,
+    dpf.locations.faces: ref_labels.face_ids,
+    "cells": ref_labels.cell_ids,
     dpf.locations.elemental: ref_labels.element_ids,
     dpf.locations.elemental_nodal: ref_labels.elemental_nodal,
     dpf.locations.overall: ref_labels.overall,
