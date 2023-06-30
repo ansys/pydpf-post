@@ -34,6 +34,7 @@ class ref_labels:
 
 location_to_label = {
     dpf.locations.nodal: ref_labels.node_ids,
+    dpf.locations.faces: ref_labels.face_ids,
     "cells": ref_labels.cell_ids,
     dpf.locations.elemental: ref_labels.element_ids,
     dpf.locations.elemental_nodal: ref_labels.elemental_nodal,
@@ -42,15 +43,6 @@ location_to_label = {
     dpf.locations.time_freq: ref_labels.set_ids,
     None: "unknown",
 }
-
-# dpf.locations.faces is available only starting with ansys-dpg-gate 0.4.0
-try:
-    location_to_label[dpf.locations.faces] = ref_labels.face_ids
-except AttributeError as e:
-    if "type object 'locations' has no attribute 'faces'" in e:
-        pass
-    else:
-        raise e
 
 
 class Index(ABC):
