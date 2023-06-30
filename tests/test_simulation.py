@@ -54,7 +54,9 @@ def test_simulation_units(static_simulation):
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
-    assert all(isinstance(x, str) for x in results)
+    assert all(
+        isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
+    )
 
 
 def test_simulation_geometries(static_simulation):
