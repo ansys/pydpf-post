@@ -51,3 +51,18 @@ class TestFluidSimulation:
         result = getattr(fluid_simulation, result_name)()
         assert result is not None
         assert type(result) is post.DataFrame
+
+    def test_fluid_simulation_zones(self, fluid_simulation):
+        from ansys.dpf.post.zone import Zones
+
+        assert type(fluid_simulation.zones) is Zones
+
+    def test_fluid_simulation_species(self, fluid_simulation):
+        from ansys.dpf.post.species import SpeciesList
+
+        assert type(fluid_simulation.species) is SpeciesList
+
+    def test_fluid_simulation_phases(self, fluid_simulation):
+        from ansys.dpf.post.phase import Phases
+
+        assert type(fluid_simulation.phases) is Phases
