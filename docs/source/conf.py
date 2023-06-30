@@ -67,7 +67,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable", None),
     # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "pyvista": ("https://docs.pyvista.org/", None),
-    "ansys-dpf-core": ("https://dpfdocs.pyansys.com", None),
+    "ansys-dpf-core": ("https://dpf.docs.pyansys.com", None),
 }
 
 
@@ -90,7 +90,7 @@ numpydoc_validation_checks = {
     "SS04",  # Summary contains heading whitespaces
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
-    # type, unless multiple values are being returned"
+    # type, unless multiple values are being returned
 }
 
 
