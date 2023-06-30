@@ -102,9 +102,7 @@ class Simulation(ABC):
         >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         [...]
         """
-        return [
-            str(result) for result in self._model.metadata.result_info.available_results
-        ]
+        return self._model.metadata.result_info.available_results
 
     @property
     def result_info(self):
