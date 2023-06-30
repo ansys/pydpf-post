@@ -7,10 +7,22 @@ This example shows how to load a fluid simulation and extract results like veloc
 It then shows extraction and selection of results by zone, phase or species.
 """
 ###############################################################################
+# Use gRPC protocol on Linux
+# --------------------------
+# The CFF plugin is currently prone to errors when used InProcess on Linux,
+# hence a gRPC server configuration is chosen when running on a Unix system.
+import platform
+
+import ansys.dpf.core as dpf
+
+###############################################################################
 # Perform required imports
 # ------------------------
 from ansys.dpf import post
 from ansys.dpf.post import examples
+
+if "Linux" in platform.system():
+    dpf.SERVER_CONFIGURATION = dpf.server_factory.AvailableServerConfigs.GrpcServer
 
 ###############################################################################
 # Load the fluid analysis result
