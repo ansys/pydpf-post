@@ -165,6 +165,18 @@ def modal_frame():
     return examples.download_modal_frame()
 
 
+@pytest.fixture()
+def fluid_fluent_elbow_steady_state():
+    """Return paths to fluid fluent mixing elbow steady-state."""
+    return examples.download_fluent_mixing_elbow_steady_state()
+
+
+@pytest.fixture()
+def fluid_fluent_elbow_transient():
+    """Return paths to fluid fluent mixing elbow transient."""
+    return examples.download_fluent_mixing_elbow_transient()
+
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""
