@@ -29,7 +29,25 @@ class TestFluidSimulation:
     def test_simulation_init(self, fluid_simulation):
         assert fluid_simulation is not None
 
-    def test_density(self, fluid_simulation):
-        result = fluid_simulation.density()
+    @pytest.mark.parametrize(
+        "result_name",
+        [
+            "enthalpy",
+            "mass_flow_rate",
+            "static_pressure",
+            "mean_static_pressure",
+            "rms_static_pressure",
+            # "surface_heat_rate",  # Wait for fix
+            "density",
+            "temperature",
+            "mean_temperature",
+            "rms_temperature",
+            "velocity",
+            "mean_velocity",
+            "rms_velocity",
+        ],
+    )
+    def test_results(self, fluid_simulation, result_name):
+        result = getattr(fluid_simulation, result_name)()
         assert result is not None
-        # print(result)
+        assert type(result) is post.DataFrame
