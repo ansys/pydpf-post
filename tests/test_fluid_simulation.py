@@ -50,19 +50,19 @@ class TestFluidSimulation:
     def test_results(self, fluid_simulation, result_name):
         result = getattr(fluid_simulation, result_name)()
         assert result is not None
-        assert isinstance(result) is post.DataFrame
+        assert isinstance(result, post.DataFrame)
 
     def test_fluid_simulation_zones(self, fluid_simulation):
         from ansys.dpf.post.zone import Zones
 
-        assert isinstance(fluid_simulation.zones) is Zones
+        assert isinstance(fluid_simulation.zones, Zones)
 
     def test_fluid_simulation_species(self, fluid_simulation):
         from ansys.dpf.post.species import SpeciesList
 
-        assert isinstance(fluid_simulation.species) is SpeciesList
+        assert isinstance(fluid_simulation.species, SpeciesList)
 
     def test_fluid_simulation_phases(self, fluid_simulation):
         from ansys.dpf.post.phase import Phases
 
-        assert isinstance(fluid_simulation.phases) is Phases
+        assert isinstance(fluid_simulation.phases, Phases)
