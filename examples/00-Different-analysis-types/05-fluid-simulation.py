@@ -22,13 +22,15 @@ from ansys.dpf import post
 from ansys.dpf.post import examples
 
 if "Linux" in platform.system():
-    dpf.SERVER_CONFIGURATION = dpf.server_factory.AvailableServerConfigs.GrpcServer
+    dpf.SERVER_CONFIGURATION = (
+        dpf.server_factory.AvailableServerConfigs.LegacyGrpcServer
+    )
 
 ###############################################################################
 # Load the fluid analysis result
 # ------------------------------
 fluid_example_files = examples.download_fluent_axial_comp()
-
+print(type(dpf.SERVER))
 simulation = post.FluidSimulation(
     cas=fluid_example_files["cas"], dat=fluid_example_files["dat"]
 )
