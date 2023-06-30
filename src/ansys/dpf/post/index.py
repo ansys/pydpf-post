@@ -47,7 +47,7 @@ location_to_label = {
 try:
     location_to_label[dpf.locations.faces] = ref_labels.face_ids
 except AttributeError as e:
-    if "type object 'locations' has no attribute 'faces'" in e:
+    if "type object 'locations' has no attribute 'faces'" in str(e):
         pass
     else:
         raise e
