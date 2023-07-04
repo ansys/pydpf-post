@@ -602,7 +602,7 @@ class Simulation(ABC):
                 ):
                     values = None
             else:
-                values = [""]
+                values = []
             label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)

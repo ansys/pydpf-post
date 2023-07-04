@@ -41,6 +41,7 @@ class Phases:
     def __init__(self, simulation: Simulation):
         """Initialize this class."""
         self._phases = []
+        self._ids = []
         self._names = []
         if "phase" in simulation.result_info.available_qualifier_labels:
             phase_support = simulation.result_info.qualifier_label_support("phase")
@@ -50,6 +51,7 @@ class Phases:
             for i, name in enumerate(names):
                 self._phases.append(Phase(name, ids[i]))
                 self._names.append(name)
+                self._ids.append(ids[i])
 
     def __repr__(self) -> str:
         """String representation of the instance."""
@@ -74,4 +76,9 @@ class Phases:
         """Return the Phase of the given name or at the given position in the list."""
         if isinstance(item, str):
             item = self._names.index(item)
-        return self._phases[item]
+        elif isinstance(item, int):
+            item = self._ids.index(item)
+        try:
+            return self._phases[item]
+        except Exception:
+            raise ValueError("Requested key must be a valid Phase ID or Phase name.")

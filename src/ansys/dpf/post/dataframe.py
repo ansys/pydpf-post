@@ -544,12 +544,15 @@ class DataFrame:
             label_space = {}
             for label_name in self.labels:
                 value = combination[label_positions_in_combinations[label_name]]
+                if not value:
+                    raise ValueError(
+                        f"Could not find label value for label {label_name}"
+                    )
+                elif isinstance(value, str):
+                    if "(" in value:
+                        value = value.split("(")[1].split(")")[0]
                 if label_name == ref_labels.set_ids:
                     label_name = ref_labels.time
-                try:
-                    value = value.split("(")[1].split(")")[0]
-                except AttributeError:
-                    pass
                 label_space[label_name] = int(value)
             fields = self._fc.get_fields(label_space=label_space)
 

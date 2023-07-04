@@ -290,18 +290,12 @@ class FluidSimulation(Simulation):
         )
         lists = []
         lists_labels = []
-        # if zone_ids is None:
-        #     zone_ids = [zone.id for zone in self.zones]
-        # else:
-        #     result_op.connect(25, zone_ids)
+        if set_ids:
+            lists.append(set_ids)
+            lists_labels.append("time")
         if zone_ids:
             lists.append(zone_ids)
             lists_labels.append("zone")
-        # if phases is None:
-        #     phases = [phase.id for phase in self.phases]
-        # else:
-        #     label_space = {"phase": phases[0]}
-        #     result_op.connect(1000, label_space)
         if phases:
             phase_ids = []
             available_phases = self.phases
@@ -309,8 +303,6 @@ class FluidSimulation(Simulation):
                 phase_ids.append(available_phases[phase].id)
             lists.append(phase_ids)
             lists_labels.append("phase")
-        # if species is None:
-        #     species = [species_i.id for species_i in self.species]
         if species:
             lists.append(species)
             lists_labels.append("species")
