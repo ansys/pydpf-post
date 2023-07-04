@@ -5,6 +5,11 @@ Explore Fluid Simulation
 ========================
 This example shows how to load a fluid simulation and explore the model and its available zones,
 species, and phases.
+
+.. note::
+    This example requires DPF 7.0 (2024.1.pre0) or above.
+    For more information, see :ref:`ref_compatibility`.
+
 """
 ###############################################################################
 # Use gRPC protocol on Linux
