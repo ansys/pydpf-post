@@ -64,10 +64,10 @@ print(simulation.phases)
 print(simulation.result_info)
 
 ###############################################################################
-# You can also get a direct list of ``AvailableResult`` objects
-print(simulation.results)
 # Print a specific one to get more information on available qualifiers (zones, phases and so on)
-print(simulation.results[0])
+print(simulation.result_info["enthalpy"])
+# Or use an index
+# print(simulation.result_info[0])
 
 ###############################################################################
 # Extract this available result as a Dataframe

@@ -89,10 +89,10 @@ class Simulation(ABC):
         self._model.metadata.release_streams()
 
     @property
-    def results(self) -> List[str]:
+    def results(self) -> List[dpf.result_info.available_result.AvailableResult]:
         r"""Available results.
 
-        Returns a list of available results as strings.
+        Returns a list of available results.
 
         Examples
         --------
