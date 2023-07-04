@@ -44,7 +44,7 @@ location_to_label = {
 }
 
 # dpf.locations.faces is available only starting with ansys-dpg-gate 0.4.0
-try:
+try:  # pragma: no cover
     location_to_label[dpf.locations.faces] = ref_labels.face_ids
 except AttributeError as e:
     if "type object 'locations' has no attribute 'faces'" in str(e):
