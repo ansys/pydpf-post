@@ -177,6 +177,12 @@ def fluid_fluent_elbow_transient():
     return examples.download_fluent_mixing_elbow_transient()
 
 
+@pytest.fixture()
+def fluid_fluent_multi_species():
+    """Return paths to fluid fluent multi species."""
+    return examples.download_fluent_multi_species()
+
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""
