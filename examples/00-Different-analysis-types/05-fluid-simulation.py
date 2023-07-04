@@ -8,7 +8,7 @@ It then shows extraction and selection of results by zone, phase or species.
 
 .. note::
     This example requires DPF 7.0 (2024.1.pre0) or above.
-    For more information, see :ref:`ref_compatibility`.
+    For more information, see :ref:`compatibility`.
 
 """
 ###############################################################################
@@ -24,9 +24,9 @@ if "Linux" in platform.system():
     dpf.SERVER_CONFIGURATION = (
         dpf.server_factory.AvailableServerConfigs.LegacyGrpcServer
     )
-# ###############################################################################
-# # Perform required imports
-# # ------------------------
+###############################################################################
+# Perform required imports
+# ------------------------
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
@@ -71,8 +71,13 @@ print(simulation.results[0])
 
 ###############################################################################
 # Extract this available result as a Dataframe
-print(simulation.enthalpy())
+enthalpy = simulation.enthalpy()
+print(enthalpy)
 # Not specifying any qualifier returns a unique column of data
+
+###############################################################################
+# Plot the Dataframe
+enthalpy.plot()
 
 ###############################################################################
 # Available qualifiers for this result can be used in the extraction request
