@@ -152,6 +152,29 @@ copybutton_prompt_is_regexp = True
 # -- Sphinx Gallery Options
 from sphinx_gallery.sorting import FileNameSortKey
 
+
+def reset_servers(gallery_conf, fname, when):
+    import gc
+
+    from ansys.dpf.core import server
+    import psutil
+
+    gc.collect()
+    server.shutdown_all_session_servers()
+
+    proc_name = "Ans.Dpf.Grpc"
+    nb_procs = 0
+    for proc in psutil.process_iter():
+        try:
+            # check whether the process name matches
+            if proc_name in proc.name():
+                # proc.kill()
+                nb_procs += 1
+        except psutil.NoSuchProcess:
+            pass
+    print(f"Counted {nb_procs} {proc_name} processes {when} example {fname}.")
+
+
 sphinx_gallery_conf = {
     # convert rst to md for ipynb
     "pypandoc": True,
@@ -175,7 +198,12 @@ sphinx_gallery_conf = {
     # 'first_notebook_cell': ("%matplotlib inline\n"
     #                         "from pyvista import set_plot_theme\n"
     #                         "set_plot_theme('document')"),
+    "reset_modules_order": "both",
+    "reset_modules": (reset_servers,),
 }
+
+autodoc_member_order = "bysource"
+
 
 # -- Options for HTML output -------------------------------------------------
 
