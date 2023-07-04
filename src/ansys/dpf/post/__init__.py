@@ -37,17 +37,20 @@ from ansys.dpf.post.misc import Report
 from ansys.dpf.post.modal_mechanical_simulation import (  # noqa: F401
     ModalMechanicalSimulation,
 )
+from ansys.dpf.post.phase import Phase, Phases
 from ansys.dpf.post.post_utility import (
     load_simulation,
     load_solution,
     print_available_keywords,
 )
+from ansys.dpf.post.species import Species, SpeciesList
 from ansys.dpf.post.static_mechanical_simulation import (  # noqa: F401
     StaticMechanicalSimulation,
 )
 from ansys.dpf.post.transient_mechanical_simulation import (  # noqa: F401
     TransientMechanicalSimulation,
 )
+from ansys.dpf.post.zone import Zone, Zones
 
 # this must be after some ansys.dpf.post import
 __version__ = importlib_metadata.version("ansys-dpf-post")
