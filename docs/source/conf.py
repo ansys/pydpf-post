@@ -59,6 +59,19 @@ for example in glob(r"../../examples/**/*.py"):
         ignored_pattern += f"|{example_name}"
 ignored_pattern += r")"
 
+###############################################################################
+# Use gRPC protocol on Linux
+# --------------------------
+# The CFF plugin is currently prone to errors when used InProcess on Linux,
+# hence a gRPC server configuration is chosen when running on a Unix system.
+import platform
+
+import ansys.dpf.core as dpf
+
+if "Linux" in platform.system():
+    dpf.SERVER_CONFIGURATION = (
+        dpf.server_factory.AvailableServerConfigs.LegacyGrpcServer
+    )
 
 # -- General configuration ---------------------------------------------------
 
@@ -154,6 +167,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 
 
 def reset_servers(gallery_conf, fname, when):
+    """Reset gRPC servers in between examples."""
     import gc
 
     from ansys.dpf.core import server

@@ -27,6 +27,7 @@ repos:
       "docs src",
       "*.py *.rst *.md",
     ]
+    exclude: conf.py
 
 - repo: https://github.com/pycqa/pydocstyle
   rev: 6.3.0
