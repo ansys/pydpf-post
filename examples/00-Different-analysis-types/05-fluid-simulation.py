@@ -3,8 +3,8 @@
 
 Fluid Simulation
 ================
-This example shows how to load a fluid simulation and extract results like velocity and pressure.
-It then shows extraction and selection of results by zone, phase or species.
+This example shows how to load a fluid simulation, explore the model and its available zones,
+species, and phases, as well as how to extract a result.
 
 .. note::
     This example requires DPF 7.0 (2024.1.pre0) or above.
