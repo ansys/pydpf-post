@@ -279,13 +279,13 @@ def test_dataframe_str(transient_rst, modal_frame):
 """  # noqa: W291, E501
     assert str(df) == ref
     # Test for cyclic with base sector label
-    modal_simulation = ModalMechanicalSimulation(modal_frame)
+    modal_simulation = ModalMechanicalSimulation(examples.find_simple_cyclic())
     df = modal_simulation.displacement(expand_cyclic=False)
     ref = """
               results       U (m)
               set_ids           1
           base_sector           1
- node_ids  components
+ node_ids  components            
         1           X  4.9812e-13
                     Y  2.4100e+02
                     Z  8.9709e-12
