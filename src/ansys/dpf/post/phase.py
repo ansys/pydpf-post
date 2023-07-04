@@ -6,7 +6,7 @@ In fluid simulations, a phase defines the physical state of a given species.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.dpf.post.simulation import Simulation
@@ -41,11 +41,15 @@ class Phases:
     def __init__(self, simulation: Simulation):
         """Initialize this class."""
         self._phases = []
+        self._names = []
         if "phase" in simulation.result_info.available_qualifier_labels:
             phase_support = simulation.result_info.qualifier_label_support("phase")
             phase_names_field = phase_support.string_field_support_by_property("names")
-            for id, name in enumerate(phase_names_field.data_as_list):
-                self._phases.append(Phase(name, id))
+            names = phase_names_field.data_as_list
+            ids = phase_names_field.scoping.ids
+            for i, name in enumerate(names):
+                self._phases.append(Phase(name, ids[i]))
+                self._names.append(name)
 
     def __repr__(self) -> str:
         """String representation of the instance."""
@@ -66,6 +70,8 @@ class Phases:
             text += f"{phase.id}: {phase.name}\n"
         return text
 
-    def __getitem__(self, item: int) -> Phase:
-        """Return the Phase at the given position in the list."""
+    def __getitem__(self, item: Union[int, str]) -> Phase:
+        """Return the Phase of the given name or at the given position in the list."""
+        if isinstance(item, str):
+            item = self._names.index(item)
         return self._phases[item]

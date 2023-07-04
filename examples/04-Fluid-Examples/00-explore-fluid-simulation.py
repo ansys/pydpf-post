@@ -86,6 +86,6 @@ print(temperature)
 # in the dataframe in the phase label column between parentheses,
 # or as listed
 # under the 'Available qualifier labels' section of the metadata on the result
-# water_temperature = simulation.temperature(phases=[2])
-# print(water_temperature)
+water_temperature = simulation.temperature(phases=["Copper"])
+print(water_temperature)
 # The dataframe obtained now only stores data for the water phase.
