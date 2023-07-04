@@ -14,6 +14,7 @@ from ansys.dpf.post.index import (
     ResultsIndex,
     ref_labels,
 )
+from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
 
@@ -178,7 +179,7 @@ def test_dataframe_repr(df):
     assert repr(df) == ref
 
 
-def test_dataframe_str(transient_rst):
+def test_dataframe_str(transient_rst, modal_frame):
     simulation = TransientMechanicalSimulation(transient_rst)
     df = simulation.displacement(all_sets=True)
     # print(df)
@@ -275,6 +276,23 @@ def test_dataframe_str(transient_rst):
          391         XX 0.0000e+00 0.0000e+00 ...
                      YY 0.0000e+00 0.0000e+00 ...
          ...        ...        ...        ... ...
+"""  # noqa: W291, E501
+    assert str(df) == ref
+    # Test for cyclic with base sector label
+    modal_simulation = ModalMechanicalSimulation(modal_frame)
+    df = modal_simulation.displacement(expand_cyclic=False)
+    ref = """
+              results       U (m)
+              set_ids           1
+          base_sector           1
+ node_ids  components
+        1           X  4.9812e-13
+                    Y  2.4100e+02
+                    Z  8.9709e-12
+       14           X -1.9511e-12
+                    Y  1.9261e+02
+                    Z  5.0359e-12
+      ...         ...         ...
 """  # noqa: W291, E501
     assert str(df) == ref
 
