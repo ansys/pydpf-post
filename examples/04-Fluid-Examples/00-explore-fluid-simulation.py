@@ -8,7 +8,7 @@ species, and phases.
 
 .. note::
     This example requires DPF 7.0 (2024.1.pre0) or above.
-    For more information, see :ref:`ref_compatibility`.
+    For more information, see :ref:`compatibility`.
 
 """
 ###############################################################################
@@ -26,9 +26,9 @@ if "Linux" in platform.system():
     )
 from ansys.dpf.core.dpf_operator import available_operator_names
 
-# ###############################################################################
-# # Perform required imports
-# # ------------------------
+###############################################################################
+# Perform required imports
+# ------------------------
 from ansys.dpf import post
 from ansys.dpf.post import examples
 
