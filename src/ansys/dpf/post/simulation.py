@@ -598,8 +598,9 @@ class Simulation(ABC):
                     ValueError,
                     errors.DPFServerException,
                     errors.DpfVersionNotSupported,
+                    AttributeError,  # Error in GitHub doc CI (Linux) where label_support = None
                 ):
-                    pass
+                    values = [""]
             else:
                 values = [""]
             label_indexes.append(LabelIndex(name=label, values=values))
