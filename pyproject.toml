@@ -42,7 +42,7 @@ Source = "https://github.com/ansys/pydpf-post"
 
 [project.optional-dependencies]
 plotting = [
-    "pyvista>=0.24.0, <0.40.0",
+    "pyvista>=0.24.0, <0.41.0",
 ]
 
 [tool.pytest.ini_options]
