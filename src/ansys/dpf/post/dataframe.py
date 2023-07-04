@@ -508,6 +508,8 @@ class DataFrame:
                 comp_values = values
             else:
                 values = index.values
+            if values is None:
+                values = [1]
             label_positions_in_combinations[index.name] = position
             lists.append(values)
         column_combinations = [p for p in itertools.product(*lists)]
