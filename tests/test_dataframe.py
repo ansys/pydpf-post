@@ -126,6 +126,25 @@ def test_dataframe_select_cells():
     df.select(cell_ids=[1])
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
+)
+def test_dataframe_select_with_labels():
+    fluid_files = examples.download_cfx_mixing_elbow()
+    simulation = post.FluidSimulation(cas=fluid_files["cas"], dat=fluid_files["dat"])
+    df = simulation.enthalpy()
+    df2 = df.select(node_ids=[1])
+    ref = """
+  results        H_S (J/kg)
+  set_ids                 1
+    phase Water at 25 C (2)
+ node_ids                  
+        1       -1.5921e+07
+"""  # noqa: W291, E501
+    assert str(df2) == ref
+
+
 def test_dataframe_iselect(df):
     df2 = df.iselect(node_ids=[0, 1], set_ids=[0], components=0)
     assert all(df2.mesh_index.values == [1, 26])

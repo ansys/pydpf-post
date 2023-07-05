@@ -354,9 +354,16 @@ class DataFrame:
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
-                column_indexes.append(
-                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                )
+                fc_values = fc.get_available_ids_for_label(label)
+                old_values = self.columns[self.columns.names.index(label)].values
+                fc_to_old_map = {}
+                for v in old_values:
+                    if "(" and ")" in v:
+                        fc_to_old_map[v.split("(")[1].split(")")[0]] = v
+                    else:
+                        fc_to_old_map[v] = v
+                values = [fc_to_old_map[str(f)] for f in fc_values]
+                column_indexes.append(LabelIndex(name=label, values=values))
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
 
