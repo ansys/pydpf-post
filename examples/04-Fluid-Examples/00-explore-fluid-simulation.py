@@ -35,8 +35,6 @@ from ansys.dpf.post import examples
 # Load the fluid analysis result
 # ------------------------------
 fluid_example_files = examples.download_cfx_heating_coil()
-# fluid_example_files = examples.download_cfx_mixing_elbow()
-# fluid_example_files = examples.download_fluent_axial_comp()
 simulation = post.FluidSimulation(
     cas=fluid_example_files["cas"], dat=fluid_example_files["dat"]
 )
@@ -68,17 +66,18 @@ print(simulation.result_info)
 
 ###############################################################################
 # Print information about a specific available result
-print(simulation.result_info["temperature"])
+# for result in simulation.result_info:
+#     print(result)
+print(simulation.result_info["enthalpy"])
 # Or use an index
 # print(simulation.result_info[12])
 
 ###############################################################################
 # Extract the temperature data
 # ----------------------------
-temperature = simulation.temperature()
+temperature = simulation.enthalpy()
 print(temperature)
 # The dataframe obtained shows data for two different phases
-
 ###############################################################################
 # To directly extract the temperature data for only one phase,
 # pass the 'temperature' method a 'phases' argument.
@@ -86,9 +85,3 @@ print(temperature)
 # in the dataframe in the phase label column between parentheses,
 # or as listed
 # under the 'Available qualifier labels' section of the metadata on the result
-# water_temperature = simulation.temperature(phases=["Copper"])
-water_temperature = simulation.temperature(
-    phases=[3], zone_ids=[8, 19, 20, 21, 22, 23, 24, 25, 26], set_ids=[1]
-)
-print(water_temperature)
-# The dataframe obtained now only stores data for the water phase.
