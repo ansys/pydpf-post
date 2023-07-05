@@ -56,8 +56,8 @@ class Phases:
     def __repr__(self) -> str:
         """String representation of the instance."""
         text = "["
-        for phase in self:
-            text += repr(phase) + ", "
+        for i in self._ids:
+            text += repr(self[i]) + ", "
         text += "]"
         return text
 
@@ -73,12 +73,12 @@ class Phases:
         return text
 
     def __getitem__(self, item: Union[int, str]) -> Phase:
-        """Return the Phase of the given name or at the given position in the list."""
-        if isinstance(item, str):
-            item = self._names.index(item)
-        elif isinstance(item, int):
-            item = self._ids.index(item)
+        """Return the Phase with the given name or ID."""
         try:
-            return self._phases[item]
+            if isinstance(item, str):
+                index = self._names.index(item)
+            else:
+                index = self._ids.index(item)
+            return self._phases[index]
         except Exception:
-            raise ValueError("Requested key must be a valid Phase ID or Phase name.")
+            raise ValueError(f"{item} is not a valid Phase ID or Phase name.")
