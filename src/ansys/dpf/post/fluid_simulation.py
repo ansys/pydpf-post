@@ -314,7 +314,6 @@ class FluidSimulation(Simulation):
                 label_space = {}
                 for j, label in enumerate(lists_labels):
                     label_space[label] = c[j]
-                print(label_space)
                 result_op.connect(1000 + i, label_space)
         # Its output is selected as future workflow output for now
         # print(result_op)
