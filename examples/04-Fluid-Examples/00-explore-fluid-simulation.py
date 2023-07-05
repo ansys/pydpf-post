@@ -68,14 +68,14 @@ print(simulation.result_info)
 # Print information about a specific available result
 # for result in simulation.result_info:
 #     print(result)
-print(simulation.result_info["enthalpy"])
+print(simulation.result_info["temperature"])
 # Or use an index
 # print(simulation.result_info[12])
 
 ###############################################################################
 # Extract the temperature data
 # ----------------------------
-temperature = simulation.enthalpy()
+temperature = simulation.temperature()
 print(temperature)
 # The dataframe obtained shows data for two different phases
 ###############################################################################
