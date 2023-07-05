@@ -544,7 +544,7 @@ class DataFrame:
             label_space = {}
             for label_name in self.labels:
                 value = combination[label_positions_in_combinations[label_name]]
-                if not value:
+                if value is None or value == "":
                     raise ValueError(
                         f"Could not find label value for label {label_name}"
                     )
