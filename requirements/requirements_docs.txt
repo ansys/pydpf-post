@@ -1,3 +1,4 @@
+pyvista[jupyter, trame]==0.40.0
 pypandoc==1.10
 imageio==2.31.0
 numpydoc==1.4.0
