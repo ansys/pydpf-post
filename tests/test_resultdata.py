@@ -330,7 +330,7 @@ def test_plot_on_coordinates(model_ns):
     solution = post.load_solution(model_ns)
     path = post.create_path_on_coordinates(coordinates=coordinates)
     displacement = solution.displacement(path=path)
-    displacement.vector.plot_contour(notebook=False)
+    displacement.vector.plot_contour()
 
 
 @pytest.mark.skipif(
