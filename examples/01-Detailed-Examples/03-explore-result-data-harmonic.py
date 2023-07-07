@@ -25,9 +25,10 @@ from ansys.dpf.post import examples
 # on Linux.
 
 example_path = examples.download_harmonic_clamped_pipe()
+# to automatically detect the simulation type, use:
 simulation = post.load_simulation(example_path)
 
-# for no autocompletion, this line is equivalent to:
+# to enable auto-completion, use the equivalent:
 simulation = post.HarmonicMechanicalSimulation(example_path)
 
 ###############################################################################

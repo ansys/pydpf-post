@@ -83,10 +83,7 @@ class Simulation(ABC):
         self._active_selection = None
         self._named_selections = None
         self._mesh = None
-        self._units = {
-            "time/frequency": self.time_freq_support.time_frequencies.unit,
-            "distance": self._model.metadata.meshed_region.unit,
-        }
+        self._units = None
         self._time_freq_precision = None
 
     def release_streams(self):
@@ -345,6 +342,11 @@ class Simulation(ABC):
     @property
     def units(self):
         """Returns the current time/frequency and distance units used."""
+        if self._units is None:
+            self._units = {
+                "time/frequency": self.time_freq_support.time_frequencies.unit,
+                "distance": self._model.metadata.meshed_region.unit,
+            }
         return self._units
 
     def split_mesh_by_properties(

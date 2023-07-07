@@ -45,6 +45,13 @@ def test_simulation_init_with_server(static_rst, grpc_server):
     assert simulation._model._server == grpc_server
 
 
+def test_simulation_units(static_simulation):
+    assert static_simulation._units is None
+    assert static_simulation.units is not None
+    assert static_simulation.units["time/frequency"] == "s"
+    assert static_simulation.units["distance"] == "m"
+
+
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
@@ -128,20 +135,20 @@ class TestStaticMechanicalSimulation:
     def test_cyclic(self, simple_cyclic):
         simulation = post.StaticMechanicalSimulation(simple_cyclic)
         result = simulation.stress(expand_cyclic=False)
-        print(result)
+        # print(result)
         assert "base_sector" in result.columns.names
         result = simulation.stress(expand_cyclic=True)
-        print(result)
+        # print(result)
         assert "base_sector" not in result.columns.names
 
     def test_multi_stage(self, multi_stage_cyclic):
         simulation = post.StaticMechanicalSimulation(multi_stage_cyclic)
         result = simulation.stress(expand_cyclic=False)
-        print(result)
+        # print(result)
         assert "base_sector" in result.columns.names
         assert "stage" in result.columns.names
         result = simulation.stress(expand_cyclic=True)
-        print(result)
+        # print(result)
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
 
@@ -417,7 +424,7 @@ class TestStaticMechanicalSimulation:
         field = elemental_volume._fc[0]
         op = static_simulation._model.operator("ENG_VOL")
         field_ref = op.eval()[0]
-        print(field_ref)
+        # print(field_ref)
         assert field.component_count == 1
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
@@ -1051,7 +1058,7 @@ class TestTransientMechanicalSimulation:
         field = result._fc[0]
         op = transient_simulation._model.operator("ENG_VOL")
         field_ref = op.eval()[0]
-        print(field_ref)
+        # print(field_ref)
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -1380,7 +1387,7 @@ class TestModalMechanicalSimulation:
         assert len(displacement.mesh_index) == 5644
 
         displacement = simulation.displacement(expand_cyclic=[[1, 2], [1, 2]])
-        print(displacement)
+        # print(displacement)
         assert "base_sector" not in displacement.columns.names
         assert "stage" not in displacement.columns.names
         assert len(displacement.mesh_index) == 6848
@@ -1397,7 +1404,7 @@ class TestModalMechanicalSimulation:
             _ = simulation.displacement(expand_cyclic=1)
 
     def test_displacement(self, modal_simulation):
-        print(modal_simulation)
+        # print(modal_simulation)
         result = modal_simulation.displacement(
             components=["X"],
             node_ids=[2, 3, 4],
@@ -1639,7 +1646,7 @@ class TestModalMechanicalSimulation:
         field = result._fc[0]
         op = modal_simulation._model.operator("ENG_VOL")
         field_ref = op.eval()[0]
-        print(field_ref)
+        # print(field_ref)
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
@@ -2028,25 +2035,25 @@ class TestHarmonicMechanicalSimulation:
     def test_cyclic(self, simple_cyclic):
         simulation = post.HarmonicMechanicalSimulation(simple_cyclic)
         result = simulation.displacement(expand_cyclic=False)
-        print(result)
+        # print(result)
         assert "base_sector" in result.columns.names
         result = simulation.displacement(expand_cyclic=True)
-        print(result)
+        # print(result)
         assert "base_sector" not in result.columns.names
 
     def test_multi_stage(self, multi_stage_cyclic):
         simulation = post.HarmonicMechanicalSimulation(multi_stage_cyclic)
         result = simulation.displacement(expand_cyclic=False)
-        print(result)
+        # print(result)
         assert "base_sector" in result.columns.names
         assert "stage" in result.columns.names
         result = simulation.displacement(expand_cyclic=True)
-        print(result)
+        # print(result)
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
 
     def test_displacement(self, harmonic_simulation):
-        print(harmonic_simulation)
+        # print(harmonic_simulation)
 
         result = harmonic_simulation.displacement(components=["X"], node_ids=[2, 3, 4])
         assert len(result._fc) == 2
@@ -2207,7 +2214,7 @@ class TestHarmonicMechanicalSimulation:
     #     assert np.allclose(field.data, field_ref.data)
 
     def test_stress(self, harmonic_simulation):
-        print(harmonic_simulation)
+        # print(harmonic_simulation)
         result = harmonic_simulation.stress(components=1, set_ids=[1])
         assert len(result._fc) == 2
         assert result._fc.get_time_scoping().ids == [1]
@@ -2351,7 +2358,7 @@ class TestHarmonicMechanicalSimulation:
         field = result._fc[0]
         op = harmonic_simulation._model.operator("ENG_VOL")
         field_ref = op.eval()[0]
-        print(field_ref)
+        # print(field_ref)
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
