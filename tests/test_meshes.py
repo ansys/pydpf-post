@@ -31,7 +31,7 @@ def test_meshes_get_item(meshes):
     with pytest.raises(
         ValueError, match="Access to a specific Mesh of a Meshes requires"
     ):
-        meshes["test"]
+        _ = meshes["test"]
     mesh1 = meshes[1]
     assert isinstance(mesh1, post.Mesh)
     assert len(mesh1.node_ids) == 240

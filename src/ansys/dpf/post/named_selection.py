@@ -58,7 +58,7 @@ class NamedSelectionsDict(Mapping):
 
     def __delitem__(self, __key):
         """Not implemented."""
-        pass
+        return NotImplementedError
 
     def __iter__(self) -> NamedSelectionsIterator:
         """Returns an iterator to access this dictionary."""
@@ -87,7 +87,7 @@ class NamedSelection:
         """Retrieve the ID at a given index."""
         return self._scoping.id(index)
 
-    def index(self, id: int) -> int:
+    def index(self, id: int) -> int:  # noqa: W0622
         """Retrieve the index of a given ID."""
         return self._scoping.index(id)
 

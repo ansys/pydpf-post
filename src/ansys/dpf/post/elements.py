@@ -6,8 +6,8 @@ from collections.abc import Collection, Iterator
 from typing import List, Union
 
 import ansys.dpf.core as dpf
-import ansys.dpf.core.elements as elements
-import ansys.dpf.core.nodes as nodes  # noqa: F401
+from ansys.dpf.core.elements import Element, Elements
+from ansys.dpf.core.nodes import Node
 
 
 class ElementType:
@@ -20,7 +20,7 @@ class ElementType:
             self._el_desc = dpf.element_types.descriptor(arg)
 
         if not isinstance(self._el_desc, dpf.ElementDescriptor):
-            raise TypeError(f"Given argument is not an int nor an ElementDescriptor")
+            raise TypeError("Given argument is not an int nor an ElementDescriptor")
 
     @property
     def enum_id(self) -> int:
@@ -91,12 +91,12 @@ class ElementType:
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
 
-    def __init__(self, elements: elements.Elements, index: int):
+    def __init__(self, elements: Elements, index: int):
         """Constructs a Proxy Element object."""
         self._elements = elements
         self._index = index
 
-    def _resolve(self) -> elements.Element:
+    def _resolve(self) -> Element:
         """Returns the original Element object in the original list."""
         return self._elements[self._index]
 
@@ -116,7 +116,7 @@ class Element:
         return self._resolve().index
 
     @property
-    def nodes(self) -> List[nodes.Node]:
+    def nodes(self) -> List[Node]:
         """See :py:meth:`ansys.dpf.core.elements.Element.nodes`."""
         return self._resolve().nodes
 
@@ -157,7 +157,7 @@ class Element:
 class ElementListIterator(Iterator):
     """Iterator class for the ElementList."""
 
-    def __init__(self, el_list: elements.Elements):
+    def __init__(self, el_list: Elements):
         """Constructs an Iterator from an element list."""
         self._el_list = el_list
         self._idx = 0
@@ -179,13 +179,13 @@ class ElementListIterator(Iterator):
 class ElementListIdx(Collection):
     """List of Elements."""
 
-    def __init__(self, elements: elements.Elements):
+    def __init__(self, elements: Elements):
         """Constructs list from existing dpf.core.elements.Elements list."""
         self._elements = elements
 
-    def __getitem__(self, idx: int) -> Element:
+    def __getitem__(self, index: int) -> Element:
         """Delegates to element_by_id() if by_id, otherwise to element_by_index()."""
-        return Element(self._elements, idx)
+        return Element(self._elements, index)
 
     def __contains__(self, el: Element) -> bool:
         """Checks if the given element in the list."""
@@ -228,11 +228,11 @@ class ElementListIdx(Collection):
 class ElementListById(ElementListIdx):
     """Wrapper class for accessing Elements by ID instead of index."""
 
-    def __init__(self, elements: elements.Elements):
+    def __init__(self, elements: Elements):
         """Constructs an ElementListById from an Elements instance."""
         super().__init__(elements)
 
-    def __getitem__(self, id: int) -> Element:
+    def __getitem__(self, id: int) -> Element:  # noqa: W0622
         """Access an Element with an ID."""
         idx = self._elements.scoping.index(id)
         return super().__getitem__(idx)

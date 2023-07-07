@@ -61,7 +61,7 @@ class Mesh:
         """Returns a list of elements indexed by ID."""
         return ElementListIdx(self._meshed_region.elements)
 
-    def get_element_by_id(self, id: int) -> Element:
+    def get_element_by_id(self, id: int) -> Element:  # noqa: W0622
         """Returns an element in the mesh from a given ID."""
         return self.elements.by_id[id]
 
@@ -70,7 +70,7 @@ class Mesh:
         """Returns a list of nodes indexed by ID."""
         return NodeListIdx(self._meshed_region.nodes)
 
-    def get_node_by_id(self, id: int) -> Node:
+    def get_node_by_id(self, id: int) -> Node:  # noqa: W0622
         """Returns a node of the mesh from a given ID."""
         return self.nodes.by_id[id]
 

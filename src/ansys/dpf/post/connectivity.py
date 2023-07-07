@@ -6,6 +6,7 @@ from collections.abc import Collection, Iterator
 from enum import Enum
 from typing import List
 
+from ansys.dpf.core.any import Any
 from ansys.dpf.core.property_field import PropertyField
 from ansys.dpf.core.scoping import Scoping
 
@@ -36,19 +37,37 @@ class ConnectivityListIterator(Iterator):
 
     def __iter__(self) -> ConnectivityListIterator:
         """Returns a new ConnectivityListIterator."""
-        return ConnectivityListIdx(self._conn_list)
+        return ConnectivityListIdx(field=self._conn_list)
 
 
 class ConnectivityListIdx(Collection):
     """Very basic wrapper around elemental and nodal connectivities fields."""
 
-    def __init__(self, field: PropertyField, scoping: Scoping, mode: ReturnMode):
+    def __init__(
+        self,
+        field: PropertyField,
+        scoping: Union[Scoping, None] = None,
+        mode: Union[ReturnMode, None] = None,
+    ):
         """Constructs a ConnectivityList by wrapping given PropertyField."""
         self._field = field
         self._mode = mode
         self._scoping = scoping
-
+        self._idx = 0
         self.local_scoping = None
+
+    def __next__(self) -> Any:
+        """Returns the next element in the list."""
+        if self._idx >= len(self):
+            raise StopIteration
+        if self._mode == ReturnMode.IDS:
+            out = self._get_ids_from_idx(self._idx)
+        elif self._mode == ReturnMode.IDX:
+            out = self._get_idx_from_idx(self._idx)
+        else:
+            raise ValueError(f"ReturnMode has an incorrect value")
+        self._idx += 1
+        return out
 
     def __getitem__(self, idx: int) -> List[int]:
         """Returns a list of indexes or IDs for a given index, see ReturnMode Enum."""
@@ -56,7 +75,7 @@ class ConnectivityListIdx(Collection):
             return self._get_ids_from_idx(idx)
         elif self._mode == ReturnMode.IDX:
             return self._get_idx_from_idx(idx)
-        raise ValueError(f"ReturnMode has an incorrect value")
+        raise ValueError("ReturnMode has an incorrect value")
 
     def _get_ids_from_idx(self, idx: int) -> List[int]:
         """Helper method to retrieve list of IDs from a given index."""
@@ -106,7 +125,7 @@ class ConnectivityListIdx(Collection):
             ]
             if self._mode == ReturnMode.IDS:
                 conn_list = list(map(self._to_ids, conn_list))
-            _str += ", ".join(map(lambda l: str(l), conn_list))
+            _str += ", ".join(map(str, conn_list))
         _str += "]"
         return _str
 
@@ -122,11 +141,11 @@ class ConnectivityListIdx(Collection):
 class ConnectivityListById(ConnectivityListIdx):
     """Connectivity List indexed by ID."""
 
-    def __init__(self, field: PropertyField, scoping: Scoping, mode: Mode):
+    def __init__(self, field: PropertyField, scoping: Scoping, mode: ReturnMode):
         """Constructs a Connectivity list from a given PropertyField."""
         super().__init__(field, scoping, mode)
 
-    def __getitem__(self, id: int) -> List[int]:
+    def __getitem__(self, id: int) -> List[int]:  # noqa: W0622
         """Returns a list of indexes or IDs for a given ID, see ReturnMode Enum."""
         idx = self._field.scoping.index(id)
         return super().__getitem__(idx)

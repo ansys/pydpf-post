@@ -107,7 +107,7 @@ class NodeListIdx(Collection):
             _str += f"{_fst}, ..., {_lst}"
         else:
             el_list = [Node(self._nodes, idx) for idx in range(self.__len__())]
-            _str += ", ".join(map(lambda el: repr(el), el_list))
+            _str += ", ".join(map(repr, el_list))
         _str += "]"
         return _str
 
@@ -127,7 +127,7 @@ class NodeListById(NodeListIdx):
         """Constructs a list from an existing core.nodes.Nodes object."""
         super().__init__(nodes)
 
-    def __getitem__(self, id: int) -> Node:
+    def __getitem__(self, id: int) -> Node:  # noqa: W0622
         """Returns a Node for a given ID."""
         idx = self._nodes.scoping.index(id)
         return super().__getitem__(idx)

@@ -10,8 +10,6 @@ import ansys.dpf.core as dpf
 from ansys.dpf.core.property_field import PropertyField
 import numpy as np
 
-from ansys import dpf
-
 
 class _LabelSpaceKV:
     """Class for internal use to associate a label space with a field."""
@@ -72,11 +70,11 @@ class _PropertyFieldsContainer(Sequence):
     # Collection
     def __str__(self):
         """Returns a string representation of a PropertyFieldsContainer."""
-        str = f"DPF PropertyFieldsContainer with {len(self)} fields\n"
+        txt = f"DPF PropertyFieldsContainer with {len(self)} fields\n"
         for idx, ls in enumerate(self.label_spaces):
-            str += f"\t {idx}: {ls}\n"
+            txt += f"\t {idx}: {ls}\n"
 
-        return str
+        return txt
 
     @property
     def labels(self):

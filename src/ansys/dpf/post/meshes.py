@@ -91,14 +91,14 @@ class Meshes:
         initial_labels = self._core_object.labels
         # Filter labels
         label_space = {}
-        for key in kwargs.keys():
+        for key in kwargs:
             if key in initial_labels:
                 label_space[key] = kwargs[key]
         # selected_meshes = self._core_object.get_meshes(label_space=label_space)
         # Create label_spaces to select
         label_values_to_select = {}
         for label in initial_labels:
-            if label in list(label_space.keys()):
+            if label in list(label_space):
                 values = label_space[label]
                 if not isinstance(values, list):
                     values = [values]
