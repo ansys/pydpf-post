@@ -15,9 +15,9 @@ import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListIdx, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListIdx
-from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
+from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 
 
 class Mesh:
