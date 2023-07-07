@@ -62,8 +62,8 @@ class Mesh:
         return ElementListIdx(self._meshed_region.elements)
 
     def get_element_by_id(
-        self, id: int
-    ) -> Element:  # pylint: disable=redefined-builtin
+        self, id: int  # pylint: disable=redefined-builtin
+    ) -> Element:
         """Returns an element in the mesh from a given ID."""
         return self.elements.by_id[id]
 

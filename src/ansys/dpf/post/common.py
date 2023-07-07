@@ -4,7 +4,9 @@ Common
 ------
 
 """
-from ansys.dpf.core.common import elemental_properties  # noqa: F401, W0611
+from ansys.dpf.core.common import (  # noqa: F401  # pylint: disable=W0611
+    elemental_properties,
+)
 
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
