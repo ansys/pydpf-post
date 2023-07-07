@@ -6,7 +6,7 @@ from collections.abc import Collection, Iterator
 from typing import List, Union
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core.elements import Element, Elements
+from ansys.dpf.core import elements
 from ansys.dpf.core.nodes import Node
 
 
@@ -91,12 +91,12 @@ class ElementType:
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
 
-    def __init__(self, elements: Elements, index: int):
+    def __init__(self, elements: elements.Elements, index: int):
         """Constructs a Proxy Element object."""
         self._elements = elements
         self._index = index
 
-    def _resolve(self) -> Element:
+    def _resolve(self) -> elements.Element:
         """Returns the original Element object in the original list."""
         return self._elements[self._index]
 
@@ -157,7 +157,7 @@ class Element:
 class ElementListIterator(Iterator):
     """Iterator class for the ElementList."""
 
-    def __init__(self, el_list: Elements):
+    def __init__(self, el_list: elements.Elements):
         """Constructs an Iterator from an element list."""
         self._el_list = el_list
         self._idx = 0
@@ -179,7 +179,7 @@ class ElementListIterator(Iterator):
 class ElementListIdx(Collection):
     """List of Elements."""
 
-    def __init__(self, elements: Elements):
+    def __init__(self, elements: elements.Elements):
         """Constructs list from existing dpf.core.elements.Elements list."""
         self._elements = elements
 
@@ -228,11 +228,11 @@ class ElementListIdx(Collection):
 class ElementListById(ElementListIdx):
     """Wrapper class for accessing Elements by ID instead of index."""
 
-    def __init__(self, elements: Elements):
+    def __init__(self, elements: elements.Elements):
         """Constructs an ElementListById from an Elements instance."""
         super().__init__(elements)
 
-    def __getitem__(self, id: int) -> Element:  # noqa: W0622
+    def __getitem__(self, id: int) -> Element:  # pylint: disable=redefined-builtin
         """Access an Element with an ID."""
         idx = self._elements.scoping.index(id)
         return super().__getitem__(idx)

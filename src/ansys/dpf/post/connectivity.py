@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Collection, Iterator
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 from ansys.dpf.core.any import Any
 from ansys.dpf.core.property_field import PropertyField
@@ -65,7 +65,7 @@ class ConnectivityListIdx(Collection):
         elif self._mode == ReturnMode.IDX:
             out = self._get_idx_from_idx(self._idx)
         else:
-            raise ValueError(f"ReturnMode has an incorrect value")
+            raise ValueError("ReturnMode has an incorrect value")
         self._idx += 1
         return out
 
@@ -145,7 +145,7 @@ class ConnectivityListById(ConnectivityListIdx):
         """Constructs a Connectivity list from a given PropertyField."""
         super().__init__(field, scoping, mode)
 
-    def __getitem__(self, id: int) -> List[int]:  # noqa: W0622
+    def __getitem__(self, id: int) -> List[int]:  # pylint: disable=redefined-builtin
         """Returns a list of indexes or IDs for a given ID, see ReturnMode Enum."""
         idx = self._field.scoping.index(id)
         return super().__getitem__(idx)

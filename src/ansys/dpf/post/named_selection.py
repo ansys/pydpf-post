@@ -87,7 +87,7 @@ class NamedSelection:
         """Retrieve the ID at a given index."""
         return self._scoping.id(index)
 
-    def index(self, id: int) -> int:  # noqa: W0622
+    def index(self, id: int) -> int:  # pylint: disable=redefined-builtin
         """Retrieve the index of a given ID."""
         return self._scoping.index(id)
 

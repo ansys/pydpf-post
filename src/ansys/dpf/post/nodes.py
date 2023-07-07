@@ -127,7 +127,7 @@ class NodeListById(NodeListIdx):
         """Constructs a list from an existing core.nodes.Nodes object."""
         super().__init__(nodes)
 
-    def __getitem__(self, id: int) -> Node:  # noqa: W0622
+    def __getitem__(self, id: int) -> Node:  # pylint: disable=redefined-builtin
         """Returns a Node for a given ID."""
         idx = self._nodes.scoping.index(id)
         return super().__getitem__(idx)
