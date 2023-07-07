@@ -109,14 +109,14 @@ def test_mesh_coordinates(mesh):
     coord = mesh.coordinates
     print(coord)
     ref = """
-                 results   coord (m)
-    node_ids  components            
-           1           X  1.5000e-02
-                       Y  4.5000e-02
-                       Z  1.5000e-02
-           2           X  1.5000e-02
-                       Y  4.5000e-02
-                       Z  0.0000e+00
-         ...
+             results  coord (m)
+ node_ids components           
+        1          X 1.5000e-02
+                   Y 4.5000e-02
+                   Z 1.5000e-02
+        2          X 1.5000e-02
+                   Y 4.5000e-02
+                   Z 0.0000e+00
+      ...        ...        ...
 """  # noqa
     assert str(coord) == ref
