@@ -13,7 +13,7 @@ from ansys.dpf import post
 )
 class TestFluidSimulation:
     @fixture
-    def fluid_simulation(self):
+    def fluent_simulation(self):
         fluid_example_files = examples.download_fluent_axial_comp()
         ds = dpf.DataSources()
         ds.set_result_file_path(
@@ -26,8 +26,22 @@ class TestFluidSimulation:
         )
         return post.FluidSimulation(ds)  # noqa
 
-    def test_simulation_init(self, fluid_simulation):
-        assert fluid_simulation is not None
+    @fixture
+    def cfx_simulation(self):
+        fluid_example_files = examples.download_cfx_heating_coil()
+        ds = dpf.DataSources()
+        ds.set_result_file_path(
+            fluid_example_files["cas"],
+            key="cas",
+        )
+        ds.add_file_path(
+            fluid_example_files["dat"],
+            key="dat",
+        )
+        return post.FluidSimulation(ds)  # noqa
+
+    def test_simulation_init(self, fluent_simulation):
+        assert fluent_simulation is not None
 
     @pytest.mark.parametrize(
         "result_name",
@@ -37,7 +51,7 @@ class TestFluidSimulation:
             "static_pressure",
             "mean_static_pressure",
             "rms_static_pressure",
-            # "surface_heat_rate",  # Wait for fix
+            "surface_heat_rate",
             "density",
             "temperature",
             "mean_temperature",
@@ -47,22 +61,57 @@ class TestFluidSimulation:
             "rms_velocity",
         ],
     )
-    def test_results(self, fluid_simulation, result_name):
-        result = getattr(fluid_simulation, result_name)()
-        assert result is not None
+    def test_results_fluent(self, fluent_simulation, result_name):
+        print(fluent_simulation.result_info[result_name])
+        result = getattr(fluent_simulation, result_name)()
+        assert isinstance(result, post.DataFrame)
+        result = getattr(fluent_simulation, result_name)(phases=[1])
+        assert isinstance(result, post.DataFrame)
+        result = getattr(fluent_simulation, result_name)(phases=["phase-1"])
+        assert isinstance(result, post.DataFrame)
+        with pytest.raises(ValueError, match="is not a valid Phase ID or Phase name"):
+            _ = getattr(fluent_simulation, result_name)(phases=[2])
+
+    @pytest.mark.parametrize(
+        "result_name",
+        [
+            "specific_heat",
+            "epsilon",
+            "enthalpy",
+            "turbulent_kinetic_energy",
+            "thermal_conductivity",
+            "dynamic_viscosity",
+            "turbulent_viscosity",
+            "static_pressure",
+            "total_pressure",
+            "density",
+            "entropy",
+            "wall_shear_stress",
+            "temperature",
+            "total_temperature",
+            "velocity",
+        ],
+    )
+    def test_results_cfx(self, cfx_simulation, result_name):
+        print(cfx_simulation.result_info[result_name])
+        result = getattr(cfx_simulation, result_name)()
+        assert isinstance(result, post.DataFrame)
+        result = getattr(cfx_simulation, result_name)(phases=[1])
+        assert isinstance(result, post.DataFrame)
+        result = getattr(cfx_simulation, result_name)(phases=[2])
         assert isinstance(result, post.DataFrame)
 
-    def test_fluid_simulation_zones(self, fluid_simulation):
+    def test_fluid_simulation_zones(self, fluent_simulation):
         from ansys.dpf.post.zone import Zones
 
-        assert isinstance(fluid_simulation.zones, Zones)
+        assert isinstance(fluent_simulation.zones, Zones)
 
-    def test_fluid_simulation_species(self, fluid_simulation):
+    def test_fluid_simulation_species(self, fluent_simulation):
         from ansys.dpf.post.species import SpeciesList
 
-        assert isinstance(fluid_simulation.species, SpeciesList)
+        assert isinstance(fluent_simulation.species, SpeciesList)
 
-    def test_fluid_simulation_phases(self, fluid_simulation):
+    def test_fluid_simulation_phases(self, fluent_simulation):
         from ansys.dpf.post.phase import Phases
 
-        assert isinstance(fluid_simulation.phases, Phases)
+        assert isinstance(fluent_simulation.phases, Phases)
