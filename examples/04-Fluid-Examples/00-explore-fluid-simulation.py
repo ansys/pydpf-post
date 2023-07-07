@@ -12,20 +12,6 @@ explore the metadata available, and use the result extraction capabilities.
 
 """
 ###############################################################################
-# Use gRPC protocol on Linux
-# --------------------------
-# The CFF plugin is currently prone to errors when used InProcess on Linux,
-# hence a gRPC server configuration is chosen when running on a Unix system.
-import platform
-
-import ansys.dpf.core as dpf
-
-if "Linux" in platform.system():
-    dpf.SERVER_CONFIGURATION = (
-        dpf.server_factory.AvailableServerConfigs.LegacyGrpcServer
-    )
-
-###############################################################################
 # Perform required imports
 # ------------------------
 from ansys.dpf import post
@@ -68,20 +54,28 @@ print(simulation.result_info)
 # Print information about a specific available result
 # for result in simulation.result_info:
 #     print(result)
-print(simulation.result_info["temperature"])
+print(simulation.result_info["enthalpy"])
 # Or use an index
 # print(simulation.result_info[12])
 
 ###############################################################################
 # Extract the temperature data
 # ----------------------------
-temperature = simulation.temperature()
+temperature = simulation.enthalpy(zone_ids=[1, 9])
 print(temperature)
-# The dataframe obtained shows data for two different phases
-###############################################################################
-# To directly extract the temperature data for only one phase,
-# pass the 'temperature' method a 'phases' argument.
-# This argument must be given a list of phase unique identifiers, which appear
-# in the dataframe in the phase label column between parentheses,
-# or as listed
-# under the 'Available qualifier labels' section of the metadata on the result
+print(temperature.select(zone=[9]))
+# # The dataframe obtained shows data for two different phases
+# print(temperature.select(phase=[2]))
+# ###############################################################################
+# # To directly extract the temperature data for only one phase,
+# # pass the 'temperature' method a 'phases' argument.
+# # This argument must be given a list of phase unique identifiers, which appear
+# # in the dataframe in the phase label column between parentheses,
+# # or as listed
+# # under the 'Available qualifier labels' section of the metadata on the result
+# # water_temperature = simulation.temperature(phases=["Copper"])
+# water_temperature = simulation.enthalpy(
+#     phases=[2]
+# )
+# print(water_temperature)
+# # The dataframe obtained now only stores data for the water phase.
