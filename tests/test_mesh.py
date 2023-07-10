@@ -120,3 +120,26 @@ def test_mesh_coordinates(mesh):
       ...        ...        ...
 """  # noqa
     assert str(coord) == ref
+
+
+def test_mesh_materials(mesh):
+    materials = mesh.materials
+    ref = """
+     results material_id
+ element_ids            
+           5           1
+           6           1
+           1           1
+           2           1
+           7           1
+           8           1
+         ...         ...
+"""  # noqa
+    assert str(materials) == ref
+    materials_5 = materials.select(element_ids=[5])
+    ref = """
+     results material_id
+ element_ids            
+           5           1
+"""  # noqa
+    assert str(materials_5) == ref
