@@ -26,12 +26,12 @@ class ConnectivityListIterator(Iterator):
         self._conn_list = conn_list
         self._idx = 0
 
-    def __next__(self) -> Any:
+    def __next__(self) -> List[int]:
         """Returns the next element in the list."""
         if self._idx >= self._conn_list.__len__():
             raise StopIteration
 
-        ret = self._conn_list.get_entity_data(self._idx)
+        ret = self._conn_list.get_entity_data(self._idx).tolist()
         self._idx += 1
         return ret
 
@@ -46,8 +46,8 @@ class ConnectivityListIdx(Collection):
     def __init__(
         self,
         field: PropertyField,
+        mode: ReturnMode,
         scoping: Union[Scoping, None] = None,
-        mode: Union[ReturnMode, None] = None,
     ):
         """Constructs a ConnectivityList by wrapping given PropertyField."""
         self._field = field
@@ -83,7 +83,7 @@ class ConnectivityListIdx(Collection):
 
     def _get_idx_from_idx(self, idx: int) -> List[int]:
         """Helper method to retrieve list of indexes from a given index."""
-        return self._field.get_entity_data(idx)
+        return self._field.get_entity_data(idx).tolist()
 
     @property
     def by_id(self) -> ConnectivityListById:
@@ -108,7 +108,7 @@ class ConnectivityListIdx(Collection):
 
     def __len__(self) -> int:
         """Returns the number of entities."""
-        return len(self._field._get_data_pointer())
+        return self._field.scoping.size
 
     def _short_list(self) -> str:
         _str = "["
