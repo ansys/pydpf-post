@@ -122,7 +122,7 @@ class Mesh:
 
     @property
     def element_to_node_ids_connectivity(self):
-        """Returns a list of Node ID for a given Element index."""
+        """Returns a."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
         return ConnectivityListIdx(

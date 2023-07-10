@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Iterator
+from collections.abc import Iterator
 from enum import Enum
-from typing import List, Union
+from typing import List
 
-from ansys.dpf.core.any import Any
 from ansys.dpf.core.property_field import PropertyField
 from ansys.dpf.core.scoping import Scoping
 
@@ -40,23 +39,35 @@ class ConnectivityListIterator(Iterator):
         return ConnectivityListIdx(field=self._conn_list, mode=ReturnMode.IDS)
 
 
-class ConnectivityListIdx(Collection):
+class ConnectivityListIdx:
     """Very basic wrapper around elemental and nodal connectivities fields."""
 
     def __init__(
         self,
         field: PropertyField,
         mode: ReturnMode,
-        scoping: Union[Scoping, None] = None,
+        scoping: Scoping,
     ):
-        """Constructs a ConnectivityList by wrapping given PropertyField."""
+        """Constructs a ConnectivityList by wrapping given PropertyField.
+
+        Arguments:
+        ---------
+        field:
+            Field of connectivity.
+        mode:
+            Whether to return indexes or IDs.
+        scoping:
+            Element or node scoping to map returned indexes to IDs.
+        """
         self._field = field
+        if mode not in [ReturnMode.IDS, ReturnMode.IDX]:
+            raise ValueError("'mode' argument must be a valid ReturnMode value")
         self._mode = mode
         self._scoping = scoping
         self._idx = 0
         self.local_scoping = None
 
-    def __next__(self) -> Any:
+    def __next__(self) -> List[int]:
         """Returns the next element in the list."""
         if self._idx >= len(self):
             raise StopIteration
@@ -64,8 +75,6 @@ class ConnectivityListIdx(Collection):
             out = self._get_ids_from_idx(self._idx)
         elif self._mode == ReturnMode.IDX:
             out = self._get_idx_from_idx(self._idx)
-        else:
-            raise ValueError("ReturnMode has an incorrect value")
         self._idx += 1
         return out
 
@@ -75,7 +84,6 @@ class ConnectivityListIdx(Collection):
             return self._get_ids_from_idx(idx)
         elif self._mode == ReturnMode.IDX:
             return self._get_idx_from_idx(idx)
-        raise ValueError("ReturnMode has an incorrect value")
 
     def _get_ids_from_idx(self, idx: int) -> List[int]:
         """Helper method to retrieve list of IDs from a given index."""
@@ -99,10 +107,6 @@ class ConnectivityListIdx(Collection):
 
         to_id = self.local_scoping.id
         return list(map(to_id, indices))
-
-    def __contains__(self, l: List[int]) -> bool:
-        """Not implemented."""
-        raise NotImplementedError
 
     def __iter__(self) -> ConnectivityListIterator:
         """Returns an iterator object on the list."""
@@ -147,7 +151,7 @@ class ConnectivityListById(ConnectivityListIdx):
         self,
         field: PropertyField,
         mode: ReturnMode,
-        scoping: Union[Scoping, None] = None,
+        scoping: Scoping,
     ):
         """Constructs a Connectivity list from a given PropertyField."""
         super().__init__(field=field, mode=mode, scoping=scoping)
@@ -157,17 +161,13 @@ class ConnectivityListById(ConnectivityListIdx):
         idx = self._field.scoping.index(id)
         return super().__getitem__(idx)
 
-    def __contains__(self, l: List[int]) -> bool:
-        """Not Implemented."""
-        raise NotImplementedError
-
     def __iter__(self) -> ConnectivityListIterator:
         """Returns an iterator object on the list."""
         return super().__iter__()
 
     def __len__(self) -> int:
         """Returns the number of entities."""
-        return len(self._field._get_data_pointer())
+        return self._field.scoping.size
 
     def __repr__(self) -> str:
         """String representation of ConnectivityListById."""
