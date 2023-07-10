@@ -125,28 +125,36 @@ class Mesh:
         """Returns a list of Node ID for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityListIdx(conn_field, nodes_scoping, ReturnMode.IDS)
+        return ConnectivityListIdx(
+            field=conn_field, mode=ReturnMode.IDS, scoping=nodes_scoping
+        )
 
     @property
     def node_to_element_ids_connectivity(self):
         """Returns a list of Element ID for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityListIdx(conn_field, elems_scoping, ReturnMode.IDS)
+        return ConnectivityListIdx(
+            field=conn_field, mode=ReturnMode.IDS, scoping=elems_scoping
+        )
 
     @property
     def element_to_node_connectivity(self):
         """Returns a list of Node index for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityListIdx(conn_field, nodes_scoping, ReturnMode.IDX)
+        return ConnectivityListIdx(
+            field=conn_field, mode=ReturnMode.IDX, scoping=nodes_scoping
+        )
 
     @property
     def node_to_element_connectivity(self):
         """Returns a list of Element index for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityListIdx(conn_field, elems_scoping, ReturnMode.IDX)
+        return ConnectivityListIdx(
+            field=conn_field, mode=ReturnMode.IDX, scoping=elems_scoping
+        )
 
     @property
     def unit(self) -> str:
