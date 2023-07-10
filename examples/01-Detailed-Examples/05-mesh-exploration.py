@@ -112,20 +112,20 @@ print(e_materials)
 # ----------------------------------------------
 
 # Get the nodes of an element
-mesh.elements[0].nodes
+elem_0_nodes = mesh.elements[0].nodes
 
 # Get the node IDs of an element
-mesh.elements[0].node_ids
+elem_0_nodes_ids = mesh.elements[0].node_ids
 
-# Get the nodes of an element
-mesh.elements[0].num_nodes
+# Get the number of nodes of an element
+num_nodes_elem_0 = mesh.elements[0].num_nodes
 
 # Get the type of the element
-mesh.elements[0].type_info
-mesh.elements[0].type
+elem_0_type_info = mesh.elements[0].type_info
+elem_0_type = mesh.elements[0].type
 
 # Get the shape of the element
-mesh.elements[0].shape
+elem_0_shape = mesh.elements[0].shape
 
 ###############################################################################
 # Get the elemental connectivity
@@ -139,7 +139,7 @@ conn2 = mesh.element_to_node_ids_connectivity
 
 el_idx_5 = mesh.elements[5]
 # get node IDS from element ID
-conn2.by_id[el_idx_5.id]
+node_ids = conn2.by_id[el_idx_5.id]
 
 ###############################################################################
 # Get nodes
@@ -159,7 +159,7 @@ print(mesh.coordinates)
 # -------------------------------------------
 
 # Coordinates
-mesh.nodes[1].coordinates
+node_1 = mesh.nodes[1].coordinates
 
 # Get Nodal connectivity
 conn3 = mesh.node_to_element_connectivity
