@@ -143,3 +143,20 @@ def test_mesh_materials(mesh):
            5           1
 """  # noqa
     assert str(materials_5) == ref
+
+
+def test_mesh_element_types(mesh):
+    element_types = mesh.element_types
+    print(element_types)
+    ref = """
+     results elem_type_id
+ element_ids             
+           5            1
+           6            1
+           1            1
+           2            1
+           7            1
+           8            1
+         ...          ...
+"""  # noqa
+    assert str(element_types) == ref
