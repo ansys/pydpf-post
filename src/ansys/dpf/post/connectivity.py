@@ -37,7 +37,7 @@ class ConnectivityListIterator(Iterator):
 
     def __iter__(self) -> ConnectivityListIterator:
         """Returns a new ConnectivityListIterator."""
-        return ConnectivityListIdx(field=self._conn_list)
+        return ConnectivityListIdx(field=self._conn_list, mode=ReturnMode.IDS)
 
 
 class ConnectivityListIdx(Collection):
@@ -88,7 +88,9 @@ class ConnectivityListIdx(Collection):
     @property
     def by_id(self) -> ConnectivityListById:
         """Returns an equivalent list which accepts an ID instead of an index in __getitem__."""
-        return ConnectivityListById(self._field, self._scoping, self._mode)
+        return ConnectivityListById(
+            field=self._field, mode=self._mode, scoping=self._scoping
+        )
 
     def _to_ids(self, indices) -> List[int]:
         """Helper method to convert a list of indexes into a list of IDs."""
@@ -141,7 +143,12 @@ class ConnectivityListIdx(Collection):
 class ConnectivityListById(ConnectivityListIdx):
     """Connectivity List indexed by ID."""
 
-    def __init__(self, field: PropertyField, scoping: Scoping, mode: ReturnMode):
+    def __init__(
+        self,
+        field: PropertyField,
+        mode: ReturnMode,
+        scoping: Union[Scoping, None] = None,
+    ):
         """Constructs a Connectivity list from a given PropertyField."""
         super().__init__(field, scoping, mode)
 
