@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
@@ -11,36 +11,14 @@ from ansys.dpf.core.scoping import Scoping
 
 
 class ReturnMode(Enum):
-    """Enum made for internal use, to dictate the behavior of ConnectivityList."""
+    """Enum made for internal use, to dictate the behavior of _ConnectivityList."""
 
     IDS = 1
     IDX = 2
 
 
-class ConnectivityListIterator(Iterator):
-    """Iterator class for Connectivity Lists."""
-
-    def __init__(self, conn_list: PropertyField):
-        """Constructs an iterator from an existing list."""
-        self._conn_list = conn_list
-        self._idx = 0
-
-    def __next__(self) -> List[int]:
-        """Returns the next element in the list."""
-        if self._idx >= self._conn_list.__len__():
-            raise StopIteration
-
-        ret = self._conn_list.get_entity_data(self._idx).tolist()
-        self._idx += 1
-        return ret
-
-    def __iter__(self) -> ConnectivityListIterator:
-        """Returns a new ConnectivityListIterator."""
-        return ConnectivityListIdx(field=self._conn_list, mode=ReturnMode.IDS)
-
-
-class ConnectivityListIdx:
-    """Very basic wrapper around elemental and nodal connectivities fields."""
+class _ConnectivityList(ABC):
+    """Abstract class for ConnectivityList objects."""
 
     def __init__(
         self,
@@ -48,7 +26,7 @@ class ConnectivityListIdx:
         mode: ReturnMode,
         scoping: Scoping,
     ):
-        """Constructs a ConnectivityList by wrapping given PropertyField.
+        """Constructs a _ConnectivityList by wrapping the given PropertyField.
 
         Arguments:
         ---------
@@ -71,50 +49,24 @@ class ConnectivityListIdx:
         """Returns the next element in the list."""
         if self._idx >= len(self):
             raise StopIteration
-        if self._mode == ReturnMode.IDS:
-            out = self._get_ids_from_idx(self._idx)
-        elif self._mode == ReturnMode.IDX:
-            out = self._get_idx_from_idx(self._idx)
+        out = self.__getitem__(self._idx)
         self._idx += 1
         return out
 
     def __getitem__(self, idx: int) -> List[int]:
-        """Returns a list of indexes or IDs for a given index, see ReturnMode Enum."""
+        """Returns, for a given entity index, the connected indexes or IDs (see ReturnMode)."""
         if self._mode == ReturnMode.IDS:
             return self._get_ids_from_idx(idx)
         elif self._mode == ReturnMode.IDX:
             return self._get_idx_from_idx(idx)
 
-    def _get_ids_from_idx(self, idx: int) -> List[int]:
-        """Helper method to retrieve list of IDs from a given index."""
-        return self._to_ids(self._get_idx_from_idx(idx))
-
-    def _get_idx_from_idx(self, idx: int) -> List[int]:
-        """Helper method to retrieve list of indexes from a given index."""
-        return self._field.get_entity_data(idx).tolist()
-
-    @property
-    def by_id(self) -> ConnectivityListById:
-        """Returns an equivalent list which accepts an ID instead of an index in __getitem__."""
-        return ConnectivityListById(
-            field=self._field, mode=self._mode, scoping=self._scoping
-        )
-
-    def _to_ids(self, indices) -> List[int]:
-        """Helper method to convert a list of indexes into a list of IDs."""
-        if not self.local_scoping:
-            self.local_scoping = self._scoping.as_local_scoping()
-
-        to_id = self.local_scoping.id
-        return list(map(to_id, indices))
-
-    def __iter__(self) -> ConnectivityListIterator:
-        """Returns an iterator object on the list."""
-        return ConnectivityListIterator(self._field)
-
     def __len__(self) -> int:
         """Returns the number of entities."""
         return self._field.scoping.size
+
+    def __repr__(self) -> str:
+        """Returns string representation of a _ConnectivityList object."""
+        return f"{self.__class__.__name__}({self.__str__()}, __len__={self.__len__()})"
 
     def _short_list(self) -> str:
         _str = "["
@@ -136,39 +88,59 @@ class ConnectivityListIdx:
         return _str
 
     def __str__(self) -> str:
-        """Returns string representation of ConnectivityListIdx."""
+        """Returns string representation of a _ConnectivityList object."""
         return self._short_list()
 
-    def __repr__(self) -> str:
-        """Returns string representation of ConnectivityListIdx."""
-        return f"ConnectivityListIdx({self.__str__()},__len__={self.__len__()})"
+    def _get_ids_from_idx(self, idx: int) -> List[int]:
+        """Helper method to retrieve list of IDs from a given index."""
+        return self._to_ids(self._get_idx_from_idx(idx))
+
+    def _get_idx_from_idx(self, idx: int) -> List[int]:
+        """Helper method to retrieve list of indexes from a given index."""
+        return self._field.get_entity_data(idx).tolist()
+
+    def _to_ids(self, indices) -> List[int]:
+        """Helper method to convert a list of indexes into a list of IDs."""
+        if not self.local_scoping:
+            self.local_scoping = self._scoping.as_local_scoping()
+
+        to_id = self.local_scoping.id
+        return list(map(to_id, indices))
+
+    @abstractmethod
+    def __iter__(self):
+        """Returns the object to iterate on."""
+        pass
 
 
-class ConnectivityListById(ConnectivityListIdx):
-    """Connectivity List indexed by ID."""
+class ConnectivityListByIndex(_ConnectivityList):
+    """Connectivity list object using indexes as input."""
 
-    def __init__(
-        self,
-        field: PropertyField,
-        mode: ReturnMode,
-        scoping: Scoping,
-    ):
-        """Constructs a Connectivity list from a given PropertyField."""
-        super().__init__(field=field, mode=mode, scoping=scoping)
+    @property
+    def by_id(self) -> ConnectivityListById:
+        """Returns an equivalent list which accepts IDs as input."""
+        return ConnectivityListById(
+            field=self._field, mode=self._mode, scoping=self._scoping
+        )
+
+    def __iter__(self) -> ConnectivityListByIndex:
+        """Returns the object to iterate on."""
+        self._idx = 0
+        return self
+
+
+class ConnectivityListById(_ConnectivityList):
+    """Connectivity list object using IDs as input."""
 
     def __getitem__(self, id: int) -> List[int]:  # pylint: disable=redefined-builtin
-        """Returns a list of indexes or IDs for a given ID, see ReturnMode Enum."""
+        """Returns, for a given entity ID, the connected indexes or IDs (see ReturnMode)."""
         idx = self._field.scoping.index(id)
         return super().__getitem__(idx)
 
-    def __iter__(self) -> ConnectivityListIterator:
-        """Returns an iterator object on the list."""
-        return super().__iter__()
-
-    def __len__(self) -> int:
-        """Returns the number of entities."""
-        return self._field.scoping.size
-
-    def __repr__(self) -> str:
-        """String representation of ConnectivityListById."""
-        return f"ConnectivityListById({super().__str__()}, __len__={self.__len__()})"
+    def __iter__(self) -> ConnectivityListByIndex:
+        """Returns the object to iterate on."""
+        return ConnectivityListByIndex(
+            field=self._field,
+            mode=self._mode,
+            scoping=self._scoping,
+        )

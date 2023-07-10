@@ -13,7 +13,7 @@ from ansys.dpf.core.nodes import Node
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
-from ansys.dpf.post.connectivity import ConnectivityListIdx, ReturnMode
+from ansys.dpf.post.connectivity import ConnectivityListByIndex, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListIdx
 from ansys.dpf.post.named_selection import NamedSelectionsDict
 from ansys.dpf.post.nodes import NodeListIdx
@@ -125,7 +125,7 @@ class Mesh:
         """Returns a."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityListIdx(
+        return ConnectivityListByIndex(
             field=conn_field, mode=ReturnMode.IDS, scoping=nodes_scoping
         )
 
@@ -134,7 +134,7 @@ class Mesh:
         """Returns a list of Element ID for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityListIdx(
+        return ConnectivityListByIndex(
             field=conn_field, mode=ReturnMode.IDS, scoping=elems_scoping
         )
 
@@ -143,7 +143,7 @@ class Mesh:
         """Returns a list of Node index for a given Element index."""
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
-        return ConnectivityListIdx(
+        return ConnectivityListByIndex(
             field=conn_field, mode=ReturnMode.IDX, scoping=nodes_scoping
         )
 
@@ -152,7 +152,7 @@ class Mesh:
         """Returns a list of Element index for a given Node index."""
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
-        return ConnectivityListIdx(
+        return ConnectivityListByIndex(
             field=conn_field, mode=ReturnMode.IDX, scoping=elems_scoping
         )
 

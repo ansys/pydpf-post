@@ -4,53 +4,67 @@ from ansys.dpf import core as dpf
 from ansys.dpf.post import connectivity
 
 
-def test_connectivity_list_iterator():
-    property_field = dpf.property_field.PropertyField()
-    cli = connectivity.ConnectivityListIterator(conn_list=property_field)
-    for i in cli:
-        assert isinstance(i, connectivity.ConnectivityListIterator)
-
-
 def test_connectivity_connectivity_list_idx():
     property_field = dpf.property_field.PropertyField()
-    property_field.append(10, scopingid=1)
-    property_field.append(11, scopingid=2)
-    property_field.append(12, scopingid=3)
+    property_field.append([0, 1, 2], scopingid=1)
+    property_field.append([2, 3, 4], scopingid=2)
+    property_field.append([4, 5, 6], scopingid=3)
+    scoping = dpf.mesh_scoping_factory.nodal_scoping(
+        [100, 101, 102, 103, 104, 105, 106]
+    )
     with pytest.raises(ValueError, match="'mode' argument must be"):
-        _ = connectivity.ConnectivityListIdx(field=property_field, mode="test")
-    # scoping = dpf.mesh_scoping_factory.nodal_scoping([1, 2, 3])
-    cli = connectivity.ConnectivityListIdx(
-        field=property_field, mode=connectivity.ReturnMode.IDX
+        _ = connectivity.ConnectivityListByIndex(
+            field=property_field, mode="test", scoping=scoping
+        )
+    cli = connectivity.ConnectivityListByIndex(
+        field=property_field, mode=connectivity.ReturnMode.IDX, scoping=scoping
     )
     for i in cli:
         assert isinstance(i, list)
-    assert cli[1] == [11]
+    assert cli[1] == [2, 3, 4]
     assert len(cli) == 3
-    ref = "ConnectivityListIdx([[10], [11], [12]],__len__=3)"
+    ref = "ConnectivityListByIndex([[0 1 2], [2 3 4], [4 5 6]], __len__=3)"
     assert repr(cli) == ref
-    ref = "[[10], [11], [12]]"
+    ref = "[[0 1 2], [2 3 4], [4 5 6]]"
     assert str(cli) == ref
     cli2 = cli.by_id
     assert isinstance(cli2, connectivity.ConnectivityListById)
 
-    cli = connectivity.ConnectivityListIdx(
-        field=property_field, mode=connectivity.ReturnMode.IDS
+    cli = connectivity.ConnectivityListByIndex(
+        field=property_field, mode=connectivity.ReturnMode.IDS, scoping=scoping
     )
     for i in cli:
         assert isinstance(i, list)
-
-    assert [10] in cli
+    for i in cli:
+        assert isinstance(i, list)
 
 
 def test_connectivity_connectivity_list_by_id():
     property_field = dpf.property_field.PropertyField()
-    property_field.append(10, scopingid=1)
-    property_field.append(11, scopingid=2)
-    property_field.append(12, scopingid=3)
-    cli = connectivity.ConnectivityListById(
-        field=property_field,
-        mode=connectivity.ReturnMode.IDS,  # , scoping=property_field.scoping
+    property_field.append([0, 1, 2], scopingid=1)
+    property_field.append([2, 3, 4], scopingid=2)
+    property_field.append([4, 5, 6], scopingid=3)
+    scoping = dpf.mesh_scoping_factory.nodal_scoping(
+        [100, 101, 102, 103, 104, 105, 106]
     )
-    assert cli[1] == [10]
+    cli = connectivity.ConnectivityListById(
+        field=property_field, mode=connectivity.ReturnMode.IDS, scoping=scoping
+    )
+    assert cli[1] == [100, 101, 102]
+    for i in cli:
+        assert isinstance(i, list)
+    for i in cli:
+        assert isinstance(i, list)
+    assert len(cli) == 3
+    ref = "ConnectivityListById([[100, 101, 102], [102, 103, 104], [104, 105, 106]], __len__=3)"
+    assert repr(cli) == ref
+    ref = "[[100, 101, 102], [102, 103, 104], [104, 105, 106]]"
+    assert str(cli) == ref
+
+    cli = connectivity.ConnectivityListById(
+        field=property_field, mode=connectivity.ReturnMode.IDS, scoping=scoping
+    )
+    for i in cli:
+        assert isinstance(i, list)
     for i in cli:
         assert isinstance(i, list)
