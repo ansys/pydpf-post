@@ -42,7 +42,7 @@ Source = "https://github.com/ansys/pydpf-post"
 
 [project.optional-dependencies]
 plotting = [
-    'pyvista[jupyter, trame]>=0.24.0, <0.41.0; python_version>="3.8"',
+    'pyvista[jupyter, trame]>=0.24.0, <0.41.0; python_version>"3.7"',
     'pyvista>=0.24.0, <0.38.5; python_version<"3.8"',
 ]
 
