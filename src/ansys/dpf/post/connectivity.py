@@ -110,7 +110,6 @@ class _ConnectivityList(ABC):
     @abstractmethod
     def __iter__(self):  # pragma: no cover
         """Returns the object to iterate on."""
-        pass
 
 
 class ConnectivityListByIndex(_ConnectivityList):
