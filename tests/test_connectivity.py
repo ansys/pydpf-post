@@ -30,6 +30,10 @@ def test_connectivity_connectivity_list_idx():
     cli2 = cli.by_id
     assert isinstance(cli2, connectivity.ConnectivityListById)
 
+    property_field.append([6, 7, 8], scopingid=4)
+    scoping = dpf.mesh_scoping_factory.nodal_scoping(
+        [100, 101, 102, 103, 104, 105, 106, 107, 108]
+    )
     cli = connectivity.ConnectivityListByIndex(
         field=property_field, mode=connectivity.ReturnMode.IDS, scoping=scoping
     )
@@ -37,6 +41,10 @@ def test_connectivity_connectivity_list_idx():
         assert isinstance(i, list)
     for i in cli:
         assert isinstance(i, list)
+    ref = "ConnectivityListByIndex([[100, 101, 102], ..., [106, 107, 108]], __len__=4)"
+    assert repr(cli) == ref
+    ref = "[[100, 101, 102], ..., [106, 107, 108]]"
+    assert str(cli) == ref
 
 
 def test_connectivity_connectivity_list_by_id():
