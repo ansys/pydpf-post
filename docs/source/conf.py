@@ -55,6 +55,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
+    'pyvista.ext.viewer_directive',
 ]
 
 typehints_defaults = "comma"
