@@ -150,7 +150,7 @@ class ConnectivityListById(ConnectivityListIdx):
         scoping: Union[Scoping, None] = None,
     ):
         """Constructs a Connectivity list from a given PropertyField."""
-        super().__init__(field, scoping, mode)
+        super().__init__(field=field, mode=mode, scoping=scoping)
 
     def __getitem__(self, id: int) -> List[int]:  # pylint: disable=redefined-builtin
         """Returns a list of indexes or IDs for a given ID, see ReturnMode Enum."""
