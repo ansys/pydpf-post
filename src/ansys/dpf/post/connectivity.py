@@ -108,7 +108,7 @@ class _ConnectivityList(ABC):
         return list(map(to_id, indices))
 
     @abstractmethod
-    def __iter__(self):
+    def __iter__(self):  # pragma: no cover
         """Returns the object to iterate on."""
         pass
 
