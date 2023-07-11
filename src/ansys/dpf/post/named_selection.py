@@ -94,6 +94,10 @@ class NamedSelection:
 
         self._name = name
 
+    def __eq__(self, other) -> bool:
+        """Tests equality of location and IDs."""
+        return (self.location == other.location) and (all(self.ids == other.ids))
+
     @property
     def name(self) -> str:
         """Returns the name."""
