@@ -24,7 +24,7 @@ class ElementType:
 
     @property
     def enum_id(self) -> dpf.element_types:
-        """ID of the Element type in the element_types enum."""
+        """Element type in the element_types enum."""
         return self._el_desc.enum_id
 
     @property
@@ -91,59 +91,54 @@ class ElementType:
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
 
-    def __init__(self, elements: elements.Elements, index: int):
+    def __init__(self, element: elements.Element):
         """Constructs a Proxy Element object."""
-        self._elements = elements
-        self._index = index
-
-    def _resolve(self) -> elements.Element:
-        """Returns the original Element object in the original list."""
-        return self._elements[self._index]
+        self._element = element
 
     @property
     def node_ids(self) -> List[int]:
         """See :py:meth:`ansys.dpf.core.elements.Element.node_ids`."""
-        return self._resolve().node_ids
+        return self._element.node_ids
 
     @property
     def id(self) -> int:
         """See :py:meth:`ansys.dpf.core.elements.Element.id`."""
-        return self._resolve().id
+        return self._element.id
 
     @property
     def index(self) -> int:
         """See :py:meth:`ansys.dpf.core.elements.Element.index`."""
-        return self._resolve().index
+        return self._element.index
 
     @property
     def nodes(self) -> List[Node]:
         """See :py:meth:`ansys.dpf.core.elements.Element.nodes`."""
-        return self._resolve().nodes
+        return self._element.nodes
 
     @property
     def num_nodes(self) -> int:
         """See :py:meth:`ansys.dpf.core.elements.Element.n_nodes`."""
-        return self._resolve().n_nodes
+        return self._element.n_nodes
 
     @property
     def type_info(self) -> ElementType:
         """Gets an element descriptor, See :py:meth:`ansys.dpf.core.elements.Element.id`."""
-        return ElementType(self._resolve().type.value)
+        return ElementType(self._element.type.value)
 
     @property
-    def type(self) -> int:
-        """Returns the ID of the Element Type."""
-        return self._resolve().type
+    def type(self) -> elements.element_types:
+        """Returns the Element Type."""
+        return self._element.type
 
     @property
     def shape(self) -> str:
         """See :py:meth:`ansys.dpf.core.elements.Element.shape`."""
-        return self._resolve().shape
+        return self._element.shape
 
     @property
     def to_node_connectivity(self) -> List[int]:
         """See :py:meth:`ansys.dpf.core.elements.Element.connectivity`."""
-        return self._resolve().connectivity
+        return self._element.connectivity
 
     def __repr__(self) -> str:
         """Returns string representation of an Element."""
@@ -151,7 +146,7 @@ class Element:
 
     def __str__(self) -> str:
         """Returns string representation of an Element."""
-        return self._resolve().__str__()
+        return self._element.__str__()
 
 
 class ElementListIterator(Iterator):
