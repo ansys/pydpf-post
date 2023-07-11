@@ -56,7 +56,7 @@ class _PropertyFieldsContainer(Sequence):
         if fields_container is not None:
             self._labels = copy.deepcopy(fields_container.labels)
             # self.scopings = copy.deepcopy(fields_container.scopings)
-            self._server = copy.deepcopy(fields_container._server)
+            self._server = fields_container._server
 
             # self.ids = copy.deepcopy(fields_container.ids)
 
