@@ -2,46 +2,26 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping
+from collections.abc import Mapping
 import copy
 from typing import List, Union
 
 import ansys.dpf.core as dpf
 import ansys.dpf.core.dpf_array as dpf_array
 
-
-class NamedSelectionsIterator(Iterator):
-    """Iterator implementation for NamedSelectionsDict."""
-
-    def __init__(self, ns_dict: NamedSelectionsDict):
-        """Initialize the Named Selection Iterator. see NamedSelectionsDict."""
-        self.idx = 0
-        self.ns_dict = ns_dict
-
-    def __iter__(self) -> NamedSelectionsIterator:
-        """Get base iterator."""
-        self.idx = 0
-        return self
-
-    def __next__(self) -> str:
-        """Returns next value."""
-        if self.idx < len(self.ns_dict):
-            res = self.ns_dict.keys()[self.idx]
-            self.idx += 1
-            return res
-        else:
-            raise StopIteration
+from ansys.dpf.post.mesh import Mesh
 
 
-class NamedSelectionsDict(Mapping):
-    """Proxy class to expose Named Selections interface to post.Mesh."""
+class NamedSelections(Mapping):
+    """Dictionary of available named selections for a given mesh."""
 
-    def __init__(self, meshed_region: dpf.MeshedRegion):
-        """Initialize Named Selections dictionary from internal Meshed Region."""
-        self._meshed_region = meshed_region
+    def __init__(self, mesh: Mesh):
+        """Initialize Named Selections dictionary from a Mesh."""
+        self._idx = 0
+        self._meshed_region = mesh._meshed_region
 
     def __getitem__(self, key: str) -> NamedSelection:
-        """Implements [] getter access function."""
+        """Get named selection of name equal to the given key."""
         if key in self._meshed_region.available_named_selections:
             scoping = self._meshed_region.named_selection(key)
             return NamedSelection(key, scoping)
@@ -56,21 +36,61 @@ class NamedSelectionsDict(Mapping):
         """Returns the length of the dictionary (number of named selections)."""
         return len(self.keys())
 
-    def __delitem__(self, __key):
-        """Not implemented."""
-        return NotImplementedError
+    def __iter__(self) -> NamedSelections:
+        """Get base iterator."""
+        self._idx = 0
+        return self
 
-    def __iter__(self) -> NamedSelectionsIterator:
-        """Returns an iterator to access this dictionary."""
-        return NamedSelectionsIterator(self)
+    def __next__(self) -> str:
+        """Returns next value."""
+        if self._idx >= len(self):
+            raise StopIteration
+        res = self.keys()[self._idx]
+        self._idx += 1
+        return res
 
 
 class NamedSelection:
-    """Class decorating dpf.Scoping with a name attribute."""
+    """Named Selection class associating a name to a list of mesh entities."""
 
-    def __init__(self, name: str, scoping: dpf.Scoping):
-        """Constructs a NamedSelection from a name and a Scoping."""
-        self._scoping = scoping
+    def __init__(
+        self,
+        name: str,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
+        scoping: Union[dpf.Scoping, None] = None,
+    ):
+        """Constructs a NamedSelection from a name and a list of entity IDs."""
+        tot = (
+            (node_ids is not None)
+            + (element_ids is not None)
+            + (face_ids is not None)
+            + (cell_ids is not None)
+            + (scoping is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "NamedSelection accepts only one argument giving a list of entities."
+            )
+        elif tot == 0:
+            raise ValueError("No list of entity IDs given.")
+        if scoping:
+            self._scoping = scoping
+        elif node_ids:
+            self._scoping = dpf.mesh_scoping_factory.nodal_scoping(node_ids=node_ids)
+        elif element_ids:
+            self._scoping = dpf.mesh_scoping_factory.elemental_scoping(
+                element_ids=element_ids
+            )
+        elif face_ids:
+            self._scoping = dpf.mesh_scoping_factory.face_scoping(face_ids=face_ids)
+        elif cell_ids:
+            self._scoping = dpf.mesh_scoping_factory.elemental_scoping(
+                element_ids=cell_ids
+            )
+
         self._name = name
 
     @property
@@ -110,13 +130,13 @@ class NamedSelection:
         """Create a deep copy of the underlying scoping's data on a given server."""
         new_scoping = self._scoping.deep_copy(server)
         new_name = copy.copy(self._name)
-        return NamedSelection(new_name, new_scoping)
+        return NamedSelection(name=new_name, scoping=new_scoping)
 
     def as_local_scoping(self) -> NamedSelection:
         """Create a deep copy of the underlying scoping that can be modified locally."""
         local_scoping = self._scoping.as_local_scoping()
         local_name = copy.copy(self._name)
-        return NamedSelection(local_name, local_scoping)
+        return NamedSelection(name=local_name, scoping=local_scoping)
 
     def __repr__(self) -> str:
         """Pretty print string of the NamedSelection."""

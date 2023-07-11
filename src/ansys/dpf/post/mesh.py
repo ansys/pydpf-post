@@ -15,7 +15,7 @@ import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListByIndex, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListByIndex
-from ansys.dpf.post.named_selection import NamedSelectionsDict
+from ansys.dpf.post.named_selection import NamedSelections
 from ansys.dpf.post.nodes import NodeListIdx
 from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 
@@ -32,9 +32,9 @@ class Mesh:
         return str(self._meshed_region).replace("Meshed Region", "Mesh")
 
     @property
-    def named_selections(self) -> NamedSelectionsDict:
-        """Returns a mapping of scopings."""
-        return NamedSelectionsDict(self._meshed_region)
+    def named_selections(self) -> NamedSelections:
+        """Returns a dictionary of available named selections for this mesh."""
+        return NamedSelections(self)
 
     @property
     def node_ids(self) -> List[int]:
