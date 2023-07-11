@@ -3,7 +3,12 @@ import pytest
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import examples
-from ansys.dpf.post.elements import Element, ElementType
+from ansys.dpf.post.elements import (
+    Element,
+    ElementListById,
+    ElementListByIndex,
+    ElementType,
+)
 
 
 def test_element_type():
@@ -69,3 +74,34 @@ def test_element():
     assert str(element) == ref
     ref = "Element(type=element_types.Hex20,index=0,id=5,shape=solid)"
     assert repr(element) == ref
+
+
+def test_elements_elements_list_by_idx():
+    model = dpf.Model(examples.find_static_rst())
+    core_elements = model.metadata.meshed_region.elements
+    elements_list_by_index = ElementListByIndex(el_list=core_elements)
+    for i in elements_list_by_index:
+        assert isinstance(i, Element)
+    for i in elements_list_by_index:
+        assert isinstance(i, Element)
+    assert elements_list_by_index[1].id == 6
+    assert len(elements_list_by_index) == 8
+    ref = "ElementListByIndex([hex20, ..., hex20], __len__=8)"
+    assert repr(elements_list_by_index) == ref
+    ref = "[hex20, ..., hex20]"
+    assert str(elements_list_by_index) == ref
+    assert elements_list_by_index[0] in elements_list_by_index
+    elements_list_by_id = elements_list_by_index.by_id
+    assert isinstance(elements_list_by_id, ElementListById)
+
+
+def test_elements_elements_list_by_id():
+    model = dpf.Model(examples.find_static_rst())
+    core_elements = model.metadata.meshed_region.elements
+    elements_list_by_id = ElementListById(el_list=core_elements)
+    for i in elements_list_by_id:
+        assert isinstance(i, Element)
+    assert isinstance(elements_list_by_id[5], Element)
+    assert elements_list_by_id[5] in elements_list_by_id
+    with pytest.raises(ValueError, match="not found"):
+        _ = elements_list_by_id[0]

@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Iterator
+from abc import ABC, abstractmethod
 from typing import List, Union
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import elements
+from ansys.dpf.core import elements as core_elements
+from ansys.dpf.core import errors
 from ansys.dpf.core.nodes import Node
 
 
@@ -91,7 +92,7 @@ class ElementType:
 class Element:
     """Proxy class wrapping dpf.core.elements.Element."""
 
-    def __init__(self, element: elements.Element):
+    def __init__(self, element: core_elements.Element):
         """Constructs a Proxy Element object."""
         self._element = element
 
@@ -126,7 +127,7 @@ class Element:
         return ElementType(self._element.type.value)
 
     @property
-    def type(self) -> elements.element_types:
+    def type(self) -> core_elements.element_types:
         """Returns the Element Type."""
         return self._element.type
 
@@ -146,104 +147,94 @@ class Element:
 
     def __str__(self) -> str:
         """Returns string representation of an Element."""
-        return self._element.__str__()
+        return str(self._element)
 
 
-class ElementListIterator(Iterator):
+class _ElementList(ABC):
     """Iterator class for the ElementList."""
 
-    def __init__(self, el_list: elements.Elements):
+    def __init__(self, el_list: core_elements.Elements):
         """Constructs an Iterator from an element list."""
         self._el_list = el_list
         self._idx = 0
 
     def __next__(self) -> Element:
         """Returns the next Element in the list."""
-        if self._idx >= self._el_list.__len__():
+        if self._idx >= len(self._el_list):
             raise StopIteration
-
-        ret = Element(self._el_list, self._idx)
+        ret = self[self._idx]
         self._idx += 1
         return ret
 
-    def __iter__(self) -> Iterator:
-        """Returns a new Iterator object."""
-        return ElementListIterator(self._el_list)
-
-
-class ElementListIdx(Collection):
-    """List of Elements."""
-
-    def __init__(self, elements: elements.Elements):
-        """Constructs list from existing dpf.core.elements.Elements list."""
-        self._elements = elements
-
     def __getitem__(self, index: int) -> Element:
-        """Delegates to element_by_id() if by_id, otherwise to element_by_index()."""
-        return Element(self._elements, index)
-
-    def __contains__(self, el: Element) -> bool:
-        """Checks if the given element in the list."""
-        return el.index >= 0 and el.index < self.__len__()
-
-    def __iter__(self) -> ElementListIterator:
-        """Returns an Iterator object on the list."""
-        return ElementListIterator(self._elements)
+        """Returns a post.Element based on an index in the current list."""
+        return Element(self._el_list[index])
 
     def __len__(self) -> int:
         """Returns the number of elements in the list."""
-        return self._elements.n_elements
+        return self._el_list.n_elements
 
-    @property
-    def by_id(self) -> ElementListById:
-        """Returns an equivalent list accessible with ID instead of index."""
-        return ElementListById(self._elements)
+    def __repr__(self) -> str:
+        """Returns a string representation of _ElementList object."""
+        return f"{self.__class__.__name__}({self}, __len__={len(self)})"
 
     def _short_list(self) -> str:
         _str = "["
         if self.__len__() > 3:
-            _fst = Element(self._elements, 0).type_info.name
-            _lst = Element(self._elements, self.__len__() - 1).type_info.name
+            _fst = Element(self._el_list[0]).type_info.name
+            _lst = Element(self._el_list[len(self) - 1]).type_info.name
             _str += f"{_fst}, ..., {_lst}"
         else:
-            el_list = [Element(self._elements, idx) for idx in range(self.__len__())]
+            el_list = [Element(self._el_list[idx]) for idx in range(len(self))]
             _str += ", ".join(map(lambda el: el.type_info.name, el_list))
         _str += "]"
         return _str
 
     def __str__(self) -> str:
-        """Returns a string representation of ElementListIdx."""
+        """Returns a string representation of an _ElementList object."""
         return self._short_list()
 
-    def __repr__(self) -> str:
-        """Returns a string representation of ElementListIdx."""
-        return f"ElementListIdx({self.__str__()}, __len__={self.__len__()})"
+    @abstractmethod
+    def __iter__(self):  # pragma: no cover
+        """Returns the object to iterate on."""
 
 
-class ElementListById(ElementListIdx):
-    """Wrapper class for accessing Elements by ID instead of index."""
+class ElementListByIndex(_ElementList):
+    """Element list object using indexes as input."""
 
-    def __init__(self, elements: elements.Elements):
-        """Constructs an ElementListById from an Elements instance."""
-        super().__init__(elements)
+    @property
+    def by_id(self) -> ElementListById:
+        """Returns an equivalent list which accepts IDs as input."""
+        return ElementListById(self._el_list)
+
+    def __iter__(self) -> ElementListByIndex:
+        """Returns the object to iterate over."""
+        self._idx = 0
+        return self
+
+    def __contains__(self, el: Element) -> bool:
+        """Checks if the given element in the list."""
+        return len(self) > el.index >= 0
+
+
+class ElementListById(_ElementList):
+    """Element list object using IDs as input."""
 
     def __getitem__(self, id: int) -> Element:  # pylint: disable=redefined-builtin
         """Access an Element with an ID."""
-        idx = self._elements.scoping.index(id)
-        return super().__getitem__(idx)
+        idx = self._el_list.scoping.index(id)
+        try:
+            return super().__getitem__(idx)
+        except errors.DPFServerException as e:
+            if "element not found" in str(e):
+                raise ValueError(f"Element with ID={id} not found in the list.")
+            else:
+                raise e  # pragma: no cover
 
     def __contains__(self, el: Element):
         """Checks if the given element is in the list."""
-        return el.id in self._elements.scoping.ids
+        return el.id in self._el_list.scoping.ids
 
-    def __iter__(self) -> ElementListIterator:
-        """Returns an iterator object on the list."""
-        return super().__iter__()
-
-    def __len__(self) -> int:
-        """Returns the number of elements in the list."""
-        return self._elements.n_elements
-
-    def __repr__(self):
-        """Returns a string representation of ElementListById."""
-        return f"ElementListById({super().__str__()}, __len__={self.__len__()})"
+    def __iter__(self) -> ElementListByIndex:
+        """Returns the object to iterate over."""
+        return ElementListByIndex(self._el_list)
