@@ -43,6 +43,8 @@ def test_mesh_named_selections(mesh):
 
 def test_mesh_unit(mesh):
     assert mesh.unit == "m"
+    mesh.unit = "kg"
+    assert mesh.unit == "kg"
 
 
 def test_mesh_nodes(mesh):
@@ -160,3 +162,7 @@ def test_mesh_element_types(mesh):
          ...          ...
 """  # noqa
     assert str(element_types) == ref
+
+
+def test_mesh_plot(mesh):
+    mesh.plot()
