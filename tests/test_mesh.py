@@ -3,6 +3,7 @@ import numpy as np
 from pytest import fixture
 
 from ansys.dpf.post import StaticMechanicalSimulation
+from ansys.dpf.post.named_selection import NamedSelection
 
 
 @fixture
@@ -34,11 +35,14 @@ def test_mesh_num(mesh):
 
 
 def test_mesh_named_selections(mesh):
-    ns = mesh.named_selections.keys()
+    ns = mesh.named_selections
     assert len(ns) == 1
+    assert len(ns.keys()) == 1
     assert all([isinstance(n, str) for n in ns])
-    assert ns[0] == "_FIXEDSU"
-    assert len(mesh.named_selections[ns[0]].ids) == 21
+    assert ns.keys()[0] == "_FIXEDSU"
+    n = ns[ns.keys()[0]]
+    assert isinstance(n, NamedSelection)
+    assert len(n.ids) == 21
 
 
 def test_mesh_unit(mesh):

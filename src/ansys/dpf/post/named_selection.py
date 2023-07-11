@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import copy
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 
 import ansys.dpf.core as dpf
 import ansys.dpf.core.dpf_array as dpf_array
 
-from ansys.dpf.post.mesh import Mesh
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.dpf.post.mesh import Mesh
 
 
 class NamedSelections(Mapping):
