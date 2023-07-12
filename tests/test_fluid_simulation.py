@@ -105,11 +105,11 @@ class TestFluidSimulation:
         assert isinstance(fluent_simulation.zones, Zones)
 
     def test_fluid_simulation_species(self, fluent_simulation):
-        from ansys.dpf.post.species import SpeciesList
+        from ansys.dpf.post.species import SpeciesDict
 
-        assert isinstance(fluent_simulation.species, SpeciesList)
+        assert isinstance(fluent_simulation.species, SpeciesDict)
 
     def test_fluid_simulation_phases(self, fluent_simulation):
-        from ansys.dpf.post.phase import Phases
+        from ansys.dpf.post.phase import PhasesDict
 
-        assert isinstance(fluent_simulation.phases, Phases)
+        assert isinstance(fluent_simulation.phases, PhasesDict)

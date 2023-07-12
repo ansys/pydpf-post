@@ -34,13 +34,12 @@ class TestPhase:
         assert repr(phase) == 'Phase<name: "phase_test", id=1>'
 
     def test_phases(self, fluid_simulation):
-        phases = post.Phases(simulation=fluid_simulation)
-        assert isinstance(phases, post.Phases)
+        phases = post.PhasesDict(simulation=fluid_simulation)
+        assert isinstance(phases, post.PhasesDict)
         assert len(phases) == 1
         assert isinstance(phases[1], post.Phase)
-        assert repr(phases) == "[Phase<name: 'phase-1', id=1>, ]"
-        print(phases)
-        assert str(phases) == "1 phases available\n{Phase<name: 'phase-1', id=1>,}"
+        assert repr(phases) == "{Phase<name: 'phase-1', id=1>, }"
+        assert str(phases) == "1 phases available\n{Phase<name: 'phase-1', id=1>, }"
         with pytest.raises(ValueError):
             _ = phases["toto"]
         with pytest.raises(ValueError):

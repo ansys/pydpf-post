@@ -10,10 +10,10 @@ from typing import List, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.phase import Phases
+from ansys.dpf.post.phase import PhasesDict
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import ResultCategory, Simulation
-from ansys.dpf.post.species import SpeciesList
+from ansys.dpf.post.species import SpeciesDict
 from ansys.dpf.post.zone import Zones
 
 
@@ -173,12 +173,12 @@ class FluidSimulation(Simulation):
     @property
     def species(self):
         """Return the list of Species in the simulation."""
-        return SpeciesList(self)
+        return SpeciesDict(self)
 
     @property
     def phases(self):
-        """Return the list of Phases in the simulation."""
-        return Phases(self)
+        """Return the list of PhasesDict in the simulation."""
+        return PhasesDict(self)
 
     def _get_result(
         self,

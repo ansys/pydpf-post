@@ -35,7 +35,7 @@ class Phase:
         return f"Phase<name: '{self._name}', id={self._id}>"
 
 
-class Phases:
+class PhasesDict:
     """Dictionary of phases available in the fluid simulation.
 
     Accepts either phase name or phase ID as key.
@@ -59,10 +59,10 @@ class Phases:
 
     def __repr__(self) -> str:
         """String representation of the instance."""
-        text = "["
+        text = "{"
         for i in self._ids:
             text += repr(self[i]) + ", "
-        text += "]"
+        text += "}"
         return text
 
     def __len__(self):
@@ -72,10 +72,7 @@ class Phases:
     def __str__(self) -> str:
         """String representation of the instance."""
         text = f"{len(self)} phases available\n"
-        text += "{"
-        for phase in self._phases:
-            text += f"{phase},"
-        text += "}"
+        text += repr(self)
         return text
 
     def __getitem__(self, item: Union[int, str]) -> Phase:
@@ -97,7 +94,7 @@ class Phases:
         self._idx += 1
         return out
 
-    def __iter__(self) -> Phases:
+    def __iter__(self) -> PhasesDict:
         """Returns the object to iterate over."""
         self._idx = 0
         return self
