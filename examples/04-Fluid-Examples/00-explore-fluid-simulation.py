@@ -54,18 +54,19 @@ print(simulation.result_info)
 # Print information about a specific available result
 # for result in simulation.result_info:
 #     print(result)
-print(simulation.result_info["enthalpy"])
+print(simulation.result_info["temperature"])
 # Or use an index
 # print(simulation.result_info[12])
 
 ###############################################################################
 # Extract the temperature data
 # ----------------------------
-temperature = simulation.enthalpy(zone_ids=[1, 9])
+temperature = simulation.temperature()
 print(temperature)
-print(temperature.select(zone=[9]))
 # # The dataframe obtained shows data for two different phases
-# print(temperature.select(phase=[2]))
+###############################################################################
+# Select data for phase 2 only (Water)
+print(temperature.select(phase=[2]))
 # ###############################################################################
 # # To directly extract the temperature data for only one phase,
 # # pass the 'temperature' method a 'phases' argument.
