@@ -52,8 +52,6 @@ print(simulation.result_info)
 
 ###############################################################################
 # Print information about a specific available result
-# for result in simulation.result_info:
-#     print(result)
 print(simulation.result_info["temperature"])
 # Or use an index
 # print(simulation.result_info[12])
