@@ -76,14 +76,16 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: '241'
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+          standalone_suffix: ${{ inputs.standalone_suffix || ''}}
+          extra-pip-args: ${{ './dpf-standalone/v241/dist' && format('--find-links {0}', './dpf-standalone/v241/dist')}}
+          custom-requirements: requirements/requirements_dev.txt
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -151,7 +153,6 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: false
-          extra-pip-args: ${{ env.extra }}
 
       - name: "Install ansys-grpc-dpf==0.4.0"
         shell: bash
@@ -194,18 +195,22 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: '241'
+      ANSYS_VERSION: "241"
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
+      custom-wheels: ${{ format('--find-links {0}', './dpf-standalone/v241/dist')}}
+      custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
   docs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: '241'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+      ANSYS_VERSION: "241"
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
+      custom-wheels: ./dpf-standalone/v241/dist
+      custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
   upload-development-docs:
