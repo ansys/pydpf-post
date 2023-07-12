@@ -197,6 +197,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         named_selections: Union[List[str], str, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
@@ -208,6 +209,8 @@ class FluidSimulation(Simulation):
         Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
+
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
         Args:
             base_name:
@@ -240,6 +243,15 @@ class FluidSimulation(Simulation):
                 List of IDs of nodes to get results for.
             cell_ids:
                 List of IDs of elements to get results for.
+            zone_ids:
+                List of IDs of zones to get results for.
+            phases:
+                List of IDs of phases to get results for.
+            species:
+                List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             named_selections:
                 Named selection or list of named selections to get results for.
 
@@ -287,22 +299,27 @@ class FluidSimulation(Simulation):
         )
         lists = []
         lists_labels = []
-        if set_ids:
-            lists.append(set_ids)
-            lists_labels.append("time")
-        if zone_ids:
-            lists.append(zone_ids)
-            lists_labels.append("zone")
-        if phases:
-            phase_ids = []
-            available_phases = self.phases
-            for phase in phases:
-                phase_ids.append(available_phases[phase].id)
-            lists.append(phase_ids)
-            lists_labels.append("phase")
-        if species:
-            lists.append(species)
-            lists_labels.append("species")
+        if qualifiers:
+            labels = list(qualifiers.keys())
+            lists_labels.extend(labels)
+            lists.extend([qualifiers[key] for key in labels])
+        else:
+            if set_ids:
+                lists.append(set_ids)
+                lists_labels.append("time")
+            if zone_ids:
+                lists.append(zone_ids)
+                lists_labels.append("zone")
+            if phases:
+                phase_ids = []
+                available_phases = self.phases
+                for phase in phases:
+                    phase_ids.append(available_phases[phase].id)
+                lists.append(phase_ids)
+                lists_labels.append("phase")
+            if species:
+                lists.append(species)
+                lists_labels.append("species")
 
         if lists:
             import itertools
@@ -364,6 +381,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -380,6 +398,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -393,6 +413,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -425,6 +448,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -438,6 +462,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -454,6 +479,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -467,6 +494,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -499,6 +529,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -511,6 +542,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -527,6 +559,8 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -538,6 +572,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -570,6 +607,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -581,6 +619,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -597,6 +636,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -606,6 +647,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -638,6 +682,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -651,6 +696,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -667,6 +713,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -680,6 +728,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -712,6 +763,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -725,6 +777,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -741,6 +794,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -754,6 +809,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -786,6 +844,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -798,6 +857,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -814,6 +874,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -825,6 +887,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -857,6 +922,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -868,6 +934,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -884,6 +951,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -921,6 +990,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -934,6 +1004,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -950,6 +1021,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -963,6 +1036,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -995,6 +1071,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1008,6 +1085,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1024,6 +1102,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1037,6 +1117,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1069,6 +1152,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1081,6 +1165,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1097,6 +1182,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -1108,6 +1195,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1140,6 +1230,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1151,6 +1242,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1166,6 +1258,8 @@ class FluidSimulation(Simulation):
         Arguments `selection`, `named_selections`, and `cell_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
+
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
         Args:
             cell_ids:
@@ -1204,6 +1298,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1217,6 +1312,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1233,6 +1329,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1246,6 +1344,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1278,6 +1379,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1291,6 +1393,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1307,6 +1410,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1320,6 +1425,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1352,6 +1460,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1364,6 +1473,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1380,6 +1490,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -1391,6 +1503,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1423,6 +1538,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1434,6 +1550,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1450,6 +1567,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -1459,6 +1578,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1491,6 +1613,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1504,6 +1627,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1520,6 +1644,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1533,6 +1659,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1565,6 +1694,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1578,6 +1708,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1594,6 +1725,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1607,6 +1740,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1639,6 +1775,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1651,6 +1788,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1667,6 +1805,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -1678,6 +1818,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1710,6 +1853,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1721,6 +1865,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1737,6 +1882,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -1746,6 +1893,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1778,6 +1928,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1791,6 +1942,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1807,6 +1959,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1820,6 +1974,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1852,6 +2009,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1865,6 +2023,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1881,6 +2040,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -1894,6 +2055,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1926,6 +2090,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -1938,6 +2103,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -1954,6 +2120,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -1965,6 +2133,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -1997,6 +2168,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2008,6 +2180,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2024,6 +2197,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -2033,6 +2208,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2065,6 +2243,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2078,6 +2257,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2094,6 +2274,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2107,6 +2289,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2139,6 +2324,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2152,6 +2338,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2168,6 +2355,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2181,6 +2370,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2213,6 +2405,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2225,6 +2418,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2241,6 +2435,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -2252,6 +2448,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2284,6 +2483,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2295,6 +2495,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2311,6 +2512,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -2320,6 +2523,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2352,6 +2558,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2365,6 +2572,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2381,6 +2589,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2394,6 +2604,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2426,6 +2639,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2439,6 +2653,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2455,6 +2670,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2468,6 +2685,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2500,6 +2720,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2512,6 +2733,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2528,6 +2750,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -2539,6 +2763,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2571,6 +2798,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2582,6 +2810,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2598,6 +2827,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -2607,6 +2838,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2639,6 +2873,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2652,6 +2887,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2668,6 +2904,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2681,6 +2919,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2713,6 +2954,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2726,6 +2968,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2742,6 +2985,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2755,6 +3000,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2787,6 +3035,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2799,6 +3048,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2815,6 +3065,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -2826,6 +3078,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2858,6 +3113,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2869,6 +3125,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2885,6 +3142,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -2894,6 +3153,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -2926,6 +3188,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -2939,6 +3202,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -2955,6 +3219,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -2968,6 +3234,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3000,6 +3269,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3013,6 +3283,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3029,6 +3300,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3042,6 +3315,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3074,6 +3350,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3086,6 +3363,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3102,6 +3380,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -3113,6 +3393,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3145,6 +3428,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3156,6 +3440,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3172,6 +3457,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -3181,6 +3468,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3213,6 +3503,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3226,6 +3517,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3244,6 +3536,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3257,6 +3551,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -3294,6 +3591,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3307,6 +3605,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3325,6 +3624,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3338,6 +3639,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -3375,6 +3679,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3387,6 +3692,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3405,6 +3711,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -3416,6 +3724,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -3453,6 +3764,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3464,6 +3776,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -3482,6 +3795,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -3491,6 +3806,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -3528,6 +3846,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3541,6 +3860,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3557,6 +3877,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3570,6 +3892,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3602,6 +3927,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3615,6 +3941,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3631,6 +3958,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3644,6 +3973,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3676,6 +4008,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3688,6 +4021,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3704,6 +4038,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -3715,6 +4051,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3747,6 +4086,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3758,6 +4098,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3774,6 +4115,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -3783,6 +4126,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3815,6 +4161,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3828,6 +4175,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3844,6 +4192,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3857,6 +4207,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3889,6 +4242,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3902,6 +4256,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3918,6 +4273,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -3931,6 +4288,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -3963,6 +4323,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -3975,6 +4336,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -3991,6 +4353,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -4002,6 +4366,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4034,6 +4401,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4045,6 +4413,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4061,6 +4430,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -4070,6 +4441,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4102,6 +4476,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4115,6 +4490,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4131,6 +4507,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4144,6 +4522,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4176,6 +4557,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4189,6 +4571,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4205,6 +4588,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4218,6 +4603,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4250,6 +4638,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4262,6 +4651,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4278,6 +4668,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -4289,6 +4681,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4321,6 +4716,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4332,6 +4728,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4348,6 +4745,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -4357,6 +4756,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4389,6 +4791,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4402,6 +4805,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4420,6 +4824,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4433,6 +4839,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -4470,6 +4879,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4483,6 +4893,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4501,6 +4912,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4514,6 +4927,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -4551,6 +4967,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4563,6 +4980,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4581,6 +4999,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -4592,6 +5012,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -4629,6 +5052,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4640,6 +5064,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -4658,6 +5083,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -4667,6 +5094,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -4704,6 +5134,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4717,6 +5148,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4733,6 +5165,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4746,6 +5180,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4778,6 +5215,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4791,6 +5229,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4807,6 +5246,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -4820,6 +5261,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4852,6 +5296,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4864,6 +5309,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4880,6 +5326,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -4891,6 +5339,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4923,6 +5374,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -4934,6 +5386,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -4950,6 +5403,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -4959,6 +5414,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -4991,6 +5449,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5004,6 +5463,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5020,6 +5480,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5033,6 +5495,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5065,6 +5530,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5078,6 +5544,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5094,6 +5561,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5107,6 +5576,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5139,6 +5611,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5151,6 +5624,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5167,6 +5641,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -5178,6 +5654,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5210,6 +5689,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5221,6 +5701,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5237,6 +5718,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -5246,6 +5729,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5278,6 +5764,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5291,6 +5778,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5309,6 +5797,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5322,6 +5812,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -5359,6 +5852,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5372,6 +5866,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5390,6 +5885,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5403,6 +5900,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -5440,6 +5940,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5452,6 +5953,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5470,6 +5972,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -5481,6 +5985,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -5518,6 +6025,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5529,6 +6037,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -5547,6 +6056,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -5556,6 +6067,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -5593,6 +6107,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5606,6 +6121,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5622,6 +6138,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5635,6 +6153,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5667,6 +6188,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5680,6 +6202,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5696,6 +6219,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5709,6 +6234,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5741,6 +6269,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5753,6 +6282,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5769,6 +6299,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -5780,6 +6312,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5812,6 +6347,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5825,6 +6361,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5841,6 +6378,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5854,6 +6393,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5886,6 +6428,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5899,6 +6442,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5915,6 +6459,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -5928,6 +6474,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -5960,6 +6509,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -5972,6 +6522,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -5988,6 +6539,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -5999,6 +6552,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6031,6 +6587,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6042,6 +6599,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6058,6 +6616,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -6067,6 +6627,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6099,6 +6662,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6112,6 +6676,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6128,6 +6693,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6141,6 +6708,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6173,6 +6743,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6186,6 +6757,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6202,6 +6774,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6215,6 +6789,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6247,6 +6824,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6259,6 +6837,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6275,6 +6854,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -6286,6 +6867,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6318,6 +6902,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6329,6 +6914,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6345,6 +6931,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -6354,6 +6942,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6386,6 +6977,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6399,6 +6991,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6415,6 +7008,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6428,6 +7023,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6460,6 +7058,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6473,6 +7072,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6489,6 +7089,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6502,6 +7104,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6534,6 +7139,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6546,6 +7152,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6562,6 +7169,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -6573,6 +7182,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6605,6 +7217,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6616,6 +7229,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6632,6 +7246,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -6641,6 +7257,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6673,6 +7292,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6686,6 +7306,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6702,6 +7323,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6715,6 +7338,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6747,6 +7373,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6760,6 +7387,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6776,6 +7404,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -6789,6 +7419,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6821,6 +7454,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6833,6 +7467,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6849,6 +7484,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -6860,6 +7497,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6892,6 +7532,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6903,6 +7544,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6919,6 +7561,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -6928,6 +7572,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -6960,6 +7607,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -6973,6 +7621,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -6989,6 +7638,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7002,6 +7653,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7034,6 +7688,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7047,6 +7702,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7063,6 +7719,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7076,6 +7734,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7108,6 +7769,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7120,6 +7782,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7136,6 +7799,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -7147,6 +7812,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7179,6 +7847,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7190,6 +7859,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7206,6 +7876,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -7215,6 +7887,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7247,6 +7922,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7260,6 +7936,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7276,6 +7953,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7289,6 +7968,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7321,6 +8003,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7334,6 +8017,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7350,6 +8034,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7363,6 +8049,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7395,6 +8084,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7407,6 +8097,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7423,6 +8114,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -7434,6 +8127,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7466,6 +8162,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7477,6 +8174,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7493,6 +8191,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -7502,6 +8202,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7534,6 +8237,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7547,6 +8251,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7565,6 +8270,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7578,6 +8285,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -7615,6 +8325,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7628,6 +8339,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7646,6 +8358,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7659,6 +8373,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -7696,6 +8413,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7708,6 +8426,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7726,6 +8445,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -7737,6 +8458,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -7774,6 +8498,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7785,6 +8510,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -7803,6 +8529,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -7812,6 +8540,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -7849,6 +8580,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7862,6 +8594,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7878,6 +8611,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7891,6 +8626,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7923,6 +8661,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -7936,6 +8675,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -7952,6 +8692,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -7965,6 +8707,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -7997,6 +8742,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8009,6 +8755,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8025,6 +8772,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -8036,6 +8785,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8068,6 +8820,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8079,6 +8832,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8095,6 +8849,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             cell_ids:
                 List of IDs of cells to get results for.
@@ -8104,6 +8860,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8136,6 +8895,7 @@ class FluidSimulation(Simulation):
             face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8149,6 +8909,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8167,6 +8928,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -8180,6 +8943,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -8217,6 +8983,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8230,6 +8997,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8248,6 +9016,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -8261,6 +9031,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -8298,6 +9071,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8310,6 +9084,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -8328,6 +9103,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -8339,6 +9116,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             components:
@@ -8376,6 +9156,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8389,6 +9170,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8405,6 +9187,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -8418,6 +9202,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8450,6 +9237,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8463,6 +9251,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8479,6 +9268,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             node_ids:
                 List of IDs of nodes to get results for.
@@ -8492,6 +9283,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8524,6 +9318,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
@@ -8536,6 +9331,7 @@ class FluidSimulation(Simulation):
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
         times: Union[float, List[float], None] = None,
         set_ids: Union[int, List[int], None] = None,
         all_sets: bool = False,
@@ -8552,6 +9348,8 @@ class FluidSimulation(Simulation):
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
         Args:
             face_ids:
                 List of IDs of faces to get results for.
@@ -8563,6 +9361,9 @@ class FluidSimulation(Simulation):
                 List of IDs of phases to get results for.
             species:
                 List of IDs of species to get results for.
+            qualifiers:
+                Dictionary of qualifier labels with associated values to get results for.
+                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
             times:
                 List of time values to get results for.
             set_ids:
@@ -8595,6 +9396,7 @@ class FluidSimulation(Simulation):
             face_ids=face_ids,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
+            qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
