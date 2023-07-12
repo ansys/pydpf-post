@@ -38,11 +38,17 @@ class TestPhase:
         assert isinstance(phases, post.Phases)
         assert len(phases) == 1
         assert isinstance(phases[1], post.Phase)
-        assert repr(phases) == '[Phase<name: "phase-1", id=1>, ]'
-        assert str(phases) == "1 phases available\n1: phase-1\n"
+        assert repr(phases) == "[Phase<name: 'phase-1', id=1>, ]"
+        print(phases)
+        assert str(phases) == "1 phases available\n{Phase<name: 'phase-1', id=1>,}"
         with pytest.raises(ValueError):
             _ = phases["toto"]
         with pytest.raises(ValueError):
             _ = phases[32]
         with pytest.raises(ValueError):
             _ = phases[24.6]
+        for phase in phases:
+            assert isinstance(phase, post.Phase)
+        for phase in phases:
+            assert isinstance(phase, post.Phase)
+        _ = list(phases)

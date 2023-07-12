@@ -32,16 +32,20 @@ class Phase:
 
     def __repr__(self) -> str:
         """String representation of the instance."""
-        return f'Phase<name: "{self._name}", id={self._id}>'
+        return f"Phase<name: '{self._name}', id={self._id}>"
 
 
 class Phases:
-    """List of physical states in a fluid simulation."""
+    """Dictionary of phases available in the fluid simulation.
+
+    Accepts either phase name or phase ID as key.
+    """
 
     def __init__(self, simulation: Simulation):
         """Initialize this class."""
         self._phases = []
         self._ids = []
+        self._idx = 0
         self._names = []
         if "phase" in simulation.result_info.available_qualifier_labels:
             phase_support = simulation.result_info.qualifier_label_support("phase")
@@ -68,12 +72,14 @@ class Phases:
     def __str__(self) -> str:
         """String representation of the instance."""
         text = f"{len(self)} phases available\n"
+        text += "{"
         for phase in self._phases:
-            text += f"{phase.id}: {phase.name}\n"
+            text += f"{phase},"
+        text += "}"
         return text
 
     def __getitem__(self, item: Union[int, str]) -> Phase:
-        """Return the Phase with the given name or ID."""
+        """Returns the Phase with the given name or ID."""
         try:
             if isinstance(item, str):
                 index = self._names.index(item)
@@ -82,3 +88,16 @@ class Phases:
             return self._phases[index]
         except Exception:
             raise ValueError(f"{item} is not a valid Phase ID or Phase name.")
+
+    def __next__(self) -> Phase:
+        """Returns the next entity in the iterator."""
+        if self._idx >= len(self):
+            raise StopIteration
+        out = self[self._ids[self._idx]]
+        self._idx += 1
+        return out
+
+    def __iter__(self) -> Phases:
+        """Returns the object to iterate over."""
+        self._idx = 0
+        return self
