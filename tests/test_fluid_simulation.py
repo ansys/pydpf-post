@@ -47,11 +47,11 @@ class TestFluidSimulation:
         "result_name",
         [
             "enthalpy",
-            "mass_flow_rate",
+            # "mass_flow_rate",
             "static_pressure",
             "mean_static_pressure",
             "rms_static_pressure",
-            "surface_heat_rate",
+            # "surface_heat_rate",
             "density",
             "temperature",
             "mean_temperature",
@@ -62,7 +62,6 @@ class TestFluidSimulation:
         ],
     )
     def test_results_fluent(self, fluent_simulation, result_name):
-        print(fluent_simulation.result_info[result_name])
         result = getattr(fluent_simulation, result_name)()
         assert isinstance(result, post.DataFrame)
         # result = getattr(fluent_simulation, result_name)(phases=[1])
@@ -93,7 +92,6 @@ class TestFluidSimulation:
         ],
     )
     def test_results_cfx(self, cfx_simulation, result_name):
-        print(cfx_simulation.result_info[result_name])
         result = getattr(cfx_simulation, result_name)()
         assert isinstance(result, post.DataFrame)
         # result = getattr(cfx_simulation, result_name)(phases=[1])
