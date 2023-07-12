@@ -61,10 +61,13 @@ print(simulation.result_info["temperature"])
 # ----------------------------
 temperature = simulation.temperature()
 print(temperature)
+
 # # The dataframe obtained shows data for two different phases
+
 ###############################################################################
 # Select data for phase 2 only (Water)
 print(temperature.select(phase=[2]))
+
 # ###############################################################################
 # # To directly extract the temperature data for only one phase,
 # # pass the 'temperature' method a 'phases' argument.
