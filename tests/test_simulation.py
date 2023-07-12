@@ -47,8 +47,8 @@ def test_simulation_init_with_server(static_rst, grpc_server):
 def test_simulation_units(static_simulation):
     assert static_simulation._units is None
     assert static_simulation.units is not None
-    assert static_simulation.units["time/frequency"] == "s"
-    assert static_simulation.units["distance"] == "m"
+    assert static_simulation.units["time"] == "s"
+    assert static_simulation.units["length"] == "m"
 
 
 def test_simulation_results(static_simulation):
@@ -659,7 +659,7 @@ class TestTransientMechanicalSimulation:
 
     def test_times_argument(self, transient_simulation, static_simulation):
         with pytest.raises(
-            ValueError, match="Could not find time=0.0s in the simulation."
+            ValueError, match="Could not find time=0.0 in the simulation."
         ):
             _ = transient_simulation.displacement(times=0.0)
 
@@ -680,7 +680,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
         # Test for times= just not near float
         with pytest.raises(
-            ValueError, match="Could not find time=0.1495s in the simulation."
+            ValueError, match="Could not find time=0.1495 in the simulation."
         ):
             _ = transient_simulation.displacement(components=["X"], times=0.1495)
 

@@ -330,11 +330,18 @@ class Simulation(ABC):
 
     @property
     def units(self):
-        """Returns the current time/frequency and distance units used."""
+        """Returns the current units used."""
+        us = self._model.metadata.result_info.unit_system
+        result_units = us.split(": ")[1].split(", ")
         if self._units is None:
             self._units = {
-                "time/frequency": self.time_freq_support.time_frequencies.unit,
-                "distance": self._model.metadata.meshed_region.unit,
+                "time": result_units[3],
+                "length": result_units[0],
+                "mass": result_units[1],
+                "force": result_units[2],
+                "temperature": result_units[6],
+                "potential": result_units[4],
+                "current": result_units[5],
             }
         return self._units
 
@@ -842,10 +849,7 @@ class MechanicalSimulation(Simulation, ABC):
                         found = True
                     i += 1
                 if not found:
-                    raise ValueError(
-                        f"Could not find time={t}{self.units['time/frequency']} "
-                        f"in the simulation."
-                    )
+                    raise ValueError(f"Could not find time={t} in the simulation.")
             selection.select_time_freq_sets(
                 time_freq_sets=available_times_to_extract_set_ids
             )

@@ -111,10 +111,7 @@ class FluidSimulation(Simulation):
                         found = True
                     i += 1
                 if not found:
-                    raise ValueError(
-                        f"Could not find time={t}{self.units['time/frequency']} "
-                        f"in the simulation."
-                    )
+                    raise ValueError(f"Could not find time={t} in the simulation.")
             selection.select_time_freq_sets(
                 time_freq_sets=available_times_to_extract_set_ids
             )
