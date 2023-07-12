@@ -920,9 +920,13 @@ class MechanicalSimulation(Simulation, ABC):
                 forward = self._model.operator(name="forward_fc")
                 forward.connect(0, first_average_op, 0)
             average_wf = dpf.Workflow(server=self._model._server)
-            average_wf.set_input_name(
-                _WfNames.skin, first_average_op.inputs.mesh_scoping
-            )
+            if hasattr(first_average_op.inputs, "mesh_scoping"):
+                inpt = (
+                    first_average_op.inputs.mesh_scoping
+                )  # To keep for retro-compatibility
+            else:
+                inpt = first_average_op.inputs.mesh
+            average_wf.set_input_name(_WfNames.skin, inpt)
             average_wf.connect_with(
                 selection.spatial_selection._selection,
                 output_input_names={_WfNames.skin: _WfNames.skin},
