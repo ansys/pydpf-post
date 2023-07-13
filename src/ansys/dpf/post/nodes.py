@@ -12,7 +12,7 @@ import ansys.dpf.core.nodes as core_nodes
 class Node:
     """Wrapper class around dpf.core.nodes.Node."""
 
-    def __init__(self, node: core_nodes.Node, index: int):
+    def __init__(self, node: core_nodes.Node):
         """Constructs a Node from its index and the original list."""
         self._node = node
 
