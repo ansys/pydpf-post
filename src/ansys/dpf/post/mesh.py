@@ -16,7 +16,7 @@ from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListByIndex, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListByIndex
 from ansys.dpf.post.named_selection import NamedSelections
-from ansys.dpf.post.nodes import NodeListIdx
+from ansys.dpf.post.nodes import NodeListByIndex
 from ansys.dpf.post.prop_fields_container import _PropertyFieldsContainer
 
 
@@ -68,9 +68,9 @@ class Mesh:
         return self.elements.by_id[id]
 
     @property
-    def nodes(self) -> NodeListIdx:
+    def nodes(self) -> NodeListByIndex:
         """Returns a list of nodes indexed by ID."""
-        return NodeListIdx(self._meshed_region.nodes)
+        return NodeListByIndex(self._meshed_region.nodes)
 
     def get_node_by_id(self, id: int) -> Node:  # pylint: disable=redefined-builtin
         """Returns a node of the mesh from a given ID."""

@@ -231,7 +231,7 @@ class ElementListById(_ElementList):
             else:
                 raise e  # pragma: no cover
 
-    def __contains__(self, el: Element):
+    def __contains__(self, el: Element) -> bool:
         """Checks if the given element is in the list."""
         return el.id in self._el_list.scoping.ids
 

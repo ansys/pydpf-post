@@ -2,43 +2,39 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Iterator
+from abc import ABC, abstractmethod
 from typing import List
 
-import ansys.dpf.core.nodes as nodes
+from ansys.dpf.core import errors
+import ansys.dpf.core.nodes as core_nodes
 
 
 class Node:
     """Wrapper class around dpf.core.nodes.Node."""
 
-    def __init__(self, nodes: nodes.Nodes, index: int):
+    def __init__(self, node: core_nodes.Node, index: int):
         """Constructs a Node from its index and the original list."""
-        self._nodes = nodes
-        self._index = index
-
-    def _resolve(self) -> nodes.Node:
-        """Returns the original Node object in the original list."""
-        return self._nodes[self._index]
-
-    @property
-    def index(self) -> int:
-        """Returns the index of the node (zero-based)."""
-        return self._resolve().index
-
-    @property
-    def id(self) -> int:
-        """Returns the ID of the node."""
-        return self._resolve().id
+        self._node = node
 
     @property
     def coordinates(self) -> List[float]:
         """Cartersian coordinates of the node."""
-        return self._resolve().coordinates
+        return self._node.coordinates
+
+    @property
+    def id(self) -> int:
+        """Returns the ID of the node."""
+        return self._node.id
+
+    @property
+    def index(self) -> int:
+        """Returns the index of the node (zero-based)."""
+        return self._node.index
 
     @property
     def to_element_connectivity(self) -> List[int]:
         """Elements indices connected to the node."""
-        return self._resolve().nodal_connectivity
+        return self._node.nodal_connectivity
 
     def __str__(self) -> str:
         """Returns a string representation of the node."""
@@ -49,101 +45,91 @@ class Node:
         return f"Node(id={self.id})"
 
 
-class NodeListIterator(Iterator):
-    """Iterator object for NodeListIdx."""
+class _NodeList(ABC):
+    """Iterator class for the NodeList."""
 
-    def __init__(self, nodes: nodes.Nodes):
-        """Constructs an iterator from a Node List."""
+    def __init__(self, nodes: core_nodes.Nodes):
+        """Constructs an iterator from a Nodes list."""
         self._nodes = nodes
         self._idx = 0
 
     def __next__(self) -> Node:
         """Returns the next Node in the list."""
-        if self._idx >= self._nodes.__len__():
+        if self._idx >= len(self._nodes):
             raise StopIteration
-
-        ret = Node(self._nodes, self._idx)
+        ret = self[self._idx]
         self._idx += 1
         return ret
 
-    def __iter__(self) -> NodeListIterator:
-        """Returns a new Iterator object."""
-        return NodeListIterator(self._nodes)
-
-
-class NodeListIdx(Collection):
-    """List of Node accessible by index."""
-
-    def __init__(self, nodes: nodes.Nodes):
-        """Constructs a NodeList from an existing dpf.core.nodes.Nodes object."""
-        self._nodes = nodes
-
-    def __getitem__(self, idx: int) -> Node:
+    def __getitem__(self, index: int) -> Node:
         """Returns a Node at a given index."""
-        return Node(self._nodes, idx)
-
-    def __contains__(self, node: nodes.Node) -> bool:
-        """Checks if given node is in the list."""
-        return node.index >= 0 and node.index < self.__len__()
-
-    def __iter__(self) -> NodeListIterator:
-        """Returns an iterator object on the list."""
-        return NodeListIterator(self._nodes)
+        return Node(self._nodes[index])
 
     def __len__(self) -> int:
         """Returns the number of nodes in the list."""
         return self._nodes.n_nodes
 
-    @property
-    def by_id(self) -> NodeListById:
-        """Returns an equivalent list Accessible by ID."""
-        return NodeListById(self._nodes)
+    def __repr__(self) -> str:
+        """Returns a string representation of a _NodeList object."""
+        return f"{self.__class__.__name__}({self}, __len__={len(self)})"
 
     def _short_list(self) -> str:
         _str = "["
         if self.__len__() > 3:
-            _fst = Node(self._nodes, 0)
-            _lst = Node(self._nodes, self.__len__() - 1)
+            _fst = Node(self._nodes[0])
+            _lst = Node(self._nodes[len(self) - 1])
             _str += f"{_fst}, ..., {_lst}"
         else:
-            el_list = [Node(self._nodes, idx) for idx in range(self.__len__())]
-            _str += ", ".join(map(repr, el_list))
+            node_list = [Node(self._nodes[idx]) for idx in range(len(self))]
+            _str += ", ".join(map(repr, node_list))
         _str += "]"
         return _str
 
     def __str__(self) -> str:
-        """Returns a string representation of NodeListIdx."""
+        """Returns a string representation of a _NodeList object."""
         return self._short_list()
 
-    def __repr__(self) -> str:
-        """Returns a string representation of NodeListIdx."""
-        return f"NodeListIdx({self.__str__()}, __len__={self.__len__()})"
+    @abstractmethod
+    def __iter__(self):  # pragma: no cover
+        """Returns an iterator object on the list."""
 
 
-class NodeListById(NodeListIdx):
-    """List of node accessible by ID."""
+class NodeListByIndex(_NodeList):
+    """Node List object using indexes as input."""
 
-    def __init__(self, nodes: nodes.Nodes):
-        """Constructs a list from an existing core.nodes.Nodes object."""
-        super().__init__(nodes)
+    @property
+    def by_id(self) -> NodeListById:
+        """Returns an equivalent list which accepts IDs as input."""
+        return NodeListById(self._nodes)
+
+    def __iter__(self) -> NodeListByIndex:
+        """Returns the object to iterate over."""
+        self._idx = 0
+        return self
+
+    def __contains__(self, node: Node) -> bool:
+        """Checks if the given node is in the list."""
+        return len(self) > node.index >= 0
+
+
+class NodeListById(_NodeList):
+    """Node List object using IDs as input."""
 
     def __getitem__(self, id: int) -> Node:  # pylint: disable=redefined-builtin
-        """Returns a Node for a given ID."""
+        """Access a Node with an ID."""
         idx = self._nodes.scoping.index(id)
-        return super().__getitem__(idx)
+        try:
+            return super().__getitem__(idx)
+        except errors.DPFServerException as e:
+            if "node not found" in str(e):
+                raise ValueError(f"Node with ID={id} not found in the list.")
+            else:
+                raise e  # pragma: no cover
 
-    def __contains__(self, node: nodes.Node) -> bool:
+    def __contains__(self, node: Node) -> bool:
         """Checks if the given node is in the list."""
         return node.id in self._nodes.scoping.ids
 
-    def __iter__(self) -> NodeListIterator:
-        """Returns an iterator object on the list."""
-        return super().__iter__()
-
-    def __len__(self) -> int:
-        """Returns the number of nodes in the list."""
-        return self._nodes.n_nodes
-
-    def __repr__(self) -> str:
-        """Returns a string representation of NodeListById."""
-        return f"NodeListById({super().__str__()}, __len__={self.__len__()})"
+    def __iter__(self) -> NodeListByIndex:
+        """Returns the object to iterate over."""
+        return NodeListByIndex(self._nodes)
