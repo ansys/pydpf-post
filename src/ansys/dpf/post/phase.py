@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class Phase:
     """Physical state of a given species in a fluid simulation."""
 
-    def __init__(self, name: str, id: int):
+    def __init__(self, name: str, id: int):  # pylint: disable=redefined-builtin
         """Initialize this class."""
         self._name = name
         self._id = id

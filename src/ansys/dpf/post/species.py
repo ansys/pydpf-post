@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class Species:
     """In fluid simulation, defines a chemical species."""
 
-    def __init__(self, name: str, id: int):
+    def __init__(self, name: str, id: int):  # pylint: disable=redefined-builtin
         """Initialize this class."""
         self._name = name
         self._id = id

@@ -11,7 +11,9 @@ from typing import List
 class Zone(ABC):
     """Base class for fluid Zone objects."""
 
-    def __init__(self, name: str, id: int, scoping):
+    def __init__(
+        self, name: str, id: int, scoping
+    ):  # pylint: disable=redefined-builtin
         """Initialize this class."""
         self._name = name
         self._id = id
