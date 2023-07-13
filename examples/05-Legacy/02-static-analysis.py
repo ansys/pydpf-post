@@ -44,42 +44,42 @@ print(disp)
 # ~~~~~~~~~~~~~~~~~~~~~~
 # Check the number of fields.
 
-disp.num_fields
+print(disp.num_fields)
 
 ###############################################################################
 # Get data from field
 # ~~~~~~~~~~~~~~~~~~~
 # Get data from a field.
 
-disp.get_data_at_field(0)
+print(disp.get_data_at_field(0))
 
 ###############################################################################
 # Get maximum data value over all fields
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get the maximum data value over all fields.
 
-disp.max_data
+print(disp.max_data)
 
 ###############################################################################
 # Get minimum data value over all fields
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get the minimum data value over all fields.
 
-disp.min_data
+print(disp.min_data)
 
 ###############################################################################
 # Get maximum data value over targeted field
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get the maximum data value over a targeted field.
 
-disp.get_max_data_at_field(0)
+print(disp.get_max_data_at_field(0))
 
 ###############################################################################
 # Get minimum data value over all fields
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get the minimum data value over all fields.
 
-disp.get_min_data_at_field(0)
+print(disp.get_min_data_at_field(0))
 
 ###############################################################################
 # Get stress result
@@ -94,7 +94,7 @@ stress = stress_result.tensor
 # ~~~~~~~~~~~~~~~~~~~~~~
 # Check the number of shell and solid elements in distinct fields.
 
-stress.num_fields
+print(stress.num_fields)
 
 ###############################################################################
 # Get shell field
@@ -102,7 +102,7 @@ stress.num_fields
 # Get the shell field.
 
 shell_field = stress[0]
-shell_field.shell_layers
+print(shell_field.shell_layers)
 
 ###############################################################################
 # Get solid field
@@ -130,7 +130,7 @@ elastic_strain = elastic_strain_result.tensor
 # Check number of fields
 # ~~~~~~~~~~~~~~~~~~~~~~
 # Check the number of shell and solid elements in distinct fields.
-elastic_strain.num_fields
+print(elastic_strain.num_fields)
 
 ###############################################################################
 # If the result file contains results, you can use this method
