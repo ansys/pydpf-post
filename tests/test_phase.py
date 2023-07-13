@@ -31,7 +31,7 @@ class TestPhase:
         assert isinstance(phase, post.Phase)
         assert phase.name == "phase_test"
         assert phase.id == 1
-        assert repr(phase) == 'Phase<name: "phase_test", id=1>'
+        assert repr(phase) == "Phase<name: 'phase_test', id=1>"
 
     def test_phases(self, fluid_simulation):
         phases = post.PhasesDict(simulation=fluid_simulation)
