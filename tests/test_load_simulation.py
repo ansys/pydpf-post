@@ -16,7 +16,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 
 def test_load_simulation_static_mechanical(simple_bar, complex_model):
     simulation = post.load_simulation(data_sources=simple_bar)
-    assert type(simulation) == StaticMechanicalSimulation
+    assert isinstance(simulation, StaticMechanicalSimulation)
     simulation = post.load_simulation(
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.static_mechanical,
@@ -26,7 +26,7 @@ def test_load_simulation_static_mechanical(simple_bar, complex_model):
 
 def test_load_simulation_transient_mechanical(plate_msup, complex_model):
     simulation = post.load_simulation(data_sources=plate_msup)
-    assert type(simulation) == TransientMechanicalSimulation
+    assert isinstance(simulation, TransientMechanicalSimulation)
     simulation = post.load_simulation(
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.transient_mechanical,
@@ -36,7 +36,7 @@ def test_load_simulation_transient_mechanical(plate_msup, complex_model):
 
 def test_load_simulation_modal_mechanical(modalallkindofcomplexity, complex_model):
     simulation = post.load_simulation(data_sources=modalallkindofcomplexity)
-    assert type(simulation) == ModalMechanicalSimulation
+    assert isinstance(simulation, ModalMechanicalSimulation)
     simulation = post.load_simulation(
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.transient_mechanical,
@@ -46,7 +46,7 @@ def test_load_simulation_modal_mechanical(modalallkindofcomplexity, complex_mode
 
 def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
     simulation = post.load_simulation(data_sources=complex_model)
-    assert type(simulation) == HarmonicMechanicalSimulation
+    assert isinstance(simulation, HarmonicMechanicalSimulation)
     simulation = post.load_simulation(
         data_sources=simple_bar,
         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
@@ -66,7 +66,7 @@ def test_load_simulation_static_fluid(fluid_fluent_elbow_steady_state, simple_ba
         key="dat",
     )
     simulation = post.load_simulation(ds)
-    assert type(simulation) == FluidSimulation
+    assert isinstance(simulation, FluidSimulation)
     simulation = post.load_simulation(
         data_sources=simple_bar,
         simulation_type=AvailableSimulationTypes.steady_fluid,
@@ -86,7 +86,7 @@ def test_load_simulation_transient_fluid(fluid_fluent_elbow_transient, simple_ba
         key="dat",
     )
     simulation = post.load_simulation(ds)
-    assert type(simulation) == FluidSimulation
+    assert isinstance(simulation, FluidSimulation)
     simulation = post.load_simulation(
         data_sources=simple_bar,
         simulation_type=AvailableSimulationTypes.unsteady_fluid,
@@ -108,6 +108,6 @@ def test_load_simulation_raise_simulation_type(simple_bar):
 )
 def test_load_simulation_with_server(simple_bar, grpc_server):
     simulation = post.load_simulation(data_sources=simple_bar, server=grpc_server)
-    assert type(simulation) == StaticMechanicalSimulation
+    assert isinstance(simulation, StaticMechanicalSimulation)
     assert simulation._model._server != dpf.SERVER
     assert simulation._model._server == grpc_server
