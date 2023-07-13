@@ -1,3 +1,4 @@
+import conftest
 import pytest
 from pytest import fixture
 
@@ -53,7 +54,8 @@ def test_named_selection():
     assert node_ns._scoping.location == dpf.locations.nodal
     element_ns = NamedSelection(name="test", element_ids=[0, 1])
     assert element_ns._scoping.location == dpf.locations.elemental
-    face_ns = NamedSelection(name="test", face_ids=[0, 1])
-    assert face_ns._scoping.location == dpf.locations.faces
+    if conftest.SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0:
+        face_ns = NamedSelection(name="test", face_ids=[0, 1])
+        assert face_ns._scoping.location == dpf.locations.faces
     cell_ns = NamedSelection(name="test", cell_ids=[0, 1])
     assert cell_ns._scoping.location == dpf.locations.elemental
