@@ -68,16 +68,16 @@ print(temperature)
 # Select data for phase 2 only (Water)
 print(temperature.select(phase=[2]))
 
-# ###############################################################################
-# # To directly extract the temperature data for only one phase,
-# # pass the 'temperature' method a 'phases' argument.
-# # This argument must be given a list of phase unique identifiers, which appear
-# # in the dataframe in the phase label column between parentheses,
-# # or as listed
-# # under the 'Available qualifier labels' section of the metadata on the result
-# # water_temperature = simulation.temperature(phases=["Copper"])
-# water_temperature = simulation.enthalpy(
-#     phases=[2]
-# )
-# print(water_temperature)
+###############################################################################
+# To directly extract the temperature data for a given phase,
+# pass the 'temperature' method a 'phases' argument.
+# This argument must be given a list of phase unique identifiers, which appear
+# in the dataframe in the phase label column between parentheses,
+# or as listed
+# under the 'Available qualifier labels' section of the metadata on the result
+# You can also directly use the phase name.
+water_temperature = simulation.temperature(phases=["Water at 25 C"])
+# equivalent to
+# water_temperature = simulation.temperature(phases=[2])
+print(water_temperature)
 # # The dataframe obtained now only stores data for the water phase.
