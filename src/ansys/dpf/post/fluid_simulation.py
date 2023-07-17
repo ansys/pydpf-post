@@ -166,17 +166,17 @@ class FluidSimulation(Simulation):
         super().__init__(data_sources=data_sources, model=model)
 
     @property
-    def zones(self):
+    def zones(self) -> Zones:
         """Return the list of Zones in the simulation."""
         return Zones()
 
     @property
-    def species(self):
+    def species(self) -> SpeciesDict:
         """Return the list of Species in the simulation."""
         return SpeciesDict(self)
 
     @property
-    def phases(self):
+    def phases(self) -> PhasesDict:
         """Return the list of PhasesDict in the simulation."""
         return PhasesDict(self)
 
@@ -212,52 +212,55 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            base_name:
-                Base name for the requested result.
-            category:
-                Type of result requested. See the :class:`ResultCategory` class.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            components:
-                Components to get results for.
-            norm:
-                Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            node_ids:
-                List of IDs of nodes to get results for.
-            cell_ids:
-                List of IDs of elements to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            named_selections:
-                Named selection or list of named selections to get results for.
+        Parameters
+        ----------
+        base_name:
+            Base name for the requested result.
+        category:
+            Type of result requested. See the :class:`ResultCategory` class.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        components:
+            Components to get results for.
+        norm:
+            Whether to return the norm of the results.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        times:
+            List of times to get results for.
+        set_ids:
+            List of sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of elements to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        named_selections:
+            Named selection or list of named selections to get results for.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         # Build the targeted time scoping
@@ -400,38 +403,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -481,38 +485,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -561,36 +566,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -638,34 +644,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -715,38 +722,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -796,38 +804,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -876,36 +885,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -953,27 +963,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of cell zones to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of cell zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1023,38 +1041,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1104,38 +1123,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1184,36 +1204,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1261,27 +1282,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of cell zones to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of cell zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1331,38 +1360,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1412,38 +1442,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1492,36 +1523,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1569,34 +1601,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1646,38 +1679,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1727,38 +1761,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1807,36 +1842,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1884,34 +1920,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -1961,38 +1998,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2042,38 +2080,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2122,36 +2161,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2199,34 +2239,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2276,38 +2317,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2357,38 +2399,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2437,36 +2480,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2514,34 +2558,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2591,38 +2636,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2672,38 +2718,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2752,36 +2799,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2829,34 +2877,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2906,38 +2955,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -2987,38 +3037,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3067,36 +3118,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3144,34 +3196,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3221,38 +3274,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3302,38 +3356,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3382,36 +3437,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3459,34 +3515,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3538,43 +3595,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3626,43 +3684,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3713,41 +3772,42 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3797,39 +3857,40 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3879,38 +3940,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -3960,38 +4022,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4040,36 +4103,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4117,34 +4181,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4194,38 +4259,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4275,38 +4341,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4355,36 +4422,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4432,34 +4500,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4509,38 +4578,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4590,38 +4660,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4670,36 +4741,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4747,34 +4819,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4826,43 +4899,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -4914,43 +4988,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5001,41 +5076,42 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5085,39 +5161,40 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5167,38 +5244,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5248,38 +5326,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5328,36 +5407,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5405,34 +5485,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5482,38 +5563,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5563,38 +5645,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5643,36 +5726,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5720,34 +5804,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5799,43 +5884,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5887,43 +5973,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -5974,41 +6061,42 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6058,39 +6146,40 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6140,38 +6229,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6221,38 +6311,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6301,36 +6392,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6380,38 +6472,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6461,38 +6554,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6541,36 +6635,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6618,34 +6713,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6695,38 +6791,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6776,38 +6873,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6856,36 +6954,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -6933,34 +7032,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7010,38 +7110,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7091,38 +7192,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7171,36 +7273,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7248,34 +7351,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7325,38 +7429,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7406,38 +7511,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7486,36 +7592,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7563,34 +7670,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7640,38 +7748,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7721,38 +7830,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7801,36 +7911,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7878,34 +7989,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -7955,38 +8067,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8036,38 +8149,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8116,36 +8230,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8193,34 +8308,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8272,43 +8388,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8360,43 +8477,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8447,41 +8565,42 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8531,39 +8650,40 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8613,38 +8733,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8694,38 +8815,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8774,36 +8896,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8851,34 +8974,35 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -8930,43 +9054,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -9018,43 +9143,44 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -9105,41 +9231,42 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -9189,38 +9316,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -9270,38 +9398,39 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            face_ids:
-                List of IDs of faces which nodes to get results for.
-            cell_ids:
-                List of IDs of cells which nodes to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        face_ids:
+            List of IDs of faces which nodes to get results for.
+        cell_ids:
+            List of IDs of cells which nodes to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
@@ -9350,36 +9479,37 @@ class FluidSimulation(Simulation):
 
         Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
 
-        Args:
-            face_ids:
-                List of IDs of faces to get results for.
-            cell_ids:
-                List of IDs of cells which faces to get results for.
-            zone_ids:
-                List of IDs of zones to get results for.
-            phases:
-                List of IDs of phases to get results for.
-            species:
-                List of IDs of species to get results for.
-            qualifiers:
-                Dictionary of qualifier labels with associated values to get results for.
-                Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
 
         Returns
         -------
-            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
         return self._get_result(
