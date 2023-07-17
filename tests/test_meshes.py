@@ -54,6 +54,6 @@ def test_meshes_select(meshes):
     assert isinstance(meshes_mat, post.Mesh)
     assert len(meshes_mat.node_ids) == 248
     meshes_mat = meshes.select(mat=1)
-    print(meshes_mat._core_object)
+    # print(meshes_mat._core_object)
     assert isinstance(meshes_mat, post.Meshes)
     assert len(meshes_mat) == 2

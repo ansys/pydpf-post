@@ -108,7 +108,7 @@ def test_mesh_str(mesh):
 
 def test_mesh_coordinates(mesh):
     coord = mesh.coordinates
-    print(coord)
+    # print(coord)
     ref = """
              results  coord (m)
  node_ids components           
@@ -148,7 +148,7 @@ def test_mesh_materials(mesh):
 
 def test_mesh_element_types(mesh):
     element_types = mesh.element_types
-    print(element_types)
+    # print(element_types)
     ref = """
      results elem_type_id
  element_ids             
