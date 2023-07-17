@@ -108,6 +108,8 @@ jobs:
           wheelhouse: false
           wheel: false
           standalone_suffix: ${{ inputs.standalone_suffix }}
+          extra-pip-args: ${{ inputs.custom-wheels }}
+          custom-requirements: ${{ inputs.custom-requirements }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3

@@ -144,7 +144,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Initialize a workflow
-        wf = core.Workflow(server=self._model._server)
+        # wf = core.Workflow(server=self._model._server)
 
         force_elemental_nodal = self._requires_manual_averaging(
             base_name=base_name,
@@ -153,7 +153,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
         )
 
-        # Instantiate the main result operator
+        # Initialize a workflow
         wf, result_op = self._build_result_workflow(
             name=base_name,
             location=location,

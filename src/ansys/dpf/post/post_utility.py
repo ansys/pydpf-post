@@ -34,6 +34,9 @@ from ansys.dpf.post.transient_analysis import (
 def load_solution(data_sources, physics_type=None, analysis_type=None):
     """Loads a solution and returns a :class:`ansys.dpf.post.Result` object.
 
+    .. deprecated:: 3.0
+       Use :func:`load_simulation` instead.
+
     This class provides information on a given set on a given scoping.
 
     Parameters
@@ -49,9 +52,6 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
         ``"static"``, ``"modal"``, ``"harmonic"``, and ``"transient"``. The
         default is ``None``, in which case the data sources are read to determine
         the analysis type.
-
-    .. deprecated:: 3.0
-       Use :func:`load_simulation` instead.
 
     Examples
     --------
@@ -195,7 +195,7 @@ def load_simulation(
                 raise NotImplementedError
             else:
                 raise ValueError(
-                    f"Unknown analysis type '{analysis_type}' for thermal."
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
                 )
         elif (
             physics_type == _PhysicsType.mecanic
@@ -214,7 +214,16 @@ def load_simulation(
                 simulation_type = AvailableSimulationTypes.transient_mechanical
             else:
                 raise ValueError(
-                    f"Unknown analysis type '{analysis_type}' for mechanical."
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
+                )
+        elif physics_type == _PhysicsType.fluid:
+            if analysis_type in [_AnalysisType.steady, _AnalysisType.static]:
+                simulation_type = AvailableSimulationTypes.steady_fluid
+            elif analysis_type in [_AnalysisType.unsteady, _AnalysisType.transient]:
+                simulation_type = AvailableSimulationTypes.unsteady_fluid
+            else:
+                raise ValueError(
+                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
                 )
         else:
             raise ValueError(f"Unknown physics type '{physics_type}.")

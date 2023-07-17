@@ -12,7 +12,7 @@ types of interaction with Ansys licenses:
   features are available, but a license may be checked-out.
 - When the **Entry** DPF Server context is active, underlying operations check if a valid Ansys
   license exists, but are not allowed to check-out any license. This means that operations requiring
-   to check-out a license are not be available and raise an error.
+  to check-out a license are not be available and raise an error.
 
 By default, using PyDPF-Post starts a DPF Server with the **Premium** context active.
 To learn more, see the `PyDPF-Core documentation <https://dpf.docs.pyansys.com/dev/user_guide/server_context.html>`_.

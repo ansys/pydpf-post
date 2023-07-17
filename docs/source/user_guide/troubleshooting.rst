@@ -11,7 +11,7 @@ Auto-completion
 Depending on your scripting environment, auto-completion might not work correctly when using the
 ``load_simulation()`` method. This method is intended as a helper which can detect automatically
 the physics type and analysis type. To get auto-completion to work in all circumstances, instantiate
- the right :ref:`Simulation <ansys.dpf.post.simulation.Simulation` sub-class directly using its
+the right :ref:`Simulation <ansys.dpf.post.simulation.Simulation>` sub-class directly using its
 constructor:
 
 .. code-block:: default
