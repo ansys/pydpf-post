@@ -50,6 +50,13 @@ class NamedSelections(Mapping):
         self._idx += 1
         return res
 
+    def __str__(self) -> str:
+        """String representation."""
+        txt = f"NamedSelections dictionary with {len(self)} named selections:"
+        for ns in self:
+            txt += f"\n\t- '{ns}'"
+        return txt
+
 
 class NamedSelection:
     """Named Selection class associating a name to a list of mesh entities."""

@@ -35,52 +35,158 @@ class Mesh:
 
     @property
     def named_selections(self) -> NamedSelections:
-        """Returns a dictionary of available named selections for this mesh."""
+        """Returns a dictionary of available named selections for this mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.named_selections) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        NamedSelections dictionary with 1 named selections:
+            - '_FIXEDSU'
+        """
         return NamedSelections(self)
 
     @property
     def node_ids(self) -> List[int]:
-        """Returns the list of node IDs in the mesh."""
+        """Returns the list of node IDs in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.node_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+         25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
+         49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
+         73 74 75 76 77 78 79 80 81]
+        """
         return self._meshed_region.nodes.scoping.ids
 
     @property
     def num_nodes(self) -> int:
-        """Returns the number of nodes in the mesh."""
+        """Returns the number of nodes in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.num_nodes) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        81
+        """
         return len(self.node_ids)
 
     @property
     def element_ids(self) -> List[int]:
-        """Returns the list of element IDs in the mesh."""
+        """Returns the list of element IDs in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.element_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [5 6 1 2 7 8 3 4]
+        """
         return self._meshed_region.elements.scoping.ids
 
     @property
     def num_elements(self) -> int:
-        """Returns the number of element in the mesh."""
+        """Returns the number of element in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.num_elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        8
+        """
         return len(self.element_ids)
 
     @property
     def elements(self) -> ElementListByIndex:
-        """Returns a list of elements indexed by ID."""
+        """Returns a list of elements indexed by ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [hex20, ..., hex20]
+        """
         return ElementListByIndex(self._meshed_region.elements)
 
     def get_element_by_id(
         self, id: int  # pylint: disable=redefined-builtin
     ) -> Element:
-        """Returns an element in the mesh from a given ID."""
+        """Returns an element in the mesh from a given ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.get_element_by_id(1)) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        DPF Element 1
+            Index:            2
+            Nodes:           20
+            Type:         Hex20
+            Shape:        Solid
+        """
         return self.elements.by_id[id]
 
     @property
     def nodes(self) -> NodeListByIndex:
-        """Returns a list of nodes indexed by ID."""
+        """Returns a list of nodes indexed by ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.nodes) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [Node(id=1, coordinates=[0.015, 0.045, 0.015]), ..., Node(id=81, coordinates=[0.03, 0.045, 0.0075])]
+        """  # noqa
         return NodeListByIndex(self._meshed_region.nodes)
 
     def get_node_by_id(self, id: int) -> Node:  # pylint: disable=redefined-builtin
-        """Returns a node of the mesh from a given ID."""
+        """Returns a node of the mesh from a given ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.get_node_by_id(1)) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        Node(id=1, coordinates=[0.015, 0.045, 0.015])
+        """
         return self.nodes.by_id[id]
 
     @property
     def element_types(self) -> post.DataFrame:
-        """Returns a DataFrame containing element types ID."""
+        """Returns a DataFrame containing element types ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.element_types) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+             results elem_type_id
+         element_ids
+                   5            1
+                   6            1
+                   1            1
+                   2            1
+                   7            1
+                   8            1
+                 ...          ...
+        """
         label = "elem_type_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.element_types_field
@@ -102,7 +208,24 @@ class Mesh:
 
     @property
     def materials(self) -> post.DataFrame:
-        """Returns a DataFrame containing element materials ID."""
+        """Returns a DataFrame containing element materials ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.materials) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+             results material_id
+         element_ids
+                   5           1
+                   6           1
+                   1           1
+                   2           1
+                   7           1
+                   8           1
+                 ...         ...
+        """
         label = "material_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.materials_field
@@ -124,7 +247,22 @@ class Mesh:
 
     @property
     def element_to_node_ids_connectivity(self):
-        """Returns a."""
+        """Returns a connectivity map between element index and node IDs.
+
+        To get the connectivity map by element ID, use the 'by_id' property of the object returned.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> element_to_node_ids_connectivity = simulation.mesh.element_to_node_ids_connectivity
+        >>> print(element_to_node_ids_connectivity[0]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [1, 26, 14, 12, 2, 27, 15, 13, 33, 64, 59, 30, 37, 65, 61, 34, 28, 81, 63, 58]
+        >>> element_to_node_ids_connectivity_by_id = element_to_node_ids_connectivity.by_id
+        >>> print(element_to_node_ids_connectivity[1]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [1, 12, 14, 26, 3, 10, 9, 4, 30, 59, 64, 33, 41, 53, 43, 38, 29, 56, 54, 44]
+        """
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
         return ConnectivityListByIndex(
@@ -133,7 +271,22 @@ class Mesh:
 
     @property
     def node_to_element_ids_connectivity(self):
-        """Returns a list of Element ID for a given Node index."""
+        """Returns a connectivity map between node index and element IDs.
+
+        To get the connectivity map by node ID, use the 'by_id' property of the object returned.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> node_to_element_ids_connectivity = simulation.mesh.node_to_element_ids_connectivity
+        >>> print(node_to_element_ids_connectivity[0]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [5, 6, 1, 2, 7, 8, 3, 4]
+        >>> node_to_element_ids_connectivity_by_id = node_to_element_ids_connectivity.by_id
+        >>> print(node_to_element_ids_connectivity_by_id[1]) # doctest: +NORMALIZE_WHITESPACE
+        [5, 6, 1, 2, 7, 8, 3, 4]
+        """
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
         return ConnectivityListByIndex(
@@ -142,7 +295,22 @@ class Mesh:
 
     @property
     def element_to_node_connectivity(self):
-        """Returns a list of Node index for a given Element index."""
+        """Returns a connectivity map between element index and node indexes.
+
+        To get the connectivity map by element ID, use the 'by_id' property of the object returned.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> element_to_node_connectivity = simulation.mesh.element_to_node_connectivity
+        >>> print(element_to_node_connectivity[0]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [0, 25, 13, 11, 1, 26, 14, 12, 32, 63, 58, 29, 36, 64, 60, 33, 27, 80, 62, 57]
+        >>> element_to_node_connectivity_by_id = element_to_node_connectivity.by_id
+        >>> print(element_to_node_connectivity_by_id[1]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [0, 17, 19, 25, 1, 18, 20, 26, 30, 69, 74, 32, 34, 71, 75, 36, 27, 68, 73, 80]
+        """
         conn_field = self._meshed_region.elements.connectivities_field
         nodes_scoping = self._meshed_region.nodes.scoping
         return ConnectivityListByIndex(
@@ -151,7 +319,22 @@ class Mesh:
 
     @property
     def node_to_element_connectivity(self):
-        """Returns a list of Element index for a given Node index."""
+        """Returns a connectivity map between node index and element indexes.
+
+        To get the connectivity map by node ID, use the 'by_id' property of the object returned.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> node_to_element_connectivity = simulation.mesh.node_to_element_connectivity
+        >>> print(node_to_element_connectivity[0]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [0, 1, 2, 3, 4, 5, 6, 7]
+        >>> node_to_element_connectivity_by_id = node_to_element_connectivity.by_id
+        >>> print(node_to_element_connectivity_by_id[1]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [0, 1, 2, 3, 4, 5, 6, 7]
+        """
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
         return ConnectivityListByIndex(
@@ -160,11 +343,33 @@ class Mesh:
 
     @property
     def unit(self) -> str:
-        """Returns the unit of the mesh (same as coordinates of the mesh)."""
+        """Returns the unit of the mesh (same as coordinates of the mesh).
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.unit) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        m
+        """
         return self._meshed_region.unit
 
     @unit.setter
     def unit(self, value: str):
+        """Set the unit of the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.unit) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        m
+        >>> simulation.mesh.unit = "mm"
+        >>> print(simulation.mesh.unit) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        mm
+        """
         self._meshed_region.unit = value
 
     @property
@@ -210,16 +415,15 @@ class Mesh:
         >>> mesh = simulation.mesh
         >>> coord = mesh.coordinates
         >>> print(coord)  # doctest: +NORMALIZE_WHITESPACE
-                     results   coord (m)
-        node_ids  components
-               1           X  1.5000e-02
-                           Y  4.5000e-02
-                           Z  1.5000e-02
-               2           X  1.5000e-02
-                           Y  4.5000e-02
-                           Z  0.0000e+00
-             ...
-
+                     results  coord (m)
+         node_ids components
+                1          X 1.5000e-02
+                           Y 4.5000e-02
+                           Z 1.5000e-02
+                2          X 1.5000e-02
+                           Y 4.5000e-02
+                           Z 0.0000e+00
+              ...        ...        ...
         """
         from ansys.dpf.post.simulation import vector_component_names
 
