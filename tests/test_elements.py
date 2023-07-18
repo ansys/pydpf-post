@@ -38,7 +38,7 @@ Quadratic element: True"""
     assert repr(el_type) == ref
     ref = "Quadratic 20-nodes Hexa"
     assert el_type.description == ref
-    assert el_type.enum_id == dpf.element_types.Hex20
+    assert el_type.elem_type_id == dpf.element_types.Hex20
     assert el_type.name == "hex20"
     assert el_type.shape == "solid"
     assert el_type.num_corner_nodes == 8

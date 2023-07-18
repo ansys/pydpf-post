@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-import copy
 from typing import TYPE_CHECKING, List, Union
 
 import ansys.dpf.core as dpf
@@ -137,18 +136,6 @@ class NamedSelection:
     def size(self) -> int:
         """Length of the list of IDs."""
         return self._scoping.size
-
-    def deep_copy(self, server=None) -> NamedSelection:
-        """Create a deep copy of the underlying scoping's data on a given server."""
-        new_scoping = self._scoping.deep_copy(server)
-        new_name = copy.copy(self._name)
-        return NamedSelection(name=new_name, scoping=new_scoping)
-
-    def as_local_scoping(self) -> NamedSelection:
-        """Create a deep copy of the underlying scoping that can be modified locally."""
-        local_scoping = self._scoping.as_local_scoping()
-        local_name = copy.copy(self._name)
-        return NamedSelection(name=local_name, scoping=local_scoping)
 
     def __repr__(self) -> str:
         """Pretty print string of the NamedSelection."""

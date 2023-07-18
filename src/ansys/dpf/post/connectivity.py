@@ -28,8 +28,8 @@ class _ConnectivityList(ABC):
     ):
         """Constructs a _ConnectivityList by wrapping the given PropertyField.
 
-        Arguments:
-        ---------
+        Parameters
+        ----------
         field:
             Field of connectivity.
         mode:

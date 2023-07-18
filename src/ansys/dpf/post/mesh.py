@@ -77,7 +77,7 @@ class Mesh:
         >>> print(simulation.mesh.num_nodes) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         81
         """
-        return len(self.node_ids)
+        return self._meshed_region.nodes.n_nodes
 
     @property
     def element_ids(self) -> List[int]:
@@ -105,7 +105,7 @@ class Mesh:
         >>> print(simulation.mesh.num_elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         8
         """
-        return len(self.element_ids)
+        return self._meshed_region.elements.n_elements
 
     @property
     def elements(self) -> ElementListByIndex:

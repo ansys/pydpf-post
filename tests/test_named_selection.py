@@ -41,10 +41,6 @@ def test_named_selection():
 """  # noqa
     assert repr(ns) == ref
 
-    assert ns.deep_copy() == ns
-
-    assert ns.as_local_scoping() == ns
-
     with pytest.raises(ValueError, match="No list of entity IDs given."):
         _ = NamedSelection(name="test")
     with pytest.raises(ValueError, match="NamedSelection accepts only"):

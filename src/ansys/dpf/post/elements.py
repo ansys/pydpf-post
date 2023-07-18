@@ -24,7 +24,7 @@ class ElementType:
             raise TypeError("Given argument is not an int nor an ElementDescriptor")
 
     @property
-    def enum_id(self) -> dpf.element_types:
+    def elem_type_id(self) -> dpf.element_types:
         """Element type in the element_types enum."""
         return self._el_desc.enum_id
 
