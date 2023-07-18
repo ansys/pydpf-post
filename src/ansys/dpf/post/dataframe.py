@@ -14,7 +14,9 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 from ansys.dpf.core.plotter import DpfPlotter
-from ansys.dpf.core.property_fields_container import PropertyFieldsContainer
+from ansys.dpf.core.property_fields_container import (
+    _MockPropertyFieldsContainer as PropertyFieldsContainer,
+)
 import ansys.dpf.gate.errors
 import numpy as np
 

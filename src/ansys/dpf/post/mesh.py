@@ -10,7 +10,9 @@ from typing import List
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core.nodes import Node
-from ansys.dpf.core.property_fields_container import PropertyFieldsContainer
+from ansys.dpf.core.property_fields_container import (
+    _MockPropertyFieldsContainer as PropertyFieldsContainer,
+)
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
