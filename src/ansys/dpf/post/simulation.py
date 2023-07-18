@@ -12,7 +12,7 @@ from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
@@ -103,10 +103,10 @@ class Simulation(ABC):
         return outputs.mesh_selection_manager
 
     @property
-    def results(self) -> List[str]:
+    def results(self) -> List[dpf.result_info.available_result.AvailableResult]:
         r"""Available results.
 
-        Returns a list of available results as strings.
+        Returns a list of available results.
 
         Examples
         --------
@@ -116,9 +116,12 @@ class Simulation(ABC):
         >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         [...]
         """
-        return [
-            str(result) for result in self._model.metadata.result_info.available_results
-        ]
+        return self._model.metadata.result_info.available_results
+
+    @property
+    def result_info(self):
+        """Return information concerning the available results."""
+        return self._model.metadata.result_info
 
     @property
     def geometries(self):
@@ -341,11 +344,18 @@ class Simulation(ABC):
 
     @property
     def units(self):
-        """Returns the current time/frequency and distance units used."""
+        """Returns the current units used."""
+        us = self._model.metadata.result_info.unit_system
+        result_units = us.split(": ")[1].split(", ")
         if self._units is None:
             self._units = {
-                "time/frequency": self.time_freq_support.time_frequencies.unit,
-                "distance": self._model.metadata.meshed_region.unit,
+                "time": result_units[3],
+                "length": result_units[0],
+                "mass": result_units[1],
+                "force": result_units[2],
+                "temperature": result_units[6],
+                "potential": result_units[4],
+                "current": result_units[5],
             }
         return self._units
 
@@ -536,7 +546,7 @@ class Simulation(ABC):
         op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
             op.connect(9, "ElementalNodal")
-        else:
+        elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
@@ -651,18 +661,40 @@ class Simulation(ABC):
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
-        column_indexes = [
-            ResultsIndex(values=[base_name], units=[unit]),
-            SetIndex(values=times),
-        ]
+        if len(fc) > 0:
+            times = fc.get_available_ids_for_label("time")
+        column_indexes = [ResultsIndex(values=[base_name], units=[unit])]
+        if times:
+            column_indexes.append(SetIndex(values=times))
         label_indexes = []
+        # Get the label name values for each label
         for label in fc.labels:
-            if label not in ["time"]:
-                if len(fc) > 0:
-                    values = fc.get_available_ids_for_label(label)
-                else:
-                    values = [""]
-                label_indexes.append(LabelIndex(name=label, values=values))
+            # Do not treat time
+            if label in ["time"]:
+                continue
+            if len(fc) > 0:
+                # Get ID values for this label
+                values = fc.get_available_ids_for_label(label)
+                # Then try to gather the correspond string values for display
+                try:
+                    label_support = self.result_info.qualifier_label_support(label)
+                    names_field = label_support.string_field_support_by_property(
+                        "names"
+                    )
+                    values = [
+                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                        for value in values
+                    ]
+                except (
+                    ValueError,
+                    errors.DPFServerException,
+                    errors.DpfVersionNotSupported,
+                    AttributeError,  # Error in GitHub doc CI (Linux) where label_support = None
+                ):
+                    values = None
+            else:
+                values = []
+            label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
@@ -901,10 +933,7 @@ class MechanicalSimulation(Simulation, ABC):
                         found = True
                     i += 1
                 if not found:
-                    raise ValueError(
-                        f"Could not find time={t}{self.units['time/frequency']} "
-                        f"in the simulation."
-                    )
+                    raise ValueError(f"Could not find time={t} in the simulation.")
             selection.select_time_freq_sets(
                 time_freq_sets=available_times_to_extract_set_ids
             )
