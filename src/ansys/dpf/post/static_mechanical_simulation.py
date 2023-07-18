@@ -48,61 +48,62 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            base_name:
-                Base name for the requested result.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            category:
-                Type of result requested. See the :class:`ResultCategory` class.
-            components:
-                Components to get results for.
-            norm:
-                Whether to return the norm of the results.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            times:
-                List of times to get results for.
-            set_ids:
-                List of sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            named_selections:
-                Named selection or list of named selections to get results for.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        base_name:
+            Base name for the requested result.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        category:
+            Type of result requested. See the :class:`ResultCategory` class.
+        components:
+            Components to get results for.
+        norm:
+            Whether to return the norm of the results.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        times:
+            List of times to get results for.
+        set_ids:
+            List of sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -325,50 +326,51 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers,
-                ordered by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting
-                 the skin on more than one result (several time freq sets, split data...) is
-                 only supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements whose nodes to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers,
+            ordered by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+            layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting
+             the skin on more than one result (several time freq sets, split data...) is
+             only supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -424,56 +426,57 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -526,46 +529,47 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -619,48 +623,49 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -716,55 +721,56 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -817,45 +823,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -909,47 +916,48 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1003,53 +1011,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1101,43 +1110,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1190,45 +1200,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1283,56 +1294,57 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1386,48 +1398,49 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1480,46 +1493,47 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1574,55 +1588,56 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1676,47 +1691,48 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1769,45 +1785,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1861,53 +1878,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -1959,43 +1977,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2048,45 +2067,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2140,53 +2160,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2238,43 +2259,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2327,45 +2349,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2420,56 +2443,57 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2523,48 +2547,49 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2617,46 +2642,47 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2711,55 +2737,56 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2813,47 +2840,48 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2906,45 +2934,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -2998,53 +3027,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3097,45 +3127,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3187,43 +3218,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3278,56 +3310,57 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3381,48 +3414,49 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3475,46 +3509,47 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
-                "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3569,55 +3604,56 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3671,47 +3707,48 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3764,45 +3801,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are: 1, 2, and 3.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3856,53 +3894,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -3955,45 +3994,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4045,43 +4085,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4136,50 +4177,51 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4233,45 +4275,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4323,43 +4366,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4411,43 +4455,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4499,43 +4544,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4587,43 +4633,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4677,53 +4724,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4775,43 +4823,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4864,45 +4913,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -4954,43 +5004,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5042,43 +5093,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5130,43 +5182,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5218,43 +5271,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5308,45 +5362,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5399,45 +5462,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5489,43 +5553,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5579,53 +5644,54 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5678,45 +5744,46 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5768,43 +5835,44 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of times to get results for.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of times to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5860,58 +5928,59 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            location:
-                Location to extract results at. Available locations are listed in
-                class:`post.locations` and are: `post.locations.nodal`,
-                `post.locations.elemental`, and `post.locations.elemental_nodal`.
-                Using the default `post.locations.elemental_nodal` results in a value
-                for every node at each element. Similarly, using `post.locations.elemental`
-                gives results with one value for each element, while using `post.locations.nodal`
-                gives results with one value for each node.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -5967,50 +6036,51 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -6065,48 +6135,49 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            element_ids:
-                List of IDs of elements to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -6162,50 +6233,51 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements whose nodes to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
@@ -6261,50 +6333,51 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
-        Args:
-            node_ids:
-                List of IDs of nodes to get results for.
-            element_ids:
-                List of IDs of elements whose nodes to get results for.
-            times:
-                List of time values to get results for.
-            components:
-                Components to get results for. Available components are "X", "Y", "Z",
-                and their respective equivalents 1, 2, 3.
-            norm:
-                Whether to return the norm of the results.
-            set_ids:
-                Sets to get results for.
-                A set is defined as a unique combination of {time, load step, sub-step}.
-            all_sets:
-                Whether to get results for all sets.
-            load_steps:
-                Load step number or list of load step numbers to get results for.
-                One can specify sub-steps of a load step with a tuple of format:
-                (load-step, sub-step number or list of sub-step numbers).
-            named_selections:
-                Named selection or list of named selections to get results for.
-            selection:
-                Selection to get results for.
-                A Selection defines both spatial and time-like criteria for filtering.
-            expand_cyclic:
-                For cyclic problems, whether to expand the sectors.
-                Can take a list of sector numbers to select specific sectors to expand
-                (one-based indexing).
-                If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-                by stage.
-            phase_angle_cyclic:
-                 For cyclic problems, phase angle to apply (in degrees).
-            external_layer:
-                 Select the external layer (last layer of solid elements under the skin)
-                 of the mesh for plotting and data extraction. If a list is passed, the external
-                 layer is computed over list of elements.
-            skin:
-                 Select the skin (creates new 2D elements connecting the external nodes)
-                 of the mesh for plotting and data extraction. If a list is passed, the skin
-                 is computed over list of elements (not supported for cyclic symmetry). Getting the
-                 skin on more than one result (several time freq sets, split data...) is only
-                 supported starting with Ansys 2023R2.
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements whose nodes to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z",
+            and their respective equivalents 1, 2, 3.
+        norm:
+            Whether to return the norm of the results.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
 
         Returns
         -------
