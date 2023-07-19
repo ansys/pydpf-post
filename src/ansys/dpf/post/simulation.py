@@ -335,14 +335,15 @@ class Simulation(ABC):
         result_units = us.split(": ")[1].split(", ")
         if self._units is None:
             self._units = {
-                "time": result_units[3],
                 "length": result_units[0],
                 "mass": result_units[1],
                 "force": result_units[2],
-                "temperature": result_units[6],
-                "potential": result_units[4],
-                "current": result_units[5],
+                "time": result_units[3],
+                "current": result_units[-2],
+                "temperature": result_units[-1],
             }
+            if len(result_units) > 6:
+                self._units["potential"] = result_units[4]
         return self._units
 
     def __str__(self):
