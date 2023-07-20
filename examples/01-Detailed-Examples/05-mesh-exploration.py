@@ -3,14 +3,15 @@
 
 Explore the mesh
 ================
-In this script a static simulation is used as an example to show how to
-query mesh information such as connectivity, element IDs, element types and so on.
+This example shows how to explore and manipulate the mesh object to query mesh data
+such as connectivity tables, element IDs, element types and so on.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports.
+# This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -18,186 +19,204 @@ from ansys.dpf.post import examples
 from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
-# Get ``Simulation`` object
-# -------------------------
-# Get the ``Simulation`` object that allows access to the result. The ``Simulation``
-# object must be instantiated with the path for the result file. For example,
-# ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
-# on Linux.
+# Load the result file
+# --------------------
+# Load the result file in a ``Simulation`` object that allows access to the results.
+# The ``Simulation`` object must be instantiated with the path for the result file.
+# For example, ``"C:/Users/user/my_result.rst"`` on Windows
+# or ``"/home/user/my_result.rst"`` on Linux.
 
-example_path = examples.download_all_kinds_of_complexity()
-simulation = post.StaticMechanicalSimulation(example_path)
-
-# print the simulation to get an overview of what's available
-print(simulation)
+example_path = examples.download_harmonic_clamped_pipe()
+simulation = post.HarmonicMechanicalSimulation(example_path)
 
 ###############################################################################
 # Get the mesh
 # ------------
-
-# Retrieve the actual mesh
+# Retrieve the mesh
 mesh = simulation.mesh
+# Printing the mesh directly gives the same information already shown at the simulation level
+print(mesh)
 
 ###############################################################################
+# Plot the mesh
+# -------------
+# Plot the mesh to view the bare mesh of the model
+mesh.plot()
+
+#################################################################q##############
 # Query basic information about the mesh
 # --------------------------------------
+# The ``Mesh`` object has several properties allowing access to different information such as:
 
-# Node IDs
-n_ids = mesh.node_ids
+# the number of nodes
+print(f"This mesh contains {mesh.num_nodes} nodes")
 
-# Element IDs
-e_ids = mesh.element_ids
+# the list of node IDs
+print(f"with IDs: {mesh.node_ids}.")
 
-# Available named selection names
-named_selections = mesh.named_selections.keys()
+# the number of elements
+print(f"This mesh contains {mesh.num_elements} elements")
 
-# Number of nodes
-n_nodes = mesh.num_nodes
+# the list of element IDs
+print(f"with IDs {mesh.element_ids}.")
 
-# Number of elements
-n_elements = mesh.num_elements
+# the unit of the mesh
+print(f"The mesh is in '{mesh.unit}'.")
 
-# Number of named selections
-n_ns = len(named_selections)
-
-# Unit (get and set)
-mesh_unit = mesh.unit
-mesh.unit = "mm"
-
-print(n_ids)
-print(e_ids)
+###############################################################################
+# Named selections
+# ----------------
+# The available named selections are given as a dictionary
+# with the names as keys and the actual ``NamedSelection`` objects as values.
+# Printing the dictionary informs you on the available names.
+named_selections = mesh.named_selections
 print(named_selections)
-print(n_nodes)
-print(n_elements)
 
 ###############################################################################
-# Get Named Selections
-# --------------------
-ns_list = mesh.named_selections.keys()
-first_key = ns_list[0]
-named_selection = mesh.named_selections[first_key]
-
-for k in mesh.named_selections.keys():
-    print(k)
-for v in mesh.named_selections.values():
-    print(v)
-for k, v in mesh.named_selections.items():
-    print(f"{k} = {v}")
+# To get a specific named selection, query it using its name as key
+print(named_selections["_FIXEDSU"])
 
 ###############################################################################
-# Get elements
-# ------------
-
-# Get an element by ID
-el_by_id = mesh.elements.by_id[1]
-
-# Get an element by index
-index = el_by_id.index
-print(mesh.elements[index])
+# Elements
+# --------
+# Use ``mesh.elements`` to access the list of Element objects
+print(mesh.elements)
 
 ###############################################################################
-# Element Types and Materials
-# ---------------------------
+# You can then query a specific element by its ID
+print(mesh.elements.by_id[1])
 
-# Get the element types
-el_types = mesh.element_types
-print(el_types)
-
-# Get the materials
-e_materials = mesh.materials
-print(e_materials)
+###############################################################################
+# or by its index
+element_0 = mesh.elements[0]
+print(element_0)
 
 ###############################################################################
 # Query information about one particular element
 # ----------------------------------------------
+# You can request the IDs of the nodes attached to an ``Element`` object
+print(element_0.node_ids)
 
-# Get the nodes of an element
-elem_0_nodes = mesh.elements[0].nodes
+# or the list of ``Node`` objects
+print(element_0.nodes)
 
-# Get the node IDs of an element
-elem_0_nodes_ids = mesh.elements[0].node_ids
-
-# Get the number of nodes of an element
-num_nodes_elem_0 = mesh.elements[0].num_nodes
+# To get the number of nodes attached, use
+print(element_0.num_nodes)
 
 # Get the type of the element
-elem_0_type_info = mesh.elements[0].type_info
-elem_0_type = mesh.elements[0].type
+print(element_0.type_info)
+print(element_0.type)
 
 # Get the shape of the element
-elem_0_shape = mesh.elements[0].shape
+print(element_0.shape)
 
 ###############################################################################
-# Get the elemental connectivity
-# ------------------------------
+# Element types and materials
+# ---------------------------
+# The ``Mesh`` object provides access to properties defined on all elements,
+# such as their types or their associated materials.
 
-# get node indices from element index
-conn1 = mesh.element_to_node_connectivity
+# Get the type of all elements
+print(mesh.element_types)
 
-# get node IDs from element index
-conn2 = mesh.element_to_node_ids_connectivity
-
-el_idx_5 = mesh.elements[5]
-# get node IDS from element ID
-node_ids = conn2.by_id[el_idx_5.id]
+# Get the materials of all elements
+print(mesh.materials)
 
 ###############################################################################
-# Get nodes
-# ---------
+# Elemental connectivity
+# ----------------------
+# The elemental connectivity maps elements to connected nodes, either using IDs or indexes.
 
-# Get a node by ID
-node_by_id = mesh.nodes.by_id[1]
+# To access the indexes of the connected nodes using an element's index, use
+element_to_node_connectivity = mesh.element_to_node_connectivity
+print(element_to_node_connectivity[0])
 
-# Get a node by index
-node_by_index = mesh.nodes[0]
+# To access the IDs of the connected nodes using an element's index, use
+element_to_node_ids_connectivity = mesh.element_to_node_ids_connectivity
+print(element_to_node_ids_connectivity[0])
 
+###############################################################################
+# Each connectivity object has a ``by_id`` property which changes the input from index to ID, thus:
+# To access the indexes of the connected nodes using an element's ID, use
+element_to_node_connectivity_by_id = mesh.element_to_node_connectivity.by_id
+print(element_to_node_connectivity_by_id[3487])
+
+# To access the IDs of the connected nodes using an element's ID, use
+element_to_node_ids_connectivity_by_id = mesh.element_to_node_ids_connectivity.by_id
+print(element_to_node_ids_connectivity_by_id[3487])
+
+###############################################################################
+# Nodes
+# -----
+
+# Get a node by its ID
+node_1 = mesh.nodes.by_id[1]
+print(node_1)
+
+###############################################################################
+# Get a node by its index
+print(mesh.nodes[0])
+
+###############################################################################
 # Get the coordinates of all nodes
 print(mesh.coordinates)
 
 ###############################################################################
 # Query information about one particular node
 # -------------------------------------------
+# Get the coordinates of a node
+print(node_1.coordinates)
 
-# Coordinates
-node_1 = mesh.nodes[1].coordinates
+###############################################################################
+# Nodal connectivity
+# ------------------
+# The nodal connectivity maps nodes to connected elements, either using IDs or indexes.
 
-# Get Nodal connectivity
-conn3 = mesh.node_to_element_connectivity
-conn4 = mesh.node_to_element_ids_connectivity
+# To access the indexes of the connected elements using a node's index, use
+node_to_element_connectivity = mesh.node_to_element_connectivity
+print(node_to_element_connectivity[0])
 
-print(mesh.nodes[0])
+# To access the IDs of the connected elements using a node's index, use
+node_to_element_ids_connectivity = mesh.node_to_element_ids_connectivity
+print(node_to_element_ids_connectivity[0])
 
-# elements indices to elem_id
-print(conn3[0])
+###############################################################################
+# Each connectivity object has a ``by_id`` property which changes the input from index to ID, thus:
+# To access the indexes of the connected elements using a node's ID, use
+node_to_element_connectivity_by_id = mesh.node_to_element_connectivity.by_id
+print(node_to_element_connectivity_by_id[1])
 
-# elements IDs from node index
-print(conn4[0])
+# To access the IDs of the connected elements using a node's ID, use
+node_to_element_ids_connectivity_by_id = mesh.node_to_element_ids_connectivity.by_id
+print(node_to_element_ids_connectivity_by_id[1])
 
 ###############################################################################
 # Splitting into meshes
 # ---------------------
-
-# Plot the mesh
-mesh.plot()
-
-# Split the global mesh according to mesh properties
+# You can split the global mesh according to mesh properties to work on specific parts of the mesh
 meshes = simulation.split_mesh_by_properties(
     properties=[elemental_properties.material, elemental_properties.element_shape]
 )
-meshes.plot()
-
-# Split the global mesh and select meshes for specific property values
+# The object obtained is a ``Meshes``
 print(meshes)
-meshes = simulation.split_mesh_by_properties(
+
+# Plotting a ``Meshes`` object plots a combination of all the ``Mesh`` objects within
+meshes.plot(text="Mesh split")
+
+###############################################################################
+# Select a specific ``Mesh`` in the ``Meshes``, by index
+meshes[0].plot(text="First mesh in the split mesh")
+
+###############################################################################
+# You can split the global mesh and select meshes based on specific property values
+meshes_filtered = simulation.split_mesh_by_properties(
     properties={
-        elemental_properties.material: 1,
-        elemental_properties.element_shape: [0, 1],
+        elemental_properties.material: [2, 3, 4],
+        elemental_properties.element_shape: 1,
     }
 )
+meshes_filtered.plot(text="Mesh split and filtered")
 
-meshes.plot()
-
-# Select a specific Mesh in the Meshes, by index
-meshes[0].plot()
-# or by property values
-meshes[{"mat": 1, "elshape": 0}].plot()
+###############################################################################
+# or with a unique combination of property values
+meshes[{"mat": 5, "elshape": 0}].plot(text="Mesh for mat=5 and elshape=0")
