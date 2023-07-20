@@ -1,8 +1,9 @@
 import ansys.dpf.core as dpf
 import numpy as np
+import pytest
 from pytest import fixture
 
-from ansys.dpf.post import StaticMechanicalSimulation
+from ansys.dpf.post import Mesh, StaticMechanicalSimulation
 
 
 @fixture
@@ -14,6 +15,8 @@ def mesh(static_rst):
 def test_mesh_core_object(mesh):
     assert isinstance(mesh._core_object, dpf.MeshedRegion)
     assert mesh._core_object.nodes.n_nodes == 81
+    with pytest.raises(ValueError, match="Tried to instantiate an empty Mesh."):
+        _ = Mesh(None)
 
 
 def test_mesh_node_ids(mesh):

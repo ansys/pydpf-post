@@ -27,6 +27,8 @@ class Mesh:
 
     def __init__(self, meshed_region: dpf.MeshedRegion):
         """Initialize this class."""
+        if meshed_region is None:
+            raise ValueError("Tried to instantiate an empty Mesh.")
         self._meshed_region = meshed_region
 
     def __str__(self):
