@@ -32,9 +32,8 @@ simulation = post.HarmonicMechanicalSimulation(example_path)
 ###############################################################################
 # Get the mesh
 # ------------
-# Retrieve the mesh
+# Retrieve the mesh and print it
 mesh = simulation.mesh
-# Printing the mesh directly gives the same information already shown at the simulation level
 print(mesh)
 
 ###############################################################################
@@ -43,25 +42,30 @@ print(mesh)
 # Plot the mesh to view the bare mesh of the model
 mesh.plot()
 
-#################################################################q##############
+###############################################################################
 # Query basic information about the mesh
 # --------------------------------------
 # The ``Mesh`` object has several properties allowing access to different information such as:
 
+###############################################################################
 # the number of nodes
 print(f"This mesh contains {mesh.num_nodes} nodes")
 
+###############################################################################
 # the list of node IDs
-print(f"with IDs: {mesh.node_ids}.")
+print(f"with IDs: {mesh.node_ids}")
 
+###############################################################################
 # the number of elements
 print(f"This mesh contains {mesh.num_elements} elements")
 
+###############################################################################
 # the list of element IDs
-print(f"with IDs {mesh.element_ids}.")
+print(f"with IDs {mesh.element_ids}")
 
+###############################################################################
 # the unit of the mesh
-print(f"The mesh is in '{mesh.unit}'.")
+print(f"The mesh is in '{mesh.unit}'")
 
 ###############################################################################
 # Named selections
@@ -92,21 +96,25 @@ element_0 = mesh.elements[0]
 print(element_0)
 
 ###############################################################################
-# Query information about one particular element
-# ----------------------------------------------
+# Query information about a particular element
+# --------------------------------------------
 # You can request the IDs of the nodes attached to an ``Element`` object
 print(element_0.node_ids)
 
+###############################################################################
 # or the list of ``Node`` objects
 print(element_0.nodes)
 
+###############################################################################
 # To get the number of nodes attached, use
 print(element_0.num_nodes)
 
+###############################################################################
 # Get the type of the element
 print(element_0.type_info)
 print(element_0.type)
 
+###############################################################################
 # Get the shape of the element
 print(element_0.shape)
 
@@ -116,9 +124,11 @@ print(element_0.shape)
 # The ``Mesh`` object provides access to properties defined on all elements,
 # such as their types or their associated materials.
 
+###############################################################################
 # Get the type of all elements
 print(mesh.element_types)
 
+###############################################################################
 # Get the materials of all elements
 print(mesh.materials)
 
@@ -127,20 +137,25 @@ print(mesh.materials)
 # ----------------------
 # The elemental connectivity maps elements to connected nodes, either using IDs or indexes.
 
+###############################################################################
 # To access the indexes of the connected nodes using an element's index, use
 element_to_node_connectivity = mesh.element_to_node_connectivity
 print(element_to_node_connectivity[0])
 
+###############################################################################
 # To access the IDs of the connected nodes using an element's index, use
 element_to_node_ids_connectivity = mesh.element_to_node_ids_connectivity
 print(element_to_node_ids_connectivity[0])
 
 ###############################################################################
 # Each connectivity object has a ``by_id`` property which changes the input from index to ID, thus:
+
+###############################################################################
 # To access the indexes of the connected nodes using an element's ID, use
 element_to_node_connectivity_by_id = mesh.element_to_node_connectivity.by_id
 print(element_to_node_connectivity_by_id[3487])
 
+###############################################################################
 # To access the IDs of the connected nodes using an element's ID, use
 element_to_node_ids_connectivity_by_id = mesh.element_to_node_ids_connectivity.by_id
 print(element_to_node_ids_connectivity_by_id[3487])
@@ -148,7 +163,6 @@ print(element_to_node_ids_connectivity_by_id[3487])
 ###############################################################################
 # Nodes
 # -----
-
 # Get a node by its ID
 node_1 = mesh.nodes.by_id[1]
 print(node_1)
@@ -172,20 +186,25 @@ print(node_1.coordinates)
 # ------------------
 # The nodal connectivity maps nodes to connected elements, either using IDs or indexes.
 
+###############################################################################
 # To access the indexes of the connected elements using a node's index, use
 node_to_element_connectivity = mesh.node_to_element_connectivity
 print(node_to_element_connectivity[0])
 
+###############################################################################
 # To access the IDs of the connected elements using a node's index, use
 node_to_element_ids_connectivity = mesh.node_to_element_ids_connectivity
 print(node_to_element_ids_connectivity[0])
 
 ###############################################################################
 # Each connectivity object has a ``by_id`` property which changes the input from index to ID, thus:
+
+###############################################################################
 # To access the indexes of the connected elements using a node's ID, use
 node_to_element_connectivity_by_id = mesh.node_to_element_connectivity.by_id
 print(node_to_element_connectivity_by_id[1])
 
+###############################################################################
 # To access the IDs of the connected elements using a node's ID, use
 node_to_element_ids_connectivity_by_id = mesh.node_to_element_ids_connectivity.by_id
 print(node_to_element_ids_connectivity_by_id[1])
@@ -197,9 +216,11 @@ print(node_to_element_ids_connectivity_by_id[1])
 meshes = simulation.split_mesh_by_properties(
     properties=[elemental_properties.material, elemental_properties.element_shape]
 )
+###############################################################################
 # The object obtained is a ``Meshes``
 print(meshes)
 
+###############################################################################
 # Plotting a ``Meshes`` object plots a combination of all the ``Mesh`` objects within
 meshes.plot(text="Mesh split")
 
