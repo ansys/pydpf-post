@@ -4,7 +4,6 @@ FluidSimulation
 ---------------
 
 """
-from enum import Enum
 from os import PathLike
 from typing import List, Union
 
@@ -16,12 +15,6 @@ from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import ResultCategory, Simulation
 from ansys.dpf.post.species import SpeciesDict
 from ansys.dpf.post.zone import Zones
-
-
-class _result_type_enum(Enum):
-    integrated = 0
-    face = 1
-    elemental_face = 2
 
 
 class FluidSimulation(Simulation):
@@ -191,6 +184,7 @@ class FluidSimulation(Simulation):
         self,
         base_name: str,
         category: ResultCategory,
+        native_location: str,
         location: Union[locations, str, None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
@@ -206,7 +200,7 @@ class FluidSimulation(Simulation):
         species: Union[List[int], None] = None,
         qualifiers: Union[dict, None] = None,
         named_selections: Union[List[str], str, None] = None,
-        result_type: Union[_result_type_enum, None] = None,
+        integrated: Union[bool, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -226,6 +220,8 @@ class FluidSimulation(Simulation):
             Base name for the requested result.
         category:
             Type of result requested. See the :class:`ResultCategory` class.
+        native_location:
+            Native location of the result.
         location:
             Location to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal`,
@@ -264,9 +260,8 @@ class FluidSimulation(Simulation):
             Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
         named_selections:
             Named selection or list of named selections to get results for.
-        result_type:
-            A ``result_type_enum`` value to inform a test on requested zones is necessary.
-            An integrated result will for example only be available on faces.
+        integrated:
+            An integrated result cannot be requested on another location than its native_location.
 
         Returns
         -------
@@ -286,12 +281,44 @@ class FluidSimulation(Simulation):
                 "are mutually exclusive."
             )
 
-        if result_type == _result_type_enum.integrated:
-            # TODO filter-out cell zones IDs from zone_ids
-            pass
-        if location == locations.elemental:
-            # TODO filter-out face zones IDs from zone_ids
-            pass
+        # Raise for integrated result queried on anything else than its native location
+        if integrated:
+            if (native_location == "Faces" and location != locations.faces) or (
+                native_location == "Elements" and location != locations.elemental
+            ):
+                raise ValueError(
+                    f"Cannot query a {native_location} integrated result on {location}."
+                )
+
+        # Define required averaging step
+        averaging_op_name = None
+        if native_location == "Nodes":
+            if location != locations.nodal:
+                averaging_op_name = "to_elemental_fc"
+        elif native_location == "Elemental":
+            if location == locations.faces:
+                raise ValueError("Cannot query elemental results on faces.")
+            elif location == locations.nodal:
+                # averaging_op_name = "to_nodal_fc"
+                pass  # nodal averaging seems to be automatic
+        elif native_location == "Faces":
+            if location == locations.elemental:
+                raise ValueError("Cannot query faces results on elements.")
+            elif location == locations.nodal:
+                # averaging_op_name = "to_nodal_fc"
+                pass  # nodal averaging seems to be automatic
+        elif native_location == "ElementalAndFaces":
+            if location == locations.nodal:
+                # averaging_op_name = "to_nodal_fc"
+                pass  # nodal averaging seems to be automatic
+            elif location == locations.faces:
+                # TODO filter-out cell zones
+                raise NotImplementedError("filter cell zones")
+            elif location == locations.elemental:
+                # CFF only returns results on face zones if qualifiers have been set
+                if (qualifiers and ("zone" in qualifiers)) or (zone_ids):
+                    # TODO filter out face zones
+                    raise NotImplementedError("filter face zones")
 
         selection = self._build_selection(
             base_name=base_name,
@@ -378,6 +405,12 @@ class FluidSimulation(Simulation):
             norm_op.connect(0, out)
             wf.add_operator(operator=norm_op)
             out = norm_op.outputs.fields_container
+
+        # if averaging_op_name:
+        #     average_op = self._model.operator(name=averaging_op_name)
+        #     average_op.connect(0, out)
+        #     wf.add_operator(operator=average_op)
+        #     out = average_op.outputs.fields_container
 
         # Set the workflow output
         wf.set_output_name("out", out)
@@ -481,6 +514,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["density"].native_location,
         )
 
     def density_on_nodes(
@@ -563,6 +597,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["density"].native_location,
         )
 
     def density_on_faces(
@@ -642,6 +677,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["density"].native_location,
         )
 
     def density_on_cells(
@@ -718,6 +754,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["density"].native_location,
         )
 
     def dynamic_viscosity(
@@ -808,6 +845,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["dynamic_viscosity"].native_location,
         )
 
     def dynamic_viscosity_on_nodes(
@@ -890,6 +928,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["dynamic_viscosity"].native_location,
         )
 
     def dynamic_viscosity_on_faces(
@@ -969,6 +1008,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["dynamic_viscosity"].native_location,
         )
 
     def dynamic_viscosity_on_cells(
@@ -1045,6 +1085,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["dynamic_viscosity"].native_location,
         )
 
     def enthalpy(
@@ -1135,6 +1176,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["enthalpy"].native_location,
         )
 
     def enthalpy_on_nodes(
@@ -1217,85 +1259,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-        )
-
-    def enthalpy_on_faces(
-        self,
-        face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
-        zone_ids: Union[List[int], None] = None,
-        phases: Union[List[Union[int, str]], None] = None,
-        species: Union[List[int], None] = None,
-        qualifiers: Union[dict, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataFrame:
-        """Extract enthalpy results on faces from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
-        are mutually exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
-
-        Parameters
-        ----------
-        face_ids:
-            List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
-        zone_ids:
-            List of IDs of zones to get results for.
-        phases:
-            List of IDs of phases to get results for.
-        species:
-            List of IDs of species to get results for.
-        qualifiers:
-            Dictionary of qualifier labels with associated values to get results for.
-            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-        times:
-            List of time values to get results for.
-        set_ids:
-            Sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
-        return self._get_result(
-            base_name="H_S",
-            location=locations.faces,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            node_ids=None,
-            face_ids=face_ids,
-            cell_ids=cell_ids,
-            zone_ids=zone_ids,
-            qualifiers=qualifiers,
-            phases=phases,
-            species=species,
-            named_selections=named_selections,
+            native_location=self.result_info["enthalpy"].native_location,
         )
 
     def enthalpy_on_cells(
@@ -1372,6 +1336,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["enthalpy"].native_location,
         )
 
     def entropy(
@@ -1462,6 +1427,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["entropy"].native_location,
         )
 
     def entropy_on_nodes(
@@ -1544,6 +1510,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["entropy"].native_location,
         )
 
     def entropy_on_faces(
@@ -1623,6 +1590,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["entropy"].native_location,
         )
 
     def entropy_on_cells(
@@ -1699,6 +1667,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["entropy"].native_location,
         )
 
     def epsilon(
@@ -1789,6 +1758,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["epsilon"].native_location,
         )
 
     def epsilon_on_nodes(
@@ -1871,6 +1841,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["epsilon"].native_location,
         )
 
     def epsilon_on_faces(
@@ -1950,6 +1921,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["epsilon"].native_location,
         )
 
     def epsilon_on_cells(
@@ -2026,6 +1998,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["epsilon"].native_location,
         )
 
     def mach_number(
@@ -2116,6 +2089,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mach_number"].native_location,
         )
 
     def mach_number_on_nodes(
@@ -2198,6 +2172,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mach_number"].native_location,
         )
 
     def mach_number_on_faces(
@@ -2277,6 +2252,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mach_number"].native_location,
         )
 
     def mach_number_on_cells(
@@ -2353,6 +2329,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mach_number"].native_location,
         )
 
     def mass_flow_rate(
@@ -2432,7 +2409,8 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            result_type=_result_type_enum.integrated,
+            integrated=True,
+            native_location=self.result_info["mass_flow_rate"].native_location,
         )
 
     def mass_flow_rate_on_faces(
@@ -2512,7 +2490,8 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            result_type=_result_type_enum.integrated,
+            integrated=True,
+            native_location=self.result_info["mass_flow_rate"].native_location,
         )
 
     def mass_fraction(
@@ -2603,6 +2582,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mass_fraction"].native_location,
         )
 
     def mass_fraction_on_nodes(
@@ -2685,6 +2665,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mass_fraction"].native_location,
         )
 
     def mass_fraction_on_faces(
@@ -2764,6 +2745,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mass_fraction"].native_location,
         )
 
     def mass_fraction_on_cells(
@@ -2840,6 +2822,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mass_fraction"].native_location,
         )
 
     def mean_static_pressure(
@@ -2930,6 +2913,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_static_pressure"].native_location,
         )
 
     def mean_static_pressure_on_nodes(
@@ -3012,6 +2996,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_static_pressure"].native_location,
         )
 
     def mean_static_pressure_on_faces(
@@ -3091,6 +3076,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_static_pressure"].native_location,
         )
 
     def mean_static_pressure_on_cells(
@@ -3167,6 +3153,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_static_pressure"].native_location,
         )
 
     def mean_temperature(
@@ -3257,6 +3244,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_temperature"].native_location,
         )
 
     def mean_temperature_on_nodes(
@@ -3339,6 +3327,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_temperature"].native_location,
         )
 
     def mean_temperature_on_faces(
@@ -3418,6 +3407,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_temperature"].native_location,
         )
 
     def mean_temperature_on_cells(
@@ -3494,6 +3484,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_temperature"].native_location,
         )
 
     def mean_velocity(
@@ -3591,6 +3582,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_velocity"].native_location,
         )
 
     def mean_velocity_on_nodes(
@@ -3680,6 +3672,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_velocity"].native_location,
         )
 
     def mean_velocity_on_faces(
@@ -3766,6 +3759,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_velocity"].native_location,
         )
 
     def mean_velocity_on_cells(
@@ -3849,6 +3843,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["mean_velocity"].native_location,
         )
 
     def omega(
@@ -3939,6 +3934,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["omega"].native_location,
         )
 
     def omega_on_nodes(
@@ -4021,6 +4017,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["omega"].native_location,
         )
 
     def omega_on_faces(
@@ -4100,6 +4097,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["omega"].native_location,
         )
 
     def omega_on_cells(
@@ -4176,6 +4174,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["omega"].native_location,
         )
 
     def rms_static_pressure(
@@ -4266,6 +4265,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_static_pressure"].native_location,
         )
 
     def rms_static_pressure_on_nodes(
@@ -4348,6 +4348,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_static_pressure"].native_location,
         )
 
     def rms_static_pressure_on_faces(
@@ -4427,6 +4428,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_static_pressure"].native_location,
         )
 
     def rms_static_pressure_on_cells(
@@ -4503,6 +4505,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_static_pressure"].native_location,
         )
 
     def rms_temperature(
@@ -4593,6 +4596,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_temperature"].native_location,
         )
 
     def rms_temperature_on_nodes(
@@ -4675,6 +4679,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_temperature"].native_location,
         )
 
     def rms_temperature_on_faces(
@@ -4754,6 +4759,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_temperature"].native_location,
         )
 
     def rms_temperature_on_cells(
@@ -4830,6 +4836,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_temperature"].native_location,
         )
 
     def rms_velocity(
@@ -4927,6 +4934,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_velocity"].native_location,
         )
 
     def rms_velocity_on_nodes(
@@ -5016,6 +5024,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_velocity"].native_location,
         )
 
     def rms_velocity_on_faces(
@@ -5102,6 +5111,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_velocity"].native_location,
         )
 
     def rms_velocity_on_cells(
@@ -5185,6 +5195,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["rms_velocity"].native_location,
         )
 
     def specific_heat(
@@ -5275,6 +5286,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["specific_heat"].native_location,
         )
 
     def specific_heat_on_nodes(
@@ -5357,6 +5369,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["specific_heat"].native_location,
         )
 
     def specific_heat_on_faces(
@@ -5436,6 +5449,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["specific_heat"].native_location,
         )
 
     def specific_heat_on_cells(
@@ -5512,6 +5526,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["specific_heat"].native_location,
         )
 
     def static_pressure(
@@ -5602,6 +5617,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["static_pressure"].native_location,
         )
 
     def static_pressure_on_nodes(
@@ -5684,6 +5700,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["static_pressure"].native_location,
         )
 
     def static_pressure_on_faces(
@@ -5763,6 +5780,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["static_pressure"].native_location,
         )
 
     def static_pressure_on_cells(
@@ -5839,6 +5857,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["static_pressure"].native_location,
         )
 
     def superficial_velocity(
@@ -5936,6 +5955,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["superficial_velocity"].native_location,
         )
 
     def superficial_velocity_on_nodes(
@@ -6025,6 +6045,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["superficial_velocity"].native_location,
         )
 
     def superficial_velocity_on_faces(
@@ -6111,6 +6132,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["superficial_velocity"].native_location,
         )
 
     def superficial_velocity_on_cells(
@@ -6194,6 +6216,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["superficial_velocity"].native_location,
         )
 
     def surface_heat_rate(
@@ -6273,7 +6296,8 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            result_type=_result_type_enum.integrated,
+            integrated=True,
+            native_location=self.result_info["surface_heat_rate"].native_location,
         )
 
     def surface_heat_rate_on_faces(
@@ -6353,7 +6377,8 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            result_type=_result_type_enum.integrated,
+            integrated=True,
+            native_location=self.result_info["surface_heat_rate"].native_location,
         )
 
     def temperature(
@@ -6444,6 +6469,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["temperature"].native_location,
         )
 
     def temperature_on_nodes(
@@ -6526,6 +6552,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["temperature"].native_location,
         )
 
     def temperature_on_faces(
@@ -6605,6 +6632,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["temperature"].native_location,
         )
 
     def temperature_on_cells(
@@ -6681,6 +6709,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["temperature"].native_location,
         )
 
     def thermal_conductivity(
@@ -6771,6 +6800,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["thermal_conductivity"].native_location,
         )
 
     def thermal_conductivity_on_nodes(
@@ -6853,6 +6883,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["thermal_conductivity"].native_location,
         )
 
     def thermal_conductivity_on_faces(
@@ -6932,6 +6963,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["thermal_conductivity"].native_location,
         )
 
     def thermal_conductivity_on_cells(
@@ -7008,6 +7040,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["thermal_conductivity"].native_location,
         )
 
     def total_pressure(
@@ -7098,6 +7131,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_pressure"].native_location,
         )
 
     def total_pressure_on_nodes(
@@ -7180,6 +7214,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_pressure"].native_location,
         )
 
     def total_pressure_on_faces(
@@ -7259,6 +7294,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_pressure"].native_location,
         )
 
     def total_pressure_on_cells(
@@ -7335,6 +7371,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_pressure"].native_location,
         )
 
     def total_temperature(
@@ -7425,6 +7462,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_temperature"].native_location,
         )
 
     def total_temperature_on_nodes(
@@ -7507,6 +7545,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_temperature"].native_location,
         )
 
     def total_temperature_on_faces(
@@ -7586,6 +7625,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_temperature"].native_location,
         )
 
     def total_temperature_on_cells(
@@ -7662,6 +7702,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["total_temperature"].native_location,
         )
 
     def turbulent_kinetic_energy(
@@ -7752,6 +7793,9 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info[
+                "turbulent_kinetic_energy"
+            ].native_location,
         )
 
     def turbulent_kinetic_energy_on_nodes(
@@ -7834,6 +7878,9 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info[
+                "turbulent_kinetic_energy"
+            ].native_location,
         )
 
     def turbulent_kinetic_energy_on_faces(
@@ -7913,6 +7960,9 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info[
+                "turbulent_kinetic_energy"
+            ].native_location,
         )
 
     def turbulent_kinetic_energy_on_cells(
@@ -7989,6 +8039,9 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info[
+                "turbulent_kinetic_energy"
+            ].native_location,
         )
 
     def turbulent_viscosity(
@@ -8079,6 +8132,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["turbulent_viscosity"].native_location,
         )
 
     def turbulent_viscosity_on_nodes(
@@ -8161,6 +8215,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["turbulent_viscosity"].native_location,
         )
 
     def turbulent_viscosity_on_faces(
@@ -8240,6 +8295,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["turbulent_viscosity"].native_location,
         )
 
     def turbulent_viscosity_on_cells(
@@ -8316,6 +8372,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["turbulent_viscosity"].native_location,
         )
 
     def velocity(
@@ -8413,6 +8470,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["velocity"].native_location,
         )
 
     def velocity_on_nodes(
@@ -8502,6 +8560,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["velocity"].native_location,
         )
 
     def velocity_on_faces(
@@ -8588,6 +8647,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["velocity"].native_location,
         )
 
     def velocity_on_cells(
@@ -8671,6 +8731,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["velocity"].native_location,
         )
 
     def volume_fraction(
@@ -8761,6 +8822,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["volume_fraction"].native_location,
         )
 
     def volume_fraction_on_nodes(
@@ -8843,6 +8905,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["volume_fraction"].native_location,
         )
 
     def volume_fraction_on_faces(
@@ -8922,6 +8985,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["volume_fraction"].native_location,
         )
 
     def volume_fraction_on_cells(
@@ -8998,6 +9062,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["volume_fraction"].native_location,
         )
 
     def wall_shear_stress(
@@ -9095,6 +9160,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["wall_shear_stress"].native_location,
         )
 
     def wall_shear_stress_on_nodes(
@@ -9184,6 +9250,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["wall_shear_stress"].native_location,
         )
 
     def wall_shear_stress_on_faces(
@@ -9270,6 +9337,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["wall_shear_stress"].native_location,
         )
 
     def y_plus(
@@ -9360,6 +9428,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["y_plus"].native_location,
         )
 
     def y_plus_on_nodes(
@@ -9442,6 +9511,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["y_plus"].native_location,
         )
 
     def y_plus_on_faces(
@@ -9521,4 +9591,5 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            native_location=self.result_info["y_plus"].native_location,
         )
