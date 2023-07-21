@@ -2351,9 +2351,8 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[locations, str, None] = None,
     ) -> DataFrame:
-        """Extract mass flow rate results from the simulation.
+        """Extract mass flow rate results on faces from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -2394,13 +2393,6 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
-        location:
-            Location to extract results at. Available locations are listed in
-            class:`post.locations` and are: `post.locations.nodal`,
-            `post.locations.elemental`, and `post.locations.faces`.
-            If no location is given, the result is returned as it is stored in the result file.
-            Using `post.locations.elemental` gives results with one value for each cell,
-            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -2409,89 +2401,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MDOT",
-            location=location,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            node_ids=node_ids,
-            face_ids=face_ids,
-            cell_ids=cell_ids,
-            zone_ids=zone_ids,
-            qualifiers=qualifiers,
-            phases=phases,
-            species=species,
-            named_selections=named_selections,
-        )
-
-    def mass_flow_rate_on_nodes(
-        self,
-        node_ids: Union[List[int], None] = None,
-        face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
-        zone_ids: Union[List[int], None] = None,
-        phases: Union[List[Union[int, str]], None] = None,
-        species: Union[List[int], None] = None,
-        qualifiers: Union[dict, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataFrame:
-        """Extract mass flow rate results on nodes from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
-        are mutually exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
-
-        Parameters
-        ----------
-        node_ids:
-            List of IDs of nodes to get results for.
-        face_ids:
-            List of IDs of faces which nodes to get results for.
-        cell_ids:
-            List of IDs of cells which nodes to get results for.
-        zone_ids:
-            List of IDs of zones to get results for.
-        phases:
-            List of IDs of phases to get results for.
-        species:
-            List of IDs of species to get results for.
-        qualifiers:
-            Dictionary of qualifier labels with associated values to get results for.
-            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-        times:
-            List of time values to get results for.
-        set_ids:
-            Sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
-        return self._get_result(
-            base_name="MDOT",
-            location=locations.nodal,
+            location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2580,82 +2490,6 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
-            zone_ids=zone_ids,
-            qualifiers=qualifiers,
-            phases=phases,
-            species=species,
-            named_selections=named_selections,
-        )
-
-    def mass_flow_rate_on_cells(
-        self,
-        cell_ids: Union[List[int], None] = None,
-        zone_ids: Union[List[int], None] = None,
-        phases: Union[List[Union[int, str]], None] = None,
-        species: Union[List[int], None] = None,
-        qualifiers: Union[dict, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataFrame:
-        """Extract mass flow rate results on cells from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, and `cell_ids`
-        are mutually exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
-
-        Parameters
-        ----------
-        cell_ids:
-            List of IDs of cells to get results for.
-        zone_ids:
-            List of IDs of zones to get results for.
-        phases:
-            List of IDs of phases to get results for.
-        species:
-            List of IDs of species to get results for.
-        qualifiers:
-            Dictionary of qualifier labels with associated values to get results for.
-            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-        times:
-            List of time values to get results for.
-        set_ids:
-            Sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
-        return self._get_result(
-            base_name="MDOT",
-            location=locations.elemental,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            node_ids=None,
-            face_ids=None,
             cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
@@ -6359,9 +6193,8 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
-        location: Union[locations, str, None] = None,
     ) -> DataFrame:
-        """Extract surface heat rate results from the simulation.
+        """Extract surface heat rate results on faces from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -6402,13 +6235,6 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
-        location:
-            Location to extract results at. Available locations are listed in
-            class:`post.locations` and are: `post.locations.nodal`,
-            `post.locations.elemental`, and `post.locations.faces`.
-            If no location is given, the result is returned as it is stored in the result file.
-            Using `post.locations.elemental` gives results with one value for each cell,
-            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -6417,89 +6243,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="Q",
-            location=location,
-            category=ResultCategory.scalar,
-            components=None,
-            norm=False,
-            selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            node_ids=node_ids,
-            face_ids=face_ids,
-            cell_ids=cell_ids,
-            zone_ids=zone_ids,
-            qualifiers=qualifiers,
-            phases=phases,
-            species=species,
-            named_selections=named_selections,
-        )
-
-    def surface_heat_rate_on_nodes(
-        self,
-        node_ids: Union[List[int], None] = None,
-        face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
-        zone_ids: Union[List[int], None] = None,
-        phases: Union[List[Union[int, str]], None] = None,
-        species: Union[List[int], None] = None,
-        qualifiers: Union[dict, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        named_selections: Union[List[str], str, None] = None,
-        selection: Union[Selection, None] = None,
-    ) -> DataFrame:
-        """Extract surface heat rate results on nodes from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
-        exclusive.
-        If none of the above is given, only the last result will be returned.
-
-        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
-        are mutually exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
-
-        Parameters
-        ----------
-        node_ids:
-            List of IDs of nodes to get results for.
-        face_ids:
-            List of IDs of faces which nodes to get results for.
-        cell_ids:
-            List of IDs of cells which nodes to get results for.
-        zone_ids:
-            List of IDs of zones to get results for.
-        phases:
-            List of IDs of phases to get results for.
-        species:
-            List of IDs of species to get results for.
-        qualifiers:
-            Dictionary of qualifier labels with associated values to get results for.
-            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
-        times:
-            List of time values to get results for.
-        set_ids:
-            Sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
-        return self._get_result(
-            base_name="Q",
-            location=locations.nodal,
+            location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
