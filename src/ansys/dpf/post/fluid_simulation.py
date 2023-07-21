@@ -184,7 +184,7 @@ class FluidSimulation(Simulation):
         self,
         base_name: str,
         category: ResultCategory,
-        location: Union[str, None] = None,
+        location: Union[locations, str, None] = None,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
@@ -221,11 +221,10 @@ class FluidSimulation(Simulation):
         location:
             Location to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal`,
-            `post.locations.elemental`, and `post.locations.elemental_nodal`.
-            Using the default `post.locations.elemental_nodal` results in a value
-            for every node at each element. Similarly, using `post.locations.elemental`
-            gives results with one value for each element, while using `post.locations.nodal`
-            gives results with one value for each node.
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
         components:
             Components to get results for.
         norm:
@@ -390,6 +389,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract density results from the simulation.
 
@@ -432,6 +432,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -440,7 +447,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="RHO",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -709,6 +716,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract dynamic viscosity results from the simulation.
 
@@ -751,6 +759,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -759,7 +774,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MU",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -792,7 +807,7 @@ class FluidSimulation(Simulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract dynamic viscosity results from the simulation.
+        """Extract dynamic viscosity results on nodes from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -1028,6 +1043,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract enthalpy results from the simulation.
 
@@ -1070,6 +1086,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -1078,7 +1101,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="H_S",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1347,6 +1370,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract entropy results from the simulation.
 
@@ -1389,6 +1413,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -1397,7 +1428,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="S_S",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1666,6 +1697,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract epsilon results from the simulation.
 
@@ -1708,6 +1740,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -1716,7 +1755,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="EPS",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -1985,6 +2024,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mach number results from the simulation.
 
@@ -2027,6 +2067,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -2035,7 +2082,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MACH",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2227,7 +2274,7 @@ class FluidSimulation(Simulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract mach number results from the simulation.
+        """Extract mach number results on cells from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -2304,6 +2351,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results from the simulation.
 
@@ -2346,6 +2394,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -2354,7 +2409,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MDOT",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2623,6 +2678,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mass fraction results from the simulation.
 
@@ -2665,6 +2721,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -2673,7 +2736,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="Y",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -2942,6 +3005,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mean static pressure results from the simulation.
 
@@ -2984,6 +3048,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -2992,7 +3063,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_SA",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -3025,7 +3096,7 @@ class FluidSimulation(Simulation):
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
-        """Extract mean static pressure results from the simulation.
+        """Extract mean static pressure results on nodes from the simulation.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -3261,6 +3332,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mean temperature results from the simulation.
 
@@ -3303,6 +3375,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -3311,7 +3390,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_A",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -3582,6 +3661,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract mean velocity results from the simulation.
 
@@ -3629,6 +3709,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -3637,7 +3724,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_A",
-            location=None,
+            location=location,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3726,7 +3813,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_A",
-            location=None,
+            location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -3927,6 +4014,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract omega results from the simulation.
 
@@ -3969,6 +4057,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -3977,7 +4072,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="OME",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -4246,6 +4341,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract RMS static pressure results from the simulation.
 
@@ -4288,6 +4384,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -4296,7 +4399,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_SRMS",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -4565,6 +4668,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract RMS temperature results from the simulation.
 
@@ -4607,6 +4711,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -4615,7 +4726,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_RMS",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -4886,6 +4997,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract RMS velocity results from the simulation.
 
@@ -4933,6 +5045,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -4941,7 +5060,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_RMS",
-            location=None,
+            location=location,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -5231,6 +5350,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract specific heat results from the simulation.
 
@@ -5273,6 +5393,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -5281,7 +5408,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="CP",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -5550,6 +5677,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract static pressure results from the simulation.
 
@@ -5592,6 +5720,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -5600,7 +5735,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_S",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -5871,6 +6006,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract superficial velocity results from the simulation.
 
@@ -5918,6 +6054,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -5926,7 +6069,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V_SUP",
-            location=None,
+            location=location,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -6216,6 +6359,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results from the simulation.
 
@@ -6258,6 +6402,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -6266,7 +6417,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="Q",
-            location=locations.faces,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -6459,6 +6610,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract temperature results from the simulation.
 
@@ -6501,6 +6653,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -6509,7 +6668,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -6778,6 +6937,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract thermal conductivity results from the simulation.
 
@@ -6820,6 +6980,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -6828,7 +6995,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="KT",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7097,6 +7264,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract total pressure results from the simulation.
 
@@ -7139,6 +7307,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -7147,7 +7322,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="P_TOT",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7416,6 +7591,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract total temperature results from the simulation.
 
@@ -7458,6 +7634,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -7466,7 +7649,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TEMP_TOT",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -7735,6 +7918,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract turbulent kinetic energy results from the simulation.
 
@@ -7777,6 +7961,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -7785,7 +7976,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="K",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -8054,6 +8245,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract turbulent viscosity results from the simulation.
 
@@ -8096,6 +8288,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -8104,7 +8303,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="MUT",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -8375,6 +8574,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract velocity results from the simulation.
 
@@ -8422,6 +8622,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -8430,7 +8637,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="V",
-            location=None,
+            location=location,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -8720,6 +8927,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract volume fraction results from the simulation.
 
@@ -8762,6 +8970,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -8770,7 +8985,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="VOF",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
@@ -9041,6 +9256,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract wall shear stress results from the simulation.
 
@@ -9088,6 +9304,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -9096,7 +9319,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="TAU",
-            location=None,
+            location=location,
             category=ResultCategory.vector,
             components=components,
             norm=norm,
@@ -9303,6 +9526,7 @@ class FluidSimulation(Simulation):
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
+        location: Union[locations, str, None] = None,
     ) -> DataFrame:
         """Extract y+ results from the simulation.
 
@@ -9345,6 +9569,13 @@ class FluidSimulation(Simulation):
         selection:
             Selection to get results for.
             A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.faces`.
+            If no location is given, the result is returned as it is stored in the result file.
+            Using `post.locations.elemental` gives results with one value for each cell,
+            while using `post.locations.nodal` gives results with one value for each node.
 
         Returns
         -------
@@ -9353,7 +9584,7 @@ class FluidSimulation(Simulation):
         """
         return self._get_result(
             base_name="YPLUS",
-            location=None,
+            location=location,
             category=ResultCategory.scalar,
             components=None,
             norm=False,
