@@ -118,3 +118,65 @@ class TestFluidSimulation:
         result = fluent_simulation.wall_shear_stress()
         with pytest.raises(ValueError, match="No data to plot."):
             result.plot()
+
+    def test_results_fluent_averaging_from_elemental(self, fluent_simulation):
+        print(fluent_simulation)
+        # ######## Elemental Result #################
+        # Request on None
+        result = fluent_simulation.enthalpy()
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
+
+        # Request on nodes
+        result = fluent_simulation.enthalpy(location=post.locations.nodal)
+        assert result.index.mesh_index.location == post.locations.nodal
+        assert result._core_object[0].location == post.locations.nodal
+        result = fluent_simulation.enthalpy_on_nodes()
+        assert result.index.mesh_index.location == post.locations.nodal
+        assert result._core_object[0].location == post.locations.nodal
+
+        # Request on faces
+        with pytest.raises(
+            ValueError, match="Cannot query elemental results on faces."
+        ):
+            _ = fluent_simulation.enthalpy(location=post.locations.faces)
+
+        # Request on cells
+        result = fluent_simulation.enthalpy(location=post.locations.elemental)
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
+        result = fluent_simulation.enthalpy_on_cells()
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
+
+    def test_results_fluent_averaging_from_elemental_faces(self, fluent_simulation):
+        print(fluent_simulation)
+        # ######## ElementalFaces Result #################
+        # Request on None
+        result = fluent_simulation.static_pressure()
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
+
+        # Request on nodes
+        result = fluent_simulation.static_pressure(location=post.locations.nodal)
+        assert result.index.mesh_index.location == post.locations.nodal
+        assert result._core_object[0].location == post.locations.nodal
+        result = fluent_simulation.static_pressure_on_nodes()
+        assert result.index.mesh_index.location == post.locations.nodal
+        assert result._core_object[0].location == post.locations.nodal
+
+        # Request on faces (requires filter-out of cell zones)
+        # result = fluent_simulation.static_pressure(location=post.locations.faces)
+        # assert result.index.mesh_index.location == post.locations.faces
+        # assert result._core_object[0].location == post.locations.faces
+        # result = fluent_simulation.static_pressure_on_faces()
+        # assert result.index.mesh_index.location == post.locations.faces
+        # assert result._core_object[0].location == post.locations.faces
+
+        # Request on cells (requires filter-out of face zones)
+        result = fluent_simulation.static_pressure(location=post.locations.elemental)
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
+        result = fluent_simulation.static_pressure_on_cells()
+        assert result.index.mesh_index.location == "cells"
+        assert result._core_object[0].location == post.locations.elemental
