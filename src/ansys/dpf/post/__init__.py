@@ -33,6 +33,8 @@ from ansys.dpf.post.fluid_simulation import FluidSimulation  # noqa: F401
 from ansys.dpf.post.harmonic_mechanical_simulation import (  # noqa: F401
     HarmonicMechanicalSimulation,
 )
+from ansys.dpf.post.mesh import Mesh  # noqa: F401
+from ansys.dpf.post.meshes import Meshes  # noqa: F401
 from ansys.dpf.post.misc import Report
 from ansys.dpf.post.modal_mechanical_simulation import (  # noqa: F401
     ModalMechanicalSimulation,

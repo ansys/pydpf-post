@@ -8,12 +8,13 @@ from abc import ABC
 from enum import Enum
 from os import PathLike
 import re
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
 from ansys.dpf.core.available_result import _result_properties
+from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
 import numpy as np
@@ -29,6 +30,7 @@ from ansys.dpf.post.index import (
     SetIndex,
 )
 from ansys.dpf.post.mesh import Mesh
+from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.selection import Selection, _WfNames
 
 component_label_to_index = {
@@ -87,6 +89,11 @@ class Simulation(ABC):
     def release_streams(self):
         """Release the streams to data files if any is active."""
         self._model.metadata.release_streams()
+
+    @property
+    def mesh_info(self):
+        """Return available mesh information."""
+        return self._model.metadata.mesh_info
 
     @property
     def results(self) -> List[dpf.result_info.available_result.AvailableResult]:
@@ -345,6 +352,76 @@ class Simulation(ABC):
             if len(result_units) > 6:
                 self._units["potential"] = result_units[4]
         return self._units
+
+    def split_mesh_by_properties(
+        self,
+        properties: Union[
+            List[elemental_properties],
+            Dict[elemental_properties, Union[int, List[int]]],
+        ],
+    ) -> Meshes:
+        """Splits the simulation Mesh according to properties and returns it as Meshes.
+
+        Parameters
+        ----------
+        properties:
+            Elemental properties to split the global mesh by. Returns all meshes if a list,
+            or returns only meshes for certain elemental property values if a dict with
+            elemental properties labels with associated value or list of values.
+
+        Returns
+        -------
+        A Meshes entity with resulting meshes.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> from ansys.dpf.post import examples
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> # Split by elemental properties and get all resulting meshes
+        >>> meshes_split = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
+        >>> # Split by elemental properties and only get meshes for certain property values
+        >>> # Here: split by material and shape, return only for material 1 and shapes 0 and 1
+        >>> meshes_filtered = simulation.split_mesh_by_properties(
+        ...     properties={elemental_properties.material: 1,
+        ...                 elemental_properties.element_shape: [0, 1]}
+        ... )
+        """
+        split_op = dpf.operators.scoping.split_on_property_type(
+            mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            requested_location=dpf.locations.elemental,
+        )
+        values = None
+        if isinstance(properties, dict):
+            values = properties.values()
+            properties = list(properties.keys())
+        for i, prop in enumerate(properties):
+            split_op.connect(13 + i, prop)
+        scopings_container = split_op.outputs.mesh_scoping()
+        # meshes = []
+        meshes_container = dpf.MeshesContainer()
+        for label in scopings_container.labels:
+            meshes_container.add_label(label)
+        for i, scoping in enumerate(scopings_container):
+            mesh_from_scoping = dpf.operators.mesh.from_scoping(
+                scoping=scoping,
+                mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            )
+            # meshes.append(mesh_from_scoping.outputs.mesh())
+            meshes_container.add_mesh(
+                mesh=mesh_from_scoping.outputs.mesh(),
+                label_space=scopings_container.get_label_space(i),
+            )
+        meshes = Meshes(meshes_container=meshes_container)
+        if values is None:
+            return meshes
+        else:
+            return meshes.select(**dict(zip(properties, values)))
 
     def __str__(self):
         """Get the string representation of this class."""

@@ -4,6 +4,9 @@ Common
 ------
 
 """
+from ansys.dpf.core.common import (  # noqa: F401  # pylint: disable=W0611
+    elemental_properties,
+)
 
 from ansys.dpf.post.fluid_simulation import FluidSimulation
 from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimulation

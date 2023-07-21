@@ -14,6 +14,9 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 from ansys.dpf.core.plotter import DpfPlotter
+from ansys.dpf.core.property_fields_container import (
+    _MockPropertyFieldsContainer as PropertyFieldsContainer,
+)
 import ansys.dpf.gate.errors
 import numpy as np
 
@@ -39,7 +42,7 @@ class DataFrame:
 
     def __init__(
         self,
-        data: dpf.FieldsContainer,
+        data: Union[dpf.FieldsContainer, PropertyFieldsContainer],
         index: Union[MultiIndex, Index, List[int]],
         columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
@@ -55,7 +58,9 @@ class DataFrame:
             Column indexing (labels) to use.
         """
         self._index = index
-        if isinstance(data, dpf.FieldsContainer):
+        if isinstance(data, dpf.FieldsContainer) or isinstance(
+            data, PropertyFieldsContainer
+        ):
             self._fc = data
             # if index is None:
             #     raise NotImplementedError("Creation from FieldsContainer without index "
@@ -315,13 +320,16 @@ class DataFrame:
                     f"Selection on a DataFrame with index "
                     f"'{mesh_index_name}' is not yet supported"
                 )
-            rescope_fc = dpf.operators.scoping.rescope_fc(
-                fields_container=input_fc,
-                mesh_scoping=mesh_scoping,
-                server=server,
-            )
-            out = rescope_fc.outputs.fields_container
-            mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
+            if isinstance(input_fc, PropertyFieldsContainer):
+                fc = input_fc.rescope(mesh_scoping)
+            else:
+                rescope_fc = dpf.operators.scoping.rescope_fc(
+                    fields_container=input_fc,
+                    mesh_scoping=mesh_scoping,
+                    server=server,
+                )
+                out = rescope_fc.outputs.fields_container
+                mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
         elif (
             mesh_index_name in axis_kwargs.keys()
             and mesh_index.location == locations.elemental_nodal
@@ -351,6 +359,9 @@ class DataFrame:
             results_index,
             set_index,
         ]
+        if isinstance(fc, PropertyFieldsContainer):
+            column_indexes = [results_index]
+
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
@@ -616,9 +627,18 @@ class DataFrame:
                         if i_n < n_col_per_entity:
                             values = data[i_n]
                             if isinstance(values, list):
-                                values = [f"{x:.4e}" for x in values]
+                                values = [
+                                    f"{x}"
+                                    if np.issubdtype(type(x), np.integer)
+                                    else f"{x:.4e}"
+                                    for x in values
+                                ]
                             else:
-                                values = [f"{values:.4e}"]
+                                values = [
+                                    f"{values}"
+                                    if np.issubdtype(type(values), np.integer)
+                                    else f"{values:.4e}"
+                                ]
                         else:
                             values = [empty] * max_rows
                         cells[combination_index + i_n].extend(values)

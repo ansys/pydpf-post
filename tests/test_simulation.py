@@ -10,8 +10,9 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post.common import AvailableSimulationTypes
+from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
+from ansys.dpf.post.meshes import Meshes
 
 
 @fixture
@@ -96,6 +97,40 @@ def test_simulation_active_selection(static_simulation):
 
 def test_simulation_plot(static_simulation):
     static_simulation.plot()
+
+
+def test_simulation_split_mesh_by_properties(allkindofcomplexity):
+    simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+    meshes = simulation.split_mesh_by_properties(
+        properties=[
+            elemental_properties.material,
+            elemental_properties.element_shape,
+        ]
+    )
+    assert isinstance(meshes, Meshes)
+    assert len(meshes) == 16
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 1,
+            elemental_properties.element_shape: [0, 1],
+        }
+    )
+    assert isinstance(meshes, Meshes)
+    assert len(meshes) == 2
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 1,
+            elemental_properties.element_shape: [0, 2],
+        }
+    )
+    assert isinstance(meshes, post.Mesh)
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 22,
+            elemental_properties.element_shape: [0, 2],
+        }
+    )
+    assert meshes is None
 
 
 class TestStaticMechanicalSimulation:
