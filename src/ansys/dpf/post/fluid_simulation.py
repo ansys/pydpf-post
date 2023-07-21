@@ -18,16 +18,17 @@ from ansys.dpf.post.species import SpeciesDict
 from ansys.dpf.post.zone import Zones
 
 
+class _result_type_enum(Enum):
+    integrated = 0
+    face = 1
+    elemental_face = 2
+
+
 class FluidSimulation(Simulation):
     """Base class for fluid type simulations.
 
     This class provides common methods and properties for all fluid type simulations.
     """
-
-    class _result_type_enum(Enum):
-        integrated = 0
-        face = 1
-        elemental_face = 2
 
     def _build_selection(
         self,
@@ -286,7 +287,10 @@ class FluidSimulation(Simulation):
             )
 
         if result_type == _result_type_enum.integrated:
-            # TODO accept only face zones
+            # TODO filter-out cell zones IDs from zone_ids
+            pass
+        if location == locations.elemental:
+            # TODO filter-out face zones IDs from zone_ids
             pass
 
         selection = self._build_selection(
