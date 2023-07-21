@@ -4,6 +4,7 @@ FluidSimulation
 ---------------
 
 """
+from enum import Enum
 from os import PathLike
 from typing import List, Union
 
@@ -22,6 +23,11 @@ class FluidSimulation(Simulation):
 
     This class provides common methods and properties for all fluid type simulations.
     """
+
+    class _result_type_enum(Enum):
+        integrated = 0
+        face = 1
+        elemental_face = 2
 
     def _build_selection(
         self,
@@ -199,6 +205,7 @@ class FluidSimulation(Simulation):
         species: Union[List[int], None] = None,
         qualifiers: Union[dict, None] = None,
         named_selections: Union[List[str], str, None] = None,
+        result_type: Union[_result_type_enum, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -256,6 +263,9 @@ class FluidSimulation(Simulation):
             Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
         named_selections:
             Named selection or list of named selections to get results for.
+        result_type:
+            A ``result_type_enum`` value to inform a test on requested zones is necessary.
+            An integrated result will for example only be available on faces.
 
         Returns
         -------
@@ -274,6 +284,10 @@ class FluidSimulation(Simulation):
                 "Arguments all_sets, selection, set_ids, and times "
                 "are mutually exclusive."
             )
+
+        if result_type == _result_type_enum.integrated:
+            # TODO accept only face zones
+            pass
 
         selection = self._build_selection(
             base_name=base_name,
@@ -2339,9 +2353,7 @@ class FluidSimulation(Simulation):
 
     def mass_flow_rate(
         self,
-        node_ids: Union[List[int], None] = None,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2353,6 +2365,9 @@ class FluidSimulation(Simulation):
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results on faces from the simulation.
+
+        .. note::
+            This is an integrated result only available on faces.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -2366,12 +2381,8 @@ class FluidSimulation(Simulation):
 
         Parameters
         ----------
-        node_ids:
-            List of IDs of nodes to get results for.
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -2409,20 +2420,20 @@ class FluidSimulation(Simulation):
             times=times,
             set_ids=set_ids,
             all_sets=all_sets,
-            node_ids=node_ids,
+            node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            cell_ids=None,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
             species=species,
             named_selections=named_selections,
+            result_type=_result_type_enum.integrated,
         )
 
     def mass_flow_rate_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2434,6 +2445,9 @@ class FluidSimulation(Simulation):
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract mass flow rate results on faces from the simulation.
+
+        .. note::
+            This is an integrated result only available on faces.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -2449,8 +2463,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -2496,6 +2508,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            result_type=_result_type_enum.integrated,
         )
 
     def mass_fraction(
@@ -6181,9 +6194,7 @@ class FluidSimulation(Simulation):
 
     def surface_heat_rate(
         self,
-        node_ids: Union[List[int], None] = None,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6195,6 +6206,9 @@ class FluidSimulation(Simulation):
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results on faces from the simulation.
+
+        .. note::
+            This is an integrated result only available on faces.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -6208,12 +6222,8 @@ class FluidSimulation(Simulation):
 
         Parameters
         ----------
-        node_ids:
-            List of IDs of nodes to get results for.
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6259,12 +6269,12 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            result_type=_result_type_enum.integrated,
         )
 
     def surface_heat_rate_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6276,6 +6286,9 @@ class FluidSimulation(Simulation):
         selection: Union[Selection, None] = None,
     ) -> DataFrame:
         """Extract surface heat rate results on faces from the simulation.
+
+        .. note::
+            This is an integrated result only available on faces.
 
         Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
         exclusive.
@@ -6291,8 +6304,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6338,6 +6349,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
+            result_type=_result_type_enum.integrated,
         )
 
     def temperature(
