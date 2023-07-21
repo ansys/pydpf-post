@@ -772,6 +772,8 @@ class DataFrame:
             fc = self._fc
             label_space = fc.get_label_space(0)
 
+        if len(fc) == 0:
+            raise ValueError("No data to plot.")
         for field in fc:
             # Treat multi-layer field
             shell_layer_check = field.shell_layers

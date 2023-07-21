@@ -113,3 +113,8 @@ class TestFluidSimulation:
         from ansys.dpf.post.phase import PhasesDict
 
         assert isinstance(fluent_simulation.phases, PhasesDict)
+
+    def test_dataframe_plot_empty(self, fluent_simulation):
+        result = fluent_simulation.wall_shear_stress()
+        with pytest.raises(ValueError, match="No data to plot."):
+            result.plot()
