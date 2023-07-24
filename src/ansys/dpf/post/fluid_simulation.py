@@ -1262,6 +1262,86 @@ class FluidSimulation(Simulation):
             native_location=self.result_info["enthalpy"].native_location,
         )
 
+    def enthalpy_on_faces(
+        self,
+        face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[Union[int, str]], None] = None,
+        species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+    ) -> DataFrame:
+        """Extract enthalpy results on faces from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, and `times` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        are mutually exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Argument `qualifiers` overrides arguments `zones_ids`, `phases`, and `species`.
+
+        Parameters
+        ----------
+        face_ids:
+            List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
+        zone_ids:
+            List of IDs of zones to get results for.
+        phases:
+            List of IDs of phases to get results for.
+        species:
+            List of IDs of species to get results for.
+        qualifiers:
+            Dictionary of qualifier labels with associated values to get results for.
+            Overrides any other qualifier argument such as `phases`, `species` or `zone_ids`.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+
+        Returns
+        -------
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="H_S",
+            location=locations.faces,
+            category=ResultCategory.scalar,
+            components=None,
+            norm=False,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            node_ids=None,
+            face_ids=face_ids,
+            cell_ids=cell_ids,
+            zone_ids=zone_ids,
+            qualifiers=qualifiers,
+            phases=phases,
+            species=species,
+            named_selections=named_selections,
+            native_location=self.result_info["enthalpy"].native_location,
+        )
+
     def enthalpy_on_cells(
         self,
         cell_ids: Union[List[int], None] = None,
