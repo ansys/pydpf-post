@@ -736,6 +736,8 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        if len(self.index.mesh_index) == 0:
+            raise ValueError("Cannot plot a Dataframe with an empty mesh index.")
         label_space = {}
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
