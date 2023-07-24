@@ -6302,6 +6302,7 @@ class FluidSimulation(Simulation):
     def surface_heat_rate(
         self,
         face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6331,6 +6332,8 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6370,7 +6373,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=None,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -6383,6 +6386,7 @@ class FluidSimulation(Simulation):
     def surface_heat_rate_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
+        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6412,6 +6416,8 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
+        cell_ids:
+            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6451,7 +6457,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=None,
+            cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -9597,7 +9603,6 @@ class FluidSimulation(Simulation):
     def y_plus_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
