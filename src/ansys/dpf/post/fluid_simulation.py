@@ -429,6 +429,12 @@ class FluidSimulation(Simulation):
             fc, location, columns, comp, base_name.split("::")[-1], None
         )
 
+    def _try_get_result_info(self, name: str):
+        try:
+            result_info = self.result_info[name]
+        except KeyError:
+            raise ValueError(f"Result {name} is not available.")
+
     def density(
         self,
         node_ids: Union[List[int], None] = None,
@@ -499,8 +505,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("density")
         return self._get_result(
-            base_name="RHO",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -517,7 +524,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["density"].native_location,
+            native_location=result_info.native_location,
         )
 
     def density_on_nodes(
@@ -582,8 +589,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("density")
         return self._get_result(
-            base_name="RHO",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -600,7 +608,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["density"].native_location,
+            native_location=result_info.native_location,
         )
 
     def density_on_faces(
@@ -662,8 +670,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("density")
         return self._get_result(
-            base_name="RHO",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -680,7 +689,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["density"].native_location,
+            native_location=result_info.native_location,
         )
 
     def density_on_cells(
@@ -739,8 +748,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("density")
         return self._get_result(
-            base_name="RHO",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -757,7 +767,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["density"].native_location,
+            native_location=result_info.native_location,
         )
 
     def dynamic_viscosity(
@@ -830,8 +840,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("dynamic_viscosity")
         return self._get_result(
-            base_name="MU",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -848,7 +859,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["dynamic_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def dynamic_viscosity_on_nodes(
@@ -913,8 +924,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("dynamic_viscosity")
         return self._get_result(
-            base_name="MU",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -931,7 +943,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["dynamic_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def dynamic_viscosity_on_faces(
@@ -993,8 +1005,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("dynamic_viscosity")
         return self._get_result(
-            base_name="MU",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -1011,7 +1024,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["dynamic_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def dynamic_viscosity_on_cells(
@@ -1070,8 +1083,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("dynamic_viscosity")
         return self._get_result(
-            base_name="MU",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -1088,7 +1102,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["dynamic_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def enthalpy(
@@ -1161,8 +1175,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("enthalpy")
         return self._get_result(
-            base_name="H_S",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -1179,7 +1194,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["enthalpy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def enthalpy_on_nodes(
@@ -1244,8 +1259,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("enthalpy")
         return self._get_result(
-            base_name="H_S",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -1262,7 +1278,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["enthalpy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def enthalpy_on_faces(
@@ -1324,8 +1340,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("enthalpy")
         return self._get_result(
-            base_name="H_S",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -1342,7 +1359,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["enthalpy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def enthalpy_on_cells(
@@ -1401,8 +1418,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("enthalpy")
         return self._get_result(
-            base_name="H_S",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -1419,7 +1437,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["enthalpy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def entropy(
@@ -1492,8 +1510,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("entropy")
         return self._get_result(
-            base_name="S_S",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -1510,7 +1529,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["entropy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def entropy_on_nodes(
@@ -1575,8 +1594,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("entropy")
         return self._get_result(
-            base_name="S_S",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -1593,7 +1613,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["entropy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def entropy_on_faces(
@@ -1655,8 +1675,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("entropy")
         return self._get_result(
-            base_name="S_S",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -1673,7 +1694,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["entropy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def entropy_on_cells(
@@ -1732,8 +1753,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("entropy")
         return self._get_result(
-            base_name="S_S",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -1750,7 +1772,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["entropy"].native_location,
+            native_location=result_info.native_location,
         )
 
     def epsilon(
@@ -1823,8 +1845,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("epsilon")
         return self._get_result(
-            base_name="EPS",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -1841,7 +1864,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["epsilon"].native_location,
+            native_location=result_info.native_location,
         )
 
     def epsilon_on_nodes(
@@ -1906,8 +1929,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("epsilon")
         return self._get_result(
-            base_name="EPS",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -1924,7 +1948,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["epsilon"].native_location,
+            native_location=result_info.native_location,
         )
 
     def epsilon_on_faces(
@@ -1986,8 +2010,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("epsilon")
         return self._get_result(
-            base_name="EPS",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -2004,7 +2029,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["epsilon"].native_location,
+            native_location=result_info.native_location,
         )
 
     def epsilon_on_cells(
@@ -2063,8 +2088,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("epsilon")
         return self._get_result(
-            base_name="EPS",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -2081,7 +2107,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["epsilon"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mach_number(
@@ -2154,8 +2180,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mach_number")
         return self._get_result(
-            base_name="MACH",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -2172,7 +2199,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mach_number"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mach_number_on_nodes(
@@ -2237,8 +2264,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mach_number")
         return self._get_result(
-            base_name="MACH",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -2255,7 +2283,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mach_number"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mach_number_on_faces(
@@ -2317,8 +2345,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mach_number")
         return self._get_result(
-            base_name="MACH",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -2335,7 +2364,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mach_number"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mach_number_on_cells(
@@ -2394,8 +2423,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mach_number")
         return self._get_result(
-            base_name="MACH",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -2412,7 +2442,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mach_number"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_flow_rate(
@@ -2474,8 +2504,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_flow_rate")
         return self._get_result(
-            base_name="MDOT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -2493,7 +2524,7 @@ class FluidSimulation(Simulation):
             species=species,
             named_selections=named_selections,
             integrated=True,
-            native_location=self.result_info["mass_flow_rate"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_flow_rate_on_faces(
@@ -2555,8 +2586,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_flow_rate")
         return self._get_result(
-            base_name="MDOT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -2574,7 +2606,7 @@ class FluidSimulation(Simulation):
             species=species,
             named_selections=named_selections,
             integrated=True,
-            native_location=self.result_info["mass_flow_rate"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_fraction(
@@ -2647,8 +2679,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_fraction")
         return self._get_result(
-            base_name="Y",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -2665,7 +2698,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mass_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_fraction_on_nodes(
@@ -2730,8 +2763,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_fraction")
         return self._get_result(
-            base_name="Y",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -2748,7 +2782,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mass_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_fraction_on_faces(
@@ -2810,8 +2844,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_fraction")
         return self._get_result(
-            base_name="Y",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -2828,7 +2863,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mass_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mass_fraction_on_cells(
@@ -2887,8 +2922,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mass_fraction")
         return self._get_result(
-            base_name="Y",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -2905,7 +2941,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mass_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_static_pressure(
@@ -2978,8 +3014,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_static_pressure")
         return self._get_result(
-            base_name="P_SA",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -2996,7 +3033,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_static_pressure_on_nodes(
@@ -3061,8 +3098,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_static_pressure")
         return self._get_result(
-            base_name="P_SA",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -3079,7 +3117,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_static_pressure_on_faces(
@@ -3141,8 +3179,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_static_pressure")
         return self._get_result(
-            base_name="P_SA",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -3159,7 +3198,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_static_pressure_on_cells(
@@ -3218,8 +3257,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_static_pressure")
         return self._get_result(
-            base_name="P_SA",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -3236,7 +3276,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_temperature(
@@ -3309,8 +3349,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_temperature")
         return self._get_result(
-            base_name="TEMP_A",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -3327,7 +3368,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_temperature_on_nodes(
@@ -3392,8 +3433,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_temperature")
         return self._get_result(
-            base_name="TEMP_A",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -3410,7 +3452,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_temperature_on_faces(
@@ -3472,8 +3514,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_temperature")
         return self._get_result(
-            base_name="TEMP_A",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -3490,7 +3533,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_temperature_on_cells(
@@ -3549,8 +3592,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_temperature")
         return self._get_result(
-            base_name="TEMP_A",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -3567,7 +3611,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_velocity(
@@ -3647,8 +3691,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_velocity")
         return self._get_result(
-            base_name="V_A",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.vector,
             components=components,
@@ -3665,7 +3710,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_velocity_on_nodes(
@@ -3737,8 +3782,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_velocity")
         return self._get_result(
-            base_name="V_A",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
@@ -3755,7 +3801,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_velocity_on_faces(
@@ -3824,8 +3870,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_velocity")
         return self._get_result(
-            base_name="V_A",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.vector,
             components=components,
@@ -3842,7 +3889,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def mean_velocity_on_cells(
@@ -3908,8 +3955,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("mean_velocity")
         return self._get_result(
-            base_name="V_A",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
@@ -3926,7 +3974,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["mean_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def omega(
@@ -3999,8 +4047,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("omega")
         return self._get_result(
-            base_name="OME",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -4017,7 +4066,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["omega"].native_location,
+            native_location=result_info.native_location,
         )
 
     def omega_on_nodes(
@@ -4082,8 +4131,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("omega")
         return self._get_result(
-            base_name="OME",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -4100,7 +4150,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["omega"].native_location,
+            native_location=result_info.native_location,
         )
 
     def omega_on_faces(
@@ -4162,8 +4212,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("omega")
         return self._get_result(
-            base_name="OME",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -4180,7 +4231,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["omega"].native_location,
+            native_location=result_info.native_location,
         )
 
     def omega_on_cells(
@@ -4239,8 +4290,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("omega")
         return self._get_result(
-            base_name="OME",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -4257,7 +4309,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["omega"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_static_pressure(
@@ -4330,8 +4382,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_static_pressure")
         return self._get_result(
-            base_name="P_SRMS",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -4348,7 +4401,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_static_pressure_on_nodes(
@@ -4413,8 +4466,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_static_pressure")
         return self._get_result(
-            base_name="P_SRMS",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -4431,7 +4485,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_static_pressure_on_faces(
@@ -4493,8 +4547,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_static_pressure")
         return self._get_result(
-            base_name="P_SRMS",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -4511,7 +4566,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_static_pressure_on_cells(
@@ -4570,8 +4625,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_static_pressure")
         return self._get_result(
-            base_name="P_SRMS",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -4588,7 +4644,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_temperature(
@@ -4661,8 +4717,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_temperature")
         return self._get_result(
-            base_name="TEMP_RMS",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -4679,7 +4736,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_temperature_on_nodes(
@@ -4744,8 +4801,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_temperature")
         return self._get_result(
-            base_name="TEMP_RMS",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -4762,7 +4820,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_temperature_on_faces(
@@ -4824,8 +4882,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_temperature")
         return self._get_result(
-            base_name="TEMP_RMS",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -4842,7 +4901,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_temperature_on_cells(
@@ -4901,8 +4960,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_temperature")
         return self._get_result(
-            base_name="TEMP_RMS",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -4919,7 +4979,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_velocity(
@@ -4999,8 +5059,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_velocity")
         return self._get_result(
-            base_name="V_RMS",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.vector,
             components=components,
@@ -5017,7 +5078,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_velocity_on_nodes(
@@ -5089,8 +5150,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_velocity")
         return self._get_result(
-            base_name="V_RMS",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
@@ -5107,7 +5169,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_velocity_on_faces(
@@ -5176,8 +5238,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_velocity")
         return self._get_result(
-            base_name="V_RMS",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.vector,
             components=components,
@@ -5194,7 +5257,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def rms_velocity_on_cells(
@@ -5260,8 +5323,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("rms_velocity")
         return self._get_result(
-            base_name="V_RMS",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
@@ -5278,7 +5342,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["rms_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def specific_heat(
@@ -5351,8 +5415,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("specific_heat")
         return self._get_result(
-            base_name="CP",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -5369,7 +5434,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["specific_heat"].native_location,
+            native_location=result_info.native_location,
         )
 
     def specific_heat_on_nodes(
@@ -5434,8 +5499,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("specific_heat")
         return self._get_result(
-            base_name="CP",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -5452,7 +5518,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["specific_heat"].native_location,
+            native_location=result_info.native_location,
         )
 
     def specific_heat_on_faces(
@@ -5514,8 +5580,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("specific_heat")
         return self._get_result(
-            base_name="CP",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -5532,7 +5599,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["specific_heat"].native_location,
+            native_location=result_info.native_location,
         )
 
     def specific_heat_on_cells(
@@ -5591,8 +5658,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("specific_heat")
         return self._get_result(
-            base_name="CP",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -5609,7 +5677,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["specific_heat"].native_location,
+            native_location=result_info.native_location,
         )
 
     def static_pressure(
@@ -5682,8 +5750,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("static_pressure")
         return self._get_result(
-            base_name="P_S",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -5700,7 +5769,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def static_pressure_on_nodes(
@@ -5765,8 +5834,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("static_pressure")
         return self._get_result(
-            base_name="P_S",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -5783,7 +5853,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def static_pressure_on_faces(
@@ -5845,8 +5915,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("static_pressure")
         return self._get_result(
-            base_name="P_S",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -5863,7 +5934,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def static_pressure_on_cells(
@@ -5922,8 +5993,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("static_pressure")
         return self._get_result(
-            base_name="P_S",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -5940,7 +6012,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["static_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def superficial_velocity(
@@ -6020,8 +6092,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("superficial_velocity")
         return self._get_result(
-            base_name="V_SUP",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.vector,
             components=components,
@@ -6038,7 +6111,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["superficial_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def superficial_velocity_on_nodes(
@@ -6110,8 +6183,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("superficial_velocity")
         return self._get_result(
-            base_name="V_SUP",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
@@ -6128,7 +6202,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["superficial_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def superficial_velocity_on_faces(
@@ -6197,8 +6271,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("superficial_velocity")
         return self._get_result(
-            base_name="V_SUP",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.vector,
             components=components,
@@ -6215,7 +6290,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["superficial_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def superficial_velocity_on_cells(
@@ -6281,8 +6356,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("superficial_velocity")
         return self._get_result(
-            base_name="V_SUP",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
@@ -6299,7 +6375,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["superficial_velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def surface_heat_rate(
@@ -6364,8 +6440,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("surface_heat_rate")
         return self._get_result(
-            base_name="Q",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -6383,7 +6460,7 @@ class FluidSimulation(Simulation):
             species=species,
             named_selections=named_selections,
             integrated=True,
-            native_location=self.result_info["surface_heat_rate"].native_location,
+            native_location=result_info.native_location,
         )
 
     def surface_heat_rate_on_faces(
@@ -6448,8 +6525,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("surface_heat_rate")
         return self._get_result(
-            base_name="Q",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -6467,7 +6545,7 @@ class FluidSimulation(Simulation):
             species=species,
             named_selections=named_selections,
             integrated=True,
-            native_location=self.result_info["surface_heat_rate"].native_location,
+            native_location=result_info.native_location,
         )
 
     def temperature(
@@ -6540,8 +6618,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("temperature")
         return self._get_result(
-            base_name="TEMP",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -6558,7 +6637,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def temperature_on_nodes(
@@ -6623,8 +6702,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("temperature")
         return self._get_result(
-            base_name="TEMP",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -6641,7 +6721,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def temperature_on_faces(
@@ -6703,8 +6783,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("temperature")
         return self._get_result(
-            base_name="TEMP",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -6721,7 +6802,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def temperature_on_cells(
@@ -6780,8 +6861,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("temperature")
         return self._get_result(
-            base_name="TEMP",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -6798,7 +6880,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def thermal_conductivity(
@@ -6871,8 +6953,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("thermal_conductivity")
         return self._get_result(
-            base_name="KT",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -6889,7 +6972,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["thermal_conductivity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def thermal_conductivity_on_nodes(
@@ -6954,8 +7037,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("thermal_conductivity")
         return self._get_result(
-            base_name="KT",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -6972,7 +7056,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["thermal_conductivity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def thermal_conductivity_on_faces(
@@ -7034,8 +7118,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("thermal_conductivity")
         return self._get_result(
-            base_name="KT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -7052,7 +7137,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["thermal_conductivity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def thermal_conductivity_on_cells(
@@ -7111,8 +7196,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("thermal_conductivity")
         return self._get_result(
-            base_name="KT",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -7129,7 +7215,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["thermal_conductivity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_pressure(
@@ -7202,8 +7288,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_pressure")
         return self._get_result(
-            base_name="P_TOT",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -7220,7 +7307,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_pressure_on_nodes(
@@ -7285,8 +7372,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_pressure")
         return self._get_result(
-            base_name="P_TOT",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -7303,7 +7391,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_pressure_on_faces(
@@ -7365,8 +7453,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_pressure")
         return self._get_result(
-            base_name="P_TOT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -7383,7 +7472,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_pressure_on_cells(
@@ -7442,8 +7531,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_pressure")
         return self._get_result(
-            base_name="P_TOT",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -7460,7 +7550,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_pressure"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_temperature(
@@ -7533,8 +7623,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_temperature")
         return self._get_result(
-            base_name="TEMP_TOT",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -7551,7 +7642,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_temperature_on_nodes(
@@ -7616,8 +7707,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_temperature")
         return self._get_result(
-            base_name="TEMP_TOT",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -7634,7 +7726,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_temperature_on_faces(
@@ -7696,8 +7788,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_temperature")
         return self._get_result(
-            base_name="TEMP_TOT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -7714,7 +7807,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def total_temperature_on_cells(
@@ -7773,8 +7866,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("total_temperature")
         return self._get_result(
-            base_name="TEMP_TOT",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -7791,7 +7885,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["total_temperature"].native_location,
+            native_location=result_info.native_location,
         )
 
     def turbulent_kinetic_energy(
@@ -7864,8 +7958,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_kinetic_energy")
         return self._get_result(
-            base_name="K",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -7949,8 +8044,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_kinetic_energy")
         return self._get_result(
-            base_name="K",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -8031,8 +8127,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_kinetic_energy")
         return self._get_result(
-            base_name="K",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -8110,8 +8207,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_kinetic_energy")
         return self._get_result(
-            base_name="K",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -8203,8 +8301,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_viscosity")
         return self._get_result(
-            base_name="MUT",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -8221,7 +8320,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["turbulent_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def turbulent_viscosity_on_nodes(
@@ -8286,8 +8385,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_viscosity")
         return self._get_result(
-            base_name="MUT",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -8304,7 +8404,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["turbulent_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def turbulent_viscosity_on_faces(
@@ -8366,8 +8466,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_viscosity")
         return self._get_result(
-            base_name="MUT",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -8384,7 +8485,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["turbulent_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def turbulent_viscosity_on_cells(
@@ -8443,8 +8544,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("turbulent_viscosity")
         return self._get_result(
-            base_name="MUT",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -8461,7 +8563,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["turbulent_viscosity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def velocity(
@@ -8541,8 +8643,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("velocity")
         return self._get_result(
-            base_name="V",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.vector,
             components=components,
@@ -8559,7 +8662,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def velocity_on_nodes(
@@ -8631,8 +8734,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("velocity")
         return self._get_result(
-            base_name="V",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
@@ -8649,7 +8753,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def velocity_on_faces(
@@ -8718,8 +8822,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("velocity")
         return self._get_result(
-            base_name="V",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.vector,
             components=components,
@@ -8736,7 +8841,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def velocity_on_cells(
@@ -8802,8 +8907,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("velocity")
         return self._get_result(
-            base_name="V",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.vector,
             components=components,
@@ -8820,7 +8926,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["velocity"].native_location,
+            native_location=result_info.native_location,
         )
 
     def volume_fraction(
@@ -8893,8 +8999,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("volume_fraction")
         return self._get_result(
-            base_name="VOF",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -8911,7 +9018,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["volume_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def volume_fraction_on_nodes(
@@ -8976,8 +9083,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("volume_fraction")
         return self._get_result(
-            base_name="VOF",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -8994,7 +9102,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["volume_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def volume_fraction_on_faces(
@@ -9056,8 +9164,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("volume_fraction")
         return self._get_result(
-            base_name="VOF",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -9074,7 +9183,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["volume_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def volume_fraction_on_cells(
@@ -9133,8 +9242,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("volume_fraction")
         return self._get_result(
-            base_name="VOF",
+            base_name=result_info.operator_name,
             location=locations.elemental,
             category=ResultCategory.scalar,
             components=None,
@@ -9151,7 +9261,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["volume_fraction"].native_location,
+            native_location=result_info.native_location,
         )
 
     def wall_shear_stress(
@@ -9231,8 +9341,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("wall_shear_stress")
         return self._get_result(
-            base_name="TAU",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.vector,
             components=components,
@@ -9249,7 +9360,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["wall_shear_stress"].native_location,
+            native_location=result_info.native_location,
         )
 
     def wall_shear_stress_on_nodes(
@@ -9321,8 +9432,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("wall_shear_stress")
         return self._get_result(
-            base_name="TAU",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.vector,
             components=components,
@@ -9339,7 +9451,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["wall_shear_stress"].native_location,
+            native_location=result_info.native_location,
         )
 
     def wall_shear_stress_on_faces(
@@ -9408,8 +9520,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("wall_shear_stress")
         return self._get_result(
-            base_name="TAU",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.vector,
             components=components,
@@ -9426,7 +9539,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["wall_shear_stress"].native_location,
+            native_location=result_info.native_location,
         )
 
     def y_plus(
@@ -9499,8 +9612,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("y_plus")
         return self._get_result(
-            base_name="YPLUS",
+            base_name=result_info.operator_name,
             location=location,
             category=ResultCategory.scalar,
             components=None,
@@ -9517,7 +9631,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["y_plus"].native_location,
+            native_location=result_info.native_location,
         )
 
     def y_plus_on_nodes(
@@ -9582,8 +9696,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("y_plus")
         return self._get_result(
-            base_name="YPLUS",
+            base_name=result_info.operator_name,
             location=locations.nodal,
             category=ResultCategory.scalar,
             components=None,
@@ -9600,7 +9715,7 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["y_plus"].native_location,
+            native_location=result_info.native_location,
         )
 
     def y_plus_on_faces(
@@ -9661,8 +9776,9 @@ class FluidSimulation(Simulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
+        result_info = self._try_get_result_info("y_plus")
         return self._get_result(
-            base_name="YPLUS",
+            base_name=result_info.operator_name,
             location=locations.faces,
             category=ResultCategory.scalar,
             components=None,
@@ -9679,5 +9795,5 @@ class FluidSimulation(Simulation):
             phases=phases,
             species=species,
             named_selections=named_selections,
-            native_location=self.result_info["y_plus"].native_location,
+            native_location=result_info.native_location,
         )
