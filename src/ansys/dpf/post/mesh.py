@@ -158,6 +158,20 @@ class Mesh:
         return self._meshed_region.faces.n_faces
 
     @property
+    def face_ids(self) -> List[int]:
+        """Returns the list of face IDs in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> print(simulation.mesh.face_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        []
+        """
+        return self._meshed_region.faces.scoping.ids
+
+    @property
     def faces(self) -> FaceListByIndex:
         """Returns a list of faces indexed by ID.
 
