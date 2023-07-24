@@ -3,13 +3,29 @@ import numpy as np
 import pytest
 from pytest import fixture
 
-from ansys.dpf.post import Mesh, StaticMechanicalSimulation
+from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
+from ansys.dpf.post.faces import Face
 
 
 @fixture
 def mesh(static_rst):
     simulation = StaticMechanicalSimulation(static_rst)
     return simulation.mesh
+
+
+@fixture
+def fluent_mesh(fluid_fluent_elbow_steady_state):
+    ds = dpf.DataSources()
+    ds.set_result_file_path(
+        fluid_fluent_elbow_steady_state["cas"][0],
+        key="cas",
+    )
+    ds.add_file_path(
+        fluid_fluent_elbow_steady_state["dat"][0],
+        key="dat",
+    )
+    simulation = FluidSimulation(ds)
+    return simulation.mesh  # noqa
 
 
 def test_mesh_core_object(mesh):
@@ -168,3 +184,14 @@ def test_mesh_element_types(mesh):
 
 def test_mesh_plot(mesh):
     mesh.plot()
+
+
+def test_mesh_faces(fluent_mesh):
+    assert fluent_mesh.num_faces == 94288
+    assert len(fluent_mesh.face_ids) == 94288
+    assert len(fluent_mesh.faces) == 94288
+    assert isinstance(fluent_mesh.faces[0], Face)
+    first_face = fluent_mesh.get_face_by_id(fluent_mesh.face_ids[0])
+    assert isinstance(first_face, Face)
+    assert first_face.index == 0
+    assert first_face.id == fluent_mesh.face_ids[0]
