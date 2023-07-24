@@ -314,8 +314,9 @@ class FluidSimulation(Simulation):
                 # averaging_op_name = "to_nodal_fc"
                 pass  # nodal averaging seems to be automatic
             elif location == locations.faces:
-                # TODO filter-out cell zones
-                raise NotImplementedError("filter cell zones")
+                if (qualifiers and ("zone" in qualifiers)) or (zone_ids):
+                    # TODO filter-out cell zones
+                    raise NotImplementedError("filter cell zones")
             elif location == locations.elemental:
                 # CFF only returns results on face zones if qualifiers have been set
                 if (qualifiers and ("zone" in qualifiers)) or (zone_ids):
