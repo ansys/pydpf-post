@@ -62,13 +62,15 @@ class FluidSimulation(Simulation):
         elif cell_ids is not None:
             if location == locations.nodal:
                 selection.select_nodes_of_elements(elements=cell_ids, mesh=self.mesh)
+            elif location == locations.faces:
+                selection.select_faces_of_elements(elements=cell_ids, mesh=self.mesh)
             else:
                 selection.select_elements(elements=cell_ids)
         elif face_ids is not None:
             if location == locations.nodal:
-                selection.select_nodes_of_elements(elements=face_ids, mesh=self.mesh)
+                selection.select_nodes_of_faces(faces=face_ids, mesh=self.mesh)
             else:
-                selection.select_elements(elements=face_ids)
+                selection.select_faces(faces=face_ids)
         elif node_ids is not None:
             if location != locations.nodal:
                 raise ValueError(
