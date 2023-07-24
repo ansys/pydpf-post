@@ -566,7 +566,7 @@ class SpatialSelection:
             mesh_scoping=scoping,
             meshed_region=mesh._meshed_region,
             inclusive=0,
-            requested_location=locations.nodes,
+            requested_location=locations.nodal,
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(
