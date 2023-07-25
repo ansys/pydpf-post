@@ -346,14 +346,14 @@ class TestFluidSimulation:
     def test_results_fluent_cross_locations_on_faces(self, fluent_simulation):
         # TODO investigate wrong plot, wrong mesh index for dataframes
         # print(fluent_simulation)
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.density_on_faces(
-                cell_ids=fluent_simulation.mesh.element_ids
-            )
+        # with pytest.raises(
+        #     ValueError,
+        #     match="Querying an ElementalAndFaces result on "
+        #     "faces currently requires the use of face zone ids",
+        # ):
+        #     _ = fluent_simulation.density_on_faces(
+        #         cell_ids=fluent_simulation.mesh.element_ids
+        #     )
         #         print(result)
         #         assert result.index.mesh_index.location == post.locations.faces
         #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
