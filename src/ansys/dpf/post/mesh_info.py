@@ -42,6 +42,7 @@ class FluidMeshInfo:
         self._core_object = core_mesh_info
         self._face_zones = None
         self._cell_zones = None
+        self._cell_zones_to_face_zones = None
 
     def __str__(self) -> str:
         """String representation of this class."""
@@ -134,7 +135,7 @@ class FluidMeshInfo:
 
     @property
     def cell_zones(self) -> dict:
-        """Returns a dictionaty of cell zones (bodies) in the mesh.
+        """Returns a dictionary of cell zones (bodies) in the mesh.
 
         Examples
         --------
@@ -156,3 +157,31 @@ class FluidMeshInfo:
                 zones[zone_id] = zone_name
             self._cell_zones = zones
         return self._cell_zones
+
+    @property
+    def cell_zones_to_face_zones(self) -> dict:
+        """Returns a map between cell zone (body) IDs and their associated face zone IDs.
+
+        Examples
+        --------
+        Get the mapping between cell zone IDs and face zone IDs
+
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
+        >>> mesh_info = simulation.mesh_info
+        >>> print(mesh_info.cell_zones_to_face_zones)  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        {13: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        28: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]}
+        """
+        if not self._cell_zones_to_face_zones:
+            result = {}
+            property_field = self._core_object.get_property("body_face_topology")
+            for cell_zone_id in property_field.scoping.ids:
+                face_zone_ids = property_field.get_entity_data_by_id(
+                    cell_zone_id
+                ).tolist()
+                result[cell_zone_id] = face_zone_ids
+            self._cell_zones_to_face_zones = result
+        return self._cell_zones_to_face_zones
