@@ -111,7 +111,7 @@ class TestFluidSimulation:
 
     def test_fluid_simulation_result_unavailable(self, fluent_simulation):
         print(fluent_simulation)
-        with pytest.raises(ValueError, match="Result unavailable."):
+        with pytest.raises(ValueError, match="is not available."):
             _ = fluent_simulation.wall_shear_stress()
 
     def test_results_fluent_averaging_from_elemental(self, fluent_simulation):
