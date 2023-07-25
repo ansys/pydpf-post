@@ -655,7 +655,7 @@ class FluidSimulation(Simulation):
     def density_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -672,7 +672,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `face_ids`, and `cell_ids` are mutually
+        Arguments `selection`, `named_selections`, and `face_ids` are mutually
         exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -682,8 +682,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -724,7 +722,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -990,7 +988,7 @@ class FluidSimulation(Simulation):
     def dynamic_viscosity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -1007,7 +1005,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -1017,8 +1015,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -1059,7 +1055,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -1325,7 +1321,7 @@ class FluidSimulation(Simulation):
     def enthalpy_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -1342,7 +1338,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -1352,8 +1348,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -1394,7 +1388,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -1660,7 +1654,7 @@ class FluidSimulation(Simulation):
     def entropy_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -1677,7 +1671,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -1687,8 +1681,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -1729,7 +1721,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -1995,7 +1987,7 @@ class FluidSimulation(Simulation):
     def epsilon_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2012,7 +2004,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -2022,8 +2014,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -2064,7 +2054,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -2330,7 +2320,7 @@ class FluidSimulation(Simulation):
     def mach_number_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2347,7 +2337,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -2357,8 +2347,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -2399,7 +2387,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -2489,6 +2477,7 @@ class FluidSimulation(Simulation):
     def mass_flow_rate(
         self,
         face_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2508,7 +2497,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        Arguments `selection`, `named_selections`, `face_ids`, and `node_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -2558,7 +2547,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=None,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -2571,6 +2560,7 @@ class FluidSimulation(Simulation):
     def mass_flow_rate_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2590,7 +2580,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -2640,7 +2630,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -2829,7 +2819,7 @@ class FluidSimulation(Simulation):
     def mass_fraction_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -2846,7 +2836,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -2856,8 +2846,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -2898,7 +2886,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -3164,7 +3152,7 @@ class FluidSimulation(Simulation):
     def mean_static_pressure_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -3181,7 +3169,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -3191,8 +3179,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -3233,7 +3219,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -3499,7 +3485,7 @@ class FluidSimulation(Simulation):
     def mean_temperature_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -3516,7 +3502,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -3526,8 +3512,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -3568,7 +3552,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -3848,7 +3832,7 @@ class FluidSimulation(Simulation):
     def mean_velocity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -3867,7 +3851,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -3877,8 +3861,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -3924,7 +3906,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -4197,7 +4179,7 @@ class FluidSimulation(Simulation):
     def omega_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -4214,7 +4196,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -4224,8 +4206,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -4266,7 +4246,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -4532,7 +4512,7 @@ class FluidSimulation(Simulation):
     def rms_static_pressure_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -4549,7 +4529,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -4559,8 +4539,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -4601,7 +4579,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -4867,7 +4845,7 @@ class FluidSimulation(Simulation):
     def rms_temperature_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -4884,7 +4862,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -4894,8 +4872,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -4936,7 +4912,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -5216,7 +5192,7 @@ class FluidSimulation(Simulation):
     def rms_velocity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -5235,7 +5211,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -5245,8 +5221,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -5292,7 +5266,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -5565,7 +5539,7 @@ class FluidSimulation(Simulation):
     def specific_heat_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -5582,7 +5556,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -5592,8 +5566,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -5634,7 +5606,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -5900,7 +5872,7 @@ class FluidSimulation(Simulation):
     def static_pressure_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -5917,7 +5889,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -5927,8 +5899,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -5969,7 +5939,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -6249,7 +6219,7 @@ class FluidSimulation(Simulation):
     def superficial_velocity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6268,7 +6238,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -6278,8 +6248,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6325,7 +6293,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -6422,7 +6390,7 @@ class FluidSimulation(Simulation):
     def surface_heat_rate(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6442,7 +6410,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, `face_ids`, and `node_ids`
+        Arguments `selection`, `named_selections`, `face_ids`, and `node_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -6452,8 +6420,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6494,7 +6460,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -6507,7 +6473,7 @@ class FluidSimulation(Simulation):
     def surface_heat_rate_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6527,7 +6493,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -6537,8 +6503,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6579,7 +6543,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -6768,7 +6732,7 @@ class FluidSimulation(Simulation):
     def temperature_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -6785,7 +6749,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -6795,8 +6759,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -6837,7 +6799,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -7103,7 +7065,7 @@ class FluidSimulation(Simulation):
     def thermal_conductivity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -7120,7 +7082,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -7130,8 +7092,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -7172,7 +7132,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -7438,7 +7398,7 @@ class FluidSimulation(Simulation):
     def total_pressure_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -7455,7 +7415,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -7465,8 +7425,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -7507,7 +7465,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -7773,7 +7731,7 @@ class FluidSimulation(Simulation):
     def total_temperature_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -7790,7 +7748,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -7800,8 +7758,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -7842,7 +7798,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -8112,7 +8068,7 @@ class FluidSimulation(Simulation):
     def turbulent_kinetic_energy_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -8129,7 +8085,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -8139,8 +8095,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -8181,7 +8135,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -8451,7 +8405,7 @@ class FluidSimulation(Simulation):
     def turbulent_viscosity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -8468,7 +8422,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -8478,8 +8432,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -8520,7 +8472,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -8800,7 +8752,7 @@ class FluidSimulation(Simulation):
     def velocity_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -8819,7 +8771,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -8829,8 +8781,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -8876,7 +8826,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -9149,7 +9099,7 @@ class FluidSimulation(Simulation):
     def volume_fraction_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -9166,7 +9116,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -9176,8 +9126,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -9218,7 +9166,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -9498,7 +9446,7 @@ class FluidSimulation(Simulation):
     def wall_shear_stress_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
-        cell_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -9517,7 +9465,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -9527,8 +9475,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -9574,7 +9520,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
@@ -9762,6 +9708,7 @@ class FluidSimulation(Simulation):
     def y_plus_on_faces(
         self,
         face_ids: Union[List[int], None] = None,
+        # cell_ids: Union[List[int], None] = None,
         zone_ids: Union[List[int], None] = None,
         phases: Union[List[Union[int, str]], None] = None,
         species: Union[List[int], None] = None,
@@ -9778,7 +9725,7 @@ class FluidSimulation(Simulation):
         exclusive.
         If none of the above is given, only the last result will be returned.
 
-        Arguments `selection`, `named_selections`, `cell_ids`, and `face_ids`
+        Arguments `selection`, `named_selections`, and `face_ids`
         are mutually exclusive.
         If none of the above is given, results will be extracted for the whole mesh.
 
@@ -9788,8 +9735,6 @@ class FluidSimulation(Simulation):
         ----------
         face_ids:
             List of IDs of faces to get results for.
-        cell_ids:
-            List of IDs of cells which faces to get results for.
         zone_ids:
             List of IDs of zones to get results for.
         phases:
@@ -9830,7 +9775,7 @@ class FluidSimulation(Simulation):
             all_sets=all_sets,
             node_ids=None,
             face_ids=face_ids,
-            cell_ids=cell_ids,
+            # cell_ids=cell_ids,
             zone_ids=zone_ids,
             qualifiers=qualifiers,
             phases=phases,
