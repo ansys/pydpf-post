@@ -99,11 +99,6 @@ class TestFluidSimulation:
         result = getattr(cfx_simulation, result_name)(phases=[2])
         assert isinstance(result, post.DataFrame)
 
-    def test_fluid_simulation_zones(self, fluent_simulation):
-        from ansys.dpf.post.zone import Zones
-
-        assert isinstance(fluent_simulation.zones, Zones)
-
     def test_fluid_simulation_species(self, fluent_simulation):
         from ansys.dpf.post.species import SpeciesDict
 

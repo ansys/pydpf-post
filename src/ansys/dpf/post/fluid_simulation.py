@@ -10,11 +10,11 @@ from typing import List, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.mesh_info import FluidMeshInfo
 from ansys.dpf.post.phase import PhasesDict
 from ansys.dpf.post.selection import Selection
 from ansys.dpf.post.simulation import ResultCategory, Simulation
 from ansys.dpf.post.species import SpeciesDict
-from ansys.dpf.post.zone import Zones
 
 
 class FluidSimulation(Simulation):
@@ -166,25 +166,33 @@ class FluidSimulation(Simulation):
         model = dpf.Model(ds, server=server)
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
+        self._mesh_info = None
 
     @property
-    def mesh_info(self):
+    def mesh_info(self) -> FluidMeshInfo:
         """Return available mesh information."""
-        return self._model.metadata.mesh_info
+        if not self._mesh_info:
+            self._mesh_info = FluidMeshInfo(self._model.metadata.mesh_info)
+        return self._mesh_info
 
     @property
-    def zones(self) -> Zones:
-        """Return the list of Zones in the simulation."""
-        return Zones()
+    def cell_zones(self) -> dict:
+        """Return a dictionary of the cell zones in the simulation."""
+        return self.mesh_info.cell_zones
+
+    @property
+    def face_zones(self) -> dict:
+        """Return a dictionary of the face zones in the simulation."""
+        return self.mesh_info.face_zones
 
     @property
     def species(self) -> SpeciesDict:
-        """Return the list of Species in the simulation."""
+        """Return a dictionary-like object of species in the simulation."""
         return SpeciesDict(self)
 
     @property
     def phases(self) -> PhasesDict:
-        """Return the list of PhasesDict in the simulation."""
+        """Return a dictionary-like object of phases in the simulation."""
         return PhasesDict(self)
 
     def _get_result(
