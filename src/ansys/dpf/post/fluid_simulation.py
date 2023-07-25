@@ -445,7 +445,7 @@ class FluidSimulation(Simulation):
     def _try_get_result_info(self, name: str):
         try:
             return self.result_info[name]
-        except KeyError:
+        except ValueError:
             raise ValueError(f"Result {name} is not available.")
 
     def density(
