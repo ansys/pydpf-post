@@ -195,6 +195,14 @@ class FluidSimulation(Simulation):
         """Return a dictionary-like object of phases in the simulation."""
         return PhasesDict(self)
 
+    def _filter_zones(self, zone_ids: List[int], keep: locations):
+        """Filter zone IDs to only keep zones of the given type."""
+        if keep == locations.elemental:
+            ref = set(self.cell_zones.keys())
+        elif keep == locations.faces:
+            ref = set(self.face_zones.keys())
+        return [i for i in zone_ids if i in ref]
+
     def _get_result(
         self,
         base_name: str,
@@ -327,14 +335,32 @@ class FluidSimulation(Simulation):
                 # averaging_op_name = "to_nodal_fc"
                 pass  # nodal averaging seems to be automatic
             elif location == locations.faces:
-                if (qualifiers and ("zone" in qualifiers)) or (zone_ids):
-                    # TODO filter-out cell zones
-                    raise NotImplementedError("filter cell zones")
+                if qualifiers and ("zone" in qualifiers):
+                    qualifiers["zone"] = self._filter_zones(
+                        zone_ids=qualifiers["zone"], keep=locations.faces
+                    )
+                elif zone_ids:
+                    zone_ids = self._filter_zones(
+                        zone_ids=zone_ids, keep=locations.faces
+                    )
+                else:
+                    if not self._server.meet_version("7.1"):
+                        raise ValueError(
+                            "Querying an ElementalAndFaces result on faces "
+                            "currently requires the use of face zone ids in the "
+                            "'qualifiers' or the 'zone_ids' arguments."
+                        )
+
             elif location == locations.elemental:
                 # CFF only returns results on face zones if qualifiers have been set
-                if (qualifiers and ("zone" in qualifiers)) or (zone_ids):
-                    # TODO filter out face zones
-                    raise NotImplementedError("filter face zones")
+                if qualifiers and ("zone" in qualifiers):
+                    qualifiers["zone"] = self._filter_zones(
+                        zone_ids=qualifiers["zone"], keep=locations.elemental
+                    )
+                elif zone_ids:
+                    zone_ids = self._filter_zones(
+                        zone_ids=zone_ids, keep=locations.elemental
+                    )
 
         selection = self._build_selection(
             base_name=base_name,
