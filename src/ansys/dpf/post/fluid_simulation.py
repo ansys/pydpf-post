@@ -344,12 +344,14 @@ class FluidSimulation(Simulation):
                         zone_ids=zone_ids, keep=locations.faces
                     )
                 else:
-                    if not self._server.meet_version("7.1"):
+                    if not self._model._server.meet_version("7.1"):
                         raise ValueError(
                             "Querying an ElementalAndFaces result on faces "
                             "currently requires the use of face zone ids in the "
                             "'qualifiers' or the 'zone_ids' arguments."
                         )
+                    else:
+                        raise NotImplementedError
 
             elif location == locations.elemental:
                 # CFF only returns results on face zones if qualifiers have been set
