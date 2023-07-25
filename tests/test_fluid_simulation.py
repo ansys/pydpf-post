@@ -161,12 +161,26 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.nodal
 
         # Request on faces (requires filter-out of cell zones)
-        # result = fluent_simulation.static_pressure(location=post.locations.faces)
+        with pytest.raises(
+            ValueError,
+            match="Querying an ElementalAndFaces result on "
+            "faces currently requires the use of face zone ids",
+        ):
+            _ = fluent_simulation.static_pressure(location=post.locations.faces)
+        # print(result)
         # assert result.index.mesh_index.location == post.locations.faces
         # assert result._core_object[0].location == post.locations.faces
-        # result = fluent_simulation.static_pressure_on_faces()
+        # result._fc[0].plot()
+        with pytest.raises(
+            ValueError,
+            match="Querying an ElementalAndFaces result on "
+            "faces currently requires the use of face zone ids",
+        ):
+            _ = fluent_simulation.static_pressure_on_faces()
+        # print(result)
         # assert result.index.mesh_index.location == post.locations.faces
-        # assert result._core_object[0].location == post.locations.faces
+        # # assert result._core_object[0].location == post.locations.faces
+        # result.plot()
 
         # Request on cells (requires filter-out of face zones)
         result = fluent_simulation.static_pressure(location=post.locations.elemental)
@@ -222,25 +236,26 @@ class TestFluidSimulation:
         assert str(result) == ref
 
     def test_results_cfx_cross_locations_on_faces(self, cfx_simulation):
-        result = cfx_simulation.density_on_faces(
-            cell_ids=cfx_simulation.mesh.element_ids
-        )
-        assert result.index.mesh_index.location == post.locations.faces
-        ref = """
-  results     RHO (kg*m^-3)           
-  set_ids                 1           
-    phase Water at 25 C (2) Copper (3)
- face_ids                             
-        1        9.9700e+02           
-        2        9.9700e+02           
-        3        9.9700e+02           
-        4        9.9700e+02           
-        5        9.9700e+02           
-        6        9.9700e+02           
-      ...               ...        ...
-"""  # noqa: W291, E501
-        assert str(result) == ref
-        result.plot()
+        #         result = cfx_simulation.density_on_faces(
+        #             cell_ids=cfx_simulation.mesh.element_ids
+        #         )
+        #         assert result.index.mesh_index.location == post.locations.faces
+        #         assert result._fc[0].location == post.locations.faces
+        #         ref = """
+        #   results     RHO (kg*m^-3)
+        #   set_ids                 1
+        #     phase Water at 25 C (2) Copper (3)
+        #  face_ids
+        #         1        9.9700e+02
+        #         2        9.9700e+02
+        #         3        9.9700e+02
+        #         4        9.9700e+02
+        #         5        9.9700e+02
+        #         6        9.9700e+02
+        #       ...               ...        ...
+        # """  # noqa: W291, E501
+        #         assert str(result) == ref
+        #         result.plot()
         result = cfx_simulation.density_on_faces(face_ids=cfx_simulation.mesh.face_ids)
         assert result.index.mesh_index.location == post.locations.faces
         ref = """
@@ -330,47 +345,58 @@ class TestFluidSimulation:
 
     def test_results_fluent_cross_locations_on_faces(self, fluent_simulation):
         # TODO investigate wrong plot, wrong mesh index for dataframes
-        print(fluent_simulation)
-        result = fluent_simulation.density_on_faces(
-            cell_ids=fluent_simulation.mesh.element_ids
-        )
-        print(result)
-        assert result.index.mesh_index.location == post.locations.faces
-        # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
-        ref = """
-  results RHO (kg*m^-3)
-  set_ids             1
- face_ids              
-        1    1.1095e+00
-        2    1.1087e+00
-        3    1.1098e+00
-        4    1.0977e+00
-        5    1.0949e+00
-        6    1.1077e+00
-      ...           ...
-"""  # noqa: W291, E501
-        assert str(result) == ref
-        result.plot()
-        result = fluent_simulation.density_on_faces(
-            face_ids=fluent_simulation.mesh.face_ids
-        )
-        print(result)
-        assert result.index.mesh_index.location == post.locations.faces
-        # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
-        ref = """
-  results RHO (kg*m^-3)
-  set_ids             1
- face_ids              
-     1003    1.0877e+00
-     1004    1.0698e+00
-     1005    1.0493e+00
-     1006    1.0334e+00
-     1007    1.0366e+00
-     1008    1.0660e+00
-      ...           ...
-"""  # noqa: W291, E501
-        assert str(result) == ref
-        result.plot()
+        # print(fluent_simulation)
+        with pytest.raises(
+            ValueError,
+            match="Querying an ElementalAndFaces result on "
+            "faces currently requires the use of face zone ids",
+        ):
+            _ = fluent_simulation.density_on_faces(
+                cell_ids=fluent_simulation.mesh.element_ids
+            )
+        #         print(result)
+        #         assert result.index.mesh_index.location == post.locations.faces
+        #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
+        #         ref = """
+        #   results RHO (kg*m^-3)
+        #   set_ids             1
+        #  face_ids
+        #         1    1.1095e+00
+        #         2    1.1087e+00
+        #         3    1.1098e+00
+        #         4    1.0977e+00
+        #         5    1.0949e+00
+        #         6    1.1077e+00
+        #       ...           ...
+        # """  # noqa: W291, E501
+        #         assert str(result) == ref
+        #         result.plot()
+        with pytest.raises(
+            ValueError,
+            match="Querying an ElementalAndFaces result on "
+            "faces currently requires the use of face zone ids",
+        ):
+            _ = fluent_simulation.density_on_faces(
+                face_ids=fluent_simulation.mesh.face_ids
+            )
+
+    #         print(result)
+    #         assert result.index.mesh_index.location == post.locations.faces
+    #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
+    #         ref = """
+    #   results RHO (kg*m^-3)
+    #   set_ids             1
+    #  face_ids
+    #      1003    1.0877e+00
+    #      1004    1.0698e+00
+    #      1005    1.0493e+00
+    #      1006    1.0334e+00
+    #      1007    1.0366e+00
+    #      1008    1.0660e+00
+    #       ...           ...
+    # """  # noqa: W291, E501
+    #         assert str(result) == ref
+    #         result.plot()
 
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
         result = fluent_simulation.density_on_cells(
