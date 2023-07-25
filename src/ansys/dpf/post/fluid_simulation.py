@@ -168,6 +168,11 @@ class FluidSimulation(Simulation):
         super().__init__(data_sources=data_sources, model=model)
 
     @property
+    def mesh_info(self):
+        """Return available mesh information."""
+        return self._model.metadata.mesh_info
+
+    @property
     def zones(self) -> Zones:
         """Return the list of Zones in the simulation."""
         return Zones()
