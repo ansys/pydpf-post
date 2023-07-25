@@ -151,9 +151,10 @@ class Mesh:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
         >>> print(simulation.mesh.num_faces) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        0
+        44242
         """
         return self._meshed_region.faces.n_faces
 
@@ -165,9 +166,10 @@ class Mesh:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
         >>> print(simulation.mesh.face_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        []
+        [ 1003  1004  1005 ... 45165 45166 45167]
         """
         return self._meshed_region.faces.scoping.ids
 
@@ -179,9 +181,10 @@ class Mesh:
         --------
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
-        >>> simulation = post.load_simulation(examples.static_rst)
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
         >>> print(simulation.mesh.faces) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [hex20, ..., hex20]
+        [quad4, ..., quad4]
         """
         return FaceListByIndex(self._meshed_region.faces)
 
