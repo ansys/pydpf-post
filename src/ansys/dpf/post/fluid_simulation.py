@@ -436,7 +436,7 @@ class FluidSimulation(Simulation):
 
     def _try_get_result_info(self, name: str):
         try:
-            result_info = self.result_info[name]
+            return self.result_info[name]
         except KeyError:
             raise ValueError(f"Result {name} is not available.")
 

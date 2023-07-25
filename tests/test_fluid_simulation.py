@@ -114,10 +114,10 @@ class TestFluidSimulation:
 
         assert isinstance(fluent_simulation.phases, PhasesDict)
 
-    def test_dataframe_plot_empty(self, fluent_simulation):
-        result = fluent_simulation.wall_shear_stress()
-        with pytest.raises(ValueError, match="No data to plot."):
-            result.plot()
+    def test_fluid_simulation_result_unavailable(self, fluent_simulation):
+        print(fluent_simulation)
+        with pytest.raises(ValueError, match="Result unavailable."):
+            _ = fluent_simulation.wall_shear_stress()
 
     def test_results_fluent_averaging_from_elemental(self, fluent_simulation):
         print(fluent_simulation)
@@ -180,3 +180,222 @@ class TestFluidSimulation:
         result = fluent_simulation.static_pressure_on_cells()
         assert result.index.mesh_index.location == "cells"
         assert result._core_object[0].location == post.locations.elemental
+
+    def test_results_cfx_cross_locations_on_nodes(self, cfx_simulation):
+        result = cfx_simulation.density_on_nodes(node_ids=cfx_simulation.mesh.node_ids)
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ node_ids                             
+        1        9.9700e+02           
+        2        9.9700e+02           
+        3        9.9700e+02           
+        4        9.9700e+02           
+        5        9.9700e+02           
+        6        9.9700e+02           
+      ...               ...        ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result = cfx_simulation.density_on_nodes(
+            cell_ids=cfx_simulation.mesh.element_ids
+        )
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ node_ids                             
+     3149        9.9700e+02           
+     4143        9.9700e+02           
+     3140        9.9700e+02           
+     3158        9.9700e+02           
+     3154        9.9700e+02           
+     4146        9.9700e+02           
+      ...               ...        ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result = cfx_simulation.density_on_nodes(face_ids=cfx_simulation.mesh.face_ids)
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ node_ids                             
+"""  # noqa: W291, E501
+        assert str(result) == ref
+
+    def test_results_cfx_cross_locations_on_faces(self, cfx_simulation):
+        result = cfx_simulation.density_on_faces(
+            cell_ids=cfx_simulation.mesh.element_ids
+        )
+        assert result.index.mesh_index.location == post.locations.faces
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ face_ids                             
+        1        9.9700e+02           
+        2        9.9700e+02           
+        3        9.9700e+02           
+        4        9.9700e+02           
+        5        9.9700e+02           
+        6        9.9700e+02           
+      ...               ...        ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result.plot()
+        result = cfx_simulation.density_on_faces(face_ids=cfx_simulation.mesh.face_ids)
+        assert result.index.mesh_index.location == post.locations.faces
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ face_ids                             
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        with pytest.raises(
+            ValueError, match="Cannot plot a Dataframe with an empty mesh index."
+        ):
+            result.plot()
+
+    def test_results_cfx_cross_locations_on_cells(self, cfx_simulation):
+        result = cfx_simulation.density_on_cells(
+            cell_ids=cfx_simulation.mesh.element_ids
+        )
+        assert result.index.mesh_index.location == "cells"
+        ref = """
+  results     RHO (kg*m^-3)           
+  set_ids                 1           
+    phase Water at 25 C (2) Copper (3)
+ cell_ids                             
+        1        9.9700e+02           
+        2        9.9700e+02           
+        3        9.9700e+02           
+        4        9.9700e+02           
+        5        9.9700e+02           
+        6        9.9700e+02           
+      ...               ...        ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+
+    def test_results_fluent_cross_locations_on_nodes(self, fluent_simulation):
+        result = fluent_simulation.density_on_nodes(
+            node_ids=fluent_simulation.mesh.node_ids
+        )
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ node_ids              
+        1    1.0742e+00
+        2    1.0436e+00
+        3    1.0131e+00
+        4    1.0327e+00
+        5    1.0247e+00
+        6    1.0445e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result = fluent_simulation.density_on_nodes(
+            cell_ids=fluent_simulation.mesh.element_ids
+        )
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ node_ids              
+      996    1.1041e+00
+      894    1.1035e+00
+      795    1.0982e+00
+      903    1.0985e+00
+      997    1.1097e+00
+      895    1.1091e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result = fluent_simulation.density_on_nodes(
+            face_ids=fluent_simulation.mesh.face_ids
+        )
+        assert result.index.mesh_index.location == post.locations.nodal
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ node_ids              
+    11291    1.3590e+00
+    11416    1.3262e+00
+    11455    1.3104e+00
+    11325    1.3470e+00
+    11348    1.2896e+00
+    11388    1.2771e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+
+    def test_results_fluent_cross_locations_on_faces(self, fluent_simulation):
+        # TODO investigate wrong plot, wrong mesh index for dataframes
+        print(fluent_simulation)
+        result = fluent_simulation.density_on_faces(
+            cell_ids=fluent_simulation.mesh.element_ids
+        )
+        print(result)
+        assert result.index.mesh_index.location == post.locations.faces
+        # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ face_ids              
+        1    1.1095e+00
+        2    1.1087e+00
+        3    1.1098e+00
+        4    1.0977e+00
+        5    1.0949e+00
+        6    1.1077e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result.plot()
+        result = fluent_simulation.density_on_faces(
+            face_ids=fluent_simulation.mesh.face_ids
+        )
+        print(result)
+        assert result.index.mesh_index.location == post.locations.faces
+        # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ face_ids              
+     1003    1.0877e+00
+     1004    1.0698e+00
+     1005    1.0493e+00
+     1006    1.0334e+00
+     1007    1.0366e+00
+     1008    1.0660e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result.plot()
+
+    def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
+        result = fluent_simulation.density_on_cells(
+            cell_ids=fluent_simulation.mesh.element_ids
+        )
+        assert result.index.mesh_index.location == "cells"
+        assert (
+            len(result.index.mesh_index.values) == fluent_simulation.mesh.num_elements
+        )
+        ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ cell_ids              
+        1    1.1095e+00
+        2    1.1087e+00
+        3    1.1098e+00
+        4    1.0977e+00
+        5    1.0949e+00
+        6    1.1077e+00
+      ...           ...
+"""  # noqa: W291, E501
+        assert str(result) == ref
+        result.plot()
