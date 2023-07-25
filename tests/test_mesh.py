@@ -1,4 +1,5 @@
 import ansys.dpf.core as dpf
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -186,6 +187,10 @@ def test_mesh_plot(mesh):
     mesh.plot()
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    reason="Available starting DPF 7.0",
+)
 def test_mesh_faces(fluent_mesh):
     assert fluent_mesh.num_faces == 94288
     assert len(fluent_mesh.face_ids) == 94288
