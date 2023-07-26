@@ -18,6 +18,7 @@ import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
 from ansys.dpf.post.connectivity import ConnectivityListByIndex, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListByIndex
+from ansys.dpf.post.faces import FaceListByIndex
 from ansys.dpf.post.named_selection import NamedSelections
 from ansys.dpf.post.nodes import NodeListByIndex
 
@@ -97,7 +98,7 @@ class Mesh:
 
     @property
     def num_elements(self) -> int:
-        """Returns the number of element in the mesh.
+        """Returns the number of elements in the mesh.
 
         Examples
         --------
@@ -141,6 +142,55 @@ class Mesh:
             Shape:        Solid
         """
         return self.elements.by_id[id]
+
+    @property
+    def num_faces(self) -> int:
+        """Returns the number of faces in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
+        >>> print(simulation.mesh.num_faces) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        44242
+        """
+        return self._meshed_region.faces.n_faces
+
+    @property
+    def face_ids(self) -> List[int]:
+        """Returns the list of face IDs in the mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
+        >>> print(simulation.mesh.face_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [ 1003  1004  1005 ... 45165 45166 45167]
+        """
+        return self._meshed_region.faces.scoping.ids
+
+    @property
+    def faces(self) -> FaceListByIndex:
+        """Returns a list of faces indexed by ID.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> files = examples.download_fluent_axial_comp()
+        >>> simulation = post.FluidSimulation(cas=files['cas'][0], dat=files['dat'][0])
+        >>> print(simulation.mesh.faces) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        [quad4, ..., quad4]
+        """
+        return FaceListByIndex(self._meshed_region.faces)
+
+    def get_face_by_id(self, id: int) -> Face:  # pylint: disable=redefined-builtin
+        """Returns a face in the mesh from a given ID."""
+        return self.faces.by_id[id]
 
     @property
     def nodes(self) -> NodeListByIndex:
@@ -248,7 +298,7 @@ class Mesh:
         )
 
     @property
-    def element_to_node_ids_connectivity(self):
+    def element_to_node_ids_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between element index and node IDs.
 
         To get the connectivity map by element ID, use the 'by_id' property of the object returned.
@@ -272,7 +322,7 @@ class Mesh:
         )
 
     @property
-    def node_to_element_ids_connectivity(self):
+    def node_to_element_ids_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between node index and element IDs.
 
         To get the connectivity map by node ID, use the 'by_id' property of the object returned.
@@ -296,7 +346,7 @@ class Mesh:
         )
 
     @property
-    def element_to_node_connectivity(self):
+    def element_to_node_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between element index and node indexes.
 
         To get the connectivity map by element ID, use the 'by_id' property of the object returned.
@@ -320,7 +370,7 @@ class Mesh:
         )
 
     @property
-    def node_to_element_connectivity(self):
+    def node_to_element_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between node index and element indexes.
 
         To get the connectivity map by node ID, use the 'by_id' property of the object returned.
@@ -341,6 +391,30 @@ class Mesh:
         elems_scoping = self._meshed_region.elements.scoping
         return ConnectivityListByIndex(
             field=conn_field, mode=ReturnMode.IDX, scoping=elems_scoping
+        )
+
+    @property
+    def face_to_node_ids_connectivity(self) -> ConnectivityListByIndex:
+        """Returns a connectivity map between face index and node IDs.
+
+        To get the connectivity map by face ID, use the 'by_id' property of the object returned.
+        """
+        conn_field = self._meshed_region.faces.faces_nodes_connectivity_field
+        nodes_scoping = self._meshed_region.nodes.scoping
+        return ConnectivityListByIndex(
+            field=conn_field, mode=ReturnMode.IDS, scoping=nodes_scoping
+        )
+
+    @property
+    def face_to_node_connectivity(self) -> ConnectivityListByIndex:
+        """Returns a connectivity map between face index and node indexes.
+
+        To get the connectivity map by face ID, use the 'by_id' property of the object returned.
+        """
+        conn_field = self._meshed_region.faces.faces_nodes_connectivity_field
+        nodes_scoping = self._meshed_region.nodes.scoping
+        return ConnectivityListByIndex(
+            field=conn_field, mode=ReturnMode.IDX, scoping=nodes_scoping
         )
 
     @property
