@@ -33,7 +33,7 @@ def test_spatial_selection_select_named_selection(allkindofcomplexity):
     simulation = post.load_simulation(allkindofcomplexity)
     selection = SpatialSelection()
     selection.select_named_selection(
-        simulation.mesh.available_named_selections[0],
+        simulation.mesh.named_selections.keys()[0],
         location=post.selection.locations.nodal,
     )
     scoping = selection._evaluate_on(simulation)
