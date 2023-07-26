@@ -7,9 +7,9 @@ from typing import List
 
 from ansys.dpf.core import errors
 from ansys.dpf.core import faces as core_faces
-from ansys.dpf.core.nodes import Node
 
 from ansys.dpf.post.elements import ElementType
+from ansys.dpf.post.nodes import NodeListByIndex
 
 
 class Face:
@@ -35,9 +35,9 @@ class Face:
         return self._face.index
 
     @property
-    def nodes(self) -> List[Node]:
-        """See :py:meth:`ansys.dpf.core.faces.Face.nodes`."""
-        return self._face.nodes
+    def nodes(self) -> NodeListByIndex:
+        """See :py:meth:`ansys.dpf.post.nodes.NodeListByIndex`."""
+        return NodeListByIndex(self._face.nodes)
 
     @property
     def num_nodes(self) -> int:
