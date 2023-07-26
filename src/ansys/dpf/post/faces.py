@@ -115,6 +115,7 @@ class _FaceList(ABC):
     @abstractmethod
     def __iter__(self):  # pragma: no cover
         """Returns the object to iterate on."""
+        raise NotImplementedError
 
 
 class FaceListByIndex(_FaceList):
