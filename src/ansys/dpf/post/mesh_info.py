@@ -34,7 +34,12 @@ class FluidMeshInfo:
     Number of nodes: 16660
     Number of faces: 45391
     Number of cells: 13856
-    Zones:
+    Cell zones:
+        {13: 'fluid-rotor', 28: 'fluid-stator'}
+    Face zones:
+        {{2: 'default-interior:0',..., 27: 'stator-per-1-shadow'}
+    Cell to face zones:
+        {13: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],...}
     """
 
     def __init__(self, core_mesh_info: dpf.MeshInfo):
