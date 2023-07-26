@@ -91,11 +91,6 @@ class Simulation(ABC):
         self._model.metadata.release_streams()
 
     @property
-    def mesh_info(self):
-        """Return available mesh information."""
-        return self._model.metadata.mesh_info
-
-    @property
     def results(self) -> List[dpf.result_info.available_result.AvailableResult]:
         r"""Available results.
 
