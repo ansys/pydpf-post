@@ -5,6 +5,7 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
+from ansys.dpf.post.connectivity import ConnectivityListByIndex
 from ansys.dpf.post.faces import Face
 
 
@@ -200,3 +201,9 @@ def test_mesh_faces(fluent_mesh):
     assert isinstance(first_face, Face)
     assert first_face.index == 0
     assert first_face.id == fluent_mesh.face_ids[0]
+    assert isinstance(fluent_mesh.face_to_node_connectivity, ConnectivityListByIndex)
+    assert fluent_mesh.face_to_node_connectivity[0] == [20, 25, 2921]
+    assert isinstance(
+        fluent_mesh.face_to_node_ids_connectivity, ConnectivityListByIndex
+    )
+    assert fluent_mesh.face_to_node_ids_connectivity[1] == [21, 2922, 23]

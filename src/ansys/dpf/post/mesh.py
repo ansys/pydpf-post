@@ -298,7 +298,7 @@ class Mesh:
         )
 
     @property
-    def element_to_node_ids_connectivity(self):
+    def element_to_node_ids_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between element index and node IDs.
 
         To get the connectivity map by element ID, use the 'by_id' property of the object returned.
@@ -322,7 +322,7 @@ class Mesh:
         )
 
     @property
-    def node_to_element_ids_connectivity(self):
+    def node_to_element_ids_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between node index and element IDs.
 
         To get the connectivity map by node ID, use the 'by_id' property of the object returned.
@@ -346,7 +346,7 @@ class Mesh:
         )
 
     @property
-    def element_to_node_connectivity(self):
+    def element_to_node_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between element index and node indexes.
 
         To get the connectivity map by element ID, use the 'by_id' property of the object returned.
@@ -370,7 +370,7 @@ class Mesh:
         )
 
     @property
-    def node_to_element_connectivity(self):
+    def node_to_element_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between node index and element indexes.
 
         To get the connectivity map by node ID, use the 'by_id' property of the object returned.
@@ -394,7 +394,7 @@ class Mesh:
         )
 
     @property
-    def face_to_node_ids_connectivity(self):
+    def face_to_node_ids_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between face index and node IDs.
 
         To get the connectivity map by face ID, use the 'by_id' property of the object returned.
@@ -406,7 +406,7 @@ class Mesh:
         )
 
     @property
-    def face_to_node_connectivity(self):
+    def face_to_node_connectivity(self) -> ConnectivityListByIndex:
         """Returns a connectivity map between face index and node indexes.
 
         To get the connectivity map by face ID, use the 'by_id' property of the object returned.
