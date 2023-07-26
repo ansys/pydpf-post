@@ -249,16 +249,16 @@ class SpatialSelection:
             self._selection.set_input_name(
                 _WfNames.data_sources, op.inputs.data_sources
             )
-            self._selection.set_input_name(
-                _WfNames.streams, op.inputs.streams_container
-            )
+            # self._selection.set_input_name(
+            #     _WfNames.streams, op.inputs.streams_container
+            # )
             self._selection.set_output_name(_WfNames.scoping, op.outputs.mesh_scoping)
         else:
             op = operators.utility.merge_scopings(server=self._server)
             forward_ds = operators.utility.forward(any=None, server=self._server)
             forward_sc = operators.utility.forward(any=None, server=self._server)
             self._selection.set_input_name(_WfNames.data_sources, forward_ds.inputs.any)
-            self._selection.set_input_name(_WfNames.streams, forward_sc.inputs.any)
+            # self._selection.set_input_name(_WfNames.streams, forward_sc.inputs.any)
             for pin, ns in enumerate(named_selection):
                 mesh_scoping_op = operators.scoping.on_named_selection(
                     requested_location=location,
