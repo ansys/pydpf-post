@@ -14,6 +14,9 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 from ansys.dpf.core.plotter import DpfPlotter
+from ansys.dpf.core.property_fields_container import (
+    _MockPropertyFieldsContainer as PropertyFieldsContainer,
+)
 import ansys.dpf.gate.errors
 import numpy as np
 
@@ -39,7 +42,7 @@ class DataFrame:
 
     def __init__(
         self,
-        data: dpf.FieldsContainer,
+        data: Union[dpf.FieldsContainer, PropertyFieldsContainer],
         index: Union[MultiIndex, Index, List[int]],
         columns: Union[MultiIndex, Index, List[str], None] = None,
     ):
@@ -55,7 +58,9 @@ class DataFrame:
             Column indexing (labels) to use.
         """
         self._index = index
-        if isinstance(data, dpf.FieldsContainer):
+        if isinstance(data, dpf.FieldsContainer) or isinstance(
+            data, PropertyFieldsContainer
+        ):
             self._fc = data
             # if index is None:
             #     raise NotImplementedError("Creation from FieldsContainer without index "
@@ -300,7 +305,9 @@ class DataFrame:
                     node_ids=node_ids,
                     server=server,
                 )
-            elif ref_labels.element_ids in mesh_index_name:
+            elif ref_labels.element_ids or ref_labels.cell_ids in mesh_index_name:
+                if ref_labels.cell_ids in mesh_index_name:
+                    location = "cells"
                 element_ids = axis_kwargs[mesh_index_name]
                 if not isinstance(element_ids, list):
                     element_ids = [element_ids]
@@ -313,13 +320,16 @@ class DataFrame:
                     f"Selection on a DataFrame with index "
                     f"'{mesh_index_name}' is not yet supported"
                 )
-            rescope_fc = dpf.operators.scoping.rescope_fc(
-                fields_container=input_fc,
-                mesh_scoping=mesh_scoping,
-                server=server,
-            )
-            out = rescope_fc.outputs.fields_container
-            mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
+            if isinstance(input_fc, PropertyFieldsContainer):
+                fc = input_fc.rescope(mesh_scoping)
+            else:
+                rescope_fc = dpf.operators.scoping.rescope_fc(
+                    fields_container=input_fc,
+                    mesh_scoping=mesh_scoping,
+                    server=server,
+                )
+                out = rescope_fc.outputs.fields_container
+                mesh_index = MeshIndex(location=location, values=mesh_scoping.ids)
         elif (
             mesh_index_name in axis_kwargs.keys()
             and mesh_index.location == locations.elemental_nodal
@@ -349,12 +359,25 @@ class DataFrame:
             results_index,
             set_index,
         ]
+        if isinstance(fc, PropertyFieldsContainer):
+            column_indexes = [results_index]
+
         label_indexes = []
         for label in fc.labels:
             if label not in ["time"]:
-                column_indexes.append(
-                    LabelIndex(name=label, values=fc.get_available_ids_for_label(label))
-                )
+                fc_values = fc.get_available_ids_for_label(label)
+                old_values = self.columns[self.columns.names.index(label)].values
+                if old_values is None:
+                    values = fc_values
+                else:
+                    fc_to_old_map = {}
+                    for v in old_values:
+                        if isinstance(v, str) and ("(" and ")" in v):
+                            fc_to_old_map[v.split("(")[1].split(")")[0]] = v
+                        else:
+                            fc_to_old_map[str(v)] = v
+                    values = [fc_to_old_map[str(f)] for f in fc_values]
+                column_indexes.append(LabelIndex(name=label, values=values))
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
 
@@ -506,6 +529,8 @@ class DataFrame:
                 comp_values = values
             else:
                 values = index.values
+            if values is None:
+                values = [1]
             label_positions_in_combinations[index.name] = position
             lists.append(values)
         column_combinations = [p for p in itertools.product(*lists)]
@@ -540,9 +565,16 @@ class DataFrame:
             label_space = {}
             for label_name in self.labels:
                 value = combination[label_positions_in_combinations[label_name]]
+                if value is None or value == "":
+                    raise ValueError(
+                        f"Could not find label value for label {label_name}"
+                    )
+                elif isinstance(value, str):
+                    if "(" in value:
+                        value = value.split("(")[1].split(")")[0]
                 if label_name == ref_labels.set_ids:
                     label_name = ref_labels.time
-                label_space[label_name] = value
+                label_space[label_name] = int(value)
             fields = self._fc.get_fields(label_space=label_space)
 
             # Start counting values found
@@ -561,6 +593,8 @@ class DataFrame:
                             continue
                         else:
                             raise e
+                    except ValueError:
+                        continue
                     n_col_per_entity = len(data)
                     # Update max number of node per element in case of elemental nodal
                     if field.location == locations.elemental_nodal:
@@ -593,9 +627,18 @@ class DataFrame:
                         if i_n < n_col_per_entity:
                             values = data[i_n]
                             if isinstance(values, list):
-                                values = [f"{x:.4e}" for x in values]
+                                values = [
+                                    f"{x}"
+                                    if np.issubdtype(type(x), np.integer)
+                                    else f"{x:.4e}"
+                                    for x in values
+                                ]
                             else:
-                                values = [f"{values:.4e}"]
+                                values = [
+                                    f"{values}"
+                                    if np.issubdtype(type(values), np.integer)
+                                    else f"{values:.4e}"
+                                ]
                         else:
                             values = [empty] * max_rows
                         cells[combination_index + i_n].extend(values)
@@ -693,6 +736,8 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        if len(self.index.mesh_index) == 0:
+            raise ValueError("Cannot plot a Dataframe with an empty mesh index.")
         label_space = {}
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
@@ -729,6 +774,8 @@ class DataFrame:
             fc = self._fc
             label_space = fc.get_label_space(0)
 
+        if len(fc) == 0:
+            raise ValueError("No data to plot.")
         for field in fc:
             # Treat multi-layer field
             shell_layer_check = field.shell_layers
@@ -763,6 +810,28 @@ class DataFrame:
             label_space.pop("stage")
 
         fields = fc.get_fields(label_space=label_space)
+        # for field in fields:
+        if len(fields) > 1:
+            # try:
+            #     for field in fields[1:]:
+            #         plotter.add_field(field=field, **kwargs)
+            # except Exception as e:
+            raise ValueError(
+                f"Plotting failed with filter {axis_kwargs} due to incompatible data."
+            )
+            # warnings.warn(
+            #     UserWarning(
+            #         "Plotting criteria resulted in incompatible data. "
+            #         "Try narrowing down to specific values for each column."
+            #     )
+            # )
+            # return None
+        field_to_plot = fields[0]
+        # If multi-component, take the norm
+        if field_to_plot.component_count > 1:
+            field_to_plot = dpf.operators.math.norm(
+                field_to_plot, server=field_to_plot._server
+            ).eval()
         plotter = DpfPlotter(**kwargs)
         plotter.add_field(field=fields[0], **kwargs)
         # for field in fields:
@@ -919,15 +988,15 @@ class DataFrame:
         >>> # Compute the maximum displacement for each node and component across time
         >>> minimum_over_time = displacement.min(axis="set_ids")
         >>> print(minimum_over_time)  # doctest: +NORMALIZE_WHITESPACE
-                   results       U (m)
-        node_ids  components
-          4872           X -3.4137e-05
-                         Y  5.1667e-04
-                         Z -4.1346e-06
-          9005           X -5.5625e-05
-                         Y  4.8445e-04
-                         Z -4.9795e-07
-                       ...
+                    results       U (m)
+         node_ids components
+             4872          X -3.4137e-05
+                           Y  5.1667e-04
+                           Z -4.1346e-06
+             9005          X -5.5625e-05
+                           Y  4.8445e-04
+                           Z -4.9795e-07
+              ...        ...         ...
         >>> # Compute the maximum displacement overall
         >>> minimum_overall = minimum_over_time.min()
         >>> print(minimum_overall)  # doctest: +NORMALIZE_WHITESPACE
@@ -975,15 +1044,15 @@ class DataFrame:
         >>> # Compute the maximum displacement for each node and component across time
         >>> maximum_over_time = displacement.max(axis="set_ids")
         >>> print(maximum_over_time)  # doctest: +NORMALIZE_WHITESPACE
-                   results       U (m)
-        node_ids  components
-          4872           X  5.6781e-06
-                         Y  1.5417e-03
-                         Z -2.6398e-06
-          9005           X -2.6323e-06
-                         Y  1.4448e-03
-                         Z  5.3134e-06
-           ...
+                     results       U (m)
+         node_ids components
+             4872          X  5.6781e-06
+                           Y  1.5417e-03
+                           Z -2.6398e-06
+             9005          X -2.6323e-06
+                           Y  1.4448e-03
+                           Z  5.3134e-06
+              ...        ...         ...
         >>> # Compute the maximum displacement overall
         >>> maximum_overall = maximum_over_time.max()
         >>> print(maximum_overall)  # doctest: +NORMALIZE_WHITESPACE

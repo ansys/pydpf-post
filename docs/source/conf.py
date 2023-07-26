@@ -1,12 +1,15 @@
 """Sphinx documentation configuration file."""
 from datetime import datetime
+from glob import glob
 import os
 
+from ansys.dpf.core import server, server_factory
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import numpy as np
 import pyvista
 
 from ansys.dpf.post import __version__
+from ansys.dpf.post.examples import get_example_required_minimum_dpf_version
 
 # Manage errors
 pyvista.set_error_output_file("errors.txt")
@@ -33,6 +36,28 @@ author = "ANSYS Inc."
 release = version = __version__
 cname = os.getenv("DOCUMENTATION_CNAME", "post.docs.pyansys.com")
 
+# -- Rename files to be ignored with the ignored pattern ---------------------
+
+# Get the DPF server version
+server_instance = server.start_local_server(
+    as_global=False,
+    config=server_factory.AvailableServerConfigs.GrpcServer,
+)
+server_version = server_instance.version
+server.shutdown_all_session_servers()
+print(f"DPF version: {server_version}")
+
+# Build ignore pattern
+ignored_pattern = r"(ignore"
+for example in glob(r"../../examples/**/*.py"):
+    minimum_version_str = get_example_required_minimum_dpf_version(example)
+    if float(server_version) - float(minimum_version_str) < -0.05:
+        example_name = example.split(os.path.sep)[-1]
+        print(
+            f"Example {example_name} skipped as it requires DPF {minimum_version_str}."
+        )
+        ignored_pattern += f"|{example_name}"
+ignored_pattern += r")"
 
 # -- General configuration ---------------------------------------------------
 
@@ -67,7 +92,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable", None),
     # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "pyvista": ("https://docs.pyvista.org/", None),
-    "ansys-dpf-core": ("https://dpfdocs.pyansys.com", None),
+    "ansys-dpf-core": ("https://dpf.docs.pyansys.com", None),
 }
 
 
@@ -90,7 +115,7 @@ numpydoc_validation_checks = {
     "SS04",  # Summary contains heading whitespaces
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
-    # type, unless multiple values are being returned"
+    # type, unless multiple values are being returned
 }
 
 
@@ -126,6 +151,30 @@ copybutton_prompt_is_regexp = True
 # -- Sphinx Gallery Options
 from sphinx_gallery.sorting import FileNameSortKey
 
+
+def reset_servers(gallery_conf, fname, when):
+    """Reset gRPC servers in between examples."""
+    import gc
+
+    from ansys.dpf.core import server
+    import psutil
+
+    gc.collect()
+    server.shutdown_all_session_servers()
+
+    proc_name = "Ans.Dpf.Grpc"
+    nb_procs = 0
+    for proc in psutil.process_iter():
+        try:
+            # check whether the process name matches
+            if proc_name in proc.name():
+                # proc.kill()
+                nb_procs += 1
+        except psutil.NoSuchProcess:
+            pass
+    print(f"Counted {nb_procs} {proc_name} processes {when} example {fname}.")
+
+
 sphinx_gallery_conf = {
     # convert rst to md for ipynb
     "pypandoc": True,
@@ -135,6 +184,8 @@ sphinx_gallery_conf = {
     "gallery_dirs": ["examples"],
     # Pattern to search for example files
     "filename_pattern": r"\.py",
+    # Pattern to search for example files to be ignored
+    "ignore_pattern": ignored_pattern,
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
     # Sort gallery example by file name instead of number of lines (default)
@@ -147,7 +198,12 @@ sphinx_gallery_conf = {
     # 'first_notebook_cell': ("%matplotlib inline\n"
     #                         "from pyvista import set_plot_theme\n"
     #                         "set_plot_theme('document')"),
+    "reset_modules_order": "both",
+    "reset_modules": (reset_servers,),
 }
+
+autodoc_member_order = "bysource"
+
 
 # -- Options for HTML output -------------------------------------------------
 

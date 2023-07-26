@@ -393,7 +393,7 @@ class ResultData:
                 style="surface",
                 show_edges=True,
                 opacity=0.3,
-                **kwargs
+                **kwargs,
             )
             # Show the plot
             pl.show_figure(**kwargs)
