@@ -11,7 +11,7 @@ class FluidMeshInfo:
     """Holds the metadata relative to a fluid mesh.
 
     This class describes the available mesh information.
-    Use this to gather information about a big mesh prior to loading it
+    Use this to gather information about a large mesh prior to loading it
     to define requests on limited parts of the mesh for improved performance.
 
     Parameters
