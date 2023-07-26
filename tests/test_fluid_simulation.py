@@ -191,44 +191,50 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.elemental
 
     def test_results_cfx_cross_locations_on_nodes(self, cfx_simulation):
-        result = cfx_simulation.density_on_nodes(node_ids=cfx_simulation.mesh.node_ids)
+        result = cfx_simulation.temperature_on_nodes(
+            node_ids=cfx_simulation.mesh.node_ids
+        )
         assert result.index.mesh_index.location == post.locations.nodal
+        assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_nodes
         ref = """
-  results     RHO (kg*m^-3)           
+  results          TEMP (K)           
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  node_ids                             
-        1        9.9700e+02           
-        2        9.9700e+02           
-        3        9.9700e+02           
-        4        9.9700e+02           
-        5        9.9700e+02           
-        6        9.9700e+02           
+        1        3.0550e+02           
+        2        3.0445e+02           
+        3        3.0147e+02           
+        4        3.0157e+02           
+        5        3.0301e+02           
+        6        3.0478e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
-        result = cfx_simulation.density_on_nodes(
+        result = cfx_simulation.temperature_on_nodes(
             cell_ids=cfx_simulation.mesh.element_ids
         )
         assert result.index.mesh_index.location == post.locations.nodal
+        assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_nodes
         ref = """
-  results     RHO (kg*m^-3)           
+  results          TEMP (K)           
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  node_ids                             
-     3149        9.9700e+02           
-     4143        9.9700e+02           
-     3140        9.9700e+02           
-     3158        9.9700e+02           
-     3154        9.9700e+02           
-     4146        9.9700e+02           
+     3149        3.0212e+02           
+     4143        3.0047e+02           
+     3140        3.0107e+02           
+     3158        3.0132e+02           
+     3154        3.0473e+02           
+     4146        3.0047e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
-        result = cfx_simulation.density_on_nodes(face_ids=cfx_simulation.mesh.face_ids)
+        result = cfx_simulation.temperature_on_nodes(
+            face_ids=cfx_simulation.mesh.face_ids
+        )
         assert result.index.mesh_index.location == post.locations.nodal
         ref = """
-  results     RHO (kg*m^-3)           
+  results          TEMP (K)           
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  node_ids                             
@@ -256,10 +262,12 @@ class TestFluidSimulation:
         # """  # noqa: W291, E501
         #         assert str(result) == ref
         #         result.plot()
-        result = cfx_simulation.density_on_faces(face_ids=cfx_simulation.mesh.face_ids)
+        result = cfx_simulation.temperature_on_faces(
+            face_ids=cfx_simulation.mesh.face_ids
+        )
         assert result.index.mesh_index.location == post.locations.faces
         ref = """
-  results     RHO (kg*m^-3)           
+  results          TEMP (K)           
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  face_ids                             
@@ -271,21 +279,22 @@ class TestFluidSimulation:
             result.plot()
 
     def test_results_cfx_cross_locations_on_cells(self, cfx_simulation):
-        result = cfx_simulation.density_on_cells(
+        result = cfx_simulation.temperature_on_cells(
             cell_ids=cfx_simulation.mesh.element_ids
         )
         assert result.index.mesh_index.location == "cells"
+        assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_cells
         ref = """
-  results     RHO (kg*m^-3)           
+  results          TEMP (K)           
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  cell_ids                             
-        1        9.9700e+02           
-        2        9.9700e+02           
-        3        9.9700e+02           
-        4        9.9700e+02           
-        5        9.9700e+02           
-        6        9.9700e+02           
+        1        3.0124e+02           
+        2        3.0200e+02           
+        3        3.0184e+02           
+        4        3.0071e+02           
+        5        3.0327e+02           
+        6        3.0063e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
