@@ -88,3 +88,10 @@ water_temperature = simulation.temperature(phases=["Water at 25 C"])
 # water_temperature = simulation.temperature(phases=[2])
 print(water_temperature)
 # # The dataframe obtained now only stores data for the water phase.
+
+###############################################################################
+# To extract a result on given zones use the 'zone_ids' argument
+# or the 'qualifiers' dictionary argument with key 'zone'
+# Here we request and plot the temperature on all face zones
+face_temperature = simulation.temperature(zone_ids=list(simulation.face_zones.keys()))
+face_temperature.plot()
