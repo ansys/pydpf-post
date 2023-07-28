@@ -58,7 +58,7 @@ jobs:
       matrix:
         ANSYS_VERSION: ["241"]
         suffix: [".pre0"]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10"]
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
