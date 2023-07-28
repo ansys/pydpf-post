@@ -19,7 +19,7 @@ The latest version of DPF supports Ansys solver result files for:
 - CFX (``.cad/dat.cff``, ``.flprj``)
 
 See the `PyDPF-Core main page <https://dpf.docs.pyansys.com/version/stable/index.html>`_
-for more information on compatibility.
+for more information on file support.
 
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
 available at `PyDPF-Core GitHub <https://github.com/ansys/pydpf-core>`_.
