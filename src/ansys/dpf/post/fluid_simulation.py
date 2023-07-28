@@ -388,12 +388,15 @@ class FluidSimulation(Simulation):
             location=location,
             force_elemental_nodal=False,
         )
+        query_regions_meshes = False
         lists = []
         lists_labels = []
         if qualifiers:
             labels = list(qualifiers.keys())
             lists_labels.extend(labels)
             lists.extend([qualifiers[key] for key in labels])
+            if "zone" in labels:
+                query_regions_meshes = qualifiers["zone"]
         else:
             if set_ids:
                 lists.append(set_ids)
@@ -401,6 +404,7 @@ class FluidSimulation(Simulation):
             if zone_ids:
                 lists.append(zone_ids)
                 lists_labels.append("zone")
+                query_regions_meshes = zone_ids
             if phases:
                 phase_ids = []
                 available_phases = self.phases
@@ -422,6 +426,14 @@ class FluidSimulation(Simulation):
                 result_op.connect(1000 + i, label_space)
         # Its output is selected as future workflow output for now
         # print(result_op)
+
+        if query_regions_meshes:
+            # Results have been queried on regions,
+            # A MeshesProvider is required to give meshes as input of the source operator
+            meshes_provider_op = self._model.operator("meshes_provider")
+            meshes_provider_op.connect(25, query_regions_meshes)
+            wf.add_operator(meshes_provider_op)
+            result_op.connect(7, meshes_provider_op.outputs.meshes)
 
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
