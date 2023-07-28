@@ -432,8 +432,14 @@ class FluidSimulation(Simulation):
             # A MeshesProvider is required to give meshes as input of the source operator
             meshes_provider_op = self._model.operator("meshes_provider")
             meshes_provider_op.connect(25, query_regions_meshes)
-            wf.add_operator(meshes_provider_op)
             result_op.connect(7, meshes_provider_op.outputs.meshes)
+            wf.add_operator(meshes_provider_op)
+        else:
+            # Results have been queried on the whole mesh,
+            # A MeshProvider is required to give the mesh as input of the source operator
+            mesh_provider_op = self._model.operator("mesh_provider")
+            result_op.connect(7, mesh_provider_op.outputs.mes)
+            wf.add_operator(mesh_provider_op)
 
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
