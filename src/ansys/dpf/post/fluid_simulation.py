@@ -438,7 +438,7 @@ class FluidSimulation(Simulation):
             # Results have been queried on the whole mesh,
             # A MeshProvider is required to give the mesh as input of the source operator
             mesh_provider_op = self._model.operator("mesh_provider")
-            result_op.connect(7, mesh_provider_op.outputs.mes)
+            result_op.connect(7, mesh_provider_op.outputs.mesh)
             wf.add_operator(mesh_provider_op)
 
         out = result_op.outputs.fields_container
