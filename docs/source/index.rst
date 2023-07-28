@@ -11,6 +11,16 @@ for postprocessing. Loading a simulation (defined by its result files) allows yo
 to extract simulation metadata as well as results and then apply postprocessing
 operations on it.
 
+The latest version of DPF supports Ansys solver result files for:
+
+- MAPDL (``.rst``, ``.mode``, ``.rfrq``, ``.rdsp``)
+- LS-DYNA (``.d3plot``, ``.binout``)
+- Fluent (``.cas/dat.h5``, ``.flprj``)
+- CFX (``.cad/dat.cff``, ``.flprj``)
+
+See the `PyDPF-Core main page <https://dpf.docs.pyansys.com/version/stable/index.html>`_
+for more information on compatibility.
+
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
 available at `PyDPF-Core GitHub <https://github.com/ansys/pydpf-core>`_.
 Use the ``ansys-dpf-core`` package for building more advanced and customized
