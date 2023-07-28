@@ -14,10 +14,10 @@ as results and then apply postprocessing operations on it.
 
 The latest version of DPF supports Ansys solver result files for:
 
-- MAPDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
-- LS-DYNA (`.d3plot`, `.binout`)
-- Fluent (`.cas/dat.h5`, `.flprj`)
-- CFX (`.cad/dat.cff`, `.flprj`)
+  - MAPDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
+  - LS-DYNA (`.d3plot`, `.binout`)
+  - Fluent (`.cas/dat.h5`, `.flprj`)
+  - CFX (`.cad/dat.cff`, `.flprj`)
 
 See the `PyDPF-Core main page <https://dpf.docs.pyansys.com/version/stable/index.html>`_
 for more information on compatibility.
