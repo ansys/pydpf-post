@@ -12,6 +12,16 @@ The Python `ansys-dpf-post` package provides a high-level, physics-oriented API 
 Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
 as results and then apply postprocessing operations on it.
 
+The latest version of DPF supports Ansys solver result files for:
+
+- MAPDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
+- LS-DYNA (`.d3plot`, `.binout`)
+- Fluent (`.cas/dat.h5`, `.flprj`)
+- CFX (`.cad/dat.cff`, `.flprj`)
+
+See the `PyDPF-Core main page <https://dpf.docs.pyansys.com/version/stable/index.html>`_
+for more information on compatibility.
+
 This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
 available at [PyDPF-Core GitHub](https://github.com/ansys/pydpf-core).
 Use the ``ansys-dpf-core`` package for building more advanced and customized workflows
@@ -41,10 +51,10 @@ pip install . --user
 
 ## Brief demo
 
-Provided you have Ansys 2023 R1 installed, a DPF server starts
+Provided you have Ansys 2023 R1 or later installed, a DPF server starts
 automatically once you start using PyDPF-Post.
 
-To load a simulation to extract and postprocess results, use this code:
+To load a simulation to extract and post-process results, use this code:
 
 ```pycon
 >>> from ansys.dpf import post
@@ -54,16 +64,16 @@ To load a simulation to extract and postprocess results, use this code:
 >>> print(displacement)
 ```
 ```pycon
-             results         U
-              set_id         3
-      node      comp          
-      4872         X -3.41e-05
-                   Y  1.54e-03
-                   Z -2.64e-06
-      9005         X -5.56e-05
-                   Y  1.44e-03
-                   Z  5.31e-06
-       ...
+             results       U (m)
+             set_ids           3
+ node_ids components            
+     4872          X -3.4137e-05
+                   Y  1.5417e-03
+                   Z -2.6398e-06
+     9005          X -5.5625e-05
+                   Y  1.4448e-03
+                   Z  5.3134e-06
+      ...        ...         ...
 ```
 ```pycon
 >>> displacement.plot()
