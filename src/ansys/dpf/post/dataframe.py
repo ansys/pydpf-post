@@ -736,6 +736,8 @@ class DataFrame:
             The interactive plotter object used for plotting.
 
         """
+        if len(self.index.mesh_index) == 0:
+            raise ValueError("Cannot plot a Dataframe with an empty mesh index.")
         label_space = {}
         if kwargs != {}:
             axis_kwargs, kwargs = self._filter_arguments(arguments=kwargs)
@@ -772,6 +774,8 @@ class DataFrame:
             fc = self._fc
             label_space = fc.get_label_space(0)
 
+        if len(fc) == 0:
+            raise ValueError("No data to plot.")
         for field in fc:
             # Treat multi-layer field
             shell_layer_check = field.shell_layers

@@ -29,10 +29,17 @@ print(simulation)
 
 
 ###############################################################################
-# Explore the available structure
-# -------------------------------
+# Explore the available metadata
+# ------------------------------
 # Check the available cell and face zones
-# print(simulation.zones)
+print(simulation.cell_zones)
+print(simulation.face_zones)
+
+###############################################################################
+# The mesh metadata is available separately from the mesh
+# as accessing the mesh means loading it.
+# Use the mesh_info property to explore the mesh structure to define queries
+print(simulation.mesh_info)
 
 ###############################################################################
 # Check the available species
