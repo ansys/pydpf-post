@@ -205,6 +205,7 @@ class Simulation(ABC):
         constructed_geometries: bool = True,
         loads: bool = True,
         boundary_conditions: bool = True,
+        **kwargs,
     ):
         """General plot of the simulation object.
 
@@ -223,6 +224,9 @@ class Simulation(ABC):
             Whether to plot the loads.
         boundary_conditions:
             Whether to plot the boundary conditions.
+        **kwargs
+            Additional keyword arguments for the plotter. More information
+            are available at :func:`pyvista.plot`.
 
         Returns
         -------
@@ -237,15 +241,15 @@ class Simulation(ABC):
         """
         plt = DpfPlotter()
         if mesh:
-            plt.add_mesh(self.mesh._meshed_region)
+            plt.add_mesh(self.mesh._meshed_region, **kwargs)
         if constructed_geometries:
             for geom in self.geometries:
-                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom)
+                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom, **kwargs)
         if loads:
             pass
         if boundary_conditions:
             pass
-        plt.show_figure()
+        plt.show_figure(**kwargs)
 
     @property
     def active_selection(self) -> Union[Selection, None]:

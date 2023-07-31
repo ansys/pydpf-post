@@ -96,7 +96,7 @@ def test_simulation_active_selection(static_simulation):
 
 
 def test_simulation_plot(static_simulation):
-    static_simulation.plot()
+    static_simulation.plot(cpos="xy")
 
 
 def test_simulation_split_mesh_by_properties(allkindofcomplexity):
