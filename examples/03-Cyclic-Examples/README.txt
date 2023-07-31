@@ -1,4 +1,4 @@
-.. _ref_detailed_examples:
+.. _ref_cyclic_examples:
 
 PyDPF-Post cyclic examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

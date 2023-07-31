@@ -10,8 +10,9 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post.common import AvailableSimulationTypes
+from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
+from ansys.dpf.post.meshes import Meshes
 
 
 @fixture
@@ -47,14 +48,16 @@ def test_simulation_init_with_server(static_rst, grpc_server):
 def test_simulation_units(static_simulation):
     assert static_simulation._units is None
     assert static_simulation.units is not None
-    assert static_simulation.units["time/frequency"] == "s"
-    assert static_simulation.units["distance"] == "m"
+    assert static_simulation.units["time"] == "s"
+    assert static_simulation.units["length"] == "m"
 
 
 def test_simulation_results(static_simulation):
     results = static_simulation.results
     assert len(results) == 12
-    assert all(isinstance(x, str) for x in results)
+    assert all(
+        isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
+    )
 
 
 def test_simulation_geometries(static_simulation):
@@ -93,7 +96,41 @@ def test_simulation_active_selection(static_simulation):
 
 
 def test_simulation_plot(static_simulation):
-    static_simulation.plot()
+    static_simulation.plot(cpos="xy")
+
+
+def test_simulation_split_mesh_by_properties(allkindofcomplexity):
+    simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+    meshes = simulation.split_mesh_by_properties(
+        properties=[
+            elemental_properties.material,
+            elemental_properties.element_shape,
+        ]
+    )
+    assert isinstance(meshes, Meshes)
+    assert len(meshes) == 16
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 1,
+            elemental_properties.element_shape: [0, 1],
+        }
+    )
+    assert isinstance(meshes, Meshes)
+    assert len(meshes) == 2
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 1,
+            elemental_properties.element_shape: [0, 2],
+        }
+    )
+    assert isinstance(meshes, post.Mesh)
+    meshes = simulation.split_mesh_by_properties(
+        properties={
+            elemental_properties.material: 22,
+            elemental_properties.element_shape: [0, 2],
+        }
+    )
+    assert meshes is None
 
 
 class TestStaticMechanicalSimulation:
@@ -657,7 +694,7 @@ class TestTransientMechanicalSimulation:
 
     def test_times_argument(self, transient_simulation, static_simulation):
         with pytest.raises(
-            ValueError, match="Could not find time=0.0s in the simulation."
+            ValueError, match="Could not find time=0.0 in the simulation."
         ):
             _ = transient_simulation.displacement(times=0.0)
 
@@ -678,7 +715,7 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
         # Test for times= just not near float
         with pytest.raises(
-            ValueError, match="Could not find time=0.1495s in the simulation."
+            ValueError, match="Could not find time=0.1495 in the simulation."
         ):
             _ = transient_simulation.displacement(components=["X"], times=0.1495)
 

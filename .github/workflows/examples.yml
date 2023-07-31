@@ -92,7 +92,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -108,6 +108,8 @@ jobs:
           wheelhouse: false
           wheel: false
           standalone_suffix: ${{ inputs.standalone_suffix }}
+          extra-pip-args: ${{ inputs.custom-wheels }}
+          custom-requirements: ${{ inputs.custom-requirements }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3

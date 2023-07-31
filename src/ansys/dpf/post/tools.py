@@ -17,7 +17,7 @@ def select(
     time_freq_sets=None,
     time_freq_values=None,
     named_selection_names=None,
-    **kwargs
+    **kwargs,
 ):
     """Creates a ``Selection`` instance allowing to choose the domain on which to evaluate results.
 
