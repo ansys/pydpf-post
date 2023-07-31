@@ -429,3 +429,24 @@ class TestFluidSimulation:
 """  # noqa: W291, E501
         assert str(result) == ref
         result.plot()
+
+    def test_plot_result_on_zones(self, fluent_simulation):
+        temperature = fluent_simulation.temperature(
+            zone_ids=list(fluent_simulation.cell_zones.keys())
+        )
+        temperature.plot()
+
+        temperature = fluent_simulation.temperature(
+            qualifiers={"zone": list(fluent_simulation.cell_zones.keys())}
+        )
+        temperature.plot()
+
+        temperature = fluent_simulation.temperature(
+            zone_ids=list(fluent_simulation.face_zones.keys())
+        )
+        temperature.plot()
+
+        temperature = fluent_simulation.temperature(
+            qualifiers={"zone": list(fluent_simulation.face_zones.keys())}
+        )
+        temperature.plot()

@@ -826,14 +826,6 @@ class DataFrame:
             #     )
             # )
             # return None
-        field_to_plot = fields[0]
-        # If multi-component, take the norm
-        if field_to_plot.component_count > 1:
-            field_to_plot = dpf.operators.math.norm(
-                field_to_plot, server=field_to_plot._server
-            ).eval()
-        plotter = DpfPlotter(**kwargs)
-        plotter.add_field(field=fields[0], **kwargs)
         # for field in fields:
         if len(fields) > 1:
             # try:
@@ -851,6 +843,15 @@ class DataFrame:
             # )
             # return None
         # field.plot(text="debug")
+        field_to_plot = fields[0]
+        # If multi-component, take the norm
+        if field_to_plot.component_count > 1:
+            field_to_plot = dpf.operators.math.norm(
+                field_to_plot, server=field_to_plot._server
+            ).eval()
+        plotter = DpfPlotter(**kwargs)
+        plotter.add_field(field=field_to_plot, **kwargs)
+
         return plotter.show_figure(
             title=kwargs.pop("title", str(label_space)), **kwargs
         )
