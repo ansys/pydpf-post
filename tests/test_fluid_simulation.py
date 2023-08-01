@@ -40,8 +40,9 @@ class TestFluidSimulation:
         )
         return post.FluidSimulation(ds)  # noqa
 
-    def test_simulation_init(self, fluent_simulation):
+    def test_simulation_str(self, fluent_simulation):
         assert fluent_simulation is not None
+        assert str(fluent_simulation)
 
     @pytest.mark.parametrize(
         "result_name",
