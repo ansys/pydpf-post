@@ -12,6 +12,7 @@ from ansys.dpf.post.selection import SpatialSelection
 def test_spatial_selection_select_nodes(allkindofcomplexity):
     simulation = post.load_simulation(allkindofcomplexity)
     selection = SpatialSelection()
+    selection._selection.progress_bar = False
     selection.select_nodes([1, 2, 3])
     scoping = selection._evaluate_on(simulation)
     assert scoping.location == post.locations.nodal
@@ -21,6 +22,7 @@ def test_spatial_selection_select_nodes(allkindofcomplexity):
 def test_spatial_selection_select_elements(allkindofcomplexity):
     simulation = post.load_simulation(allkindofcomplexity)
     selection = SpatialSelection()
+    selection._selection.progress_bar = False
     selection.select_elements([1, 2, 3, 4])
     scoping = selection._evaluate_on(simulation)
     assert scoping.location == post.locations.elemental
@@ -32,6 +34,7 @@ def test_spatial_selection_select_elements(allkindofcomplexity):
 def test_spatial_selection_select_named_selection(allkindofcomplexity):
     simulation = post.load_simulation(allkindofcomplexity)
     selection = SpatialSelection()
+    selection._selection.progress_bar = False
     selection.select_named_selection(
         simulation.mesh.named_selections.keys()[0],
         location=post.selection.locations.nodal,
@@ -68,6 +71,7 @@ class TestSpatialSelectionFaces:
 
     def test_spatial_selection_select_faces(self, fluent_simulation):
         selection = SpatialSelection()
+        selection._selection.progress_bar = False
         selection.select_faces(fluent_simulation.mesh.face_ids)
         scoping = selection._evaluate_on(fluent_simulation)
         assert scoping.location == post.locations.faces
@@ -75,6 +79,7 @@ class TestSpatialSelectionFaces:
 
     def test_spatial_selection_select_nodes_of_faces(self, fluent_simulation):
         selection = SpatialSelection()
+        selection._selection.progress_bar = False
         face_0 = fluent_simulation.mesh.faces[0]
         selection.select_nodes_of_faces(
             faces=[face_0.id],
@@ -86,6 +91,7 @@ class TestSpatialSelectionFaces:
 
     def test_spatial_selection_select_faces_of_elements(self, fluent_simulation):
         selection = SpatialSelection()
+        selection._selection.progress_bar = False
         elem_0 = fluent_simulation.mesh.elements[0]
         selection.select_faces_of_elements(
             elements=[elem_0.id],
