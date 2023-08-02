@@ -78,13 +78,8 @@ displacement_norm.plot(set_ids=6)
 
 
 ###############################################################################
-# Extract a selection of mode shapes and view them one by one
-# -----------------------------------------------------------
-
+# Extract a selection of mode shapes
+# ----------------------------------
 modes = [1, 2, 3]
-
 displacement_norm = simulation.displacement(modes=modes, norm=True)
 print(displacement_norm)
-
-for set_id in modes:
-    displacement_norm.plot(set_ids=set_id)
