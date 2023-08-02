@@ -47,20 +47,24 @@ print(displacement)
 displacement.animate(deform=True, title="U")
 
 
+###############################################################################
 # get specific components with "components"
 x_displacement = simulation.displacement(all_sets=True, components=["X"])
 print(x_displacement)
 x_displacement.animate(deform=True, title="UX")
 
 
+###############################################################################
 # get the norm of a vectorial result with "norm=True"
 displacement_norm = simulation.displacement(all_sets=True, norm=True)
 print(displacement_norm)
 displacement_norm.animate(deform=True, title="U norm")
 
+###############################################################################
 # get the available time set ids in the simulation
 print(simulation.set_ids)
 
+###############################################################################
 # extract displacement on given time steps or select the times steps from the already evaluated
 # displacement DataFrame
 displacement = simulation.displacement(set_ids=simulation.set_ids[5:])
@@ -73,6 +77,7 @@ print(displacement)
 strain = simulation.elastic_strain_nodal(all_sets=True)
 print(strain)
 
+###############################################################################
 strain = simulation.elastic_strain_nodal(set_ids=simulation.set_ids[10:])
 print(strain)
 
