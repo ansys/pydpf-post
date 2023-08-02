@@ -49,10 +49,12 @@ subdisp = displacement.select(complex=0, set_ids=1)
 print(subdisp)
 subdisp.plot(title="U tot real")
 
+###############################################################################
 subdisp = displacement.select(complex=1, set_ids=1)
 print(subdisp)
 subdisp.plot(title="U tot imaginary")
 
+###############################################################################
 subdisp = displacement.select(complex=0, set_ids=2)
 print(subdisp)
 subdisp.plot(title="U tot real")
@@ -68,10 +70,12 @@ sub_eqv = stress_eqv.select(complex=0, set_ids=1)
 print(sub_eqv)
 sub_eqv.plot(title="S_eqv real")
 
+###############################################################################
 sub_eqv = stress_eqv.select(complex=1, set_ids=1)
 print(sub_eqv)
 sub_eqv.plot(title="S_eqv imaginary")
 
+###############################################################################
 sub_eqv = stress_eqv.select(complex=0, set_ids=2)
 print(sub_eqv)
 sub_eqv.plot(title="S_eqv real")

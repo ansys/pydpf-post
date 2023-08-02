@@ -67,6 +67,7 @@ elemental_stress_ext = simulation.stress_principal_elemental(
 )
 elemental_stress_ext.plot()
 
+###############################################################################
 elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
     external_layer=True
 )

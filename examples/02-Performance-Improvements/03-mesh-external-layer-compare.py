@@ -49,6 +49,7 @@ print(simulation)
 displacement_ext = simulation.displacement(external_layer=True)
 displacement = simulation.displacement()  # default is external_layer=False
 displacement_ext.plot()
+###############################################################################
 displacement.plot()
 
 print(
@@ -70,6 +71,7 @@ elemental_stress_ext = simulation.stress_principal_elemental(
 )
 elemental_stress = simulation.stress_principal_elemental()
 elemental_stress_ext.plot()
+###############################################################################
 elemental_stress.plot()
 
 print(
@@ -83,5 +85,7 @@ elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
     external_layer=True
 )
 elastic_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal()
+###############################################################################
 elastic_strain_eqv_ext.plot()
+###############################################################################
 elastic_strain_eqv.plot()

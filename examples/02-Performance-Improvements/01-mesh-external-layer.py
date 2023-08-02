@@ -73,6 +73,7 @@ print(
     f"number of elements with external_layer=False: {len(simulation.mesh.element_ids)}"
 )
 
+###############################################################################
 elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
     external_layer=True
 )

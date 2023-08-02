@@ -54,6 +54,7 @@ print(x_displacement)
 # plot
 x_displacement.plot()
 
+###############################################################################
 # extract displacement on specific nodes
 nodes_displacement = displacement.select(node_ids=[1, 10, 100])
 nodes_displacement.plot()
@@ -89,10 +90,12 @@ print(nodal_stress)
 elemental_stress = simulation.stress_elemental()
 print(elemental_stress)
 
+###############################################################################
 # Extract elemental stresses on specific elements
 elemental_stress = elemental_stress.select(element_ids=[5, 6, 7])
 elemental_stress.plot()
 
+###############################################################################
 # Compute nodal eqv stresses from the result file
 eqv_stress = simulation.stress_eqv_von_mises_nodal()
 print(eqv_stress)

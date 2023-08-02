@@ -70,6 +70,7 @@ print(
 print(f"number of elements with skin=False: {len(simulation.mesh.element_ids)}")
 
 
+###############################################################################
 elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=True)
 elastic_strain_eqv_skin.plot()
 

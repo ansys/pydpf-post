@@ -51,10 +51,12 @@ print(strain)
 princ_stress_1 = simulation.stress_principal(components=[1])
 print(princ_stress_1)
 
+###############################################################################
 nodal_princ_stress_2 = simulation.stress_principal_nodal(components=[2])
 print(nodal_princ_stress_2)
 nodal_princ_stress_2.plot()
 
+###############################################################################
 nodal_princ_strain_2 = simulation.elastic_strain_principal_nodal(components=[2])
 print(nodal_princ_strain_2)
 nodal_princ_strain_2.plot()
@@ -67,8 +69,10 @@ nodal_princ_strain_2.plot()
 stress_eqv = simulation.stress_eqv_von_mises(set_ids=[1])
 print(stress_eqv)
 
+###############################################################################
 nodal_stress_eqv = simulation.stress_eqv_von_mises_nodal(set_ids=[1])
 nodal_stress_eqv.plot()
 
+###############################################################################
 nodal_strain_eqv = simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
 nodal_strain_eqv.plot()

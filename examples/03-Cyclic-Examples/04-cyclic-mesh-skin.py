@@ -60,6 +60,7 @@ displacement_skin.plot()
 elemental_stress_skin = simulation.stress_principal_elemental(components=[1], skin=True)
 elemental_stress_skin.plot()
 
+###############################################################################
 elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=True)
 elastic_strain_eqv_skin.plot()
 

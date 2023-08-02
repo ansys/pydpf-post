@@ -53,10 +53,12 @@ u_cyc = simulation.displacement(all_sets=True, expand_cyclic=False)
 # print(u_cyc)
 print(simulation.time_freq_support)
 
+###############################################################################
 s_cyc = simulation.stress_eqv_von_mises_nodal(all_sets=True, expand_cyclic=False)
 # plot mode 7 base sector (real) result
 s_cyc.plot(set_ids=7, base_sector=1)
 
+###############################################################################
 # plot mode 7 duplicate sector (imaginary) result
 s_cyc.plot(set_ids=7, base_sector=0)
 
@@ -68,12 +70,14 @@ s_cyc.plot(set_ids=7, base_sector=0)
 u_cyc = simulation.displacement(all_sets=True, expand_cyclic=[1])
 u_cyc.plot()
 
+###############################################################################
 # with phi=90°
 u_cyc = simulation.displacement(
     all_sets=True, expand_cyclic=[1], phase_angle_cyclic=90.0
 )
 u_cyc.plot()
 
+###############################################################################
 # with phi=45°
 u_cyc = simulation.displacement(
     all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0
