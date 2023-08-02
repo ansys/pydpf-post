@@ -27,7 +27,7 @@ class TestFluidMeshInfo:
         return post.FluidSimulation(ds)  # noqa
 
     def test_fluid_mesh_info_print(self, fluent_simulation):
-        print(fluent_simulation.mesh_info)
+        # print(fluent_simulation.mesh_info)
         ref = (
             "Fluid mesh metadata\n"
             "-------------------\n"
