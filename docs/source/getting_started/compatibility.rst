@@ -22,6 +22,9 @@ libraries.
    * - DPF server version
      - ansys.dpf.core python module version
      - ansys.dpf.post python module version
+   * - 7.0 (DPF Server 2024.1.pre0)
+     - 0.9.0 or later
+     - 0.5.0 or later
    * - 6.1 (DPF Server 2023.2.pre1)
      - 0.8.0 or later
      - 0.4.0 or later
