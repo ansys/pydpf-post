@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-dpf-post"
-version = "0.4.1.dev0"
+version = "0.5.0"
 description = "PyDPF-Post Python library."
 readme = "README.md"
 requires-python = ">=3.8,<4.0"
@@ -17,7 +17,7 @@ maintainers = [
     {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"},
 ]
 dependencies = [
-    "ansys-dpf-core @ git+https://git@github.com/ansys/pydpf-core.git",
+    "ansys-dpf-core",
     "scooby",
 ]
 classifiers = [
@@ -27,7 +27,6 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
