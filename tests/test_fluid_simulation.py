@@ -1,5 +1,8 @@
 from ansys.dpf.core import examples
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
+)
 import pytest
 from pytest import fixture
 
@@ -162,26 +165,31 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.nodal
 
         # Request on faces (requires filter-out of cell zones)
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.static_pressure(location=post.locations.faces)
-        # print(result)
-        # assert result.index.mesh_index.location == post.locations.faces
-        # assert result._core_object[0].location == post.locations.faces
-        # result._fc[0].plot()
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.static_pressure_on_faces()
-        # print(result)
-        # assert result.index.mesh_index.location == post.locations.faces
-        # # assert result._core_object[0].location == post.locations.faces
-        # result.plot()
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.static_pressure(location=post.locations.faces)
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.static_pressure_on_faces()
+        else:
+            result = fluent_simulation.static_pressure(location=post.locations.faces)
+            # print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            assert result._core_object[0].location == post.locations.faces
+            # result._fc[0].plot()
+
+            result = fluent_simulation.static_pressure_on_faces()
+            # print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            assert result._core_object[0].location == post.locations.faces
+            # result.plot()
 
         # Request on cells (requires filter-out of face zones)
         result = fluent_simulation.static_pressure(location=post.locations.elemental)
@@ -381,31 +389,38 @@ class TestFluidSimulation:
         # """  # noqa: W291, E501
         #         assert str(result) == ref
         #         result.plot()
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.density_on_faces(
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.density_on_faces(
+                    face_ids=fluent_simulation.mesh.face_ids
+                )
+        else:
+            result = fluent_simulation.density_on_faces(
                 face_ids=fluent_simulation.mesh.face_ids
             )
+            print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            # assert (
+            #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
+            # )  # TODO: why does this fail? Is the result not defined everywhere?
+            ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ face_ids              
+    39897    1.1077e+00
+    39898    1.0892e+00
+    39899    1.0821e+00
+    39900    1.0761e+00
+    39901    1.0721e+00
+    39902    1.0724e+00
+      ...           ...
+"""  # noqa: W291, E501
+            assert str(result) == ref
 
-    #         print(result)
-    #         assert result.index.mesh_index.location == post.locations.faces
-    #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
-    #         ref = """
-    #   results RHO (kg*m^-3)
-    #   set_ids             1
-    #  face_ids
-    #      1003    1.0877e+00
-    #      1004    1.0698e+00
-    #      1005    1.0493e+00
-    #      1006    1.0334e+00
-    #      1007    1.0366e+00
-    #      1008    1.0660e+00
-    #       ...           ...
-    # """  # noqa: W291, E501
-    #         assert str(result) == ref
     #         result.plot()
 
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
