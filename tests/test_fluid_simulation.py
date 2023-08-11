@@ -418,7 +418,7 @@ class TestFluidSimulation:
     39901    1.0721e+00
     39902    1.0724e+00
       ...           ...
-    """  # noqa: W291, E501
+"""  # noqa: W291, E501
             assert str(result) == ref
 
     #         result.plot()
