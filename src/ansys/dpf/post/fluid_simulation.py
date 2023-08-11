@@ -352,6 +352,12 @@ class FluidSimulation(Simulation):
                             "currently requires the use of face zone ids in the "
                             "'qualifiers' or the 'zone_ids' arguments."
                         )
+                    else:
+                        # ElementalAndFaces results have been requested on faces
+                        # without defining zones
+                        # Do nothing unless face_ids is not defined, in which case we set it to all
+                        if face_ids is None:
+                            face_ids = self.mesh.face_ids
 
             elif location == locations.elemental:
                 # CFF only returns results on face zones if qualifiers have been set
