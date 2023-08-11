@@ -7,6 +7,8 @@ FluidSimulation
 from os import PathLike
 from typing import List, Union
 
+from ansys.dpf.core.server_types import BaseServer
+
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
@@ -131,7 +133,7 @@ class FluidSimulation(Simulation):
         cas: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         flprj: Union[PathLike, str, None] = None,
-        server: Union[dpf.server_types.BaseServer, None] = None,
+        server: Union[BaseServer, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
         tot = (
@@ -350,8 +352,6 @@ class FluidSimulation(Simulation):
                             "currently requires the use of face zone ids in the "
                             "'qualifiers' or the 'zone_ids' arguments."
                         )
-                    else:
-                        raise NotImplementedError
 
             elif location == locations.elemental:
                 # CFF only returns results on face zones if qualifiers have been set

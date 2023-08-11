@@ -180,13 +180,13 @@ class TestFluidSimulation:
                 _ = fluent_simulation.static_pressure_on_faces()
         else:
             result = fluent_simulation.static_pressure(location=post.locations.faces)
-            # print(result)
+            print(result)
             assert result.index.mesh_index.location == post.locations.faces
             assert result._core_object[0].location == post.locations.faces
             # result._fc[0].plot()
 
             result = fluent_simulation.static_pressure_on_faces()
-            # print(result)
+            print(result)
             assert result.index.mesh_index.location == post.locations.faces
             assert result._core_object[0].location == post.locations.faces
             # result.plot()
@@ -402,7 +402,7 @@ class TestFluidSimulation:
             result = fluent_simulation.density_on_faces(
                 face_ids=fluent_simulation.mesh.face_ids
             )
-            #         print(result)
+            print(result)
             assert result.index.mesh_index.location == post.locations.faces
             assert (
                 len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
