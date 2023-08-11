@@ -389,31 +389,38 @@ class TestFluidSimulation:
         # """  # noqa: W291, E501
         #         assert str(result) == ref
         #         result.plot()
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.density_on_faces(
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.density_on_faces(
+                    face_ids=fluent_simulation.mesh.face_ids
+                )
+        else:
+            result = fluent_simulation.density_on_faces(
                 face_ids=fluent_simulation.mesh.face_ids
             )
+            #         print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            assert (
+                len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
+            )
+            ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ face_ids
+     1003    1.0877e+00
+     1004    1.0698e+00
+     1005    1.0493e+00
+     1006    1.0334e+00
+     1007    1.0366e+00
+     1008    1.0660e+00
+      ...           ...
+    """  # noqa: W291, E501
+            assert str(result) == ref
 
-    #         print(result)
-    #         assert result.index.mesh_index.location == post.locations.faces
-    #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
-    #         ref = """
-    #   results RHO (kg*m^-3)
-    #   set_ids             1
-    #  face_ids
-    #      1003    1.0877e+00
-    #      1004    1.0698e+00
-    #      1005    1.0493e+00
-    #      1006    1.0334e+00
-    #      1007    1.0366e+00
-    #      1008    1.0660e+00
-    #       ...           ...
-    # """  # noqa: W291, E501
-    #         assert str(result) == ref
     #         result.plot()
 
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
