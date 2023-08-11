@@ -1,5 +1,8 @@
 from ansys.dpf.core import examples
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
+)
 import pytest
 from pytest import fixture
 
@@ -162,26 +165,31 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.nodal
 
         # Request on faces (requires filter-out of cell zones)
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.static_pressure(location=post.locations.faces)
-        # print(result)
-        # assert result.index.mesh_index.location == post.locations.faces
-        # assert result._core_object[0].location == post.locations.faces
-        # result._fc[0].plot()
-        with pytest.raises(
-            ValueError,
-            match="Querying an ElementalAndFaces result on "
-            "faces currently requires the use of face zone ids",
-        ):
-            _ = fluent_simulation.static_pressure_on_faces()
-        # print(result)
-        # assert result.index.mesh_index.location == post.locations.faces
-        # # assert result._core_object[0].location == post.locations.faces
-        # result.plot()
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.static_pressure(location=post.locations.faces)
+            with pytest.raises(
+                ValueError,
+                match="Querying an ElementalAndFaces result on "
+                "faces currently requires the use of face zone ids",
+            ):
+                _ = fluent_simulation.static_pressure_on_faces()
+        else:
+            result = fluent_simulation.static_pressure(location=post.locations.faces)
+            # print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            assert result._core_object[0].location == post.locations.faces
+            # result._fc[0].plot()
+
+            result = fluent_simulation.static_pressure_on_faces()
+            # print(result)
+            assert result.index.mesh_index.location == post.locations.faces
+            assert result._core_object[0].location == post.locations.faces
+            # result.plot()
 
         # Request on cells (requires filter-out of face zones)
         result = fluent_simulation.static_pressure(location=post.locations.elemental)
