@@ -210,11 +210,6 @@ jobs:
     needs: [style, tests, retro, examples, docs]
     runs-on: ubuntu-latest
     steps:
-      - name: "Set up Python"
-        uses: actions/setup-python@v4.7.0
-        with:
-          python-version: 3.9
-
       - name: "Download artifacts"
         uses: actions/download-artifact@v3
 
