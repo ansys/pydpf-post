@@ -115,7 +115,7 @@ start the legacy PyDPF-Post tools:
 ```
 ![Example Stress plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
-## License
+## License and acknowledgements
 
 PyDPF-Post is licensed under the MIT license. For more information, see the
 [LICENSE](https://github.com/ansys/pydpf-post/raw/master/LICENSE) file.
