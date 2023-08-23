@@ -16,10 +16,10 @@ postprocessing operations on them.
 
 The latest version of DPF supports Ansys solver results files for:
 
-- Mechanical APDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
-- LS-DYNA (`.d3plot`, `.binout`)
-- Fluent (`.cas/dat.h5`, `.flprj`)
-- CFX (`.cad/dat.cff`, `.flprj`)
+  - Mechanical APDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
+  - LS-DYNA (`.d3plot`, `.binout`)
+  - Fluent (`.cas/dat.h5`, `.flprj`)
+  - CFX (`.cad/dat.cff`, `.flprj`)
 
 For more information on file support, see the [main page](https://dpf.docs.pyansys.com/version/stable/index.html)
 in the PyDPF-Core documentation.
