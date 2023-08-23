@@ -22,7 +22,7 @@ The latest version of DPF supports Ansys solver results files for:
 - CFX (`.cad/dat.cff`, `.flprj`)
 
 For more information on file support, see the [main page](https://dpf.docs.pyansys.com/version/stable/index.html)
-in the PDF-Core documentation.
+in the PyDPF-Core documentation.
 
 PyDPF-Post leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
 available at [PyDPF-Core GitHub](https://github.com/ansys/pydpf-core).
@@ -45,7 +45,7 @@ for using PyDPF-Post.
 
 On the [PyDPF-Post Issues](https://github.com/ansys/pydpf-post/issues) page,
 you can create issues to report bugs and request new features. On the
-[PyDPF-Core Discussions](https://github.com/ansys/pydpf-post/discussions) page or the [Discussions](https://discuss.ansys.com/)
+[PyDPF-Post Discussions](https://github.com/ansys/pydpf-post/discussions) page or the [Discussions](https://discuss.ansys.com/)
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback. 
 
 To reach the project support team, email [pyansys.core@ansys.com](mailto:pyansys.core@ansys.com).
