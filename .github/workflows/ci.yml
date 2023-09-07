@@ -84,8 +84,6 @@ jobs:
           wheel: true
           wheelhouse: true
           standalone_suffix: ${{ inputs.standalone_suffix || ''}}
-          extra-pip-args: ${{ './dpf-standalone/v241/dist' && format('--find-links {0}', './dpf-standalone/v241/dist')}}
-          custom-requirements: requirements/requirements_dev.txt
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -198,8 +196,6 @@ jobs:
       ANSYS_VERSION: "241"
       python_versions: '["3.10"]'
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
-      custom-wheels: ${{ format('--find-links {0}', './dpf-standalone/v241/dist')}}
-      custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
   docs:
@@ -209,8 +205,6 @@ jobs:
       ANSYS_VERSION: "241"
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
-      custom-wheels: ./dpf-standalone/v241/dist
-      custom-requirements: requirements/requirements_dev.txt
     secrets: inherit
 
   upload-development-docs:
