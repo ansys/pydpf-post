@@ -22,20 +22,20 @@ def plot_streamlines(
     contour_opacity: float = 0.3,
     **kwargs,
 ):
-    """Plot streamlines based on a velocity field DataFrame.
+    """Plot streamlines based on a vector field DataFrame.
 
     Parameters
     ----------
     dataframe:
-        A `post.DataFrame` object containing a velocity field.
+        A `post.DataFrame` object containing a vector field.
     sources:
         A list of dictionaries defining spherical point sources for the streamlines.
         Expected keywords are "center", "radius", and "line_thickness".
     mesh:
         A `post.Mesh` object to use to compute the streamlines instead of the mesh associated with
-        the velocity field in the DataFrame.
+        the vector field in the DataFrame.
     plot_contour:
-        Whether to plot the field contour along with the streamlines.
+        Whether to plot the field's norm contour along with the streamlines.
     contour_opacity:
         Opacity to use for the field contour in case "plot_contour=True".
     plot_mesh:
