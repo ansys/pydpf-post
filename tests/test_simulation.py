@@ -512,6 +512,34 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
+    def test_thermal_strain(self, allkindofcomplexity):
+        static_simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+        print(static_simulation)
+        result = static_simulation.thermal_strain(components=1)
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("ETHX")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_thermal_strains_eqv(self, allkindofcomplexity):
+        static_simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+        print(static_simulation)
+        result = static_simulation.thermal_strain_eqv()
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("ETH_EQV")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+
     # @pytest.mark.skipif(
     #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     #     reason="Available starting DPF 5.0",
