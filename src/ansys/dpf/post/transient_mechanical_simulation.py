@@ -3076,6 +3076,765 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             skin=skin,
         )
 
+    def thermal_strain(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=location,
+            category=ResultCategory.matrix,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_nodal(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract nodal thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.nodal,
+            category=ResultCategory.matrix,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_elemental(
+        self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract elemental thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are "X", "Y", "Z", "XX", "XY",
+            "XZ", and their respective equivalents 1, 2, 3, 4, 5, 6.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.elemental,
+            category=ResultCategory.matrix,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_principal(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract principal thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=location,
+            category=ResultCategory.principal,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_principal_nodal(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract nodal principal thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs pf elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.nodal,
+            category=ResultCategory.principal,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_principal_elemental(
+        self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        components: Union[str, List[str], int, List[int], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract elemental principal thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        components:
+            Components to get results for. Available components are: 1, 2, and 3.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.elemental,
+            category=ResultCategory.principal,
+            components=components,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_eqv(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        location: Union[locations, str] = locations.elemental_nodal,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract equivalent thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=location,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_eqv_nodal(
+        self,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract nodal equivalent thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.nodal,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+    def thermal_strain_eqv_elemental(
+        self,
+        element_ids: Union[List[int], None] = None,
+        times: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract elemental equivalent thermal strain results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `times`, and `load_steps` are mutually
+        exclusive.
+        If none of the above is given, only the last result will be returned.
+
+        Arguments `selection`, `named_selections`, and `element_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to get results for.
+        times:
+            List of time values to get results for.
+        set_ids:
+            Sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        named_selections:
+            Named selection or list of named selections to get results for.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+            Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        return self._get_result(
+            base_name="ETH",
+            location=locations.elemental,
+            category=ResultCategory.equivalent,
+            components=None,
+            selection=selection,
+            times=times,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            load_steps=load_steps,
+            node_ids=None,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
     def reaction_force(
         self,
         node_ids: Union[List[int], None] = None,
