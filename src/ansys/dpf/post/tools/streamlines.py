@@ -15,7 +15,7 @@ from ansys.dpf import post
 def plot_streamlines(
     dataframe: post.DataFrame,
     sources: List[dict],
-    mesh: Union[post.Mesh, None] = None,
+    streamline_thickness: Union[float, List[float]] = 0.01,
     plot_mesh: bool = True,
     mesh_opacity: float = 0.3,
     plot_contour: bool = True,
@@ -30,10 +30,12 @@ def plot_streamlines(
         A `post.DataFrame` object containing a vector field.
     sources:
         A list of dictionaries defining spherical point sources for the streamlines.
-        Expected keywords are "center", "radius", and "line_thickness".
-    mesh:
-        A `post.Mesh` object to use to compute the streamlines instead of the mesh associated with
-        the vector field in the DataFrame.
+        Expected keywords are "center", "radius", "max_time" and "n_points".
+        Keyword "max_time" is for the maximum integration pseudo-time for the streamline
+        computation algorithm, which defines the final length of the lines.
+        More information is available at :func:`pyvista.DataSetFilters.streamlines`.
+    streamline_thickness:
+        Thickness of the streamlines plotted. Use a list to specify a value for each source.
     plot_contour:
         Whether to plot the field's norm contour along with the streamlines.
     contour_opacity:
@@ -46,10 +48,7 @@ def plot_streamlines(
 
     """
     # Select data to work with
-    if mesh:
-        meshed_region = mesh._meshed_region
-    else:
-        meshed_region = dataframe._fc[0].meshed_region
+    meshed_region = dataframe._fc[0].meshed_region
     field = dataframe._fc[0]
 
     # Initialize the plotter
@@ -59,18 +58,21 @@ def plot_streamlines(
         plt.add_field(field=field, opacity=contour_opacity)
     elif plot_mesh:
         plt.add_mesh(meshed_region=meshed_region, opacity=mesh_opacity)
-
+    if not isinstance(streamline_thickness, list):
+        streamline_thickness = [streamline_thickness] * len(sources)
     # Add streamlines for each source
-    for source in sources:
+    for i, source in enumerate(sources):
         pv_streamline, pv_source = core_streamlines.compute_streamlines(
             meshed_region=meshed_region,
             field=field,
             return_source=True,
             source_radius=source["radius"],
             source_center=source["center"],
+            n_points=source["n_points"] if "n_points" in source else 100,
+            max_time=source["max_time"] if "max_time" in source else None,
         )
         plt.add_streamlines(
-            pv_streamline, source=pv_source, radius=source["line_thickness"]
+            pv_streamline, source=pv_source, radius=streamline_thickness[i]
         )
 
     plt.show_figure(**kwargs)
