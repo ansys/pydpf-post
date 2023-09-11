@@ -40,7 +40,7 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v4.7.0
@@ -63,7 +63,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: env.ANSYS_VERSION > 231
@@ -132,7 +132,7 @@ jobs:
         ANSYS_VERSION: ["232", "231", "222"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: matrix.ANSYS_VERSION > 231
