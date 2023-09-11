@@ -52,6 +52,8 @@ class TestFluidSimulation:
             flprj=examples.download_fluent_axial_comp()["flprj"]
         )
         assert len(simulation.time_freq_support.time_frequencies) == 3
+        result = simulation.static_pressure(all_sets=True)
+        assert len(result.columns.set_ids) == 3
 
     @pytest.mark.parametrize(
         "result_name",
