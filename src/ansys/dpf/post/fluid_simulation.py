@@ -154,7 +154,7 @@ class FluidSimulation(Simulation):
         else:
             ds = dpf.DataSources()
             if flprj:
-                raise NotImplementedError("flprj input not accepted yet")
+                ds.set_result_file_path(flprj, "flprj")
             if cas:
                 if not isinstance(cas, list):
                     cas = [cas]
