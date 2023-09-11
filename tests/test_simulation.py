@@ -512,61 +512,41 @@ class TestStaticMechanicalSimulation:
         assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
-    # def test_element_nodal_forces(self, allkindofcomplexity):
-    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-    #     element_nodal_forces = static_simulation.element_nodal_forces()
-    #     assert len(element_nodal_forces._fc) == 1
-    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-    #     field = element_nodal_forces._fc[0]
-    #     op = static_simulation._model.operator("ENF")
-    #     op.inputs.bool_rotate_to_global.connect(False)
-    #     field_ref = op.eval()[0]
-    #     assert field.component_count == 3
-    #     # if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-    #     #     assert field.data.shape == (103750, 3)
-    #     assert np.allclose(field.data, field_ref.data)
-    #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
-    # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
-    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-    #     element_nodal_forces = static_simulation.element_nodal_forces_nodal()
-    #     assert len(element_nodal_forces._fc) == 3
-    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-    #     field = element_nodal_forces._fc[0]
-    #     op = static_simulation._model.operator("ENF")
-    #     op.inputs.bool_rotate_to_global.connect(False)
-    #     op.connect(9, post.locations.nodal)
-    #     field_ref = op.eval()[0]
-    #     assert field.component_count == 3
-    #     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-    #         assert field.data.shape == (14982, 3)
-    #     assert np.allclose(field.data, field_ref.data)
-    #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
-    # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
-    #     static_simulation = post.load_simulation(data_sources=allkindofcomplexity)
-    #     element_nodal_forces = static_simulation.element_nodal_forces_elemental()
-    #     assert len(element_nodal_forces._fc) == 3
-    #     assert element_nodal_forces._fc.get_time_scoping().ids == [1]
-    #     field = element_nodal_forces._fc[0]
-    #     op = static_simulation._model.operator("ENF")
-    #     op.inputs.bool_rotate_to_global.connect(False)
-    #     op.connect(9, post.locations.elemental)
-    #     field_ref = op.eval()[0]
-    #     assert field.component_count == 3
-    #     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-    #         assert field.data.shape == (9433, 3)
-    #     assert np.allclose(field.data, field_ref.data)
+    def test_thermal_strain(self, allkindofcomplexity):
+        static_simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+        # thermal_strain
+        result = static_simulation.thermal_strain(components=1)
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("ETHX")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+        # thermal_strain_eqv
+        result = static_simulation.thermal_strain_eqv()
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("ETH_EQV")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+        # thermal_strain_principal
+        result = static_simulation.thermal_strain_principal(components=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = static_simulation._model.operator("ETH1")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain_eqv_von_mises(self, static_simulation):
         result = static_simulation.elastic_strain_eqv_von_mises(set_ids=[1])
@@ -1082,6 +1062,43 @@ class TestTransientMechanicalSimulation:
         op = transient_simulation._model.operator("ENG_TH")
         field_ref = op.eval()[0]
         assert field.component_count == 1
+        assert np.allclose(field.data, field_ref.data)
+
+    def test_thermal_strain(self, allkindofcomplexity):
+        simulation = post.TransientMechanicalSimulation(allkindofcomplexity)
+        print(simulation)
+        # thermal_strain
+        result = simulation.thermal_strain(components=1)
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = simulation._model.operator("ETHX")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+        # thermal_strain_eqv
+        result = simulation.thermal_strain_eqv()
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = simulation._model.operator("ETH_EQV")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
+        assert np.allclose(field.data, field_ref.data)
+        # thermal_strain_principal
+        result = simulation.thermal_strain_principal(components=[1])
+        assert len(result._fc) == 1
+        assert result._fc.get_time_scoping().ids == [1]
+        field = result._fc[0]
+        op = simulation._model.operator("ETH1")
+        op.connect(9, post.locations.elemental_nodal)
+        field_ref = op.eval()[0]
+        assert field.component_count == 1
+        assert field.data.shape == (40016,)
         assert np.allclose(field.data, field_ref.data)
 
     def test_kinetic_energy(self, transient_simulation):
