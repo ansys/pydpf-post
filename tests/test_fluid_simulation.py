@@ -47,6 +47,12 @@ class TestFluidSimulation:
         assert fluent_simulation is not None
         assert str(fluent_simulation)
 
+    def test_simulation_flprj(self):
+        simulation = post.FluidSimulation(
+            flprj=examples.download_fluent_axial_comp()["flprj"]
+        )
+        assert len(simulation.time_freq_support.time_frequencies) == 3
+
     @pytest.mark.parametrize(
         "result_name",
         [
