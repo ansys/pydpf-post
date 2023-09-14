@@ -37,7 +37,7 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v4.7.0
@@ -62,7 +62,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: env.ANSYS_VERSION > 231
@@ -127,10 +127,10 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["232", "231", "222", "221"]
+        ANSYS_VERSION: ["232", "231", "222"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: matrix.ANSYS_VERSION > 231
@@ -150,14 +150,6 @@ jobs:
           install_extras: plotting
           wheel: false
           extra-pip-args: ${{ env.extra }}
-
-      - name: "Install ansys-grpc-dpf==0.4.0"
-        shell: bash
-        run: |
-          pip install ansys-grpc-dpf==0.4.0
-          pip uninstall -y protobuf
-          pip install "protobuf<4.0"
-        if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3

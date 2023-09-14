@@ -82,6 +82,7 @@ extensions = [
 ]
 
 typehints_defaults = "comma"
+typehints_use_signature = True
 simplify_optional_unions = False
 
 # Intersphinx mapping
