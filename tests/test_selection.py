@@ -1,4 +1,3 @@
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -7,6 +6,7 @@ from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
 from ansys.dpf.post.selection import SpatialSelection
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
 def test_spatial_selection_select_nodes(allkindofcomplexity):

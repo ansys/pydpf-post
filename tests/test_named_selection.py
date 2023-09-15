@@ -1,10 +1,10 @@
-import conftest
 import pytest
 from pytest import fixture
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import StaticMechanicalSimulation
 from ansys.dpf.post.named_selection import NamedSelection
+import conftest
 
 
 @fixture
