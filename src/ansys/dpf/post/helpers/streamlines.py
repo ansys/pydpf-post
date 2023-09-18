@@ -9,12 +9,14 @@ from typing import List, Union
 from ansys.dpf.core.helpers import streamlines as core_streamlines
 from ansys.dpf.core.plotter import DpfPlotter
 
+from ansys.dpf import core as dpf
 from ansys.dpf import post
 
 
 def plot_streamlines(
     dataframe: post.DataFrame,
     sources: List[dict],
+    set_id: int = 1,
     streamline_thickness: Union[float, List[float]] = 0.01,
     plot_mesh: bool = True,
     mesh_opacity: float = 0.3,
@@ -28,12 +30,16 @@ def plot_streamlines(
     ----------
     dataframe:
         A `post.DataFrame` object containing a vector field.
+        If present, merges the `DataFrame` across its `zone` label before plotting.
     sources:
         A list of dictionaries defining spherical point sources for the streamlines.
         Expected keywords are "center", "radius", "max_time" and "n_points".
         Keyword "max_time" is for the maximum integration pseudo-time for the streamline
         computation algorithm, which defines the final length of the lines.
         More information is available at :func:`pyvista.DataSetFilters.streamlines`.
+    set_id:
+        ID of the set (time-step) for which to compute streamlines if the `DataFrame` object
+        contains temporal data.
     streamline_thickness:
         Thickness of the streamlines plotted. Use a list to specify a value for each source.
     plot_contour:
@@ -48,8 +54,16 @@ def plot_streamlines(
 
     """
     # Select data to work with
-    meshed_region = dataframe._fc[0].meshed_region
-    field = dataframe._fc[0]
+    fc = dataframe._fc
+    if "zone" in dataframe.columns.names:
+        fc = dpf.operators.utility.merge_fields_by_label(
+            fields_container=fc,
+            label="zone",
+        ).outputs.fields_container()
+    if set_id not in dataframe.columns.set_index.values:
+        raise ValueError("The set_id requested is not available in this dataframe.")
+    field = fc.get_field_by_time_id(timeid=set_id)
+    meshed_region = field.meshed_region
 
     # Initialize the plotter
     plt = DpfPlotter(**kwargs)

@@ -21,7 +21,6 @@ class TestStreamlines:
         #
         # pv.OFF_SCREEN = False
         dataframe = simulation.velocity(times=[0.0], zone_ids=[5])
-        print(dataframe)
         sources = [
             {"radius": 0.25, "center": (0.75, 0.0, 0.0), "n_points": 20},
             {
@@ -36,6 +35,30 @@ class TestStreamlines:
         streamlines.plot_streamlines(
             dataframe=dataframe,
             sources=sources,
+            streamline_thickness=0.007,
+            plot_mesh=True,
+            mesh_opacity=0.2,
+            plot_contour=True,
+            contour_opacity=0.3,
+            title="Streamlines with multiple sources",
+        )
+        dataframe = simulation.velocity()
+        with pytest.raises(ValueError, match="The set_id requested is not available"):
+            streamlines.plot_streamlines(
+                dataframe=dataframe,
+                sources=sources,
+                set_id=2,
+                streamline_thickness=0.007,
+                plot_mesh=True,
+                mesh_opacity=0.2,
+                plot_contour=True,
+                contour_opacity=0.3,
+                title="Streamlines with multiple sources",
+            )
+        streamlines.plot_streamlines(
+            dataframe=dataframe,
+            sources=sources,
+            set_id=1,
             streamline_thickness=0.007,
             plot_mesh=True,
             mesh_opacity=0.2,
