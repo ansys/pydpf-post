@@ -811,7 +811,7 @@ class MechanicalSimulation(Simulation, ABC):
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
         external_layer: bool = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (

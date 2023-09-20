@@ -1,8 +1,4 @@
 import ansys.dpf.core as dpf
-from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-)
 import pytest
 
 from ansys.dpf import post
@@ -12,6 +8,10 @@ from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimu
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+)
 
 
 def test_load_simulation_static_mechanical(simple_bar, complex_model):
