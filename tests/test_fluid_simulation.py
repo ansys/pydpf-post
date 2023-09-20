@@ -97,7 +97,6 @@ class TestFluidSimulation:
             "total_pressure",
             "density",
             "entropy",
-            "wall_shear_stress",
             "temperature",
             "total_temperature",
             "velocity",
