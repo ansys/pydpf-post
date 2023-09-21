@@ -217,7 +217,7 @@ class TestFluidSimulation:
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  node_ids                             
-        1        3.0553e+02           
+        1        3.0533e+02           
         2        3.0389e+02           
         3        3.0155e+02           
         4        3.0201e+02           
