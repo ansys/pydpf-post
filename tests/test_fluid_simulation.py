@@ -217,12 +217,12 @@ class TestFluidSimulation:
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  node_ids                             
-        1        3.0550e+02           
-        2        3.0445e+02           
-        3        3.0147e+02           
-        4        3.0157e+02           
-        5        3.0301e+02           
-        6        3.0478e+02           
+        1        3.0553e+02           
+        2        3.0389e+02           
+        3        3.0155e+02           
+        4        3.0201e+02           
+        5        3.0340e+02           
+        6        3.0487e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -305,12 +305,12 @@ class TestFluidSimulation:
   set_ids                 1           
     phase Water at 25 C (2) Copper (3)
  cell_ids                             
-        1        3.0124e+02           
-        2        3.0200e+02           
-        3        3.0184e+02           
-        4        3.0071e+02           
-        5        3.0327e+02           
-        6        3.0063e+02           
+        1        3.0113e+02           
+        2        3.0206e+02           
+        3        3.0182e+02           
+        4        3.0093e+02           
+        5        3.0291e+02           
+        6        3.0055e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
