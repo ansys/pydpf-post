@@ -77,6 +77,7 @@ class DpfSolution:
              -  co_energy: Elemental co-energy
              -  incremental_energy: Elemental incremental energy
              -  elastic_strain: ElementalNodal Strain
+             -  eul: ElementalNodal EUL
              -  structural_temperature: ElementalNodal Structural temperature
         """
         return self._model.metadata.result_info
