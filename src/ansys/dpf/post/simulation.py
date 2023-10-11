@@ -619,6 +619,7 @@ class Simulation(ABC):
         merge_op = dpf.operators.utility.merge_fields_by_label(
             fields_container=shell_layer_op.outputs.fields_container_as_fields_container,
             label="eltype",
+            server=fc._server,
         )
 
         # Expose output
@@ -643,7 +644,9 @@ class Simulation(ABC):
             if submesh is not None:
                 for i_field in range(len(fc)):
                     bind_support_op = dpf.operators.utility.bind_support(
-                        fc[i_field], submesh
+                        fc[i_field],
+                        submesh,
+                        server=fc._server,
                     )
                     fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
         if unit == "":
@@ -811,7 +814,7 @@ class MechanicalSimulation(Simulation, ABC):
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
         external_layer: bool = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (

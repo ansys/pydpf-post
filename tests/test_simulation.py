@@ -1,10 +1,6 @@
 import os.path
 
 import ansys.dpf.core as dpf
-from conftest import (  # SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
-)
 import numpy as np
 import pytest
 from pytest import fixture
@@ -13,6 +9,11 @@ from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
+from conftest import (  # SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+)
 
 
 @fixture
@@ -54,7 +55,10 @@ def test_simulation_units(static_simulation):
 
 def test_simulation_results(static_simulation):
     results = static_simulation.results
-    assert len(results) == 12
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0:
+        assert len(results) == 12
+    else:
+        assert len(results) == 13
     assert all(
         isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
     )
@@ -153,6 +157,16 @@ class TestStaticMechanicalSimulation:
         # print(result)
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
+
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+        reason="Available starting DPF 4.0",
+    )
+    def test_with_grpc_server(self, static_rst, grpc_server):
+        simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
+        assert simulation._model._server != dpf.SERVER
+        _ = simulation.displacement()
+        _ = simulation.displacement(skin=True)
 
     def test_times_argument(self, static_simulation):
         _ = static_simulation.displacement(times=1)
@@ -2070,6 +2084,18 @@ class TestHarmonicMechanicalSimulation:
         # print(result)
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
+
+    @pytest.mark.skipif(
+        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+        reason="Available starting DPF 4.0",
+    )
+    def test_with_grpc_server(self, complex_model, grpc_server):
+        simulation = post.HarmonicMechanicalSimulation(
+            complex_model, server=grpc_server
+        )
+        assert simulation._model._server != dpf.SERVER
+        _ = simulation.displacement()
+        _ = simulation.displacement(skin=True)
 
     def test_displacement(self, harmonic_simulation):
         # print(harmonic_simulation)
