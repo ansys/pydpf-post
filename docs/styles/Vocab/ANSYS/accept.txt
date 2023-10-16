@@ -3,19 +3,18 @@ Ansys 2022R1
 Ansys 2022R2
 Ansys 2023R1
 ANSYS
-Ansys
-ansys
-ansys-dpf-server-2023-2-pre0
-ansys-dpf-server-2023-2-pre1
+[Aa]nsys
+[Aa]nsys-dpf-server-2023-2-pre0
+[Aa]nsys-dpf-server-2023-2-pre1
 API
 HDF5
+[Cc]ore
 postprocess
 postprocessing
 PyDPF
 PyDPF-Core
 PyDPF-Post
-Post
-post
+[Pp]ost
 Pythonic
 subresult
 subresults
