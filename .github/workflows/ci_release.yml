@@ -58,7 +58,7 @@ jobs:
       matrix:
         ANSYS_VERSION: ["241"]
         suffix: [".pre0"]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
@@ -192,6 +192,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: '241'
+      python-version: "3.10"
       standalone_suffix: '.pre0'
       event_name: ${{ github.event_name }}
     secrets: inherit
