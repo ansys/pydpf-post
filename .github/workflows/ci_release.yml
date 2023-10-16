@@ -6,6 +6,12 @@ on:
       - "v*"
   schedule:
     - cron: "0 13 * * 0"
+  workflow_dispatch:
+    inputs:
+      standalone_branch_suffix:
+        description: 'Suffix of the branch on standalone'
+        required: false
+        default: '.pre0'
 
 #┌───────────── minute (0 - 59)
 #│ ┌───────────── hour (0 - 23)
@@ -57,7 +63,6 @@ jobs:
       fail-fast: false
       matrix:
         ANSYS_VERSION: ["241"]
-        suffix: [".pre0"]
         python-version: ["3.9", "3.10", "3.11"]
         os: ["windows-latest", "ubuntu-latest"]
 
@@ -82,7 +87,7 @@ jobs:
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ matrix.suffix }}
+          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -185,7 +190,7 @@ jobs:
     with:
       ANSYS_VERSION: '241'
       python_versions: '["3.10"]'
-      standalone_suffix: '.pre0'
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
     secrets: inherit
 
   docs:
@@ -193,7 +198,7 @@ jobs:
     with:
       ANSYS_VERSION: '241'
       python-version: "3.10"
-      standalone_suffix: '.pre0'
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
       event_name: ${{ github.event_name }}
     secrets: inherit
 
