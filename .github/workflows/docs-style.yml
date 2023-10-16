@@ -23,7 +23,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
-          version: '2.29.5'
           files: docs
           reporter: ${{ inputs.vale_reporter || 'local' }}
           level: error
