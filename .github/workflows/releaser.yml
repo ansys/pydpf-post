@@ -6,7 +6,6 @@ on:
 
 env:
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
-  PYTHON_MAIN_VERSION: '3.10'
 
 jobs:
 
