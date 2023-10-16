@@ -1,5 +1,9 @@
+.. vale off
+
 PyDPF-Post
 ==========
+
+.. vale on
 
 Ansys Data Processing Framework (DPF) provides numerical simulation 
 users and engineers with a toolbox for accessing and transforming simulation 
