@@ -1,7 +1,7 @@
-Ansys 2021R2
-Ansys 2022R1
-Ansys 2022R2
-Ansys 2023R1
+2021R2
+2022R1
+2022R2
+2023R1
 ANSYS
 [Aa]nsys
 [Aa]nsys-dpf-server-2023-2-pre0
