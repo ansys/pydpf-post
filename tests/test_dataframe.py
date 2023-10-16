@@ -1,5 +1,4 @@
 import ansys.dpf.core as core
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -17,6 +16,7 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
 @fixture

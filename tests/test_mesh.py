@@ -1,5 +1,4 @@
 import ansys.dpf.core as dpf
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 import numpy as np
 import pytest
 from pytest import fixture
@@ -7,6 +6,7 @@ from pytest import fixture
 from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
 from ansys.dpf.post.connectivity import ConnectivityListByIndex
 from ansys.dpf.post.faces import Face
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
 @fixture

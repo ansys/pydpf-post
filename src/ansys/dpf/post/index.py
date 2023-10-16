@@ -379,7 +379,7 @@ class MultiIndex:
 
     @property
     def results_index(self) -> Union[ResultsIndex, None]:
-        """Returns the available ResultsIndex is present."""
+        """Returns the available ResultsIndex if present."""
         for index in self._indexes:
             if isinstance(index, ResultsIndex):
                 return index
@@ -387,9 +387,17 @@ class MultiIndex:
 
     @property
     def mesh_index(self) -> Union[MeshIndex, None]:
-        """Returns the available ResultsIndex is present."""
+        """Returns the available ResultsIndex if present."""
         for index in self._indexes:
             if isinstance(index, MeshIndex):
+                return index
+        return None
+
+    @property
+    def set_index(self) -> Union[SetIndex, None]:
+        """Returns the available SetIndex if present."""
+        for index in self._indexes:
+            if isinstance(index, SetIndex):
                 return index
         return None
 

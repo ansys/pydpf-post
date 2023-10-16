@@ -379,7 +379,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             )
             for i_field in range(len(fc)):
                 bind_support_op = dpf.operators.utility.bind_support(
-                    fc[i_field], submesh
+                    fc[i_field],
+                    submesh,
+                    server=fc._server,
                 )
                 fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
 
