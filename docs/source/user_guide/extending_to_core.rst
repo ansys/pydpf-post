@@ -2,7 +2,6 @@
 
 .. vale off
 
-************************
 Use PyDPF-Core operators
 ************************
 
