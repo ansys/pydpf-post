@@ -1,12 +1,8 @@
 .. _user_guide_extending_to_core:
 
-.. vale off
-
 ************************
 Use PyDPF-Core operators
 ************************
-
-.. vale on
 
 PyDPF-Post is based on PyDPF-Core, but it is streamlined for postprocessing.
 Because PyDPF-Post works hand-in-hand with PyDPF-Core, you can use the powerful,
