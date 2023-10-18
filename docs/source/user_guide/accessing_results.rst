@@ -137,8 +137,8 @@ You can query other components, as well as whole tensor data, accordingly.
 For more information, see :ref:`ref_api_result_data`.
 
 
-Strain (elastic, plastic)
--------------------------
+Elastic and plastic strain
+--------------------------
 You can access the :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
 :class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects with:
 
