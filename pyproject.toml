@@ -17,7 +17,7 @@ maintainers = [
     {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"},
 ]
 dependencies = [
-    "ansys-dpf-core",
+    "ansys-dpf-core @ git+https://git@github.com/ansys/pydpf-core.git@release/0.10.0",
     "scooby",
 ]
 classifiers = [
