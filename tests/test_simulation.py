@@ -9,10 +9,9 @@ from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
-from conftest import (  # SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
 )
 
@@ -56,7 +55,7 @@ def test_simulation_units(static_simulation):
 
 def test_simulation_results(static_simulation):
     results = static_simulation.results
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0:
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
         assert len(results) == 12
     else:
         assert len(results) == 13
