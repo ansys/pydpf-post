@@ -6,9 +6,7 @@ API
 HDF5
 postprocess
 postprocessing
-PyDPF
-PyDPF-Core
-PyDPF-Post
+(PyDPF\s|PyDPF-Core|PyDPF-Post)
 Pythonic
 R1
 R2
