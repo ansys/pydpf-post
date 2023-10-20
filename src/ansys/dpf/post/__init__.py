@@ -55,12 +55,3 @@ from ansys.dpf.post.transient_mechanical_simulation import (  # noqa: F401
 
 # this must be after some ansys.dpf.post import
 __version__ = importlib_metadata.version("ansys-dpf-post")
-
-
-if hasattr(core, "settings") and hasattr(
-    core.settings, "set_dynamic_available_results_capability"
-):
-    core.settings.set_dynamic_available_results_capability(False)
-if hasattr(core, "settings") and hasattr(core.settings, "set_default_pyvista_config"):
-    core.settings.set_default_pyvista_config()
-# dpf.core.start_local_server()
