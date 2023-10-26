@@ -192,7 +192,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_stress(self, **kwargs):
@@ -218,7 +218,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_elastic_strain(self, **kwargs):
@@ -244,7 +244,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_plastic_strain(self, **kwargs):
@@ -270,7 +270,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_structural_temperature(self, **kwargs):
@@ -296,7 +296,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_thermal_strains(self, **kwargs):
@@ -322,7 +322,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_eqv_stress_parameter(self, **kwargs):
@@ -348,7 +348,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_stress_ratio(self, **kwargs):
@@ -374,7 +374,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_hydrostatic_pressure(self, **kwargs):
@@ -400,7 +400,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_accu_eqv_plastic_strain(self, **kwargs):
@@ -426,7 +426,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_plastic_state_variable(self, **kwargs):
@@ -452,7 +452,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_accu_eqv_creep_strain(self, **kwargs):
@@ -478,7 +478,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_plastic_strain_energy_density(self, **kwargs):
@@ -504,7 +504,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_creep_strain_energy_density(self, **kwargs):
@@ -530,7 +530,7 @@ class MecanicMisc(Misc):
             self._data_sources,
             location="Elemental",
             b_elem_average=True,
-            **kwargs
+            **kwargs,
         )
 
     def elemental_nodal_elastic_strain_energy_density(self, **kwargs):

@@ -40,10 +40,10 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Setup Python"
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -59,11 +59,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: env.ANSYS_VERSION > 231
@@ -76,14 +76,14 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: '241'
+          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: true
           wheelhouse: true
-          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+          standalone_suffix: ${{ inputs.standalone_suffix || ''}}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -129,10 +129,10 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["232", "231", "222", "221"]
+        ANSYS_VERSION: ["232", "231", "222"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: matrix.ANSYS_VERSION > 231
@@ -151,15 +151,6 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: false
-          extra-pip-args: ${{ env.extra }}
-
-      - name: "Install ansys-grpc-dpf==0.4.0"
-        shell: bash
-        run: |
-          pip install ansys-grpc-dpf==0.4.0
-          pip uninstall -y protobuf
-          pip install "protobuf<4.0"
-        if: matrix.ANSYS_VERSION == '221'
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -194,17 +185,18 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: '241'
+      ANSYS_VERSION: "241"
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
     secrets: inherit
 
   docs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: '241'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
+      ANSYS_VERSION: "241"
+      python_version: "3.10"
+      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
     secrets: inherit
 
@@ -218,4 +210,5 @@ jobs:
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: HTML-doc-ansys-dpf-post
+          doc-artifact-name: HTML-doc-ansys-dpf-post.zip
+          decompress-artifact: true

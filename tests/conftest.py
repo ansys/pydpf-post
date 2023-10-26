@@ -165,6 +165,24 @@ def modal_frame():
     return examples.download_modal_frame()
 
 
+@pytest.fixture()
+def fluid_fluent_elbow_steady_state():
+    """Return paths to fluid fluent mixing elbow steady-state."""
+    return examples.download_fluent_mixing_elbow_steady_state()
+
+
+@pytest.fixture()
+def fluid_fluent_elbow_transient():
+    """Return paths to fluid fluent mixing elbow transient."""
+    return examples.download_fluent_mixing_elbow_transient()
+
+
+@pytest.fixture()
+def fluid_fluent_multi_species():
+    """Return paths to fluid fluent multi species."""
+    return examples.download_fluent_multi_species()
+
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleanup a testing directory once we are finished."""
@@ -185,6 +203,14 @@ def grpc_server():
     yield server
     server.shutdown()
 
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1 = meets_version(
+    get_server_version(core._global_server()), "7.1"
+)
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0 = meets_version(
+    get_server_version(core._global_server()), "7.0"
+)
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2 = meets_version(
     get_server_version(core._global_server()), "6.2"

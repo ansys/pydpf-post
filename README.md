@@ -4,34 +4,61 @@
 [![pypi](https://badge.fury.io/py/ansys-dpf-post.svg?logo=python&logoColor=white)](https://pypi.org/project/ansys-dpf-post)
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The Ansys Data Processing Framework (DPF) is designed to provide numerical
-simulation users and engineers with a toolbox for accessing and
-transforming simulation data.
+Ansys Data Processing Framework (DPF) provides numerical simulation 
+users and engineers with a toolbox for accessing and transforming simulation 
+data. With DPF, you can perform complex preprocessing or postprocessing of
+large amounts of simulation data within a simulation workflow.
 
-The Python `ansys-dpf-post` package provides a high-level, physics-oriented API for postprocessing.
-Loading a simulation (defined by its result files) allows you to extract simulation metadata as well
-as results and then apply postprocessing operations on it.
+The Python `ansys-dpf-post` package provides a high-level, physics-oriented
+API for postprocessing. Loading a simulation (defined by its results files)
+allows you to extract simulation metadata and results and then apply
+postprocessing operations on them.
 
-This module leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
+The latest version of DPF supports Ansys solver results files for:
+
+  - Mechanical APDL (`.rst`, `.mode`, `.rfrq`, `.rdsp`)
+  - LS-DYNA (`.d3plot`, `.binout`)
+  - Fluent (`.cas/dat.h5`, `.flprj`)
+  - CFX (`.cad/dat.cff`, `.flprj`)
+
+For more information on file support, see the [main page](https://dpf.docs.pyansys.com/version/stable/index.html)
+in the PyDPF-Core documentation.
+
+PyDPF-Post leverages the PyDPF-Core project's ``ansys-dpf-core`` package, which is
 available at [PyDPF-Core GitHub](https://github.com/ansys/pydpf-core).
 Use the ``ansys-dpf-core`` package for building more advanced and customized workflows
 using Ansys DPF.
 
-## Documentation
+## Documentation and issues
 
-For comprehensive information on this package, see the [PyDPF-Post Documentation](https://post.docs.pyansys.com),
-For detailed how-to information, see the [Examples](https://post.docs.pyansys.com/version/stable/examples/index.html)
-in the PyDPF-Post documentation.
+Documentation for the latest stable release of PyPDF-Post is hosted at
+[PyDPF-Post documentation](https://post.docs.pyansys.com/version/stable/).
+
+In the upper right corner of the documentation's title bar, there is an option for switching from
+viewing the documentation for the latest stable release to viewing the documentation for the
+development version or previously released versions.
+
+You can also [view](https://cheatsheets.docs.pyansys.com/pydpf-post_cheat_sheet.png) or
+[download](https://cheatsheets.docs.pyansys.com/pydpf-post_cheat_sheet.pdf) the
+PyDPF-Post cheat sheet. This one-page reference provides syntax rules and commands
+for using PyDPF-Post.
+
+On the [PyDPF-Post Issues](https://github.com/ansys/pydpf-post/issues) page,
+you can create issues to report bugs and request new features. On the
+[PyDPF-Post Discussions](https://github.com/ansys/pydpf-post/discussions) page or the [Discussions](https://discuss.ansys.com/)
+page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback. 
+
+To reach the project support team, email [pyansys.core@ansys.com](mailto:pyansys.core@ansys.com).
 
 ## Installation
 
-To install this package, use this command:
+To install this package, run this command:
 
 ```
 pip install ansys-dpf-post
 ```
 
-You can also clone and install this package with this code:
+You can also clone and install this package with these commands:
 
 ```
 git clone https://github.com/ansys/pydpf-post
@@ -41,10 +68,11 @@ pip install . --user
 
 ## Brief demo
 
-Provided you have Ansys 2023 R1 installed, a DPF server starts
-automatically once you start using PyDPF-Post.
+Provided you have Ansys 2023 R1 or later installed, a DPF server automatically starts
+once you start using PyDPF-Post.
 
-To load a simulation to extract and postprocess results, use this code:
+To load a simulation for a MAPDL result file to extract and
+postprocess results, use this code:
 
 ```pycon
 >>> from ansys.dpf import post
@@ -54,16 +82,16 @@ To load a simulation to extract and postprocess results, use this code:
 >>> print(displacement)
 ```
 ```pycon
-             results         U
-              set_id         3
-      node      comp          
-      4872         X -3.41e-05
-                   Y  1.54e-03
-                   Z -2.64e-06
-      9005         X -5.56e-05
-                   Y  1.44e-03
-                   Z  5.31e-06
-       ...
+             results       U (m)
+             set_ids           3
+ node_ids components            
+     4872          X -3.4137e-05
+                   Y  1.5417e-03
+                   Z -2.6398e-06
+     9005          X -5.5625e-05
+                   Y  1.4448e-03
+                   Z  5.3134e-06
+      ...        ...         ...
 ```
 ```pycon
 >>> displacement.plot()
@@ -75,8 +103,8 @@ To load a simulation to extract and postprocess results, use this code:
 ```
 ![Example Stress plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
-To run PyDPF-Post with Ansys versions 2021 R1 and 2022 R2, use this code to
-start the legacy PyDPF-Post tools::
+To run PyDPF-Post with Ansys 2021 R1 through 2022 R2, use this code to
+start the legacy PyDPF-Post tools:
 
 ```pycon
 >>> from ansys.dpf import post
@@ -87,7 +115,12 @@ start the legacy PyDPF-Post tools::
 ```
 ![Example Stress plot Crankshaft](https://github.com/ansys/pydpf-post/raw/master/docs/source/images/crankshaft_stress.png)
 
-## License
+## License and acknowledgements
 
-``PyDPF-Post`` is licensed under the MIT license. For more information, see the
-[LICENSE](https://github.com/ansys/pydpf-post/raw/master/LICENSE).
+PyDPF-Post is licensed under the MIT license. For more information, see the
+[LICENSE](https://github.com/ansys/pydpf-post/raw/master/LICENSE) file.
+
+PyDPF-Post makes no commercial claim over Ansys whatsoever. This library
+extends the functionality of Ansys DPF by adding a Python interface
+to DPF without changing the core behavior or license of the original
+software.

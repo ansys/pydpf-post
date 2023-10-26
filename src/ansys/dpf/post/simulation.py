@@ -8,12 +8,13 @@ from abc import ABC
 from enum import Enum
 from os import PathLike
 import re
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
 from ansys.dpf.core.available_result import _result_properties
+from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
 import numpy as np
@@ -29,6 +30,7 @@ from ansys.dpf.post.index import (
     SetIndex,
 )
 from ansys.dpf.post.mesh import Mesh
+from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.selection import Selection, _WfNames
 
 component_label_to_index = {
@@ -89,10 +91,10 @@ class Simulation(ABC):
         self._model.metadata.release_streams()
 
     @property
-    def results(self) -> List[str]:
+    def results(self) -> List[dpf.result_info.available_result.AvailableResult]:
         r"""Available results.
 
-        Returns a list of available results as strings.
+        Returns a list of available results.
 
         Examples
         --------
@@ -102,9 +104,12 @@ class Simulation(ABC):
         >>> print(simulation.results) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
         [...]
         """
-        return [
-            str(result) for result in self._model.metadata.result_info.available_results
-        ]
+        return self._model.metadata.result_info.available_results
+
+    @property
+    def result_info(self):
+        """Return information concerning the available results."""
+        return self._model.metadata.result_info
 
     @property
     def geometries(self):
@@ -200,6 +205,7 @@ class Simulation(ABC):
         constructed_geometries: bool = True,
         loads: bool = True,
         boundary_conditions: bool = True,
+        **kwargs,
     ):
         """General plot of the simulation object.
 
@@ -218,6 +224,9 @@ class Simulation(ABC):
             Whether to plot the loads.
         boundary_conditions:
             Whether to plot the boundary conditions.
+        **kwargs
+            Additional keyword arguments for the plotter. More information
+            are available at :func:`pyvista.plot`.
 
         Returns
         -------
@@ -232,15 +241,15 @@ class Simulation(ABC):
         """
         plt = DpfPlotter()
         if mesh:
-            plt.add_mesh(self.mesh._meshed_region)
+            plt.add_mesh(self.mesh._meshed_region, **kwargs)
         if constructed_geometries:
             for geom in self.geometries:
-                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom)
+                getattr(plt, "add_" + str(type(geom).__name__).lower())(geom, **kwargs)
         if loads:
             pass
         if boundary_conditions:
             pass
-        plt.show_figure()
+        plt.show_figure(**kwargs)
 
     @property
     def active_selection(self) -> Union[Selection, None]:
@@ -327,13 +336,91 @@ class Simulation(ABC):
 
     @property
     def units(self):
-        """Returns the current time/frequency and distance units used."""
+        """Returns the current units used."""
+        us = self._model.metadata.result_info.unit_system
+        result_units = us.split(": ")[1].split(", ")
         if self._units is None:
             self._units = {
-                "time/frequency": self.time_freq_support.time_frequencies.unit,
-                "distance": self._model.metadata.meshed_region.unit,
+                "length": result_units[0],
+                "mass": result_units[1],
+                "force": result_units[2],
+                "time": result_units[3],
+                "current": result_units[-2],
+                "temperature": result_units[-1],
             }
+            if len(result_units) > 6:
+                self._units["potential"] = result_units[4]
         return self._units
+
+    def split_mesh_by_properties(
+        self,
+        properties: Union[
+            List[elemental_properties],
+            Dict[elemental_properties, Union[int, List[int]]],
+        ],
+    ) -> Meshes:
+        """Splits the simulation Mesh according to properties and returns it as Meshes.
+
+        Parameters
+        ----------
+        properties:
+            Elemental properties to split the global mesh by. Returns all meshes if a list,
+            or returns only meshes for certain elemental property values if a dict with
+            elemental properties labels with associated value or list of values.
+
+        Returns
+        -------
+        A Meshes entity with resulting meshes.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> from ansys.dpf.post import examples
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> # Split by elemental properties and get all resulting meshes
+        >>> meshes_split = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
+        >>> # Split by elemental properties and only get meshes for certain property values
+        >>> # Here: split by material and shape, return only for material 1 and shapes 0 and 1
+        >>> meshes_filtered = simulation.split_mesh_by_properties(
+        ...     properties={elemental_properties.material: 1,
+        ...                 elemental_properties.element_shape: [0, 1]}
+        ... )
+        """
+        split_op = dpf.operators.scoping.split_on_property_type(
+            mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            requested_location=dpf.locations.elemental,
+        )
+        values = None
+        if isinstance(properties, dict):
+            values = properties.values()
+            properties = list(properties.keys())
+        for i, prop in enumerate(properties):
+            split_op.connect(13 + i, prop)
+        scopings_container = split_op.outputs.mesh_scoping()
+        # meshes = []
+        meshes_container = dpf.MeshesContainer()
+        for label in scopings_container.labels:
+            meshes_container.add_label(label)
+        for i, scoping in enumerate(scopings_container):
+            mesh_from_scoping = dpf.operators.mesh.from_scoping(
+                scoping=scoping,
+                mesh=self._model.metadata.mesh_provider.outputs.mesh,
+            )
+            # meshes.append(mesh_from_scoping.outputs.mesh())
+            meshes_container.add_mesh(
+                mesh=mesh_from_scoping.outputs.mesh(),
+                label_space=scopings_container.get_label_space(i),
+            )
+        meshes = Meshes(meshes_container=meshes_container)
+        if values is None:
+            return meshes
+        else:
+            return meshes.select(**dict(zip(properties, values)))
 
     def __str__(self):
         """Get the string representation of this class."""
@@ -452,7 +539,7 @@ class Simulation(ABC):
         op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
             op.connect(9, "ElementalNodal")
-        else:
+        elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
@@ -532,6 +619,7 @@ class Simulation(ABC):
         merge_op = dpf.operators.utility.merge_fields_by_label(
             fields_container=shell_layer_op.outputs.fields_container_as_fields_container,
             label="eltype",
+            server=fc._server,
         )
 
         # Expose output
@@ -556,7 +644,9 @@ class Simulation(ABC):
             if submesh is not None:
                 for i_field in range(len(fc)):
                     bind_support_op = dpf.operators.utility.bind_support(
-                        fc[i_field], submesh
+                        fc[i_field],
+                        submesh,
+                        server=fc._server,
                     )
                     fc.add_field(fc.get_label_space(i_field), bind_support_op.eval())
         if unit == "":
@@ -567,18 +657,40 @@ class Simulation(ABC):
         row_indexes = [MeshIndex(location=location, fc=fc)]
         if comp_index is not None:
             row_indexes.append(comp_index)
-        column_indexes = [
-            ResultsIndex(values=[base_name], units=[unit]),
-            SetIndex(values=times),
-        ]
+        if len(fc) > 0:
+            times = fc.get_available_ids_for_label("time")
+        column_indexes = [ResultsIndex(values=[base_name], units=[unit])]
+        if times:
+            column_indexes.append(SetIndex(values=times))
         label_indexes = []
+        # Get the label name values for each label
         for label in fc.labels:
-            if label not in ["time"]:
-                if len(fc) > 0:
-                    values = fc.get_available_ids_for_label(label)
-                else:
-                    values = [""]
-                label_indexes.append(LabelIndex(name=label, values=values))
+            # Do not treat time
+            if label in ["time"]:
+                continue
+            if len(fc) > 0:
+                # Get ID values for this label
+                values = fc.get_available_ids_for_label(label)
+                # Then try to gather the correspond string values for display
+                try:
+                    label_support = self.result_info.qualifier_label_support(label)
+                    names_field = label_support.string_field_support_by_property(
+                        "names"
+                    )
+                    values = [
+                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                        for value in values
+                    ]
+                except (
+                    ValueError,
+                    errors.DPFServerException,
+                    errors.DpfVersionNotSupported,
+                    AttributeError,  # Error in GitHub doc CI (Linux) where label_support = None
+                ):
+                    values = None
+            else:
+                values = []
+            label_indexes.append(LabelIndex(name=label, values=values))
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
@@ -702,7 +814,7 @@ class MechanicalSimulation(Simulation, ABC):
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
         external_layer: bool = False,
-        skin: Union[bool] = False,
+        skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
     ) -> Selection:
         tot = (
@@ -817,10 +929,7 @@ class MechanicalSimulation(Simulation, ABC):
                         found = True
                     i += 1
                 if not found:
-                    raise ValueError(
-                        f"Could not find time={t}{self.units['time/frequency']} "
-                        f"in the simulation."
-                    )
+                    raise ValueError(f"Could not find time={t} in the simulation.")
             selection.select_time_freq_sets(
                 time_freq_sets=available_times_to_extract_set_ids
             )

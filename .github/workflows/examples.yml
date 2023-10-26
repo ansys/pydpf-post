@@ -17,16 +17,6 @@ on:
         required: false
         type: string
         default: ''
-      custom-requirements:
-        description: "Path to requirements.txt file to install"
-        required: false
-        type: string
-        default: ''
-      custom-wheels:
-        description: "extra pip --find-links argument to find custom dpf wheels"
-        required: false
-        type: string
-        default: ''
 # Can be called manually
   workflow_dispatch:
     inputs:
@@ -42,16 +32,6 @@ on:
         default: "241"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
-        required: false
-        type: string
-        default: ''
-      custom-requirements:
-        description: "Path to requirements.txt file to install"
-        required: false
-        type: string
-        default: ''
-      custom-wheels:
-        description: "extra pip --find-links argument to find custom dpf wheels"
         required: false
         type: string
         default: ''
@@ -82,7 +62,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: inputs.ANSYS_VERSION > 231
@@ -92,7 +72,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.0
         with:
           python-version: ${{ matrix.python-version }}
 

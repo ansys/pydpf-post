@@ -23,7 +23,9 @@ class ref_labels:
     frequencies = "frequencies"
     set_ids = "set_ids"
     node_ids = "node_ids"
+    face_ids = "face_ids"
     element_ids = "element_ids"
+    cell_ids = "cell_ids"
     elemental_nodal = "element_ids"
     step = "step_ids"
     overall = "overall"
@@ -32,12 +34,23 @@ class ref_labels:
 
 location_to_label = {
     dpf.locations.nodal: ref_labels.node_ids,
+    "cells": ref_labels.cell_ids,
     dpf.locations.elemental: ref_labels.element_ids,
     dpf.locations.elemental_nodal: ref_labels.elemental_nodal,
     dpf.locations.overall: ref_labels.overall,
     dpf.locations.time_freq_step: ref_labels.step,
     dpf.locations.time_freq: ref_labels.set_ids,
+    None: "unknown",
 }
+
+# dpf.locations.faces is available only starting with ansys-dpg-gate 0.4.0
+try:  # pragma: no cover
+    location_to_label[dpf.locations.faces] = ref_labels.face_ids
+except AttributeError as e:
+    if "type object 'locations' has no attribute 'faces'" in str(e):
+        pass
+    else:
+        raise e
 
 
 class Index(ABC):
@@ -366,7 +379,7 @@ class MultiIndex:
 
     @property
     def results_index(self) -> Union[ResultsIndex, None]:
-        """Returns the available ResultsIndex is present."""
+        """Returns the available ResultsIndex if present."""
         for index in self._indexes:
             if isinstance(index, ResultsIndex):
                 return index
@@ -374,9 +387,17 @@ class MultiIndex:
 
     @property
     def mesh_index(self) -> Union[MeshIndex, None]:
-        """Returns the available ResultsIndex is present."""
+        """Returns the available ResultsIndex if present."""
         for index in self._indexes:
             if isinstance(index, MeshIndex):
+                return index
+        return None
+
+    @property
+    def set_index(self) -> Union[SetIndex, None]:
+        """Returns the available SetIndex if present."""
+        for index in self._indexes:
+            if isinstance(index, SetIndex):
                 return index
         return None
 

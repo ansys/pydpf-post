@@ -7,23 +7,13 @@ on:
       python_version:
         required: false
         type: string
-        default: "3.8"
+        default: "3.10"
       ANSYS_VERSION:
         required: false
         type: string
         default: "241"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
-        required: false
-        type: string
-        default: ''
-      custom-requirements:
-        description: "Path to requirements.txt file to install"
-        required: false
-        type: string
-        default: ''
-      custom-wheels:
-        description: "extra pip '--find-links XXX' argument to find custom dpf wheels"
         required: false
         type: string
         default: ''
@@ -47,7 +37,7 @@ on:
         description: "Python interpreter"
         required: true
         type: string
-        default: "3.8"
+        default: "3.10"
       ANSYS_VERSION:
         description: "ANSYS version"
         required: true
@@ -55,16 +45,6 @@ on:
         default: "241"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
-        required: false
-        type: string
-        default: ''
-      custom-requirements:
-        description: "Path to requirements.txt file to install"
-        required: false
-        type: string
-        default: ''
-      custom-wheels:
-        description: "extra pip --find-links argument to find custom dpf wheels"
         required: false
         type: string
         default: ''
@@ -89,7 +69,7 @@ jobs:
     name: "Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
         if: inputs.ANSYS_VERSION > 231
@@ -99,7 +79,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -121,9 +101,7 @@ jobs:
           install_extras: plotting
           wheel: false
           wheelhouse: false
-          extra-pip-args: ${{ inputs.custom-wheels && format('--find-links {0}', inputs.custom-wheels) || '' }}
           standalone_suffix: ${{ inputs.standalone_suffix }}
-          custom-requirements: ${{ inputs.custom-requirements }}
 
       - name: "Setup headless display"
         uses: pyvista/setup-headless-display-action@v2
@@ -184,12 +162,18 @@ jobs:
           path: docs/*.txt
         if: always()
 
+      - name: "Zip HTML Documentation"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: docs/build/html/
+          dest: HTML-doc-${{env.PACKAGE_NAME}}.zip
+        if: always()
+
       - name: "Upload HTML Documentation"
         uses: actions/upload-artifact@v3
         with:
-          name: HTML-doc-${{env.PACKAGE_NAME}}
-          path: |
-            docs/build/html/
+          name: HTML-doc-${{env.PACKAGE_NAME}}.zip
+          path: HTML-doc-${{env.PACKAGE_NAME}}.zip
         if: always()
 
       - name: "Find PDF Documentation"
