@@ -443,11 +443,21 @@ class SpatialSelection:
                 elements = Scoping(
                     server=self._server, ids=elements, location=locations.elemental
                 )
-            mesh_by_scop_op = operators.mesh.from_scoping(
-                scoping=elements, server=self._server
+            # mesh_by_scop_op = operators.mesh.from_scoping(
+            #     scoping=elements, server=self._server
+            # )
+            # mesh_input = mesh_by_scop_op.inputs.mesh
+            # op.inputs.mesh.connect(mesh_by_scop_op)
+            forward_op = operators.utility.forward()
+            mesh_input = forward_op.inputs.any
+            nodal_scoping = operators.scoping.transpose(
+                mesh_scoping=elements, server=self._server
             )
-            mesh_input = mesh_by_scop_op.inputs.mesh
-            op.inputs.mesh.connect(mesh_by_scop_op)
+            nodal_scoping.connect(1, forward_op)
+            op.connect(0, forward_op)
+            op.inputs.mesh_scoping.connect(
+                nodal_scoping.outputs.mesh_scoping_as_scoping
+            )
 
         if mesh_input is not None:
             self._selection.set_input_name(_WfNames.initial_mesh, mesh_input)
