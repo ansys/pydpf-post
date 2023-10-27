@@ -2750,7 +2750,7 @@ class TestHarmonicMechanicalSimulation:
                 [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
             )
             result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-            assert len(result.index.mesh_index) == 44
+            assert len(result.index.mesh_index) == 40
 
     def test_stress_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
         if harmonic_simulation._model._server.meet_version("6.2"):
@@ -2760,19 +2760,26 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
+            outer_nodes = harmonic_simulation.mesh.named_selections[
+                "OUTER_FACE"
+            ]._scoping
+            outer_elements = dpf.operators.scoping.transpose(
+                mesh_scoping=outer_nodes,
+                meshed_region=harmonic_simulation.mesh._meshed_region,
+            ).eval()
             result = harmonic_simulation.stress_elemental(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=outer_elements.ids
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
+                assert len(result.index.mesh_index) == 240
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
             result = harmonic_simulation.stress_eqv_von_mises_nodal(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=outer_elements.ids
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
+                assert len(result.index.mesh_index) == 880
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
