@@ -5,7 +5,7 @@ from pytest import fixture
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
-from ansys.dpf.post.selection import SpatialSelection
+from ansys.dpf.post.selection import SpatialSelection, _WfNames
 from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
@@ -48,6 +48,32 @@ def test_spatial_selection_select_named_selection(allkindofcomplexity):
     assert len(ids) == 12970
     assert 1857 in ids
     assert 14826 in ids
+
+
+def test_spatial_selection_select_skin(static_rst):
+    simulation = post.StaticMechanicalSimulation(static_rst)
+    selection = SpatialSelection()
+    selection._selection.progress_bar = False
+    selection.select_skin(
+        location=post.locations.elemental_nodal,
+        result_native_location=post.locations.elemental_nodal,
+        elements=[1, 2, 3],
+    )
+    mesh_wf = dpf.Workflow()
+    mesh_wf.set_output_name(
+        _WfNames.initial_mesh, simulation._model.metadata.mesh_provider
+    )
+    selection._selection.connect_with(
+        mesh_wf,
+        output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
+    )
+    # This returns a scoping on the initial mesh (logic to change?)
+    scoping_ids = selection.apply_to(simulation)
+    assert len(scoping_ids) == 8
+
+    # This gives the skin mesh with its 9 shell elements
+    skin = selection._selection.get_output(_WfNames.skin, dpf.MeshedRegion)
+    assert len(skin.elements.scoping.ids) == 9
 
 
 @pytest.mark.skipif(
