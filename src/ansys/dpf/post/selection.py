@@ -443,11 +443,6 @@ class SpatialSelection:
                 elements = Scoping(
                     server=self._server, ids=elements, location=locations.elemental
                 )
-            # mesh_by_scop_op = operators.mesh.from_scoping(
-            #     scoping=elements, server=self._server
-            # )
-            # mesh_input = mesh_by_scop_op.inputs.mesh
-            # op.inputs.mesh.connect(mesh_by_scop_op)
             forward_op = operators.utility.forward()
             mesh_input = forward_op.inputs.any
             nodal_scoping = operators.scoping.transpose(
