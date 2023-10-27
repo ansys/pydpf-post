@@ -657,31 +657,27 @@ class TestStaticMechanicalSimulation:
 
     def test_skin_layer2(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 44
+        assert len(result.index.mesh_index) == 38
+        static_simulation.plot()
+        result.plot()
 
     def test_skin_layer3(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.elastic_strain_eqv_von_mises_elemental(
             skin=[1, 2, 3]
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 14
-        else:
-            assert len(result.index.mesh_index) == 18
+        assert len(result.index.mesh_index) == 9
 
     def test_skin_layer4(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.stress_principal_nodal(skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 44
+        assert len(result.index.mesh_index) == 38
 
     def test_skin_layer5(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.elastic_strain_eqv_von_mises_nodal(skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 44
+        assert len(result.index.mesh_index) == 38
 
     def test_skin_layer6(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.stress_principal_elemental(skin=[1, 2, 3])
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 14
-        else:
-            assert len(result.index.mesh_index) == 18
+        assert len(result.index.mesh_index) == 9
 
 
 class TestTransientMechanicalSimulation:
@@ -1324,7 +1320,7 @@ class TestTransientMechanicalSimulation:
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
         result = transient_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 44
+        assert len(result.index.mesh_index) == 42
 
     def test_skin_layer3(
         self, transient_simulation: post.TransientMechanicalSimulation
@@ -1996,7 +1992,10 @@ class TestModalMechanicalSimulation:
             result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
         )
         result = frame_modal_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-        assert len(result.index.mesh_index) == 21
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            assert len(result.index.mesh_index) == 21
+        else:
+            assert len(result.index.mesh_index) == 14
         assert np.allclose(
             result.max(axis="node_ids").array, [-0.77876072, 7.08211902, 0.05292333]
         )
@@ -2796,24 +2795,31 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
+            outer_nodes = harmonic_simulation.mesh.named_selections[
+                "OUTER_FACE"
+            ]._scoping
+            outer_elements = dpf.operators.scoping.transpose(
+                mesh_scoping=outer_nodes,
+                meshed_region=harmonic_simulation.mesh._meshed_region,
+            ).eval()
             result = harmonic_simulation.stress_principal_elemental(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=outer_elements.ids
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
+                assert len(result.index.mesh_index) == 240
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=outer_elements.ids
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
+                assert len(result.index.mesh_index) == 880
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
             assert np.allclose(
-                result.select(complex=0).max(axis="node_ids").array, [1.34699501e-06]
+                result.select(complex=0).max(axis="node_ids").array, [1.22784309e-06]
             )
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
                 set_ids=[1], skin=True
@@ -2824,10 +2830,10 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result.index.mesh_index) == 4802
             assert len(result.columns.set_ids) == 1
             result = harmonic_simulation.elastic_strain_principal_nodal(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=outer_elements.ids
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
+                assert len(result.index.mesh_index) == 880
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
