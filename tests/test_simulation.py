@@ -1328,8 +1328,9 @@ class TestTransientMechanicalSimulation:
     def test_skin_layer3(
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
+        print(transient_simulation.mesh.named_selections)
         result = transient_simulation.stress_principal_elemental(
-            skin=list(range(1, 100))
+            skin=transient_simulation.mesh.element_ids
         )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 124
@@ -1340,7 +1341,7 @@ class TestTransientMechanicalSimulation:
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
         result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
-            skin=list(range(1, 100))
+            skin=transient_simulation.mesh.element_ids
         )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 124
@@ -1350,7 +1351,9 @@ class TestTransientMechanicalSimulation:
     def test_skin_layer5(
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
-        result = transient_simulation.stress_principal_nodal(skin=list(range(1, 100)))
+        result = transient_simulation.stress_principal_nodal(
+            skin=transient_simulation.mesh.element_ids
+        )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 374
         else:
@@ -1360,7 +1363,7 @@ class TestTransientMechanicalSimulation:
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
         result = transient_simulation.elastic_strain_eqv_von_mises_nodal(
-            skin=list(range(1, 100))
+            skin=transient_simulation.mesh.element_ids
         )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 374
