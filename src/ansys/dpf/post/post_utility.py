@@ -223,10 +223,10 @@ def load_simulation(
                 simulation_type = AvailableSimulationTypes.unsteady_fluid
             else:
                 raise ValueError(
-                    f"Unknown analysis type '{analysis_type}' for {physics_type}."
+                    f"Unknown analysis type '{analysis_type}' for '{physics_type}'."
                 )
         else:
-            raise ValueError(f"Unknown physics type '{physics_type}.")
+            raise ValueError(f"Unknown physics type '{physics_type}'.")
 
     if simulation_type in [
         getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
