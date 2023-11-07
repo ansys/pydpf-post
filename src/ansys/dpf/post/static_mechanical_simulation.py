@@ -181,11 +181,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         if selection.requires_mesh:
             mesh_wf = core.Workflow(server=self._model._server)
             mesh_wf.set_output_name(
-                _WfNames.initial_mesh, self._model.metadata.mesh_provider
+                "initial_mesh_wf_out", self._model.metadata.mesh_provider
             )
             selection.spatial_selection._selection.connect_with(
                 mesh_wf,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
+                output_input_names={"initial_mesh_wf_out": _WfNames.initial_mesh},
             )
 
         if selection.reduces_mesh:
