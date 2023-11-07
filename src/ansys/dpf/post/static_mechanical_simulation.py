@@ -193,7 +193,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 selection.spatial_selection._selection,
                 output_input_names={
                     "scoping": "mesh_scoping",
-                    "initial_mesh": "initial_mesh",
+                    "initial_mesh": _WfNames.result_mesh,
                 },
             )
         else:

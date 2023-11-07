@@ -45,6 +45,7 @@ class _WfNames:
     cyclic_sectors_to_expand = "cyclic_sectors_to_expand"
     cyclic_phase = "cyclic_phase"
     result = "result"
+    result_mesh = "result_mesh"
 
 
 def _is_model_cyclic(is_cyclic: str):
