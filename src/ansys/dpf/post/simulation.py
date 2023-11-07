@@ -845,22 +845,28 @@ class MechanicalSimulation(Simulation, ABC):
         # Reduce mesh if necessary
         if reduce_mesh is not False:
             extract_scoping = None
+            # Reduce on the list of reduced
             if not isinstance(reduce_mesh, bool):
+                # reduce_mesh=list
                 select_mesh = Selection()
                 select_mesh.select_elements(reduce_mesh)
                 extract_scoping = select_mesh.spatial_selection.apply_to(self)
-            elif not isinstance(skin, bool):
-                select_mesh = Selection()
-                select_mesh.select_elements(skin)
-                extract_scoping = select_mesh.spatial_selection.apply_to(self)
-            elif element_ids is not None:
-                select_mesh = Selection()
-                select_mesh.select_elements(element_ids)
-                extract_scoping = select_mesh.spatial_selection.apply_to(self)
-            elif named_selections:
-                select_mesh = Selection()
-                select_mesh.select_named_selection(named_selections)
-                extract_scoping = select_mesh.spatial_selection.apply_to(self)
+            else:
+                # reduce_mesh=True
+                if not isinstance(skin, bool):
+                    select_mesh = Selection()
+                    select_mesh.select_elements(skin)
+                    extract_scoping = select_mesh.spatial_selection.apply_to(self)
+                else:
+                    # reduce_mesh=True, skin=True|False
+                    if element_ids is not None:
+                        select_mesh = Selection()
+                        select_mesh.select_elements(element_ids)
+                        extract_scoping = select_mesh.spatial_selection.apply_to(self)
+                    elif named_selections:
+                        select_mesh = Selection()
+                        select_mesh.select_named_selection(named_selections)
+                        extract_scoping = select_mesh.spatial_selection.apply_to(self)
             if extract_scoping is not None:
                 selection.reduce_mesh(extract_scoping)
 
