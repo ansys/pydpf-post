@@ -536,12 +536,12 @@ class Simulation(ABC):
         force_elemental_nodal: bool,
     ) -> (dpf.Workflow, dpf.Operator):
         op = self._model.operator(name=name)
-        op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
             op.connect(9, "ElementalNodal")
         elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
+        wf.set_input_name(_WfNames.initial_mesh, op, 7)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
         wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
         wf.set_input_name(_WfNames.cyclic_phase, op, 19)
@@ -816,6 +816,7 @@ class MechanicalSimulation(Simulation, ABC):
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        reduce_mesh: Union[bool, List[int]] = False,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -840,6 +841,28 @@ class MechanicalSimulation(Simulation, ABC):
         else:
             selection = Selection(server=self._model._server)
         # Create the SpatialSelection
+
+        # Reduce mesh if necessary
+        if reduce_mesh is not False:
+            extract_scoping = None
+            if not isinstance(reduce_mesh, bool):
+                select_mesh = Selection()
+                select_mesh.select_elements(reduce_mesh)
+                extract_scoping = select_mesh.spatial_selection.apply_to(self)
+            elif not isinstance(skin, bool):
+                select_mesh = Selection()
+                select_mesh.select_elements(skin)
+                extract_scoping = select_mesh.spatial_selection.apply_to(self)
+            elif element_ids is not None:
+                select_mesh = Selection()
+                select_mesh.select_elements(element_ids)
+                extract_scoping = select_mesh.spatial_selection.apply_to(self)
+            elif named_selections:
+                select_mesh = Selection()
+                select_mesh.select_named_selection(named_selections)
+                extract_scoping = select_mesh.spatial_selection.apply_to(self)
+            if extract_scoping is not None:
+                selection.reduce_mesh(extract_scoping)
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
         # the skin/external layer

@@ -37,6 +37,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        reduce_mesh: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -104,6 +105,11 @@ class StaticMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        reduce_mesh:
+            Perform a reduction of the mesh under consideration based on, by order of priority:
+            - the list of element IDs given to this parameter
+            - parameter skin if reduce_mesh=True
+            - parameter element_ids if reduce_mesh=True and skin=None
 
         Returns
         -------
@@ -138,6 +144,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=location,
             external_layer=external_layer,
             skin=skin,
+            reduce_mesh=reduce_mesh,
         )
 
         comp, to_extract, columns = self._create_components(
@@ -181,10 +188,20 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names={"scoping": "mesh_scoping"},
-        )
+        if selection.reduces_mesh:
+            wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={
+                    "scoping": "mesh_scoping",
+                    "initial_mesh": "initial_mesh",
+                },
+            )
+        else:
+            result_op.connect(7, self.mesh._meshed_region)
+            wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={"scoping": "mesh_scoping"},
+            )
 
         # Treat cyclic cases
         wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, wf)
@@ -1099,6 +1116,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        reduce_mesh: Union[bool, List[int]] = False,
     ) -> DataFrame:
         """Extract elemental equivalent von Mises stress results from the simulation.
 
@@ -1137,17 +1155,22 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             If the problem is multi-stage, can take a list of lists of sector numbers, ordered
             by stage.
         phase_angle_cyclic:
-             For cyclic problems, phase angle to apply (in degrees).
+            For cyclic problems, phase angle to apply (in degrees).
         external_layer:
-             Select the external layer (last layer of solid elements under the skin)
-             of the mesh for plotting and data extraction. If a list is passed, the external
-             layer is computed over list of elements.
+            Select the external layer (last layer of solid elements under the skin)
+            of the mesh for plotting and data extraction. If a list is passed, the external
+            layer is computed over list of elements.
         skin:
-             Select the skin (creates new 2D elements connecting the external nodes)
-             of the mesh for plotting and data extraction. If a list is passed, the skin
-             is computed over list of elements (not supported for cyclic symmetry). Getting the
-             skin on more than one result (several time freq sets, split data...) is only
-             supported starting with Ansys 2023R2.
+            Select the skin (creates new 2D elements connecting the external nodes)
+            of the mesh for plotting and data extraction. If a list is passed, the skin
+            is computed over list of elements (not supported for cyclic symmetry). Getting the
+            skin on more than one result (several time freq sets, split data...) is only
+            supported starting with Ansys 2023R2.
+        reduce_mesh:
+            Perform a reduction of the mesh under consideration based on, by order of priority:
+            - the list of element IDs given to this parameter
+            - parameter skin if reduce_mesh=True
+            - parameter element_ids if reduce_mesh=True and skin=None
 
         Returns
         -------
@@ -1171,6 +1194,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
+            reduce_mesh=reduce_mesh,
         )
 
     def stress_eqv_von_mises_nodal(

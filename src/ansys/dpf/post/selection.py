@@ -219,9 +219,31 @@ class SpatialSelection:
         """
         self._server = get_or_create_server(server)
         self._selection = Workflow(server=self._server)
-
+        self._current_initial_mesh_output = None
         if scoping is not None:
             self.select_with_scoping(scoping)
+
+    def reduce_mesh(self, element_ids: Union[Scoping, List[int]]):
+        """Reduce the mesh under consideration to the given list of elements.
+
+        Parameters
+        ----------
+        element_ids:
+            Scoping or list of IDs of elements to reduce the mesh to.
+        """
+        if not isinstance(element_ids, Scoping):
+            element_ids = Scoping(
+                ids=element_ids, location=locations.elemental, server=self._server
+            )
+        op = operators.mesh.from_scoping(element_ids, server=self._server)
+        self._selection.add_operator(op)
+        # If the workflow already has an initial_mesh output, connect this after
+        if self._current_initial_mesh_output:
+            op.inputs.mesh.connect(self._current_initial_mesh_output)
+        else:
+            self._selection.set_input_name(_WfNames.initial_mesh, op.inputs.mesh)
+        self._selection.set_output_name(_WfNames.initial_mesh, op.outputs.mesh)
+        self._current_initial_mesh_output = op.outputs.mesh
 
     def select_named_selection(
         self,
@@ -393,7 +415,7 @@ class SpatialSelection:
             Native (as found in the file) location of the output result. Used to pick
             the location of the scoping.
         elements:
-            List of elements to use to compute the external layer,
+            List of elements to use to compute the skin,
             default is all the elements of the model. Getting the skin on a selection of
             elements for cyclic symmetry is not supported.
         is_model_cyclic:
@@ -455,7 +477,18 @@ class SpatialSelection:
             )
 
         if mesh_input is not None:
-            self._selection.set_input_name(_WfNames.initial_mesh, mesh_input)
+            # If the workflow already has an initial_mesh output, connect this after
+            if self._current_initial_mesh_output:
+                mesh_input.connect(self._current_initial_mesh_output)
+            else:
+                self._selection.set_input_name(_WfNames.initial_mesh, mesh_input)
+            # self._selection.set_output_name(_WfNames.initial_mesh, op.outputs.mesh)
+            # self._current_initial_mesh_output = op.outputs.mesh
+
+            #     pass
+            # else:
+            #     # otherwise, set this as the initial_mesh input
+            #     self._selection.set_input_name(_WfNames.initial_mesh, mesh_input)
             if location == result_native_location:
                 self._selection.set_output_name(_WfNames.mesh, op.outputs.mesh)
         self._selection.set_output_name(_WfNames.skin, op.outputs.mesh)
@@ -727,8 +760,13 @@ class SpatialSelection:
         return _WfNames.initial_mesh in self._selection.input_names
 
     @property
+    def reduces_mesh(self) -> bool:
+        """Whether the selection workflow gives a reduced ``mesh`` as an output or not."""
+        return _WfNames.initial_mesh in self._selection.output_names
+
+    @property
     def outputs_mesh(self) -> bool:
-        """Whether the selection workflow as an output named ``mesh``."""
+        """Whether the selection workflow has an output named ``mesh``."""
         return _WfNames.mesh in self._selection.output_names
 
     def requires_manual_averaging(
@@ -802,6 +840,16 @@ class Selection:
     @spatial_selection.setter
     def spatial_selection(self, value: SpatialSelection):
         self._spatial_selection = value
+
+    def reduce_mesh(self, element_ids: Union[List[int]]):
+        """Reduce the mesh under consideration to the given list of elements.
+
+        Parameters
+        ----------
+        element_ids:
+            List of IDs of elements to reduce the mesh to.
+        """
+        self._spatial_selection.reduce_mesh(element_ids)
 
     def select_time_freq_indices(self, time_freq_indices: List[int]) -> None:
         """Select time frequency sets by their indices (zero-based indexing).
@@ -1020,6 +1068,11 @@ class Selection:
     def requires_mesh(self) -> bool:
         """Whether the selection workflow requires a ``initial_mesh`` as an input or not."""
         return self._spatial_selection.requires_mesh
+
+    @property
+    def reduces_mesh(self) -> bool:
+        """Whether the selection workflow gives a reduced ``mesh`` as an output or not."""
+        return self._spatial_selection.reduces_mesh
 
     @property
     def outputs_mesh(self) -> bool:
