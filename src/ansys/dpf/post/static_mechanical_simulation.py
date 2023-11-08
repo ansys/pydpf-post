@@ -187,6 +187,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 mesh_wf,
                 output_input_names={"initial_mesh_wf_out": _WfNames.initial_mesh},
             )
+        else:
+            result_op.connect(7, self.mesh._meshed_region)
 
         if selection.reduces_mesh:
             wf.connect_with(
@@ -197,7 +199,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 },
             )
         else:
-            result_op.connect(7, self.mesh._meshed_region)
             wf.connect_with(
                 selection.spatial_selection._selection,
                 output_input_names={"scoping": "mesh_scoping"},
