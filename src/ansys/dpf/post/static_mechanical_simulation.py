@@ -179,6 +179,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             output_input_names=("scoping", "time_scoping"),
         )
         if selection.requires_mesh:
+            self._model._metadata = None
             mesh_wf = core.Workflow(server=self._model._server)
             mesh_wf.progress_bar = False
             mesh_wf.set_output_name(
