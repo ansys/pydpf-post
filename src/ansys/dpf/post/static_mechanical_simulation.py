@@ -180,6 +180,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
         if selection.requires_mesh:
             mesh_wf = core.Workflow(server=self._model._server)
+            mesh_wf.progress_bar = False
             mesh_wf.set_output_name(
                 "initial_mesh_wf_out", self._model.metadata.mesh_provider
             )
