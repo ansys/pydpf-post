@@ -4,7 +4,7 @@ ModalMechanicalSimulation
 -------------------------
 
 """
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
@@ -16,7 +16,7 @@ from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations."""
 
-    def _get_result(
+    def _get_result_workflow(
         self,
         base_name: str,
         location: str,
@@ -35,77 +35,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-    ) -> DataFrame:
-        """Extract results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
-        exclusive.
-        If none of the above is given, only the first mode will be returned.
-
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Parameters
-        ----------
-        base_name:
-            Base name for the requested result.
-        location:
-            Location to extract results at. Available locations are listed in
-            class:`post.locations` and are: `post.locations.nodal`,
-            `post.locations.elemental`, and `post.locations.elemental_nodal`.
-            Using the default `post.locations.elemental_nodal` results in a value
-            for every node at each element. Similarly, using `post.locations.elemental`
-            gives results with one value for each element, while using `post.locations.nodal`
-            gives results with one value for each node.
-        category:
-            Type of result requested. See the :class:`ResultCategory` class.
-        components:
-            Components to get results for.
-        norm:
-            Whether to return the norm of the results.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-        frequencies:
-            Frequency value or list of frequency values to get results for.
-        set_ids:
-            List of sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets/modes.
-        modes:
-            Mode number or list of mode numbers to get results for.
-        node_ids:
-            List of IDs of nodes to get results for.
-        element_ids:
-            List of IDs of elements to get results for.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        expand_cyclic:
-            For cyclic problems, whether to expand the sectors.
-            Can take a list of sector numbers to select specific sectors to expand
-            (one-based indexing).
-            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-            by stage.
-        phase_angle_cyclic:
-             For cyclic problems, phase angle to apply (in degrees).
-        external_layer:
-             Select the external layer (last layer of solid elements under the skin)
-             of the mesh for plotting and data extraction. If a list is passed, the external
-             layer is computed over list of elements.
-        skin:
-             Select the skin (creates new 2D elements connecting the external nodes)
-             of the mesh for plotting and data extraction. If a list is passed, the skin
-             is computed over list of elements (not supported for cyclic symmetry). Getting the
-             skin on more than one result (several time freq sets, split data...) is only
-             supported starting with Ansys 2023R2.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
+    ) -> Tuple[dpf.Workflow, dpf.outputs.Output, Selection]:
+        """Generate (without evaluating) the Workflow to extract results."""
         # Build the targeted spatial and time scoping
         tot = (
             (set_ids is not None)
@@ -277,6 +208,118 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             comp = None
             base_name += "_N"
 
+        return wf, out, selection
+
+    def _get_result(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        frequencies: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        modes: Union[int, List[int], None] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
+        exclusive.
+        If none of the above is given, only the first mode will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        base_name:
+            Base name for the requested result.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        category:
+            Type of result requested. See the :class:`ResultCategory` class.
+        components:
+            Components to get results for.
+        norm:
+            Whether to return the norm of the results.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        frequencies:
+            Frequency value or list of frequency values to get results for.
+        set_ids:
+            List of sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets/modes.
+        modes:
+            Mode number or list of mode numbers to get results for.
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        wf, out, selection = self._get_result_workflow(
+            base_name=base_name,
+            location=location,
+            category=category,
+            components=components,
+            norm=norm,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            frequencies=frequencies,
+            set_ids=set_ids,
+            all_sets=all_sets,
+            modes=modes,
+            named_selections=named_selections,
+            selection=selection,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
         # Set the workflow output
         wf.set_output_name("out", out)
         wf.progress_bar = False
@@ -292,6 +335,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
                 _WfNames.mesh, dpf.types.meshed_region
             )
 
+        comp, _, columns = self._create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name, disp_wf, submesh
         )
