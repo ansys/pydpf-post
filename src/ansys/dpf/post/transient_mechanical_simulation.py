@@ -24,49 +24,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
-        times: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        named_selections: Union[List[str], str, None] = None,
-        external_layer: Union[bool, List[int]] = False,
-        skin: Union[bool, List[int]] = False,
-    ) -> Tuple[dpf.Workflow, dpf.outputs.Output, Selection]:
+    ) -> dpf.Workflow:
         """Generate (without evaluating) the Workflow to extract results."""
-        # Build the targeted time scoping
-        tot = (
-            (set_ids is not None)
-            + (all_sets is True)
-            + (times is not None)
-            + (load_steps is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments all_sets, selection, set_ids, times, "
-                "and load_steps are mutually exclusive."
-            )
-
-        selection = self._build_selection(
-            base_name=base_name,
-            category=category,
-            selection=selection,
-            set_ids=set_ids,
-            times=times,
-            load_steps=load_steps,
-            all_sets=all_sets,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-            location=location,
-            external_layer=external_layer,
-            skin=skin,
-        )
-
         comp, to_extract, _ = self._create_components(base_name, category, components)
 
         # Initialize a workflow
@@ -203,7 +162,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             comp = None
             base_name += "_N"
 
-        return wf, out, selection
+        # Set the workflow output
+        wf.set_output_name("out", out)
+        wf.progress_bar = False
+
+        return wf
 
     def _get_result(
         self,
@@ -291,27 +254,45 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
-        wf, out, selection = self._get_result_workflow(
+        # Build the targeted time scoping
+        tot = (
+            (set_ids is not None)
+            + (all_sets is True)
+            + (times is not None)
+            + (load_steps is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments all_sets, selection, set_ids, times, "
+                "and load_steps are mutually exclusive."
+            )
+
+        selection = self._build_selection(
+            base_name=base_name,
+            category=category,
+            selection=selection,
+            set_ids=set_ids,
+            times=times,
+            load_steps=load_steps,
+            all_sets=all_sets,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            location=location,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+        wf = self._get_result_workflow(
             base_name=base_name,
             location=location,
             category=category,
             components=components,
             norm=norm,
             selection=selection,
-            times=times,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            load_steps=load_steps,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-            external_layer=external_layer,
-            skin=skin,
         )
 
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 

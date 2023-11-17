@@ -4,7 +4,7 @@ ModalMechanicalSimulation
 -------------------------
 
 """
-from typing import List, Tuple, Union
+from typing import List, Union
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
@@ -23,55 +23,12 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         category: ResultCategory,
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        frequencies: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        modes: Union[int, List[int], None] = None,
-        named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool, List[int]] = False,
-        skin: Union[bool, List[int]] = False,
-    ) -> Tuple[dpf.Workflow, dpf.outputs.Output, Selection]:
+    ) -> dpf.Workflow:
         """Generate (without evaluating) the Workflow to extract results."""
-        # Build the targeted spatial and time scoping
-        tot = (
-            (set_ids is not None)
-            + (all_sets is True)
-            + (frequencies is not None)
-            + (modes is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments all_sets, selection, set_ids, frequencies, "
-                "and modes are mutually exclusive."
-            )
-        elif tot == 0:
-            set_ids = 1
-
-        selection = self._build_selection(
-            base_name=base_name,
-            category=category,
-            selection=selection,
-            set_ids=set_ids if set_ids else modes,
-            times=frequencies,
-            load_steps=None,
-            all_sets=all_sets,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-            location=location,
-            external_layer=external_layer,
-            skin=skin,
-        )
-
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
+        comp, to_extract, _ = self._create_components(base_name, category, components)
 
         # Initialize a workflow
         wf = dpf.Workflow(server=self._model._server)
@@ -208,7 +165,11 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             comp = None
             base_name += "_N"
 
-        return wf, out, selection
+        # Set the workflow output
+        wf.set_output_name("out", out)
+        wf.progress_bar = False
+
+        return wf
 
     def _get_result(
         self,
@@ -300,29 +261,49 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
 
         """
-        wf, out, selection = self._get_result_workflow(
+        # Build the targeted spatial and time scoping
+        tot = (
+            (set_ids is not None)
+            + (all_sets is True)
+            + (frequencies is not None)
+            + (modes is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments all_sets, selection, set_ids, frequencies, "
+                "and modes are mutually exclusive."
+            )
+        elif tot == 0:
+            set_ids = 1
+
+        selection = self._build_selection(
+            base_name=base_name,
+            category=category,
+            selection=selection,
+            set_ids=set_ids if set_ids else modes,
+            times=frequencies,
+            load_steps=None,
+            all_sets=all_sets,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            location=location,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+        wf = self._get_result_workflow(
             base_name=base_name,
             location=location,
             category=category,
             components=components,
             norm=norm,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            frequencies=frequencies,
-            set_ids=set_ids,
-            all_sets=all_sets,
-            modes=modes,
-            named_selections=named_selections,
             selection=selection,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
-            external_layer=external_layer,
-            skin=skin,
         )
 
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 
