@@ -2,6 +2,7 @@ import pytest
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
+
 # from ansys.dpf.post.helpers import streamlines
 from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
