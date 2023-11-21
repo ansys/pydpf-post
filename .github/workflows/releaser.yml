@@ -58,3 +58,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           doc-artifact-name: HTML-doc-ansys-dpf-post.zip
           decompress-artifact: true
+
+  update_ansys_lab_examples:
+    uses: ./.github/workflows/ansys_lab.yml
+    with:
+      version: latest
+    secrets: inherit
