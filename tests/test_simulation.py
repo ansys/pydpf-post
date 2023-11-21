@@ -679,6 +679,17 @@ class TestStaticMechanicalSimulation:
         result = static_simulation.stress_principal_elemental(skin=[1, 2, 3])
         assert len(result.index.mesh_index) == 9
 
+    def test_reduced_mesh(self, static_simulation: post.StaticMechanicalSimulation):
+        result = static_simulation.stress_eqv_von_mises_elemental(reduce_mesh=True)
+        print(result)
+        assert len(result.mesh_index) == static_simulation.mesh.num_elements
+        result = static_simulation.stress_eqv_von_mises_elemental(
+            reduce_mesh=static_simulation.mesh.element_ids[:-2]
+        )
+        print(static_simulation.mesh.element_ids[:-2])
+        print(result)
+        assert len(result.mesh_index) == static_simulation.mesh.num_elements - 2
+
 
 class TestTransientMechanicalSimulation:
     @fixture
