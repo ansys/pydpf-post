@@ -3,7 +3,10 @@ import pytest
 from ansys.dpf import post
 from ansys.dpf.post import examples
 from ansys.dpf.post.helpers import streamlines
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
+)
 
 
 @pytest.mark.skipif(
@@ -20,7 +23,10 @@ class TestStreamlines:
         import pyvista as pv
 
         pv.OFF_SCREEN = False
-        dataframe = simulation.velocity(times=[0.0], zone_ids=[1])
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            dataframe = simulation.velocity(times=[0.0], zone_ids=[1])
+        else:
+            dataframe = simulation.velocity(times=[0.0], zone_ids=[5])
         sources = [
             {"radius": 0.25, "center": (0.75, 0.0, 0.0), "n_points": 20},
             {
