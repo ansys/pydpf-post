@@ -25,7 +25,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
-  ANSYS_VERSION: '241'
+  ANSYS_VERSION: '242'
 
 jobs:
   debug:
@@ -129,7 +129,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["232", "231", "222"]
+        ANSYS_VERSION: ["241", "232", "231", "222"]
 
     steps:
       - uses: actions/checkout@v4
@@ -185,7 +185,7 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: "241"
+      ANSYS_VERSION: "242"
       python_versions: '["3.10"]'
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
     secrets: inherit
@@ -194,7 +194,7 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: "241"
+      ANSYS_VERSION: "242"
       python_version: "3.10"
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
