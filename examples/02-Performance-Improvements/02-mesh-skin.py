@@ -50,7 +50,7 @@ print(simulation)
 # Extract displacement data on the skin.
 
 displacement_skin = simulation.displacement(skin=True)
-displacement_skin.plot()
+displacement_skin.plot(text="U with skin=True")
 
 print(f"number of nodes with skin=True: {len(displacement_skin.index.mesh_index)}")
 print(f"number of nodes with skin=False: {len(simulation.mesh.node_ids)}")
@@ -62,7 +62,7 @@ print(f"number of nodes with skin=False: {len(simulation.mesh.node_ids)}")
 # Averaging, and invariants computation are done through a solid to skin connectivity mapping.
 
 elemental_stress_skin = simulation.stress_principal_elemental(components=[1], skin=True)
-elemental_stress_skin.plot()
+elemental_stress_skin.plot(text="S1 with skin=True")
 
 print(
     f"number of elements with skin=True: {len(elemental_stress_skin.index.mesh_index)}"
@@ -71,15 +71,15 @@ print(f"number of elements with skin=False: {len(simulation.mesh.element_ids)}")
 
 
 elastic_strain_eqv_skin = simulation.elastic_strain_eqv_von_mises_nodal(skin=True)
-elastic_strain_eqv_skin.plot()
+elastic_strain_eqv_skin.plot(text="EE with skin=True")
 
 ###############################################################################
-# Extract the external layer on a selection of elements
-# -----------------------------------------------------
+# Extract on the skin of a selection of elements
+# ----------------------------------------------
 
 all_elements = simulation.mesh.element_ids
 elements = []
 for i in range(0, int(all_elements.size / 2)):
     elements.append(all_elements[i])
 elemental_stress_skin = simulation.stress_principal_elemental(skin=elements)
-elemental_stress_skin.plot()
+elemental_stress_skin.plot(text="S1 with skin=elements")
