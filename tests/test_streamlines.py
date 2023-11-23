@@ -20,9 +20,6 @@ class TestStreamlines:
         return post.FluidSimulation(cas=files_cfx["cas"], dat=files_cfx["dat"])  # noqa
 
     def test_plot_streamlines(self, simulation):
-        import pyvista as pv
-
-        pv.OFF_SCREEN = False
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
             dataframe = simulation.velocity(times=[0.0], zone_ids=[1])
         else:
