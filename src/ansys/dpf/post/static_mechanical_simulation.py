@@ -106,10 +106,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
         reduce_mesh:
-            Perform a reduction of the mesh under consideration based on, by order of priority:
-            - the list of element IDs given to this parameter
-            - parameter skin if reduce_mesh=True
-            - parameter element_ids if reduce_mesh=True and skin=None
+            Perform a reduction of the mesh based on, by order of priority:
+            - The list of element IDs given to this parameter
+            - Parameter skin if reduce_mesh=True
+            - Parameter element_ids if reduce_mesh=True and skin=None
 
         Returns
         -------
@@ -1168,12 +1168,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             of the mesh for plotting and data extraction. If a list is passed, the skin
             is computed over list of elements (not supported for cyclic symmetry). Getting the
             skin on more than one result (several time freq sets, split data...) is only
-            supported starting with Ansys 2023R2.
+            supported starting with Ansys 2023 R2.
         reduce_mesh:
-            Perform a reduction of the mesh under consideration based on, by order of priority:
-            - the list of element IDs given to this parameter
-            - parameter skin if reduce_mesh=True
-            - parameter element_ids if reduce_mesh=True and skin=None
+            Perform a reduction of the mesh based on, by order of priority:
+            - The list of element IDs given to this parameter
+            - Parameter skin if reduce_mesh=True
+            - Parameter element_ids if reduce_mesh=True and skin=None
 
         Returns
         -------

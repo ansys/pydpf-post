@@ -227,7 +227,7 @@ class SpatialSelection:
             self.select_with_scoping(scoping)
 
     def reduce_mesh(self, element_ids: Union[Scoping, List[int]]):
-        """Reduce the mesh under consideration to the given list of elements.
+        """Reduce the mesh with consideration to the given list of elements.
 
         Parameters
         ----------
@@ -845,7 +845,7 @@ class Selection:
         self._spatial_selection = value
 
     def reduce_mesh(self, element_ids: Union[List[int]]):
-        """Reduce the mesh under consideration to the given list of elements.
+        """Reduce the mesh with consideration to the given list of elements.
 
         Parameters
         ----------
