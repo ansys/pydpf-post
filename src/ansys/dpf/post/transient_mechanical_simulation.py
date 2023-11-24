@@ -24,7 +24,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
-    ) -> dpf.Workflow:
+    ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, _ = self._create_components(base_name, category, components)
 
@@ -166,7 +166,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         wf.set_output_name("out", out)
         wf.progress_bar = False
 
-        return wf
+        return wf, comp, base_name
 
     def _get_result(
         self,
@@ -284,7 +284,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             skin=skin,
         )
 
-        wf = self._get_result_workflow(
+        wf, comp, base_name = self._get_result_workflow(
             base_name=base_name,
             location=location,
             category=category,
@@ -305,7 +305,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 _WfNames.mesh, dpf.types.meshed_region
             )
 
-        comp, _, columns = self._create_components(base_name, category, components)
+        _, _, columns = self._create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name, disp_wf=disp_wf, submesh=submesh
         )

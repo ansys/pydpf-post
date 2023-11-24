@@ -37,11 +37,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-    ) -> dpf.Workflow:
+    ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
+        comp, to_extract, _ = self._create_components(base_name, category, components)
 
         # Initialize a workflow
         wf = dpf.Workflow(server=self._model._server)
@@ -209,7 +207,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         wf.set_output_name("out", out)
         wf.progress_bar = False
 
-        return wf
+        return wf, comp, base_name
 
     def _get_result(
         self,
@@ -354,7 +352,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             skin=skin,
         )
 
-        wf = self._get_result_workflow(
+        wf, comp, base_name = self._get_result_workflow(
             base_name=base_name,
             location=location,
             category=category,
@@ -372,7 +370,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
-        comp, _, columns = self._create_components(base_name, category, components)
+        _, _, columns = self._create_components(base_name, category, components)
 
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
