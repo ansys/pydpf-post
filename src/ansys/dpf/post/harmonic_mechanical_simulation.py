@@ -25,7 +25,7 @@ from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 class HarmonicMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical harmonic simulations."""
 
-    def _get_result(
+    def _get_result_workflow(
         self,
         base_name: str,
         location: str,
@@ -34,143 +34,12 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         norm: bool = False,
         amplitude: bool = False,
         sweeping_phase: Union[float, None] = 0.0,
-        node_ids: Union[List[int], None] = None,
-        element_ids: Union[List[int], None] = None,
-        frequencies: Union[float, List[float], None] = None,
-        set_ids: Union[int, List[int], None] = None,
-        all_sets: bool = False,
-        load_steps: Union[
-            int, List[int], Tuple[int, Union[int, List[int]]], None
-        ] = None,
-        named_selections: Union[List[str], str, None] = None,
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        external_layer: Union[bool, List[int]] = False,
-        skin: Union[bool, List[int]] = False,
-    ) -> DataFrame:
-        """Extract results from the simulation.
-
-        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
-        exclusive.
-        If none of the above is given, only the first mode will be returned.
-
-        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
-        exclusive.
-        If none of the above is given, results will be extracted for the whole mesh.
-
-        Parameters
-        ----------
-        base_name:
-            Base name for the requested result.
-        location:
-            Location to extract results at. Available locations are listed in
-            class:`post.locations` and are: `post.locations.nodal`,
-            `post.locations.elemental`, and `post.locations.elemental_nodal`.
-            Using the default `post.locations.elemental_nodal` results in a value
-            for every node at each element. Similarly, using `post.locations.elemental`
-            gives results with one value for each element, while using `post.locations.nodal`
-            gives results with one value for each node.
-        category:
-            Type of result requested. See the :class:`ResultCategory` class.
-        components:
-            Components to get results for.
-        norm:
-            Whether to return the norm of the results.
-        amplitude:
-            Whether to return the amplitude of the result. Overrides `sweeping_phase`.
-        sweeping_phase:
-            Sweeping phase value to extract result for. If a single `float` value is given, it
-            must be in degrees. Unused if `amplitude=True`.
-        selection:
-            Selection to get results for.
-            A Selection defines both spatial and time-like criteria for filtering.
-        frequencies:
-            Frequency value or list of frequency values to get results for.
-        set_ids:
-            List of sets to get results for.
-            A set is defined as a unique combination of {time, load step, sub-step}.
-        all_sets:
-            Whether to get results for all sets.
-        load_steps:
-            Load step number or list of load step numbers to get results for.
-            One can specify sub-steps of a load step with a tuple of format:
-            (load-step, sub-step number or list of sub-step numbers).
-        node_ids:
-            List of IDs of nodes to get results for.
-        element_ids:
-            List of IDs of elements to get results for.
-        named_selections:
-            Named selection or list of named selections to get results for.
-        expand_cyclic:
-            For cyclic problems, whether to expand the sectors.
-            Can take a list of sector numbers to select specific sectors to expand
-            (one-based indexing).
-            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
-            by stage.
-        phase_angle_cyclic:
-             For cyclic problems, phase angle to apply (in degrees).
-        external_layer:
-             Select the external layer (last layer of solid elements under the skin)
-             of the mesh for plotting and data extraction. If a list is passed, the external
-             layer is computed over list of elements.
-        skin:
-             Select the skin (creates new 2D elements connecting the external nodes)
-             of the mesh for plotting and data extraction. If a list is passed, the skin
-             is computed over list of elements (not supported for cyclic symmetry). Getting the
-             skin on more than one result (several time freq sets, split data...) is only
-             supported starting with Ansys 2023R2.
-
-        Returns
-        -------
-        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
-
-        """
-        # Build the targeted spatial and time scoping
-        tot = (
-            (set_ids is not None)
-            + (all_sets is True)
-            + (frequencies is not None)
-            + (load_steps is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments all_sets, selection, set_ids, frequencies, "
-                "and load_steps are mutually exclusive."
-            )
-
-        tot = (
-            (node_ids is not None)
-            + (element_ids is not None)
-            + (named_selections is not None)
-            + (selection is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Arguments selection, named_selections, element_ids, "
-                "and node_ids are mutually exclusive"
-            )
-
-        selection = self._build_selection(
-            base_name=base_name,
-            category=category,
-            selection=selection,
-            set_ids=set_ids,
-            times=frequencies,
-            load_steps=load_steps,
-            all_sets=all_sets,
-            node_ids=node_ids,
-            element_ids=element_ids,
-            named_selections=named_selections,
-            location=location,
-            external_layer=external_layer,
-            skin=skin,
-        )
-
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
+    ) -> (dpf.Workflow, Union[str, list[str], None], str):
+        """Generate (without evaluating) the Workflow to extract results."""
+        comp, to_extract, _ = self._create_components(base_name, category, components)
 
         # Initialize a workflow
         wf = dpf.Workflow(server=self._model._server)
@@ -337,10 +206,171 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         # Set the workflow output
         wf.set_output_name("out", out)
         wf.progress_bar = False
+
+        return wf, comp, base_name
+
+    def _get_result(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        amplitude: bool = False,
+        sweeping_phase: Union[float, None] = 0.0,
+        node_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], None] = None,
+        frequencies: Union[float, List[float], None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        all_sets: bool = False,
+        load_steps: Union[
+            int, List[int], Tuple[int, Union[int, List[int]]], None
+        ] = None,
+        named_selections: Union[List[str], str, None] = None,
+        selection: Union[Selection, None] = None,
+        expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        phase_angle_cyclic: Union[float, None] = None,
+        external_layer: Union[bool, List[int]] = False,
+        skin: Union[bool, List[int]] = False,
+    ) -> DataFrame:
+        """Extract results from the simulation.
+
+        Arguments `selection`, `set_ids`, `all_sets`, `frequencies`, and `modes` are mutually
+        exclusive.
+        If none of the above is given, only the first mode will be returned.
+
+        Arguments `selection`, `named_selections`, `element_ids`, and `node_ids` are mutually
+        exclusive.
+        If none of the above is given, results will be extracted for the whole mesh.
+
+        Parameters
+        ----------
+        base_name:
+            Base name for the requested result.
+        location:
+            Location to extract results at. Available locations are listed in
+            class:`post.locations` and are: `post.locations.nodal`,
+            `post.locations.elemental`, and `post.locations.elemental_nodal`.
+            Using the default `post.locations.elemental_nodal` results in a value
+            for every node at each element. Similarly, using `post.locations.elemental`
+            gives results with one value for each element, while using `post.locations.nodal`
+            gives results with one value for each node.
+        category:
+            Type of result requested. See the :class:`ResultCategory` class.
+        components:
+            Components to get results for.
+        norm:
+            Whether to return the norm of the results.
+        amplitude:
+            Whether to return the amplitude of the result. Overrides `sweeping_phase`.
+        sweeping_phase:
+            Sweeping phase value to extract result for. If a single `float` value is given, it
+            must be in degrees. Unused if `amplitude=True`.
+        selection:
+            Selection to get results for.
+            A Selection defines both spatial and time-like criteria for filtering.
+        frequencies:
+            Frequency value or list of frequency values to get results for.
+        set_ids:
+            List of sets to get results for.
+            A set is defined as a unique combination of {time, load step, sub-step}.
+        all_sets:
+            Whether to get results for all sets.
+        load_steps:
+            Load step number or list of load step numbers to get results for.
+            One can specify sub-steps of a load step with a tuple of format:
+            (load-step, sub-step number or list of sub-step numbers).
+        node_ids:
+            List of IDs of nodes to get results for.
+        element_ids:
+            List of IDs of elements to get results for.
+        named_selections:
+            Named selection or list of named selections to get results for.
+        expand_cyclic:
+            For cyclic problems, whether to expand the sectors.
+            Can take a list of sector numbers to select specific sectors to expand
+            (one-based indexing).
+            If the problem is multi-stage, can take a list of lists of sector numbers, ordered
+            by stage.
+        phase_angle_cyclic:
+             For cyclic problems, phase angle to apply (in degrees).
+        external_layer:
+             Select the external layer (last layer of solid elements under the skin)
+             of the mesh for plotting and data extraction. If a list is passed, the external
+             layer is computed over list of elements.
+        skin:
+             Select the skin (creates new 2D elements connecting the external nodes)
+             of the mesh for plotting and data extraction. If a list is passed, the skin
+             is computed over list of elements (not supported for cyclic symmetry). Getting the
+             skin on more than one result (several time freq sets, split data...) is only
+             supported starting with Ansys 2023R2.
+
+        Returns
+        -------
+        Returns a :class:`ansys.dpf.post.data_object.DataFrame` instance.
+
+        """
+        # Build the targeted spatial and time scoping
+        tot = (
+            (set_ids is not None)
+            + (all_sets is True)
+            + (frequencies is not None)
+            + (load_steps is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments all_sets, selection, set_ids, frequencies, "
+                "and load_steps are mutually exclusive."
+            )
+
+        tot = (
+            (node_ids is not None)
+            + (element_ids is not None)
+            + (named_selections is not None)
+            + (selection is not None)
+        )
+        if tot > 1:
+            raise ValueError(
+                "Arguments selection, named_selections, element_ids, "
+                "and node_ids are mutually exclusive"
+            )
+
+        selection = self._build_selection(
+            base_name=base_name,
+            category=category,
+            selection=selection,
+            set_ids=set_ids,
+            times=frequencies,
+            load_steps=load_steps,
+            all_sets=all_sets,
+            node_ids=node_ids,
+            element_ids=element_ids,
+            named_selections=named_selections,
+            location=location,
+            external_layer=external_layer,
+            skin=skin,
+        )
+
+        wf, comp, base_name = self._get_result_workflow(
+            base_name=base_name,
+            location=location,
+            category=category,
+            components=components,
+            norm=norm,
+            amplitude=amplitude,
+            sweeping_phase=sweeping_phase,
+            selection=selection,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+        )
+
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
+
+        _, _, columns = self._create_components(base_name, category, components)
 
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
