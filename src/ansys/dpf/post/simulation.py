@@ -542,6 +542,7 @@ class Simulation(ABC):
         elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
+        wf.add_operator(op)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
         wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
         wf.set_input_name(_WfNames.cyclic_phase, op, 19)
