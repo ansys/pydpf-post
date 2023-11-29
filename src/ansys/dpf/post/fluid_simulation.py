@@ -469,10 +469,7 @@ class FluidSimulation(Simulation):
 
         # Add an optional norm operation if requested
         if norm:
-            norm_op = self._model.operator(name="norm_fc")
-            norm_op.connect(0, out)
-            wf.add_operator(operator=norm_op)
-            out = norm_op.outputs.fields_container
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
 
         # if averaging_op_name:
         #     average_op = self._model.operator(name=averaging_op_name)

@@ -158,12 +158,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # Add an optional norm operation if requested
         if norm:
-            norm_op = self._model.operator(name="norm_fc")
-            norm_op.connect(0, out)
-            wf.add_operator(operator=norm_op)
-            out = norm_op.outputs.fields_container
-            comp = None
-            base_name += "_N"
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
 
         # Set the workflow output
         wf.set_output_name("out", out)

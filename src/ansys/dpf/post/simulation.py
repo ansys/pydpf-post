@@ -549,6 +549,16 @@ class Simulation(ABC):
         wf.set_output_name(_WfNames.result, op, 0)
         return wf, op
 
+    def _append_norm(self, wf, out, base_name):
+        """Append a norm operator to the current result workflow."""
+        norm_op = self._model.operator(name="norm_fc")
+        norm_op.connect(0, out)
+        wf.add_operator(operator=norm_op)
+        base_name += "_N"
+        out = norm_op.outputs.fields_container
+        comp = None
+        return wf, out, comp, base_name
+
     def _create_components(self, base_name, category, components):
         comp = None
         # Build the list of requested results
