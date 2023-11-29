@@ -205,6 +205,120 @@ class FluidSimulation(Simulation):
             ref = set(self.face_zones.keys())
         return [i for i in zone_ids if i in ref]
 
+    def _get_result_workflow(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+        set_ids: Union[int, List[int], None] = None,
+        zone_ids: Union[List[int], None] = None,
+        phases: Union[List[Union[int, str]], None] = None,
+        species: Union[List[int], None] = None,
+        qualifiers: Union[dict, None] = None,
+    ) -> (dpf.Workflow, Union[str, list[str], None], str):
+        """Generate (without evaluating) the Workflow to extract results."""
+        comp, to_extract, columns = self._create_components(
+            base_name, category, components
+        )
+
+        # Initialize a workflow
+        wf, result_op = self._build_result_workflow(
+            name=base_name,
+            location=location,
+            force_elemental_nodal=False,
+        )
+        query_regions_meshes = False
+        lists = []
+        lists_labels = []
+        if qualifiers:
+            labels = list(qualifiers.keys())
+            lists_labels.extend(labels)
+            lists.extend([qualifiers[key] for key in labels])
+            if "zone" in labels:
+                query_regions_meshes = qualifiers["zone"]
+        else:
+            if set_ids:
+                lists.append(set_ids)
+                lists_labels.append("time")
+            if zone_ids:
+                lists.append(zone_ids)
+                lists_labels.append("zone")
+                query_regions_meshes = zone_ids
+            if phases:
+                phase_ids = []
+                available_phases = self.phases
+                for phase in phases:
+                    phase_ids.append(available_phases[phase].id)
+                lists.append(phase_ids)
+                lists_labels.append("phase")
+            if species:
+                lists.append(species)
+                lists_labels.append("species")
+
+        if lists:
+            import itertools
+
+            for i, c in enumerate(itertools.product(*lists)):
+                label_space = {}
+                for j, label in enumerate(lists_labels):
+                    label_space[label] = c[j]
+                result_op.connect(1000 + i, label_space)
+        # Its output is selected as future workflow output for now
+        # print(result_op)
+
+        if query_regions_meshes:
+            # Results have been queried on regions,
+            # A MeshesProvider is required to give meshes as input of the source operator
+            meshes_provider_op = self._model.operator("meshes_provider")
+            meshes_provider_op.connect(25, query_regions_meshes)
+            result_op.connect(7, meshes_provider_op.outputs.meshes)
+            wf.add_operator(meshes_provider_op)
+        else:
+            # Results have been queried on the whole mesh,
+            # A MeshProvider is required to give the mesh as input of the source operator
+            mesh_provider_op = self._model.operator("mesh_provider")
+            result_op.connect(7, mesh_provider_op.outputs.mesh)
+            wf.add_operator(mesh_provider_op)
+
+        out = result_op.outputs.fields_container
+        # Its inputs are selected as workflow inputs for merging with selection workflows
+        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
+        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
+
+        wf.connect_with(
+            selection.time_freq_selection._selection,
+            output_input_names=("scoping", "time_scoping"),
+        )
+        wf.connect_with(
+            selection.spatial_selection._selection,
+            output_input_names=("scoping", "mesh_scoping"),
+        )
+
+        # Connect data_sources and streams_container inputs of selection if necessary
+        if "streams" in wf.input_names:
+            wf.connect("streams", self._model.metadata.streams_provider)
+        if "data_sources" in wf.input_names:
+            wf.connect("data_sources", self._model.metadata.data_sources)
+
+        # if averaging_op_name:
+        #     average_op = self._model.operator(name=averaging_op_name)
+        #     average_op.connect(0, out)
+        #     wf.add_operator(operator=average_op)
+        #     out = average_op.outputs.fields_container
+
+        # Add an optional norm operation if requested
+        if norm:
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
+
+        # Set the workflow output
+        wf.set_output_name("out", out)
+        wf.progress_bar = False
+
+        return wf, comp, base_name
+
     def _get_result(
         self,
         base_name: str,
@@ -384,102 +498,20 @@ class FluidSimulation(Simulation):
             location=location,
         )
 
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
-
-        # Initialize a workflow
-        wf, result_op = self._build_result_workflow(
-            name=base_name,
+        wf, comp, base_name = self._get_result_workflow(
+            base_name=base_name,
             location=location,
-            force_elemental_nodal=False,
-        )
-        query_regions_meshes = False
-        lists = []
-        lists_labels = []
-        if qualifiers:
-            labels = list(qualifiers.keys())
-            lists_labels.extend(labels)
-            lists.extend([qualifiers[key] for key in labels])
-            if "zone" in labels:
-                query_regions_meshes = qualifiers["zone"]
-        else:
-            if set_ids:
-                lists.append(set_ids)
-                lists_labels.append("time")
-            if zone_ids:
-                lists.append(zone_ids)
-                lists_labels.append("zone")
-                query_regions_meshes = zone_ids
-            if phases:
-                phase_ids = []
-                available_phases = self.phases
-                for phase in phases:
-                    phase_ids.append(available_phases[phase].id)
-                lists.append(phase_ids)
-                lists_labels.append("phase")
-            if species:
-                lists.append(species)
-                lists_labels.append("species")
-
-        if lists:
-            import itertools
-
-            for i, c in enumerate(itertools.product(*lists)):
-                label_space = {}
-                for j, label in enumerate(lists_labels):
-                    label_space[label] = c[j]
-                result_op.connect(1000 + i, label_space)
-        # Its output is selected as future workflow output for now
-        # print(result_op)
-
-        if query_regions_meshes:
-            # Results have been queried on regions,
-            # A MeshesProvider is required to give meshes as input of the source operator
-            meshes_provider_op = self._model.operator("meshes_provider")
-            meshes_provider_op.connect(25, query_regions_meshes)
-            result_op.connect(7, meshes_provider_op.outputs.meshes)
-            wf.add_operator(meshes_provider_op)
-        else:
-            # Results have been queried on the whole mesh,
-            # A MeshProvider is required to give the mesh as input of the source operator
-            mesh_provider_op = self._model.operator("mesh_provider")
-            result_op.connect(7, mesh_provider_op.outputs.mesh)
-            wf.add_operator(mesh_provider_op)
-
-        out = result_op.outputs.fields_container
-        # Its inputs are selected as workflow inputs for merging with selection workflows
-        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
-        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
-
-        wf.connect_with(
-            selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
-        )
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
+            category=category,
+            components=components,
+            norm=norm,
+            selection=selection,
+            set_ids=set_ids,
+            zone_ids=zone_ids,
+            phases=phases,
+            species=species,
+            qualifiers=qualifiers,
         )
 
-        # Connect data_sources and streams_container inputs of selection if necessary
-        if "streams" in wf.input_names:
-            wf.connect("streams", self._model.metadata.streams_provider)
-        if "data_sources" in wf.input_names:
-            wf.connect("data_sources", self._model.metadata.data_sources)
-
-        # Add an optional norm operation if requested
-        if norm:
-            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
-
-        # if averaging_op_name:
-        #     average_op = self._model.operator(name=averaging_op_name)
-        #     average_op.connect(0, out)
-        #     wf.add_operator(operator=average_op)
-        #     out = average_op.outputs.fields_container
-
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
         # print(fc)
@@ -487,6 +519,8 @@ class FluidSimulation(Simulation):
             location = fc[0].location
         if location == locations.elemental:
             location = "cells"
+
+        _, _, columns = self._create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
         )
