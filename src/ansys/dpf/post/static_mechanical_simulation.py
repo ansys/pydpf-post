@@ -56,6 +56,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
         if selection.requires_mesh:
             mesh_wf = core.Workflow(server=self._model._server)
+            mesh_wf.add_operator(self._model.metadata.mesh_provider)
             mesh_wf.set_output_name(
                 _WfNames.initial_mesh, self._model.metadata.mesh_provider
             )
@@ -89,10 +90,10 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             # Instantiate the required operator
             principal_op = self._model.operator(name="invariants_fc")
             # Corresponds to scripting name principal_invariants
-
             if average_op is not None:
                 average_op[0].connect(0, out)
                 principal_op.connect(0, average_op[1])
+                wf.add_operators(average_op)
                 # Set as future output of the workflow
                 average_op = None
             else:
@@ -117,12 +118,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             ):
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
-                wf.add_operator(operator=average_op[1])
+                wf.add_operators(average_op)
                 # Set as future output of the workflow
                 out = average_op[1].outputs.fields_container
             elif average_op is not None:
                 average_op[0].connect(0, out)
                 equivalent_op.connect(0, average_op[1])
+                wf.add_operators(average_op)
                 # Set as future output of the workflow
                 out = equivalent_op.outputs.fields_container
             else:
@@ -134,6 +136,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         if average_op is not None:
             average_op[0].connect(0, out)
+            wf.add_operators(average_op)
             out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
