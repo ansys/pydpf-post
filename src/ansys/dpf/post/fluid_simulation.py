@@ -303,12 +303,6 @@ class FluidSimulation(Simulation):
         if "data_sources" in wf.input_names:
             wf.connect("data_sources", self._model.metadata.data_sources)
 
-        # if averaging_op_name:
-        #     average_op = self._model.operator(name=averaging_op_name)
-        #     average_op.connect(0, out)
-        #     wf.add_operator(operator=average_op)
-        #     out = average_op.outputs.fields_container
-
         # Add an optional norm operation if requested
         if norm:
             wf, out, comp, base_name = self._append_norm(wf, out, base_name)
