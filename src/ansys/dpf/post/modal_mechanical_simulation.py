@@ -56,6 +56,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         )
         if selection.requires_mesh:
             mesh_wf = dpf.Workflow(server=self._model._server)
+            mesh_wf.add_operator(self._model.metadata.mesh_provider)
             mesh_wf.set_output_name(
                 _WfNames.initial_mesh, self._model.metadata.mesh_provider
             )
@@ -94,6 +95,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             if average_op is not None:
                 average_op[0].connect(0, out)
                 principal_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 average_op = None
             else:
@@ -118,12 +120,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             ):
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
-                wf.add_operator(operator=average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 out = average_op[1].outputs.fields_container
             elif average_op is not None:
                 average_op[0].connect(0, out)
                 equivalent_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 out = equivalent_op.outputs.fields_container
             else:
@@ -134,6 +137,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         if average_op is not None:
             average_op[0].connect(0, out)
+            wf.add_operators(list(average_op))
             out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
@@ -155,12 +159,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         # Add an optional norm operation if requested
         if norm:
-            norm_op = self._model.operator(name="norm_fc")
-            norm_op.connect(0, out)
-            wf.add_operator(operator=norm_op)
-            out = norm_op.outputs.fields_container
-            comp = None
-            base_name += "_N"
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
 
         # Set the workflow output
         wf.set_output_name("out", out)

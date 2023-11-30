@@ -28,9 +28,6 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, _ = self._create_components(base_name, category, components)
 
-        # Initialize a workflow
-        wf = dpf.Workflow(server=self._model._server)
-
         force_elemental_nodal = self._requires_manual_averaging(
             base_name=base_name,
             location=location,
@@ -57,6 +54,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         if selection.requires_mesh:
             # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
             mesh_wf = dpf.Workflow(server=self._model._server)
+            mesh_wf.add_operator(self._model.metadata.mesh_provider)
             mesh_wf.set_output_name(
                 _WfNames.initial_mesh, self._model.metadata.mesh_provider
             )
@@ -91,10 +89,12 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             if average_op is not None:
                 average_op[0].connect(0, out)
                 principal_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 average_op = None
             else:
                 principal_op.connect(0, out)
+            wf.add_operator(operator=principal_op)
             # Set as future output of the workflow
             if len(to_extract) == 1:
                 out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
@@ -114,12 +114,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             ):
                 equivalent_op.connect(0, out)
                 average_op[0].connect(0, equivalent_op)
-                wf.add_operator(operator=average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 out = average_op[1].outputs.fields_container
             elif average_op is not None:
                 average_op[0].connect(0, out)
                 equivalent_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
                 # Set as future output of the workflow
                 out = equivalent_op.outputs.fields_container
             else:
@@ -130,6 +131,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         if average_op is not None:
             average_op[0].connect(0, out)
+            wf.add_operators(list(average_op))
             out = average_op[1].outputs.fields_container
 
         # Add an optional component selection step if result is vector, matrix, or principal
@@ -155,12 +157,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         # Add an optional norm operation if requested
         if norm:
-            norm_op = self._model.operator(name="norm_fc")
-            norm_op.connect(0, out)
-            wf.add_operator(operator=norm_op)
-            out = norm_op.outputs.fields_container
-            comp = None
-            base_name += "_N"
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
 
         # Set the workflow output
         wf.set_output_name("out", out)
