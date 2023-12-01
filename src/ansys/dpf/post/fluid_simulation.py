@@ -561,8 +561,8 @@ class FluidSimulation(Simulation):
         node_ids:
             List of IDs of nodes to get results for.
         face_ids:
-            List of IDs of faces to get results for. For CFX files, these ids correspond
-            to the COMPOSITE that gather the related face zones.
+            List of faces IDs to get results for. For CFX files, these IDs correspond
+            to the COMPOSITE that gathers the related face zones.
         cell_ids:
             List of IDs of cells to get results for.
         zone_ids:
