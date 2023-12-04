@@ -184,7 +184,10 @@ class FluidSimulation(Simulation):
 
     @property
     def face_zones(self) -> dict:
-        """Return a dictionary of the face zones in the simulation."""
+        """Return a dictionary of the face zones in the simulation.
+
+        For CFX files, we gather face zones in COMPOSITE entities more physics-related.
+        """
         return self.mesh_info.face_zones
 
     @property
@@ -558,7 +561,8 @@ class FluidSimulation(Simulation):
         node_ids:
             List of IDs of nodes to get results for.
         face_ids:
-            List of IDs of faces to get results for.
+            List of faces IDs to get results for. For CFX files, these IDs correspond
+            to the COMPOSITE that gathers the related face zones.
         cell_ids:
             List of IDs of cells to get results for.
         zone_ids:
