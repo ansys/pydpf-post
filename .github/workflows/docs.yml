@@ -156,7 +156,7 @@ jobs:
           make pdf $DEBUG_PDF
 
       - name: "Upload Documentation Build log"
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: doc-${{env.PACKAGE_NAME}}-log
           path: docs/*.txt
@@ -170,7 +170,7 @@ jobs:
         if: always()
 
       - name: "Upload HTML Documentation"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HTML-doc-${{env.PACKAGE_NAME}}.zip
           path: HTML-doc-${{env.PACKAGE_NAME}}.zip
@@ -195,7 +195,7 @@ jobs:
           dest: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Upload PDF Documentation"
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         if: inputs.generate_pdf == 'true'
         with:
           name: PDF-doc-${{env.PACKAGE_NAME}}
