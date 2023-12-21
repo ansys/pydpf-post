@@ -16,6 +16,155 @@ from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations."""
 
+    def _get_result_workflow(
+        self,
+        base_name: str,
+        location: str,
+        category: ResultCategory,
+        components: Union[str, List[str], int, List[int], None] = None,
+        norm: bool = False,
+        selection: Union[Selection, None] = None,
+    ) -> (dpf.Workflow, Union[str, list[str], None], str):
+        """Generate (without evaluating) the Workflow to extract results."""
+        comp, to_extract, _ = self._create_components(base_name, category, components)
+
+        force_elemental_nodal = self._requires_manual_averaging(
+            base_name=base_name,
+            location=location,
+            category=category,
+            selection=selection,
+        )
+
+        # Instantiate the main result operator
+        wf, result_op = self._build_result_workflow(
+            name=base_name,
+            location=location,
+            force_elemental_nodal=force_elemental_nodal,
+        )
+        # Its output is selected as future workflow output for now
+        out = result_op.outputs.fields_container
+        # Its inputs are selected as workflow inputs for merging with selection workflows
+        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
+        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
+
+        wf.connect_with(
+            selection.time_freq_selection._selection,
+            output_input_names=("scoping", "time_scoping"),
+        )
+        if selection.requires_mesh:
+            # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
+            mesh_wf = dpf.Workflow(server=self._model._server)
+            mesh_wf.add_operator(self._model.metadata.mesh_provider)
+            mesh_wf.set_output_name(
+                _WfNames.initial_mesh, self._model.metadata.mesh_provider
+            )
+            selection.spatial_selection._selection.connect_with(
+                mesh_wf,
+                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
+            )
+        wf.connect_with(
+            selection.spatial_selection._selection,
+            output_input_names={
+                "scoping": "mesh_scoping",
+            },
+        )
+
+        # Connect data_sources and streams_container inputs of selection if necessary
+        if "streams" in wf.input_names:
+            wf.connect("streams", self._model.metadata.streams_provider)
+        if "data_sources" in wf.input_names:
+            wf.connect("data_sources", self._model.metadata.data_sources)
+
+        average_op = None
+        if force_elemental_nodal:
+            average_op = self._create_averaging_operator(
+                location=location, selection=selection
+            )
+
+        # Add a step to compute principal invariants if result is principal
+        if category == ResultCategory.principal:
+            # Instantiate the required operator
+            principal_op = self._model.operator(name="invariants_fc")
+            # Corresponds to scripting name principal_invariants
+            if average_op is not None:
+                average_op[0].connect(0, out)
+                principal_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
+                # Set as future output of the workflow
+                average_op = None
+            else:
+                principal_op.connect(0, out)
+            wf.add_operator(operator=principal_op)
+            # Set as future output of the workflow
+            if len(to_extract) == 1:
+                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
+            else:
+                raise NotImplementedError("Cannot combine principal results yet.")
+                # We need to define the behavior for storing different results in a DataFrame
+
+        # Add a step to compute equivalent if result is equivalent
+        elif category == ResultCategory.equivalent:
+            equivalent_op = self._model.operator(name="eqv_fc")
+            wf.add_operator(operator=equivalent_op)
+            # If a strain result, change the location now
+            if (
+                average_op is not None
+                and category == ResultCategory.equivalent
+                and base_name[0] == "E"
+            ):
+                equivalent_op.connect(0, out)
+                average_op[0].connect(0, equivalent_op)
+                wf.add_operators(list(average_op))
+                # Set as future output of the workflow
+                out = average_op[1].outputs.fields_container
+            elif average_op is not None:
+                average_op[0].connect(0, out)
+                equivalent_op.connect(0, average_op[1])
+                wf.add_operators(list(average_op))
+                # Set as future output of the workflow
+                out = equivalent_op.outputs.fields_container
+            else:
+                equivalent_op.connect(0, out)
+                out = equivalent_op.outputs.fields_container
+            average_op = None
+            base_name += "_VM"
+
+        if average_op is not None:
+            average_op[0].connect(0, out)
+            wf.add_operators(list(average_op))
+            out = average_op[1].outputs.fields_container
+
+        # Add an optional component selection step if result is vector, matrix, or principal
+        if (
+            category
+            in [
+                ResultCategory.vector,
+                ResultCategory.matrix,
+            ]
+        ) and (to_extract is not None):
+            # Instantiate a component selector operator
+            extract_op = self._model.operator(name="component_selector_fc")
+            # Feed it the current workflow output
+            extract_op.connect(0, out)
+            # Feed it the requested components
+            extract_op.connect(1, to_extract)
+            wf.add_operator(operator=extract_op)
+            # Set as future output of the workflow
+            out = extract_op.outputs.fields_container
+            if len(to_extract) == 1:
+                base_name += f"_{comp[0]}"
+                comp = None
+
+        # Add an optional norm operation if requested
+        if norm:
+            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
+
+        # Set the workflow output
+        wf.set_output_name("out", out)
+        wf.progress_bar = False
+
+        return wf, comp, base_name
+
     def _get_result(
         self,
         base_name: str,
@@ -132,147 +281,15 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             skin=skin,
         )
 
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
-
-        # Initialize a workflow
-        wf = dpf.Workflow(server=self._model._server)
-
-        force_elemental_nodal = self._requires_manual_averaging(
+        wf, comp, base_name = self._get_result_workflow(
             base_name=base_name,
             location=location,
             category=category,
+            components=components,
+            norm=norm,
             selection=selection,
         )
 
-        # Instantiate the main result operator
-        wf, result_op = self._build_result_workflow(
-            name=base_name,
-            location=location,
-            force_elemental_nodal=force_elemental_nodal,
-        )
-        # Its output is selected as future workflow output for now
-        out = result_op.outputs.fields_container
-        # Its inputs are selected as workflow inputs for merging with selection workflows
-        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
-        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
-
-        wf.connect_with(
-            selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
-        )
-        if selection.requires_mesh:
-            # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
-            mesh_wf = dpf.Workflow(server=self._model._server)
-            mesh_wf.set_output_name(
-                _WfNames.initial_mesh, self._model.metadata.mesh_provider
-            )
-            selection.spatial_selection._selection.connect_with(
-                mesh_wf,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
-            )
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names={
-                "scoping": "mesh_scoping",
-            },
-        )
-
-        # Connect data_sources and streams_container inputs of selection if necessary
-        if "streams" in wf.input_names:
-            wf.connect("streams", self._model.metadata.streams_provider)
-        if "data_sources" in wf.input_names:
-            wf.connect("data_sources", self._model.metadata.data_sources)
-
-        average_op = None
-        if force_elemental_nodal:
-            average_op = self._create_averaging_operator(
-                location=location, selection=selection
-            )
-
-        # Add a step to compute principal invariants if result is principal
-        if category == ResultCategory.principal:
-            # Instantiate the required operator
-            principal_op = self._model.operator(name="invariants_fc")
-            # Corresponds to scripting name principal_invariants
-            if average_op is not None:
-                average_op[0].connect(0, out)
-                principal_op.connect(0, average_op[1])
-                # Set as future output of the workflow
-                average_op = None
-            else:
-                principal_op.connect(0, out)
-            # Set as future output of the workflow
-            if len(to_extract) == 1:
-                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
-            else:
-                raise NotImplementedError("Cannot combine principal results yet.")
-                # We need to define the behavior for storing different results in a DataFrame
-
-        # Add a step to compute equivalent if result is equivalent
-        elif category == ResultCategory.equivalent:
-            equivalent_op = self._model.operator(name="eqv_fc")
-            wf.add_operator(operator=equivalent_op)
-            # If a strain result, change the location now
-            if (
-                average_op is not None
-                and category == ResultCategory.equivalent
-                and base_name[0] == "E"
-            ):
-                equivalent_op.connect(0, out)
-                average_op[0].connect(0, equivalent_op)
-                wf.add_operator(operator=average_op[1])
-                # Set as future output of the workflow
-                out = average_op[1].outputs.fields_container
-            elif average_op is not None:
-                average_op[0].connect(0, out)
-                equivalent_op.connect(0, average_op[1])
-                # Set as future output of the workflow
-                out = equivalent_op.outputs.fields_container
-            else:
-                equivalent_op.connect(0, out)
-                out = equivalent_op.outputs.fields_container
-            average_op = None
-            base_name += "_VM"
-
-        if average_op is not None:
-            average_op[0].connect(0, out)
-            out = average_op[1].outputs.fields_container
-
-        # Add an optional component selection step if result is vector, matrix, or principal
-        if (
-            category
-            in [
-                ResultCategory.vector,
-                ResultCategory.matrix,
-            ]
-        ) and (to_extract is not None):
-            # Instantiate a component selector operator
-            extract_op = self._model.operator(name="component_selector_fc")
-            # Feed it the current workflow output
-            extract_op.connect(0, out)
-            # Feed it the requested components
-            extract_op.connect(1, to_extract)
-            wf.add_operator(operator=extract_op)
-            # Set as future output of the workflow
-            out = extract_op.outputs.fields_container
-            if len(to_extract) == 1:
-                base_name += f"_{comp[0]}"
-                comp = None
-
-        # Add an optional norm operation if requested
-        if norm:
-            norm_op = self._model.operator(name="norm_fc")
-            norm_op.connect(0, out)
-            wf.add_operator(operator=norm_op)
-            out = norm_op.outputs.fields_container
-            comp = None
-            base_name += "_N"
-
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
         # Evaluate  the workflow
         fc = wf.get_output("out", dpf.types.fields_container)
 
@@ -285,6 +302,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 _WfNames.mesh, dpf.types.meshed_region
             )
 
+        _, _, columns = self._create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name, disp_wf=disp_wf, submesh=submesh
         )

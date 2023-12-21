@@ -542,11 +542,22 @@ class Simulation(ABC):
         elif location:
             op.connect(9, location)
         wf = Workflow(server=self._model._server)
+        wf.add_operator(op)
         wf.set_input_name(_WfNames.read_cyclic, op, 14)
         wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
         wf.set_input_name(_WfNames.cyclic_phase, op, 19)
         wf.set_output_name(_WfNames.result, op, 0)
         return wf, op
+
+    def _append_norm(self, wf, out, base_name):
+        """Append a norm operator to the current result workflow."""
+        norm_op = self._model.operator(name="norm_fc")
+        norm_op.connect(0, out)
+        wf.add_operator(operator=norm_op)
+        base_name += "_N"
+        out = norm_op.outputs.fields_container
+        comp = None
+        return wf, out, comp, base_name
 
     def _create_components(self, base_name, category, components):
         comp = None
