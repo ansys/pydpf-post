@@ -246,6 +246,7 @@ class SpatialSelection:
                 named_selection_name=named_selection,
                 server=self._server,
             )
+            self._selection.add_operator(op)
             self._selection.set_input_name(
                 _WfNames.data_sources, op.inputs.data_sources
             )
@@ -257,6 +258,7 @@ class SpatialSelection:
             op = operators.utility.merge_scopings(server=self._server)
             forward_ds = operators.utility.forward(any=None, server=self._server)
             forward_sc = operators.utility.forward(any=None, server=self._server)
+            self._selection.add_operators([op, forward_ds, forward_sc])
             self._selection.set_input_name(_WfNames.data_sources, forward_ds.inputs.any)
             # self._selection.set_input_name(_WfNames.streams, forward_sc.inputs.any)
             for pin, ns in enumerate(named_selection):
@@ -267,12 +269,11 @@ class SpatialSelection:
                     # data_sources=forward_ds.outputs.any,
                     # streams_container=forward_sc.outputs.any,
                 )
+                self._selection.add_operator(mesh_scoping_op)
                 mesh_scoping_op.connect(3, forward_sc.outputs.any)
                 mesh_scoping_op.connect(4, forward_ds.outputs.any)
                 op.connect(pin, mesh_scoping_op.outputs.mesh_scoping)
             self._selection.set_output_name(_WfNames.scoping, op.outputs.merged_scoping)
-
-        self._selection.add_operator(op)
 
     def select_external_layer(
         self,
@@ -312,9 +313,11 @@ class SpatialSelection:
         ):
             location = result_native_location
         op = operators.mesh.external_layer(server=self._server)
+        self._selection.add_operator(op)
 
         if _is_model_cyclic(is_model_cyclic):
             mesh_provider_cyc = operators.mesh.mesh_provider()
+            self._selection.add_operator(mesh_provider_cyc)
             self._selection.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
             self._selection.set_input_name(
                 _WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18
@@ -335,6 +338,7 @@ class SpatialSelection:
                     scoping=elements,
                     server=self._server,
                 )
+                self._selection.add_operator(mesh_by_scop_op)
                 op.inputs.mesh.connect(mesh_by_scop_op)
             else:
                 op.inputs.mesh.connect(mesh_provider_cyc)
@@ -349,6 +353,7 @@ class SpatialSelection:
             mesh_by_scop_op = operators.mesh.from_scoping(
                 scoping=elements, server=self._server
             )
+            self._selection.add_operator(mesh_by_scop_op)
             self._selection.set_input_name(
                 _WfNames.initial_mesh, mesh_by_scop_op.inputs.mesh
             )
@@ -366,8 +371,6 @@ class SpatialSelection:
             self._selection.set_output_name(
                 _WfNames.scoping, op.outputs.elements_mesh_scoping
             )
-
-        self._selection.add_operator(op)
 
     def select_skin(
         self,
@@ -402,10 +405,12 @@ class SpatialSelection:
             on the expanded mesh.
         """
         op = operators.mesh.skin(server=self._server)
+        self._selection.add_operator(op)
         mesh_input = op.inputs.mesh
 
         if _is_model_cyclic(is_model_cyclic):
             mesh_provider_cyc = operators.mesh.mesh_provider()
+            self._selection.add_operator(mesh_provider_cyc)
             self._selection.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
             self._selection.set_input_name(
                 _WfNames.cyclic_sectors_to_expand, mesh_provider_cyc, 18
@@ -430,6 +435,7 @@ class SpatialSelection:
                     scoping=elements,
                     server=self._server,
                 )
+                self._selection.add_operator(mesh_by_scop_op)
                 op.inputs.mesh.connect(mesh_by_scop_op)
             else:
                 op.inputs.mesh.connect(mesh_provider_cyc)
@@ -446,6 +452,7 @@ class SpatialSelection:
             mesh_by_scop_op = operators.mesh.from_scoping(
                 scoping=elements, server=self._server
             )
+            self._selection.add_operator(mesh_by_scop_op)
             mesh_input = mesh_by_scop_op.inputs.mesh
             op.inputs.mesh.connect(mesh_by_scop_op)
 
@@ -466,14 +473,13 @@ class SpatialSelection:
             transpose_op = operators.scoping.transpose(
                 mesh_scoping=op.outputs.nodes_mesh_scoping, server=self._server
             )
+            self._selection.add_operator(transpose_op)
             self._selection.set_input_name(
                 _WfNames.initial_mesh, transpose_op.inputs.meshed_region
             )
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
-
-        self._selection.add_operator(op)
 
     def select_with_scoping(self, scoping: Scoping):
         """Directly sets the scoping as the spatial selection.

@@ -11,7 +11,7 @@ on:
       ANSYS_VERSION:
         required: false
         type: string
-        default: "241"
+        default: "242"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
         required: false
@@ -42,7 +42,7 @@ on:
         description: "ANSYS version"
         required: true
         type: string
-        default: "241"
+        default: "242"
       standalone_suffix:
         description: "Suffix of the branch on standalone"
         required: false
@@ -79,7 +79,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v5.0.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -156,7 +156,7 @@ jobs:
           make pdf $DEBUG_PDF
 
       - name: "Upload Documentation Build log"
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: doc-${{env.PACKAGE_NAME}}-log
           path: docs/*.txt
@@ -170,7 +170,7 @@ jobs:
         if: always()
 
       - name: "Upload HTML Documentation"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HTML-doc-${{env.PACKAGE_NAME}}.zip
           path: HTML-doc-${{env.PACKAGE_NAME}}.zip
@@ -195,7 +195,7 @@ jobs:
           dest: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Upload PDF Documentation"
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         if: inputs.generate_pdf == 'true'
         with:
           name: PDF-doc-${{env.PACKAGE_NAME}}
