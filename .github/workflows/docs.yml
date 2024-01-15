@@ -60,10 +60,13 @@ env:
 jobs:
   doc-style:
     name: "Check doc style"
-    uses: ./.github/workflows/docs-style.yml
-    with:
-      vale_reporter: ${{ (inputs.event_name == 'pull_request') && 'github-check' || 'local' }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+        - name: "Running documentation style checks"
+          uses: ansys/actions/doc-style@v5.0
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            vale-config: "docs/.vale.ini"
 
   docs:
     name: "Documentation"
