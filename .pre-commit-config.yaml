@@ -1,6 +1,6 @@
 exclude: |
     (?x)^(
-        docs/styles/
+        doc/styles/
     )
 repos:
 - repo: https://github.com/psf/black
@@ -28,7 +28,7 @@ repos:
   hooks:
   - id: codespell
     args: [
-      "docs src",
+      "doc src",
       "*.py *.rst *.md",
     ]
     exclude: conf.py
