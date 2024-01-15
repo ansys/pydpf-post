@@ -15,5 +15,5 @@ coverage:
         if_no_uploads: error
   ignore:
     - "examples"  # ignore folder and all its contents
-    - "docs"  # ignore folder and all its contents
+    - "doc"  # ignore folder and all its contents
     - "tests"  # ignore folder and all its contents
