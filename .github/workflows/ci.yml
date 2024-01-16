@@ -151,6 +151,7 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
           wheel: false
+          standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
