@@ -73,4 +73,4 @@ jobs:
           git add .
           git status
           git commit -a -m ${{ inputs.version }}
-          git push https://${{ secrets.DPF_PIPELINE }}@github.com/ansys/pydpf-post.git --follow-tags
+          git push https://${{ secrets.PYANSYS_CI_BOT_TOKEN }}@github.com/ansys/pydpf-post.git --follow-tags
