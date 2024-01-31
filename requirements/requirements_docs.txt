@@ -11,6 +11,6 @@ pytest-sphinx==0.5.0
 sphinx-notfound-page==1.0.0
 sphinx-copybutton==0.5.0
 sphinx-gallery==0.15.0
-ansys_sphinx_theme==0.13.1
+ansys_sphinx_theme==0.13.2
 sphinx-autodoc-typehints==1.25.2
 pyvista==0.43.2
