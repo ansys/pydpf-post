@@ -165,7 +165,7 @@ jobs:
         if: always()
 
       - name: "Zip HTML Documentation"
-        uses: vimtor/action-zip@v1.1
+        uses: vimtor/action-zip@v1.2
         with:
           files: doc/build/html/
           dest: HTML-doc-${{env.PACKAGE_NAME}}.zip
@@ -190,7 +190,7 @@ jobs:
           echo "Found PDF doc: ${files[0]}"
 
       - name: "Zip PDF Documentation"
-        uses: vimtor/action-zip@v1.1
+        uses: vimtor/action-zip@v1.2
         if: ${{ inputs.generate_pdf == 'true' }}
         with:
           files: doc/build/latex/${{ steps.pdf.outputs.PDF_file }}
