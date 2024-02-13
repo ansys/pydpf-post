@@ -712,13 +712,23 @@ class DataFrame:
         """Representation of the DataFrame."""
         return f"DataFrame<index={self.index}, columns={self.columns}>"
 
-    def plot(self, shell_layer=shell_layers.top, **kwargs) -> Union[DpfPlotter, None]:
+    def plot(
+        self,
+        shell_layer=shell_layers.top,
+        deform_by: Union[DataFrame, None] = None,
+        scale_factor: float = 1.0,
+        **kwargs,
+    ) -> Union[DpfPlotter, None]:
         """Plot the result.
 
         Parameters
         ----------
         shell_layer:
             Shell layer to show if multi-layered shell data is present. Defaults to top.
+        deform_by:  # TODO: switch to deform as bool and use self._disp_wf as in animate
+            A DataFrame containing a 3D vector field to use for deformation of the mesh.
+        scale_factor:
+            Scaling factor to apply when deforming the mesh. Defaults to 1.0.
         **kwargs:
             This function accepts as argument any of the Index names available associated with a
             single value.
@@ -850,7 +860,12 @@ class DataFrame:
                 field_to_plot, server=field_to_plot._server
             ).eval()
         plotter = DpfPlotter(**kwargs)
-        plotter.add_field(field=field_to_plot, **kwargs)
+        deform = None
+        if isinstance(deform_by, DataFrame):
+            deform = deform_by._fc
+        plotter.add_field(
+            field=field_to_plot, deform_by=deform, scale_factor=scale_factor, **kwargs
+        )
 
         return plotter.show_figure(
             title=kwargs.pop("title", str(label_space)), **kwargs
