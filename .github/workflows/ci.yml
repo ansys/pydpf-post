@@ -118,7 +118,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   retro:
     name: "Retro-compatibility"
@@ -180,7 +180,7 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   examples:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
