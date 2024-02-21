@@ -1,4 +1,4 @@
-pypandoc==1.12
+pypandoc==1.13
 imageio==2.34.0
 numpydoc==1.6.0
 imageio-ffmpeg==0.4.7
