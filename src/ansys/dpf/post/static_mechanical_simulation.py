@@ -26,6 +26,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
+        split_by: Union[str, None] = None,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, _ = self._create_components(base_name, category, components)
@@ -65,10 +66,41 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names={"scoping": "mesh_scoping"},
-        )
+        if split_by:
+            split_wf = core.Workflow(server=self._model._server)
+            if split_by in [
+                core.common.elemental_properties.material,
+                core.common.elemental_properties.element_shape,
+            ]:
+                split_op = core.operators.scoping.split_on_property_type(
+                    label1=split_by,
+                    requested_location=location,
+                    server=self._model._server,
+                )
+                split_wf.set_input_name(_WfNames.scoping, split_op.inputs.mesh_scoping)
+                split_wf.set_input_name(_WfNames.mesh, split_op.inputs.mesh)
+                split_wf.set_output_name(
+                    _WfNames.scoping, split_op.outputs.mesh_scoping
+                )
+                split_wf.add_operator(split_op)
+
+            split_wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={
+                    _WfNames.mesh: _WfNames.mesh,
+                    _WfNames.scoping: _WfNames.scoping,
+                },
+            )
+
+            wf.connect_with(
+                split_wf,
+                output_input_names={_WfNames.scoping: "mesh_scoping"},
+            )
+        else:
+            wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={_WfNames.scoping: "mesh_scoping"},
+            )
 
         # Treat cyclic cases
         wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, wf)
@@ -187,6 +219,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        split_by: Union[str, None] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -254,6 +287,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        split_by:
+            Property to split the result on ("mat", "elshape", "part").
 
         Returns
         -------
@@ -299,6 +334,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
+            split_by=split_by,
         )
 
         # Evaluate  the workflow
@@ -336,6 +372,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        split_by: Union[str, None] = None,
     ) -> DataFrame:
         """Extract displacement results from the simulation.
 
@@ -392,6 +429,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting
              the skin on more than one result (several time freq sets, split data...) is
              only supported starting with Ansys 2023R2.
+        split_by:
+            Property to split the result on ("mat", "elshape", "part").
 
         Returns
         -------
@@ -416,6 +455,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
+            split_by=split_by,
         )
 
     def stress(
