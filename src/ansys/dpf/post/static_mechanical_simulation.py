@@ -48,12 +48,12 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         # Its output is selected as future workflow output for now
         out = result_op.outputs.fields_container
         # Its inputs are selected as workflow inputs for merging with selection workflows
-        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
-        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
+        wf.set_input_name(_WfNames.time_scoping, result_op.inputs.time_scoping)
+        wf.set_input_name(_WfNames.mesh_scoping, result_op.inputs.mesh_scoping)
 
         wf.connect_with(
             selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
+            output_input_names=(_WfNames.time_scoping, _WfNames.time_scoping),
         )
         if selection.requires_mesh:
             mesh_wf = core.Workflow(server=self._model._server)
@@ -68,6 +68,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         if split_by:
             split_wf = core.Workflow(server=self._model._server)
+            outputs_to_inputs = {}
             if split_by in [
                 core.common.elemental_properties.material,
                 core.common.elemental_properties.element_shape,
@@ -77,29 +78,37 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                     requested_location=location,
                     server=self._model._server,
                 )
-                split_wf.set_input_name(_WfNames.scoping, split_op.inputs.mesh_scoping)
-                split_wf.set_input_name(_WfNames.mesh, split_op.inputs.mesh)
+                if (
+                    _WfNames.mesh_scoping
+                    in selection.spatial_selection._selection.output_names
+                ):
+                    split_wf.set_input_name(
+                        _WfNames.mesh_scoping, split_op.inputs.mesh_scoping
+                    )
+                    outputs_to_inputs[_WfNames.mesh_scoping] = _WfNames.mesh_scoping
+                if _WfNames.mesh in selection.spatial_selection._selection.output_names:
+                    split_wf.set_input_name(_WfNames.mesh, split_op.inputs.mesh)
+                    outputs_to_inputs[_WfNames.mesh] = _WfNames.mesh
+                else:
+                    split_op.inputs.mesh.connect(self.mesh._meshed_region)
                 split_wf.set_output_name(
-                    _WfNames.scoping, split_op.outputs.mesh_scoping
+                    _WfNames.mesh_scoping, split_op.outputs.mesh_scoping
                 )
                 split_wf.add_operator(split_op)
 
             split_wf.connect_with(
                 selection.spatial_selection._selection,
-                output_input_names={
-                    _WfNames.mesh: _WfNames.mesh,
-                    _WfNames.scoping: _WfNames.scoping,
-                },
+                output_input_names=outputs_to_inputs,
             )
 
             wf.connect_with(
                 split_wf,
-                output_input_names={_WfNames.scoping: "mesh_scoping"},
+                output_input_names={_WfNames.mesh_scoping: _WfNames.mesh_scoping},
             )
         else:
             wf.connect_with(
                 selection.spatial_selection._selection,
-                output_input_names={_WfNames.scoping: "mesh_scoping"},
+                output_input_names={_WfNames.mesh_scoping: _WfNames.mesh_scoping},
             )
 
         # Treat cyclic cases
