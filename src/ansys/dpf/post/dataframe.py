@@ -353,8 +353,6 @@ class DataFrame:
         set_index = None
         if "time" in fc.labels:
             set_index = SetIndex(values=fc.get_available_ids_for_label("time"))
-        # else:
-        #     set_index = SetIndex(values=[])
 
         column_indexes = [results_index]
         if set_index:
