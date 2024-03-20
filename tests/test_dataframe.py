@@ -116,6 +116,15 @@ def test_dataframe_select(df):
     # print(df2)
 
 
+def test_dataframe_select_no_set_index():
+    simulation = post.StaticMechanicalSimulation(examples.find_simple_bar())
+    df = simulation.mesh.coordinates
+    df2 = df.select(components="X")
+    assert len(df2.index) == 2
+    assert df2.index.components.values == ["X"]
+    assert len(df2.mesh_index.values) == len(df.mesh_index.values)
+
+
 @pytest.mark.skipif(
     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
