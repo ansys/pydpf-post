@@ -12,6 +12,7 @@ from ansys.dpf.core.server_types import BaseServer
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.mesh_info import FluidMeshInfo
 from ansys.dpf.post.phase import PhasesDict
 from ansys.dpf.post.selection import Selection
@@ -176,6 +177,15 @@ class FluidSimulation(Simulation):
         if not self._mesh_info:
             self._mesh_info = FluidMeshInfo(self._model.metadata.mesh_info)
         return self._mesh_info
+
+    def zone_mesh(self, zone_id: int) -> Mesh:
+        """Return the mesh of the given zone."""
+        if zone_id not in self.cell_zones.keys():
+            if zone_id not in self.face_zones.keys():
+                raise ValueError(f"'{zone_id}' is not a valid zone ID.")
+        mesh_provider = self._model.metadata.mesh_provider
+        mesh_provider.inputs.region_scoping(zone_id)
+        return Mesh(mesh_provider.eval())
 
     @property
     def cell_zones(self) -> dict:
