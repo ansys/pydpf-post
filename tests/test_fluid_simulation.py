@@ -473,3 +473,15 @@ class TestFluidSimulation:
             qualifiers={"zone": list(fluent_simulation.face_zones.keys())}
         )
         temperature.plot()
+
+    def test_fluid_simulation_zone_mesh(self, fluent_simulation):
+        # Cell zone mesh
+        cell_zone_mesh = fluent_simulation.zone_mesh(zone_id=13)
+        assert cell_zone_mesh.num_elements == 6080
+        assert cell_zone_mesh.num_nodes == 7293
+        assert cell_zone_mesh.num_faces == 19388
+        # Face zone mesh
+        face_zone_mesh = fluent_simulation.zone_mesh(zone_id=4)
+        assert face_zone_mesh.num_elements == 0
+        assert face_zone_mesh.num_nodes == 429
+        assert face_zone_mesh.num_faces == 380
