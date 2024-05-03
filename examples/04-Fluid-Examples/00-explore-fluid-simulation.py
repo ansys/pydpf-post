@@ -57,14 +57,17 @@ print(simulation.phases)
 print(simulation.mesh)
 simulation.mesh.plot()
 ###############################################################################
-# Extract the mesh for a given zone
-cell_zone_mesh = simulation.zone_mesh(zone_id=2)
+# Extract the mesh for a given zone by its ID
+cell_zone_mesh = simulation.zone_mesh(zone=2)
 print(cell_zone_mesh)
 cell_zone_mesh.plot()
+# or by its name
+cell_zone_mesh = simulation.zone_mesh(zone="heater")
 
-face_zone_mesh = simulation.zone_mesh(zone_id=9)
+face_zone_mesh = simulation.zone_mesh(zone=9)
 print(face_zone_mesh)
 face_zone_mesh.plot()
+face_zone_mesh = simulation.zone_mesh(zone="outflow")
 
 
 ###############################################################################
