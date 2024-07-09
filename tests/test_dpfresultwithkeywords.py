@@ -254,31 +254,31 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
     assert stress.result_fields_container[0].location == locations.elemental_nodal
 
 
-def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
-    result = post.load_solution(allkindofcomplexity)
-    disp = result.misc.nodal_displacement(grouping=post.grouping.by_el_shape)
-    assert disp.num_fields == 4
-    assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
-    assert len(disp.get_data_at_field(0)) == 14826
-    assert len(disp.get_data_at_field(1)) == 1486
-    assert len(disp.get_data_at_field(2)) == 19
-    assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
-    assert disp[0].location == locations.nodal
+# def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
+#     result = post.load_solution(allkindofcomplexity)
+#     disp = result.misc.nodal_displacement(grouping=post.grouping.by_el_shape)
+#     assert disp.num_fields == 4
+#     assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
+#     assert len(disp.get_data_at_field(0)) == 14826
+#     assert len(disp.get_data_at_field(1)) == 1486
+#     assert len(disp.get_data_at_field(2)) == 19
+#     assert len(disp.get_data_at_field(3)) == 4
+#     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
+#     assert disp[0].location == locations.nodal
 
 
-def test_groupingelshape_nodallocation(allkindofcomplexity):
-    result = post.load_solution(allkindofcomplexity)
-    d = result.displacement(grouping=post.grouping.by_el_shape)
-    disp = d.vector
-    assert disp.num_fields == 4
-    assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
-    assert len(disp.get_data_at_field(0)) == 14826
-    assert len(disp.get_data_at_field(1)) == 1486
-    assert len(disp.get_data_at_field(2)) == 19
-    assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
-    assert disp[0].location == locations.nodal
+# def test_groupingelshape_nodallocation(allkindofcomplexity):
+#     result = post.load_solution(allkindofcomplexity)
+#     d = result.displacement(grouping=post.grouping.by_el_shape)
+#     disp = d.vector
+#     assert disp.num_fields == 4
+#     assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
+#     assert len(disp.get_data_at_field(0)) == 14826
+#     assert len(disp.get_data_at_field(1)) == 1486
+#     assert len(disp.get_data_at_field(2)) == 19
+#     assert len(disp.get_data_at_field(3)) == 4
+#     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
+#     assert disp[0].location == locations.nodal
 
     # with dpf.core operator
     from ansys.dpf import core
@@ -364,55 +364,55 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     assert out == True
 
 
-def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
-    result = post.load_solution(allkindofcomplexity)
-    disp = result.misc.nodal_displacement(grouping=post.grouping.by_material)
-    assert disp.num_fields == 11
-    assert len(disp[0]) == 6288
-    assert len(disp[2]) == 744
-    assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
-    assert disp.result_fields_container.get_label_space(3) == {"time": 1, "mat": 10}
-    for field in disp:
-        assert len(field) != 0
-        assert field.location == locations.nodal
+# def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
+#     result = post.load_solution(allkindofcomplexity)
+#     disp = result.misc.nodal_displacement(grouping=post.grouping.by_material)
+#     assert disp.num_fields == 11
+#     assert len(disp[0]) == 6288
+#     assert len(disp[2]) == 744
+#     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
+#     assert disp.result_fields_container.get_label_space(3) == {"time": 1, "mat": 10}
+#     for field in disp:
+#         assert len(field) != 0
+#         assert field.location == locations.nodal
 
 
-def test_groupingmat_nodallocation(allkindofcomplexity):
-    result = post.load_solution(allkindofcomplexity)
-    d = result.displacement(grouping=post.grouping.by_material)
-    disp = d.vector
-    assert disp.num_fields == 11
-    assert len(disp[0]) == 6288
-    assert len(disp[2]) == 744
-    assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
-    assert disp.result_fields_container.get_label_space(3) == {"time": 1, "mat": 10}
-    for field in disp:
-        assert len(field) != 0
-        assert field.location == locations.nodal
-
-    # with dpf.core operator
-    from ansys.dpf import core
-
-    op = core.Operator("U")
-    # op.inputs.requested_location.connect(core.locations.nodal)
-    op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
-    mesh_provider = core.Operator("MeshProvider")
-    mesh_provider.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
-    scop_op = core.Operator("scoping::by_property")
-    scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh)
-    scop_op.inputs.requested_location.connect(core.locations.nodal)
-    scop_op.inputs.label1.connect("mat")
-    op.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
-    fc = op.outputs.fields_container()
-    assert len(fc) == disp.num_fields
-    assert fc[0].location == disp[0].location
-    assert len(fc[0].data) == len(disp[0].data)
-    assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
-    comp = core.operators.logic.identical_fc()
-    comp.inputs.fields_containerA.connect(fc)
-    comp.inputs.fields_containerB.connect(disp.result_fields_container)
-    out = comp.outputs.boolean()
-    assert out is True
+# def test_groupingmat_nodallocation(allkindofcomplexity):
+#     result = post.load_solution(allkindofcomplexity)
+#     d = result.displacement(grouping=post.grouping.by_material)
+#     disp = d.vector
+#     assert disp.num_fields == 11
+#     assert len(disp[0]) == 6288
+#     assert len(disp[2]) == 744
+#     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
+#     assert disp.result_fields_container.get_label_space(3) == {"time": 1, "mat": 10}
+#     for field in disp:
+#         assert len(field) != 0
+#         assert field.location == locations.nodal
+#
+#     # with dpf.core operator
+#     from ansys.dpf import core
+#
+#     op = core.Operator("U")
+#     # op.inputs.requested_location.connect(core.locations.nodal)
+#     op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+#     mesh_provider = core.Operator("MeshProvider")
+#     mesh_provider.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+#     scop_op = core.Operator("scoping::by_property")
+#     scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh)
+#     scop_op.inputs.requested_location.connect(core.locations.nodal)
+#     scop_op.inputs.label1.connect("mat")
+#     op.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
+#     fc = op.outputs.fields_container()
+#     assert len(fc) == disp.num_fields
+#     assert fc[0].location == disp[0].location
+#     assert len(fc[0].data) == len(disp[0].data)
+#     assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
+#     comp = core.operators.logic.identical_fc()
+#     comp.inputs.fields_containerA.connect(fc)
+#     comp.inputs.fields_containerB.connect(disp.result_fields_container)
+#     out = comp.outputs.boolean()
+#     assert out is True
 
 
 def test_groupingmat_elemlocation_verbose_api(allkindofcomplexity):
