@@ -280,29 +280,29 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
 #     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
 #     assert disp[0].location == locations.nodal
 #
-    # with dpf.core operator
-    # from ansys.dpf import core
-    #
-    # op = core.Operator("U")
-    # # op.inputs.requested_location.connect(core.locations.nodal)
-    # op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
-    # mesh_provider = core.Operator("MeshProvider")
-    # mesh_provider.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
-    # scop_op = core.Operator("scoping::by_property")
-    # scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh)
-    # scop_op.inputs.requested_location.connect(core.locations.nodal)
-    # scop_op.inputs.label1.connect("elshape")
-    # op.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
-    # fc = op.outputs.fields_container()
-    # assert len(fc) == disp.num_fields
-    # assert fc[0].location == disp[0].location
-    # assert len(fc[0].data) == len(disp[0].data)
-    # assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
-    # comp = core.operators.logic.identical_fc()
-    # comp.inputs.fields_containerA.connect(fc)
-    # comp.inputs.fields_containerB.connect(disp.result_fields_container)
-    # out = comp.outputs.boolean()
-    # assert out == True
+# with dpf.core operator
+# from ansys.dpf import core
+#
+# op = core.Operator("U")
+# # op.inputs.requested_location.connect(core.locations.nodal)
+# op.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+# mesh_provider = core.Operator("MeshProvider")
+# mesh_provider.inputs.data_sources.connect(core.DataSources(allkindofcomplexity))
+# scop_op = core.Operator("scoping::by_property")
+# scop_op.inputs.mesh.connect(mesh_provider.outputs.mesh)
+# scop_op.inputs.requested_location.connect(core.locations.nodal)
+# scop_op.inputs.label1.connect("elshape")
+# op.inputs.mesh_scoping.connect(scop_op.outputs.mesh_scoping)
+# fc = op.outputs.fields_container()
+# assert len(fc) == disp.num_fields
+# assert fc[0].location == disp[0].location
+# assert len(fc[0].data) == len(disp[0].data)
+# assert np.allclose(disp[0].data.tolist(), fc[0].data.tolist())
+# comp = core.operators.logic.identical_fc()
+# comp.inputs.fields_containerA.connect(fc)
+# comp.inputs.fields_containerB.connect(disp.result_fields_container)
+# out = comp.outputs.boolean()
+# assert out == True
 
 
 def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
