@@ -280,7 +280,7 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
-# with dpf.core operator
+    # with dpf.core operator
     from ansys.dpf import core
 
     op = core.Operator("U")

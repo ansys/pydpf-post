@@ -8,7 +8,6 @@ from pytest import fixture
 from ansys.dpf import post
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
-
 from ansys.dpf.post.meshes import Meshes
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
