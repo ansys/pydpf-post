@@ -105,7 +105,7 @@ class TestSpatialSelectionFaces:
     def test_skin_extraction_with_scoping(self):
 
         # Todo: Upload to examples repo
-        rst_path = r"beam_2_mat.rst"
+        rst_path = r"D:\ANSYSDev\remote_post\models\beam_2_mat.rst"
 
         simulation = post.StaticMechanicalSimulation(rst_path)
 

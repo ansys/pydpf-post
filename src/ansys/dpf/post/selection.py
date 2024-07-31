@@ -33,7 +33,6 @@ from numpy import ndarray
 class _WfNames:
     data_sources = "data_sources"
     scoping = "scoping"
-    skin_scoping = "skin_scoping"
     skin_input_mesh = "skin_input_mesh"
     final_scoping = "final_scoping"
     scoping_a = "scoping_a"
@@ -463,11 +462,6 @@ class SpatialSelection:
             mesh_input = mesh_by_scop_op.inputs.mesh
             op.inputs.mesh.connect(mesh_by_scop_op)
             solid_mesh_output = mesh_by_scop_op.outputs.mesh
-            fwd_scoping_op = operators.utility.forward(elements, server=self._server)
-            self._selection.set_output_name(
-                _WfNames.scoping, fwd_scoping_op.outputs.any
-            )
-
         else:
             input_mesh_fwd_op = operators.utility.forward()
             self._selection.set_input_name(_WfNames.initial_mesh, input_mesh_fwd_op.inputs.any)
@@ -480,7 +474,7 @@ class SpatialSelection:
         self._selection.set_output_name(_WfNames.skin, op.outputs.mesh)
         if location == locations.nodal and result_native_location == locations.nodal:
             self._selection.set_output_name(
-                _WfNames.skin_scoping, op.outputs.nodes_mesh_scoping
+                _WfNames.scoping, op.outputs.nodes_mesh_scoping
             )
 
         elif not _is_model_cyclic(is_model_cyclic) and (
@@ -495,7 +489,7 @@ class SpatialSelection:
                 _WfNames.initial_mesh, transpose_op.inputs.meshed_region
             )
             self._selection.set_output_name(
-                _WfNames.skin_scoping, transpose_op.outputs.mesh_scoping_as_scoping
+                _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
 
         # Provide the input mesh from which a skin was generated
