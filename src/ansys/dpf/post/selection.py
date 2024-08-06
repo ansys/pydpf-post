@@ -414,9 +414,11 @@ class SpatialSelection:
 
         initial_mesh_fwd_op = operators.utility.forward()
         self._selection.set_input_name(_WfNames.initial_mesh, initial_mesh_fwd_op.inputs.any)
+        self._selection.add_operator(initial_mesh_fwd_op)
 
         skin_operator_input_mesh_fwd_op = operators.utility.forward()
         connect_any(skin_operator_input_mesh_fwd_op.inputs.any, initial_mesh_fwd_op)
+        self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
         if _is_model_cyclic(is_model_cyclic):
             mesh_provider_cyc = operators.mesh.mesh_provider()
@@ -498,6 +500,8 @@ class SpatialSelection:
         self._selection.set_output_name(
             _WfNames.skin_input_mesh, skin_operator_input_mesh_fwd_op.outputs.any
         )
+
+        self._selection.view()
 
     def select_with_scoping(self, scoping: Scoping):
         """Directly sets the scoping as the spatial selection.
