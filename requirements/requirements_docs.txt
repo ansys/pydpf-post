@@ -1,6 +1,6 @@
 pypandoc==1.13
 imageio==2.34.0
-numpydoc==1.6.0
+numpydoc==1.7.0
 imageio-ffmpeg==0.4.7
 Sphinx<7.2.0; python_version == '3.8'
 Sphinx==7.2.6; python_version >= '3.9'
