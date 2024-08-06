@@ -7,6 +7,7 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
@@ -261,7 +262,10 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
     assert len(disp.get_data_at_field(0)) == 14826
     assert len(disp.get_data_at_field(1)) == 1486
-    assert len(disp.get_data_at_field(2)) == 19
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        assert len(disp.get_data_at_field(2)) == 21
+    else:
+        assert len(disp.get_data_at_field(2)) == 19
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
@@ -275,7 +279,10 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
     assert len(disp.get_data_at_field(0)) == 14826
     assert len(disp.get_data_at_field(1)) == 1486
-    assert len(disp.get_data_at_field(2)) == 19
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        assert len(disp.get_data_at_field(2)) == 21
+    else:
+        assert len(disp.get_data_at_field(2)) == 19
     assert len(disp.get_data_at_field(3)) == 4
     assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
@@ -367,7 +374,10 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
 def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping=post.grouping.by_material)
-    assert disp.num_fields == 11
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        assert disp.num_fields == 13
+    else:
+        assert disp.num_fields == 11
     assert len(disp[0]) == 6288
     assert len(disp[2]) == 744
     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)
@@ -381,7 +391,10 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping=post.grouping.by_material)
     disp = d.vector
-    assert disp.num_fields == 11
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        assert disp.num_fields == 13
+    else:
+        assert disp.num_fields == 11
     assert len(disp[0]) == 6288
     assert len(disp[2]) == 744
     assert np.isclose(disp.get_data_at_field(2)[0][2], -6.649053654123576e-07)

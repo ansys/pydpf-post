@@ -47,7 +47,7 @@ jobs:
     needs: get_latest_tag
     steps:
       - name: "Download Release Assets"
-        uses: robinraju/release-downloader@v1.8
+        uses: robinraju/release-downloader@v1.10
         with:
           tag: ${{ github.event.inputs.release_tag || needs.get_latest_tag.outputs.version }}
           fileName: "*.whl"
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Download Release Asset - HTML"
-        uses: dsaltares/fetch-gh-release-asset@1.1.1
+        uses: dsaltares/fetch-gh-release-asset@1.1.2
         with:
           file: HTML-doc-ansys-dpf-post.zip
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
           path: HTML-doc-ansys-dpf-post.zip
 
       - name: "Deploy the stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v5
+        uses: ansys/actions/doc-deploy-stable@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -122,7 +122,7 @@ jobs:
           echo "VERSION_MEILI=$VERSION_MEILI" >> $GITHUB_ENV
 
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v5
+        uses: ansys/actions/doc-deploy-index@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
           index-name: pydpf-post-v${{ env.VERSION_MEILI }}

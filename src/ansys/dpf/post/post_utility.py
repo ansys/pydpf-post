@@ -44,7 +44,7 @@ def load_solution(data_sources, physics_type=None, analysis_type=None):
     data_sources: str, ansys.dpf.core.DataSources
          Path to the file to open or the :class:`ansys.dpf.core.DataSources` class.
     physics_type: common._PhysicsType, str, optional
-        Type of phsyics described in the specified data sources. Options are
+        Type of physics described in the specified data sources. Options are
         ``"mecanic"`` or ``"thermal"``. The default is ``None``, in which case
         the data sources are read to determine the physics type.
     analysis_type: common._AnalysisType, str, optional

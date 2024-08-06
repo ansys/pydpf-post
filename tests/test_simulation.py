@@ -13,6 +13,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
 )
 
 
@@ -112,7 +113,10 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
         ]
     )
     assert isinstance(meshes, Meshes)
-    assert len(meshes) == 16
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        assert len(meshes) == 18
+    else:
+        assert len(meshes) == 16
     meshes = simulation.split_mesh_by_properties(
         properties={
             elemental_properties.material: 1,

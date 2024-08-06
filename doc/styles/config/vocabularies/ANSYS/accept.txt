@@ -4,6 +4,7 @@
 ANSYS
 API
 HDF5
+mecanic
 postprocess
 postprocessing
 (PyDPF\s|PyDPF-Core|PyDPF-Post)
