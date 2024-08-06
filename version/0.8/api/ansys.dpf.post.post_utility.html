@@ -1,0 +1,850 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Post-utility &#8212; PyDPF-Post</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css?v=f64ca0e9" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+ 
+<link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=040b0d01"></script>
+    <script src="../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys.dpf.post.post_utility';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="ansys.dpf.post.result_data.html" />
+    <link rel="prev" title="Phase" href="ansys.dpf.post.phase.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/api/ansys.dpf.post.post_utility.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <script>document.write(`<img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyDPF-Post - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.examples.html">ansys.dpf.post.examples package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.helpers.html">ansys.dpf.post.helpers package</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.common.html">Common</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.connectivity.html"><code class="docutils literal notranslate"><span class="pre">ReturnMode</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dataframe.html">DataFrame</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.displacement.html"><code class="docutils literal notranslate"><span class="pre">Displacement</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_path.html"><code class="docutils literal notranslate"><span class="pre">create_path_on_coordinates()</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html"><code class="docutils literal notranslate"><span class="pre">DpfSolution</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.electric_results.html"><code class="docutils literal notranslate"><span class="pre">ElectricField</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.elements.html"><code class="docutils literal notranslate"><span class="pre">ElementType</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.errors.html"><code class="docutils literal notranslate"><span class="pre">NodalLocationError</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.faces.html"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.fluid_simulation.html">FluidSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.harmonic_mechanical_simulation.html">HarmonicMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.index.html">Index</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.mesh.html">Mesh</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.mesh_info.html">FluidMeshInfo</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.meshes.html">Meshes</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc.html">Misc</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html"><code class="docutils literal notranslate"><span class="pre">Misc</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.modal_mechanical_simulation.html">ModalMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.named_selection.html"><code class="docutils literal notranslate"><span class="pre">NamedSelections</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.nodes.html"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.phase.html">Phase</a></li>
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Post-utility</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_data.html"><code class="docutils literal notranslate"><span class="pre">ResultData</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_definition.html"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_evaluation.html"><code class="docutils literal notranslate"><span class="pre">ResultEvaluator</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_object.html"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.scalar.html"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.selection.html">Selection</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.simulation.html">Simulation</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.species.html">Species</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_analysis.html"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_mechanical_simulation.html">StaticMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html"><code class="docutils literal notranslate"><span class="pre">ElasticStrain</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.stress.html"><code class="docutils literal notranslate"><span class="pre">Stress</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tensor.html"><code class="docutils literal notranslate"><span class="pre">Tensor</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tools.html">tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_mechanical_simulation.html">TransientMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.vector.html"><code class="docutils literal notranslate"><span class="pre">Vector</span></code></a></li>
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="ansys.dpf.post.html" class="nav-link">ansys.dpf.post package</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Post-utility</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p id="module-ansys.dpf.post.post_utility">Module containing the method to instantiate the result object.</p>
+<section id="post-utility">
+<h1>Post-utility<a class="headerlink" href="#post-utility" title="Link to this heading">#</a></h1>
+<p>This module is used for the initialization of PyDPF-Post objects.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.dpf.post.post_utility.load_solution">
+<span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.post_utility.</span></span><span class="sig-name descname"><span class="pre">load_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_sources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">physics_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.post_utility.load_solution" title="Link to this definition">#</a></dt>
+<dd><p>Loads a solution and returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.dpf.post.Result</span></code> object.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 3.0: </span>Use <a class="reference internal" href="#ansys.dpf.post.post_utility.load_simulation" title="ansys.dpf.post.post_utility.load_simulation"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_simulation()</span></code></a> instead.</p>
+</div>
+<p>This class provides information on a given set on a given scoping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_sources</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>ansys.dpf.core.DataSources</em>) – Path to the file to open or the <code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.dpf.core.DataSources</span></code> class.</p></li>
+<li><p><strong>physics_type</strong> (<em>common._PhysicsType</em><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Type of phsyics described in the specified data sources. Options are
+<code class="docutils literal notranslate"><span class="pre">&quot;mecanic&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;thermal&quot;</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case
+the data sources are read to determine the physics type.</p></li>
+<li><p><strong>analysis_type</strong> (<em>common._AnalysisType</em><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Type of analysis described in the specified data sources. Options are
+<code class="docutils literal notranslate"><span class="pre">&quot;static&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;modal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;harmonic&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;transient&quot;</span></code>. The
+default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case the data sources are read to determine
+the analysis type.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Load the example static result.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.dpf.post.post_utility.load_simulation">
+<span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.post_utility.</span></span><span class="sig-name descname"><span class="pre">load_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_sources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ansys.dpf.post.common.html#ansys.dpf.post.common.AvailableSimulationTypes" title="ansys.dpf.post.common.AvailableSimulationTypes"><span class="pre">AvailableSimulationTypes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseServer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.post_utility.load_simulation" title="Link to this definition">#</a></dt>
+<dd><p>Loads a simulation and returns a <a class="reference internal" href="ansys.dpf.post.simulation.html#ansys.dpf.post.simulation.Simulation" title="ansys.dpf.post.simulation.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.dpf.post.simulation.Simulation</span></code></a> object.</p>
+<p>This class provides the main interface to explore and manipulate results, meshes, geometries,
+and other entities associated with the result files given in input.
+The interface exposed depends on the type of simulation selected with the argument
+<cite>simulation_type</cite>. Each one proposes a post-processing context with its specific vocabulary and
+most common post-processing functionalities.
+Available simulation types are listed in
+<code class="xref py py-class docutils literal notranslate"><span class="pre">&lt;AvailableSimulationTypes&gt;</span> <span class="pre">ansys.dpf.post.common.AvailableSimulationTypes</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_sources</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>ansys.dpf.core.DataSources</em>) – Path to the file to open or the <code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.dpf.core.DataSources</span></code> class.</p></li>
+<li><p><strong>simulation_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-data docutils literal notranslate"><span class="pre">AvailableSimulationTypes</span></code>, <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Type of simulation to create when loading the specified data sources.
+Each type of simulation gives access to specific properties and methods to better fit
+expectations and vocabulary of each context.
+This defaults to the simulation type corresponding to the combination of physics type
+and analysis type detected automatically by DPF when reading the result files.
+If nothing is detected, this will default to a static mechanical type of simulation.
+The best practice is to define this parameter to select the right post-processing context.
+Options are given in
+<code class="xref py py-class docutils literal notranslate"><span class="pre">&lt;AvailableSimulationTypes&gt;</span> <span class="pre">ansys.dpf.post.common.AvailableSimulationTypes</span></code>.</p></li>
+<li><p><strong>server</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseServer</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – DPF server connected to a remote or local instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.TypeVar" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">SimulationType</span></code>, bound= <a class="reference internal" href="ansys.dpf.post.simulation.html#ansys.dpf.post.simulation.Simulation" title="ansys.dpf.post.simulation.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a>)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>An instance of one of the subclasses of the</em></p></li>
+<li><p><a class="reference internal" href="ansys.dpf.post.simulation.html#ansys.dpf.post.simulation.Simulation" title="ansys.dpf.post.simulation.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> class.</p></li>
+<li><p><em>.. versionadded:: 3.0</em> – This function replaces the deprecated <a class="reference internal" href="#ansys.dpf.post.post_utility.load_solution" title="ansys.dpf.post.post_utility.load_solution"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_solution()</span></code></a> function.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Load the example static result.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.dpf.post.post_utility.print_available_keywords">
+<span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.post_utility.</span></span><span class="sig-name descname"><span class="pre">print_available_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.post_utility.print_available_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Print the keywords that can be used into the result object.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">download_all_kinds_of_complexity</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">post</span><span class="o">.</span><span class="n">print_available_keywords</span><span class="p">()</span> 
+<span class="go">element_scoping: list, int or dpf.core.Scoping</span>
+<span class="go">grouping: str. Use post.grouping.(...) as helper.</span>
+<span class="go">location: str. Use post.locations.(...) as helper.</span>
+<span class="go">mapdl_grouping: int. Write 186 to get mapdl_elements solid_186.</span>
+<span class="go">named_selection: str. Name of named_selection.</span>
+<span class="go">node_scoping: list, int or dpf.core.Scoping</span>
+<span class="go">path: DpfPath object that</span>
+<span class="go">            contains a list of coordinates,</span>
+<span class="go">            e.g. [[0.1, 0.0, 0.0],</span>
+<span class="go">            [0.0, 0.1, 0.0]].</span>
+<span class="go">set: int</span>
+<span class="go">time: float</span>
+<span class="go">time_scoping: list, int or dpf.core.Scoping</span>
+</pre></div>
+</div>
+</dd></dl>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Post-utility</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.post_utility.load_solution"><code class="docutils literal notranslate"><span class="pre">load_solution()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.post_utility.load_simulation"><code class="docutils literal notranslate"><span class="pre">load_simulation()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.post_utility.print_available_keywords"><code class="docutils literal notranslate"><span class="pre">print_available_keywords()</span></code></a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/ansys.dpf.post.post_utility.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.14.0. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

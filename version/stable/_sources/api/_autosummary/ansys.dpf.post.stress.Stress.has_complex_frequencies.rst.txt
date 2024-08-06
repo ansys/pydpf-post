@@ -1,0 +1,6 @@
+has\_complex\_frequencies
+=========================
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. automethod:: Stress.has_complex_frequencies
