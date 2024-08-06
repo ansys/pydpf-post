@@ -81,7 +81,8 @@ jobs:
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
-          wheel: true
+          # Upload the wheel artifact for only one of the OS as it is OS-agnostic
+          wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
           wheelhouse: true
           standalone_suffix: ${{ inputs.standalone_suffix || ''}}
 
