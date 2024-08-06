@@ -412,11 +412,11 @@ class SpatialSelection:
         self._selection.add_operator(skin_operator)
 
 
-        initial_mesh_fwd_op = operators.utility.forward()
+        initial_mesh_fwd_op = operators.utility.forward(server=self._server)
         self._selection.set_input_name(_WfNames.initial_mesh, initial_mesh_fwd_op.inputs.any)
         self._selection.add_operator(initial_mesh_fwd_op)
 
-        skin_operator_input_mesh_fwd_op = operators.utility.forward()
+        skin_operator_input_mesh_fwd_op = operators.utility.forward(server=self._server)
         connect_any(skin_operator_input_mesh_fwd_op.inputs.any, initial_mesh_fwd_op)
         self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
