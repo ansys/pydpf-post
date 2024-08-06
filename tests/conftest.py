@@ -12,7 +12,7 @@ import pytest
 import pyvista as pv
 
 from ansys.dpf import core
-from ansys.dpf.post import examples
+from ansys.dpf.post import examples, DataFrame
 
 # enable off_screen plotting to avoid test interruption
 pv.OFF_SCREEN = True
@@ -42,6 +42,31 @@ pv.global_theme.lighting = get_lighting()
 
 # currently running dpf on docker.  Used for testing on CI
 running_docker = os.environ.get("DPF_DOCKER", False)
+
+
+def check_skin_consistency(result_solid_scoped: DataFrame, result_skin_scoped: DataFrame):
+    set_ids = result_solid_scoped.columns.set_ids.values
+    if "components" in result_solid_scoped.index.names:
+        components = result_solid_scoped.index.components.values
+    else:
+        components = ["_"]
+    for set_id in set_ids:
+        for component in components:
+            by_id_and_component = result_solid_scoped.select(set_ids=set_id, components=component, complex=0)
+            solid_max = by_id_and_component.max(axis="element_ids").array[0]
+            solid_min = by_id_and_component.min(axis="element_ids").array[0]
+
+            by_id_and_component = result_skin_scoped.select(set_ids=set_id, components=component, complex=0)
+            for value in by_id_and_component.array:
+                assert solid_min <= value <= solid_max
+
+def save_screenshot(dataframe, suffix=""):
+    import os
+    import pathlib
+    import pyvista
+    pyvista.OFF_SCREEN = True
+    test_path = pathlib.Path(os.environ.get("PYTEST_CURRENT_TEST"))
+    dataframe.plot(screenshot=f"{'_'.join(test_path.name.split('::'))}_{suffix}.jpeg")
 
 
 def resolve_test_file(basename, additional_path=""):
