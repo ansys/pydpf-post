@@ -501,8 +501,6 @@ class SpatialSelection:
             _WfNames.skin_input_mesh, skin_operator_input_mesh_fwd_op.outputs.any
         )
 
-        self._selection.view()
-
     def select_with_scoping(self, scoping: Scoping):
         """Directly sets the scoping as the spatial selection.
 
