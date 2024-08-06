@@ -1022,7 +1022,9 @@ class MechanicalSimulation(Simulation, ABC):
             else:
                 inpt = first_average_op.inputs.mesh
 
-            average_wf.set_input_name(_WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh)
+            average_wf.set_input_name(
+                _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
+            )
             average_wf.set_input_name(_WfNames.skin, inpt)
             average_wf.connect_with(
                 selection.spatial_selection._selection,
@@ -1033,7 +1035,6 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.spatial_selection._selection,
                 output_input_names={_WfNames.skin_input_mesh: _WfNames.skin_input_mesh},
             )
-
 
         if location == locations.nodal:
             average_op = self._model.operator(name="to_nodal_fc")

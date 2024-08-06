@@ -14,14 +14,16 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
 )
 
 
-def check_skin_consistency(result_solid_scoped: DataFrame, result_skin_scoped: DataFrame):
+def check_skin_consistency(
+    result_solid_scoped: DataFrame, result_skin_scoped: DataFrame
+):
     """
-    Check that skin results are consistent. Consistent means that the skin
-    result is withitn the min and the max value of the elemental nodal solid result.
+    Check that skin results are consistent. Consistent means that all the values on the skin
+    are within the min and the max value of the elemental nodal solid result.
     result_solid_scoped and result_skin_scoped must have the same set_ids and components and
     should be scoped to the same elements.
     Just checks the real part of complex results.
@@ -34,13 +36,18 @@ def check_skin_consistency(result_solid_scoped: DataFrame, result_skin_scoped: D
         components = ["_"]
     for set_id in set_ids:
         for component in components:
-            by_id_and_component = result_solid_scoped.select(set_ids=set_id, components=component, complex=0)
+            by_id_and_component = result_solid_scoped.select(
+                set_ids=set_id, components=component, complex=0
+            )
             solid_max = by_id_and_component.max(axis="element_ids").array[0]
             solid_min = by_id_and_component.min(axis="element_ids").array[0]
 
-            by_id_and_component = result_skin_scoped.select(set_ids=set_id, components=component, complex=0)
+            by_id_and_component = result_skin_scoped.select(
+                set_ids=set_id, components=component, complex=0
+            )
             for value in by_id_and_component.array:
                 assert solid_min <= value <= solid_max
+
 
 @fixture
 def static_simulation(static_rst):
@@ -2032,18 +2039,26 @@ class TestModalMechanicalSimulation:
 
     def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         if frame_modal_simulation._model._server.meet_version("7.1"):
-            result_full = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+            result_full = frame_modal_simulation.stress_elemental(
+                all_sets=True, skin=True
+            )
             assert len(result_full.index.mesh_index) == 2048
             assert len(result_full.columns.set_ids) == 6
 
         elif frame_modal_simulation._model._server.meet_version("6.2"):
-            result_full = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+            result_full = frame_modal_simulation.stress_elemental(
+                all_sets=True, skin=True
+            )
             assert len(result_full.index.mesh_index) == 11146
             assert len(result_full.columns.set_ids) == 6
 
         element_ids = list(range(1, 100))
-        result_skin_scoped = frame_modal_simulation.stress_elemental(all_sets=True, skin=element_ids)
-        result_solid_scoped = frame_modal_simulation.stress(all_sets=True, element_ids=element_ids)
+        result_skin_scoped = frame_modal_simulation.stress_elemental(
+            all_sets=True, skin=element_ids
+        )
+        result_solid_scoped = frame_modal_simulation.stress(
+            all_sets=True, element_ids=element_ids
+        )
 
         check_skin_consistency(result_solid_scoped, result_skin_scoped)
 
@@ -2140,8 +2155,12 @@ class TestModalMechanicalSimulation:
             )
 
         element_ids = list(range(1, 100))
-        result_skin_scoped = frame_modal_simulation.elastic_strain_elemental(all_sets=True, skin=element_ids)
-        result_solid_scoped = frame_modal_simulation.elastic_strain(all_sets=True, element_ids=element_ids)
+        result_skin_scoped = frame_modal_simulation.elastic_strain_elemental(
+            all_sets=True, skin=element_ids
+        )
+        result_solid_scoped = frame_modal_simulation.elastic_strain(
+            all_sets=True, element_ids=element_ids
+        )
         check_skin_consistency(result_solid_scoped, result_skin_scoped)
 
         result_scoped_first_set = result_skin_scoped.select(set_ids=[1])
@@ -2152,7 +2171,6 @@ class TestModalMechanicalSimulation:
         else:
             assert len(result_scoped_first_set.index.mesh_index) == 110
         assert len(result_scoped_first_set.columns.set_ids) == 1
-
 
     def test_strain_skin2(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
@@ -2821,10 +2839,12 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
             element_ids = list(range(1, 100))
-            result_skin_scoped = harmonic_simulation.stress_elemental(all_sets=True,
-                                                                         skin=element_ids)
-            result_solid_scoped = harmonic_simulation.stress(all_sets=True,
-                                                                element_ids=element_ids)
+            result_skin_scoped = harmonic_simulation.stress_elemental(
+                all_sets=True, skin=element_ids
+            )
+            result_solid_scoped = harmonic_simulation.stress(
+                all_sets=True, element_ids=element_ids
+            )
 
             check_skin_consistency(result_solid_scoped, result_skin_scoped)
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -2835,8 +2855,9 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result_skin_scoped.index.mesh_index) == 192
             assert len(result_skin_scoped.columns.set_ids) == 1
 
-            result_skin_scoped = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1],
-                                                                         skin=element_ids)
+            result_skin_scoped = harmonic_simulation.stress_eqv_von_mises_nodal(
+                set_ids=[1], skin=element_ids
+            )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 1080
@@ -2866,8 +2887,8 @@ class TestHarmonicMechanicalSimulation:
             assert len(result.columns.set_ids) == 1
             element_ids = list(range(1, 100))
             result_skin_scoped = harmonic_simulation.stress_principal_elemental(
-                                                                         skin=element_ids, set_ids=[1])
-
+                skin=element_ids, set_ids=[1]
+            )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 360
@@ -2878,7 +2899,8 @@ class TestHarmonicMechanicalSimulation:
             assert len(result_skin_scoped.columns.set_ids) == 1
 
             result_skin_scoped = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                                                                         skin=element_ids, set_ids=[1])
+                skin=element_ids, set_ids=[1]
+            )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 1080
@@ -2888,10 +2910,12 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result_skin_scoped.index.mesh_index) == 530
             assert len(result_skin_scoped.columns.set_ids) == 1
             assert np.allclose(
-                result_skin_scoped.select(complex=0).max(axis="node_ids").array, [1.37163319e-06]
+                result_skin_scoped.select(complex=0).max(axis="node_ids").array,
+                [1.37163319e-06],
             )
             result_skin_scoped = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                                                                         skin=element_ids, set_ids=[1])
+                skin=element_ids, set_ids=[1]
+            )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result_skin_scoped.index.mesh_index) == 1080
@@ -2900,7 +2924,8 @@ class TestHarmonicMechanicalSimulation:
             assert len(result_skin_scoped.columns.set_ids) == 1
 
             result_skin_scoped = harmonic_simulation.elastic_strain_principal_nodal(
-                                                                         skin=element_ids, set_ids=[1])
+                skin=element_ids, set_ids=[1]
+            )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 1080
             elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
@@ -2909,8 +2934,11 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result_skin_scoped.index.mesh_index) == 530
             assert len(result_skin_scoped.columns.set_ids) == 1
 
-            result_skin_scoped = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
-                                                                         skin=element_ids, set_ids=[1])
+            result_skin_scoped = (
+                harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+                    skin=element_ids, set_ids=[1]
+                )
+            )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 360

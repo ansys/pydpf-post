@@ -101,9 +101,7 @@ class TestSpatialSelectionFaces:
         assert scoping.location == post.locations.faces
         assert np.allclose(scoping.ids, [11479, 11500, -1, 11502, 11503])
 
-
     def test_skin_extraction_with_scoping(self):
-
         # Todo: Upload to examples repo
         rst_path = r"D:\ANSYSDev\remote_post\models\beam_2_mat.rst"
 
@@ -111,7 +109,7 @@ class TestSpatialSelectionFaces:
 
         # get an elemental named selection
         scoping = simulation._model.metadata.meshed_region.named_selection(
-            'X_MIN_SOLID_ELE'
+            "X_MIN_SOLID_ELE"
         )
 
         seqv_ns_skin = simulation.stress_eqv_von_mises_elemental(skin=scoping.ids)
@@ -121,6 +119,7 @@ class TestSpatialSelectionFaces:
         assert field.scoping.size == 128
         assert field.max().data[0] == pytest.approx(287.2531)
         assert field.min().data[0] == pytest.approx(213.1394)
+
 
 #
 #

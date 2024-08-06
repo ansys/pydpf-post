@@ -405,6 +405,7 @@ class SpatialSelection:
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
         """
+
         def connect_any(input, input_value):
             # Workaround to connect any inputs: see
             # https://github.com/ansys/pydpf-core/issues/1670
@@ -414,7 +415,9 @@ class SpatialSelection:
         self._selection.add_operator(skin_operator)
 
         initial_mesh_fwd_op = operators.utility.forward(server=self._server)
-        self._selection.set_input_name(_WfNames.initial_mesh, initial_mesh_fwd_op.inputs.any)
+        self._selection.set_input_name(
+            _WfNames.initial_mesh, initial_mesh_fwd_op.inputs.any
+        )
         self._selection.add_operator(initial_mesh_fwd_op)
 
         skin_operator_input_mesh_fwd_op = operators.utility.forward(server=self._server)
@@ -455,7 +458,6 @@ class SpatialSelection:
 
             mesh_provider_cyc.connect(100, initial_mesh_fwd_op.outputs.any)
 
-
         elif elements is not None:
             if not isinstance(elements, Scoping):
                 elements = Scoping(
@@ -470,7 +472,9 @@ class SpatialSelection:
 
         if not _is_model_cyclic(is_model_cyclic):
             if location == result_native_location:
-                self._selection.set_output_name(_WfNames.mesh, skin_operator.outputs.mesh)
+                self._selection.set_output_name(
+                    _WfNames.mesh, skin_operator.outputs.mesh
+                )
 
         self._selection.set_output_name(_WfNames.skin, skin_operator.outputs.mesh)
         if location == locations.nodal and result_native_location == locations.nodal:
@@ -483,15 +487,20 @@ class SpatialSelection:
             or result_native_location == locations.elemental_nodal
         ):
             transpose_op = operators.scoping.transpose(
-                mesh_scoping=skin_operator.outputs.nodes_mesh_scoping, server=self._server
+                mesh_scoping=skin_operator.outputs.nodes_mesh_scoping,
+                server=self._server,
             )
             self._selection.add_operator(transpose_op)
-            connect_any(transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any)
+            connect_any(
+                transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
+            )
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
 
-        connect_any(skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any)
+        connect_any(
+            skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any
+        )
 
         # Provide the input mesh from which a skin was generated
         # This is useful because the skin_mesh contains the mapping of
