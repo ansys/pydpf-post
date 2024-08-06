@@ -6,6 +6,7 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
+from ansys.dpf.post import DataFrame
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
@@ -13,9 +14,33 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0, save_screenshot, check_skin_consistency,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
 )
 
+
+def check_skin_consistency(result_solid_scoped: DataFrame, result_skin_scoped: DataFrame):
+    """
+    Check that skin results are consistent. Consistent means that the skin
+    result is withitn the min and the max value of the elemental nodal solid result.
+    result_solid_scoped and result_skin_scoped must have the same set_ids and components and
+    should be scoped to the same elements.
+    Just checks the real part of complex results.
+    """
+    set_ids = result_solid_scoped.columns.set_ids.values
+    if "components" in result_solid_scoped.index.names:
+        components = result_solid_scoped.index.components.values
+    else:
+        # use a dummy component. The component will just be ignored in the selection
+        components = ["_"]
+    for set_id in set_ids:
+        for component in components:
+            by_id_and_component = result_solid_scoped.select(set_ids=set_id, components=component, complex=0)
+            solid_max = by_id_and_component.max(axis="element_ids").array[0]
+            solid_min = by_id_and_component.min(axis="element_ids").array[0]
+
+            by_id_and_component = result_skin_scoped.select(set_ids=set_id, components=component, complex=0)
+            for value in by_id_and_component.array:
+                assert solid_min <= value <= solid_max
 
 @fixture
 def static_simulation(static_rst):
