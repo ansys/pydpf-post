@@ -90,7 +90,7 @@ jobs:
           path: HTML-doc-ansys-dpf-post.zip
 
       - name: "Deploy the stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v6
+        uses: ansys/actions/doc-deploy-stable@v7
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -122,7 +122,7 @@ jobs:
           echo "VERSION_MEILI=$VERSION_MEILI" >> $GITHUB_ENV
 
       - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v6
+        uses: ansys/actions/doc-deploy-index@v7
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
           index-name: pydpf-post-v${{ env.VERSION_MEILI }}
