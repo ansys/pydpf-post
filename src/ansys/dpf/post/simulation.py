@@ -1044,6 +1044,6 @@ class MechanicalSimulation(Simulation, ABC):
             average_op.connect(0, forward, 0)
         else:
             first_average_op = average_op
-
+        # Todo: returns None if location is ElementalNodal and skin is active
         if first_average_op is not None and average_op is not None:
             return (first_average_op, average_op)
