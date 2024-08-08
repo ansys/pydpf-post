@@ -1,6 +1,7 @@
 import os.path
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core import Field, MeshedRegion, Scoping, operators
 import numpy as np
 import pytest
 from pytest import fixture
@@ -19,7 +20,7 @@ from conftest import (
 
 
 def check_skin_consistency(
-    result_solid_scoped: DataFrame, result_skin_scoped: DataFrame
+    result_solid_scoped: DataFrame, result_skin_scoped: DataFrame, nodal=False
 ):
     """
     Check that skin results are consistent. Consistent means that all the values on the skin
@@ -47,6 +48,80 @@ def check_skin_consistency(
             )
             for value in by_id_and_component.array:
                 assert solid_min <= value <= solid_max
+
+
+def get_expected_average_skin_value(
+    element_id,
+    solid_mesh: MeshedRegion,
+    skin_mesh: MeshedRegion,
+    elemental_nodal_solid_data_field: Field,
+) -> dict[int, float]:
+    """
+    Get the average skin value of all the skin elements that belong to the solid
+    element with the element_id.
+    Returns a dictionary with the expected average skin values indexed
+    by the skin element id.
+    """
+
+    elemental_nodal_solid_data = elemental_nodal_solid_data_field.get_entity_data_by_id(
+        element_id
+    )
+
+    # Find all nodes connected to this solid element
+    connected_node_indices = (
+        solid_mesh.elements.connectivities_field.get_entity_data_by_id(element_id)
+    )
+    connected_node_ids = solid_mesh.nodes.scoping.ids[connected_node_indices]
+
+    # Find the skin elements attached to all the nodes of the solid element
+    # Note: This includes elements that are not skin elements of
+    # a particular solid element (because not all nodes are part of the solid element)
+    skin_element_ids = set()
+    for connected_node_id in connected_node_ids:
+        skin_element_index = (
+            skin_mesh.nodes.nodal_connectivity_field.get_entity_data_by_id(
+                connected_node_id
+            )
+        )
+        skin_element_ids.update(skin_mesh.elements.scoping.ids[skin_element_index])
+
+    expected_average_skin_values = {}
+    for skin_element_id in skin_element_ids:
+        # Go through all the skin element candidates and get check if all their nodes are
+        # part of the solid element.
+        skin_node_indices = (
+            skin_mesh.elements.connectivities_field.get_entity_data_by_id(
+                skin_element_id
+            )
+        )
+        node_ids = skin_mesh.nodes.scoping.ids[skin_node_indices]
+
+        node_missing = False
+        for node_id in node_ids:
+            if node_id not in connected_node_ids:
+                node_missing = True
+                break
+
+        if node_missing:
+            # If a node is missing the skin element does not belong to the solid element
+            continue
+
+        # Get the elementary indices of the connected nodes in the solid
+        # ElementalNodal data
+        indices_to_average = []
+        for idx, node_id in enumerate(connected_node_ids):
+            if node_id in node_ids:
+                indices_to_average.append(idx)
+
+        # Skip indices that are out of bounds (these are the mid side nodes)
+        indices_to_average = [
+            idx for idx in indices_to_average if idx < len(elemental_nodal_solid_data)
+        ]
+        data_to_average = elemental_nodal_solid_data[indices_to_average, :]
+
+        average = np.mean(data_to_average, axis=0)
+        expected_average_skin_values[skin_element_id] = average
+    return expected_average_skin_values
 
 
 @fixture
@@ -718,6 +793,93 @@ class TestStaticMechanicalSimulation:
             assert len(result.index.mesh_index) == 14
         else:
             assert len(result.index.mesh_index) == 18
+
+    # The comments configurations do not work because for the skin
+    # we first extract the skin and then average to then nodes.
+    # If an element adjacent to the node is covered by multiple skins element,
+    # the results differ from an averaging based on elemental nodal data.
+    @pytest.mark.parametrize(
+        "skin",
+        [
+            True,
+            [1],
+            [1, 2],
+            #  [1, 2, 3],
+            [1, 2, 3, 4],
+            # [1, 2, 3, 4, 5],
+            # [1, 2, 3, 4, 5, 6],
+            # [1, 2, 3, 4, 5, 6, 7],
+            [1, 2, 3, 4, 5, 6, 7, 8],
+        ],
+    )
+    def test_skin_stresses(
+        self, static_simulation: post.StaticMechanicalSimulation, skin
+    ):
+        if isinstance(skin, list):
+            element_ids = skin
+        else:
+            element_ids = static_simulation.mesh.element_ids
+        result_skin_scoped_elemental = static_simulation.stress_elemental(
+            all_sets=True, skin=skin
+        )
+
+        scoping = None
+        if isinstance(skin, list):
+            scoping = Scoping(ids=element_ids, location="elemental")
+
+        stress = static_simulation._model.operator(name="S")
+        if scoping is not None:
+            stress.inputs.mesh_scoping(scoping)
+        stress.inputs.requested_location("ElementalNodal")
+        fc_elemental_nodal = stress.outputs.fields_container()
+
+        # We have two options to get nodal data:
+        # 1)    Request nodal location directly from the operator.
+        #       This way we get the nodal data of the full mesh scoped to
+        #       the elements in the element scope.
+        # 2)    Get the elemental nodal data and then
+        #       average it to nodal. We get different results at the boundaries
+        #       of the element scopem compared to 1). This is because the averaging cannot take into
+        #       account the elemental nodal data outside of the element scope. Therefore, the
+        #       averaged node data at the boundaries is different.
+        # Currently, the skin workflow requests elemental nodal data and then averages it to nodal,
+        # which corresponds to the case 2 above. We should probably fix this, so it
+        # matches the data of case 1
+
+        stress_nodal = static_simulation._model.operator(name="S")
+        stress_nodal.inputs.requested_location("Nodal")
+        if scoping is not None:
+            stress.inputs.mesh_scoping(scoping)
+        fc_native_nodal = stress_nodal.outputs.fields_container()
+
+        to_nodal = operators.averaging.to_nodal_fc()
+        to_nodal.inputs.fields_container(stress)
+        fc_nodal = to_nodal.outputs.fields_container()
+
+        for element_id in element_ids:
+            expected_skin_values = get_expected_average_skin_value(
+                element_id=element_id,
+                solid_mesh=static_simulation.mesh._meshed_region,
+                skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
+                elemental_nodal_solid_data_field=fc_elemental_nodal[0],
+            )
+
+            for skin_element_id, expected_skin_value in expected_skin_values.items():
+                actual_skin_value = result_skin_scoped_elemental._fc[
+                    0
+                ].get_entity_data_by_id(skin_element_id)
+                assert np.allclose(actual_skin_value, expected_skin_value)
+
+        result_skin_scoped_nodal = static_simulation.stress_nodal(
+            all_sets=True, skin=element_ids
+        )
+
+        nodal_skin_field = result_skin_scoped_nodal._fc[0]
+        for node_id in nodal_skin_field.scoping.ids:
+            assert np.allclose(
+                fc_nodal[0].get_entity_data_by_id(node_id),
+                nodal_skin_field.get_entity_data_by_id(node_id),
+            ), str(node_id)
 
 
 class TestTransientMechanicalSimulation:
