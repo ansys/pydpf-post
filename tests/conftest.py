@@ -44,6 +44,15 @@ pv.global_theme.lighting = get_lighting()
 running_docker = os.environ.get("DPF_DOCKER", False)
 
 
+def save_screenshot(dataframe, suffix=""):
+    """Save a screenshot of a dataframe plot, with the current test name."""
+    import os
+    import pathlib
+
+    test_path = pathlib.Path(os.environ.get("PYTEST_CURRENT_TEST"))
+    dataframe.plot(screenshot=f"{'_'.join(test_path.name.split('::'))}_{suffix}.jpeg")
+
+
 def resolve_test_file(basename, additional_path=""):
     """Resolves a test file's full path based on the base name and the
     environment.
