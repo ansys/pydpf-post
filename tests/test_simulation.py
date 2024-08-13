@@ -1,4 +1,5 @@
 import os.path
+from typing import Optional
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import (
@@ -7,6 +8,7 @@ from ansys.dpf.core import (
     MeshedRegion,
     Operator,
     Scoping,
+    element_types,
     natures,
     operators,
 )
@@ -15,10 +17,11 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post import DataFrame, StaticMechanicalSimulation
+from ansys.dpf.post import StaticMechanicalSimulation
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
+from ansys.dpf.post.simulation import Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
@@ -43,39 +46,8 @@ def mode_suffix(mode: str) -> str:
     return ""
 
 
-def check_skin_consistency(
-    result_solid_scoped: DataFrame, result_skin_scoped: DataFrame, nodal=False
-):
-    """
-    Check that skin results are consistent. Consistent means that all the values on the skin
-    are within the min and the max value of the elemental nodal solid result.
-    result_solid_scoped and result_skin_scoped must have the same set_ids and components and
-    should be scoped to the same elements.
-    Just checks the real part of complex results.
-    """
-    set_ids = result_solid_scoped.columns.set_ids.values
-    if "components" in result_solid_scoped.index.names:
-        components = result_solid_scoped.index.components.values
-    else:
-        # use a dummy component. The component will just be ignored in the selection
-        components = ["_"]
-    for set_id in set_ids:
-        for component in components:
-            by_id_and_component = result_solid_scoped.select(
-                set_ids=set_id, components=component, complex=0
-            )
-            solid_max = by_id_and_component.max(axis="element_ids").array[0]
-            solid_min = by_id_and_component.min(axis="element_ids").array[0]
-
-            by_id_and_component = result_skin_scoped.select(
-                set_ids=set_id, components=component, complex=0
-            )
-            for value in by_id_and_component.array:
-                assert solid_min <= value <= solid_max
-
-
 def get_expected_average_skin_value(
-    element_id,
+    element_id: int,
     solid_mesh: MeshedRegion,
     skin_mesh: MeshedRegion,
     elemental_nodal_solid_data_field: Field,
@@ -111,7 +83,7 @@ def get_expected_average_skin_value(
 
     expected_average_skin_values = {}
     for skin_element_id in skin_element_ids:
-        # Go through all the skin element candidates and get check if all their nodes are
+        # Go through all the skin element candidates and check if all their nodes are
         # part of the solid element.
         skin_node_indices = (
             skin_mesh.elements.connectivities_field.get_entity_data_by_id(
@@ -158,9 +130,13 @@ def get_and_check_elemental_skin_results(
     mode: str,
     element_ids: list[int],
 ):
+    """
+    Get the elemental skin results and check if they match the
+    expected average skin values.
+    """
     result_skin_scoped_elemental = getattr(
         static_simulation, f"{result_name}{mode_suffix(mode)}_elemental"
-    )(all_sets=True, skin=element_ids)
+    )(set_ids=[1], skin=element_ids)
 
     if is_equivalent(mode) and result_name == "elastic_strain":
         invariant_op = static_simulation._model.operator(name="eqv_fc")
@@ -206,6 +182,10 @@ def get_and_check_elemental_skin_results(
 
 
 def copy_fields_container(fc):
+    """
+    Create a copy of a fields container. Just works with a single field
+    and a symmetric matrix field.
+    """
     fields_container = FieldsContainer()
     field = Field(nature=natures.symmatrix)
     for id in fc[0].scoping.ids:
@@ -219,12 +199,13 @@ def copy_fields_container(fc):
 operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
 
 
-def get_elemental_nodal_results(static_simulation, result_name, scoping):
-    elemental_nodal_result_op = static_simulation._model.operator(
+def get_elemental_nodal_results(simulation, result_name, scoping):
+    elemental_nodal_result_op = simulation._model.operator(
         name=operator_map[result_name]
     )
     if scoping is not None:
         elemental_nodal_result_op.inputs.mesh_scoping(scoping)
+    elemental_nodal_result_op.inputs.time_scoping([1])
     elemental_nodal_result_op.inputs.requested_location("ElementalNodal")
 
     return (
@@ -234,10 +215,10 @@ def get_elemental_nodal_results(static_simulation, result_name, scoping):
 
 
 def get_nodal_results(
-    static_simulation: StaticMechanicalSimulation,
+    simulation: Simulation,
     result_name: str,
     mode: str,
-    elemental_nodal_result_op: Operator | None = None,
+    elemental_nodal_result_op: Optional[Operator] = None,
 ):
     # We have two options to get nodal data:
     # 1)    Request nodal location directly from the operator.
@@ -252,18 +233,20 @@ def get_nodal_results(
     # which corresponds to the case 2 above. We should probably fix this, so it
     # matches the data of case 1
 
+    # If we don't get a elemental_nodal_result_op, this means the result does not support
+    # elemental nodal evaluation. Currently used only for displacement.
+    # In this case we just get the nodal results directly (case 1 above)
     if elemental_nodal_result_op is None:
-        nodal_result_op = static_simulation._model.operator(
-            name=operator_map[result_name]
-        )
+        nodal_result_op = simulation._model.operator(name=operator_map[result_name])
         if hasattr(nodal_result_op, "requested_location"):
             # Displacement operator does not have the requested location input
             nodal_result_op.inputs.requested_location("Nodal")
+        nodal_result_op.inputs.time_scoping([1])
         fields_container = nodal_result_op.outputs.fields_container()
 
     else:
         if is_equivalent(mode) and result_name == "elastic_strain":
-            invariant_op = static_simulation._model.operator(name="eqv_fc")
+            invariant_op = simulation._model.operator(name="eqv_fc")
             invariant_op.inputs.fields_container(elemental_nodal_result_op)
             fields_container = invariant_op.outputs.fields_container()
         else:
@@ -286,14 +269,14 @@ def get_nodal_results(
             fields_container = copy_fields_container(fc_nodal)
         else:
             fields_container = fc_nodal
-        invariant_op = static_simulation._model.operator(name="invariants_fc")
+        invariant_op = simulation._model.operator(name="invariants_fc")
         invariant_op.inputs.fields_container(fields_container)
         fc_nodal = invariant_op.outputs.fields_eig_1()
 
     if is_equivalent(mode) and result_name != "elastic_strain":
         fields_container = copy_fields_container(fc_nodal)
 
-        invariant_op = static_simulation._model.operator(name="eqv_fc")
+        invariant_op = simulation._model.operator(name="eqv_fc")
         invariant_op.inputs.fields_container(fields_container)
         fc_nodal = invariant_op.outputs.fields_container()
     return fc_nodal
@@ -995,99 +978,180 @@ class TestStaticMechanicalSimulation:
             0
         ].get_entity_data_by_id(1)
 
-    # The comments configurations do not work because for the skin
-    # we first extract the skin and then average to then nodes.
-    # If an element adjacent to the node is covered by multiple skins element,
-    # the results differ from an averaging based on elemental nodal data.
-    @pytest.mark.parametrize(
-        "skin",
-        [
-            True,
-            [1],
-            [1, 2],
-            #  [1, 2, 3],
-            [1, 2, 3, 4],
-            # [1, 2, 3, 4, 5],
-            # [1, 2, 3, 4, 5, 6],
-            # [1, 2, 3, 4, 5, 6, 7],
-            [1, 2, 3, 4, 5, 6, 7, 8],
-        ],
-    )
-    @pytest.mark.parametrize(
-        "result_name", ["stress", "elastic_strain", "displacement"]
-    )
-    @pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
-    def test_skin_stresses(
-        self,
-        static_simulation: post.StaticMechanicalSimulation,
-        skin,
-        result_name,
-        mode,
-    ):
-        supports_elemental = True
 
-        if result_name == "displacement":
-            supports_elemental = False
-            if is_principal(mode) or is_equivalent(mode):
-                return
+@fixture
+def transient_simulation(plate_msup):
+    return post.load_simulation(
+        data_sources=plate_msup,
+        simulation_type=AvailableSimulationTypes.transient_mechanical,
+    )
 
-        if isinstance(skin, list):
-            element_ids = skin
+
+@fixture
+def modal_simulation(modalallkindofcomplexity):
+    return post.load_simulation(
+        data_sources=modalallkindofcomplexity,
+        simulation_type=AvailableSimulationTypes.modal_mechanical,
+    )
+
+
+@fixture
+def harmonic_simulation(complex_model):
+    return post.load_simulation(
+        data_sources=complex_model,
+        simulation_type=AvailableSimulationTypes.harmonic_mechanical,
+    )
+
+
+# List of element configurations for each simulation type
+# The commented configurations contain "corners" which yield incorrect
+# results because the skin data is interpolated
+element_configurations = {
+    "static_simulation": {
+        1: [1],
+        2: [1, 2],
+        # 3: [1, 2, 3],
+        4: [1, 2, 3, 4],
+        # 5: [1, 2, 3, 4, 5],
+        # 6: [1, 2, 3, 4, 5, 6],
+        # 7: [1, 2, 3, 4, 5, 6, 7],
+        8: [1, 2, 3, 4, 5, 6, 7, 8],
+    },
+    "transient_simulation": {
+        1: [1],
+        2: [1, 2],
+        #  3: [1, 2, 3],
+        4: [1, 2, 3, 4],
+        # 5: [1, 2, 3, 4, 5],
+        # 6: [1, 2, 3, 4, 5, 6],
+        # 7: [1, 2, 3, 4, 5, 6, 7],
+        8: [1, 2, 3, 4, 5, 6, 7, 8],
+    },
+    "modal_simulation": {
+        1: [1],
+        2: [1, 2],
+        3: [1, 2, 3],
+        #  4: [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "harmonic_simulation": {
+        1: [1],
+        2: [1, 2],
+        3: [1, 2, 3],
+        #  4: list(range(1, 100))
+    },
+}
+
+# Get a set of all element configurations defined in the dictionary above
+all_configuration_ids = [True] + list(
+    set().union(
+        *[
+            element_configurations.keys()
+            for element_configurations in element_configurations.values()
+        ]
+    )
+)
+
+
+# The comments configurations do not work because for the skin
+# we first extract the skin and then average to then nodes.
+# If an element adjacent to the node is covered by multiple skins element,
+# the results differ from an averaging based on elemental nodal data.
+@pytest.mark.parametrize("skin", all_configuration_ids)
+@pytest.mark.parametrize("result_name", ["stress", "elastic_strain", "displacement"])
+@pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
+@pytest.mark.parametrize(
+    "simulation_str",
+    [
+        "static_simulation",
+        "transient_simulation",
+        "modal_simulation",
+        "harmonic_simulation",
+    ],
+)
+def test_skin_stresses(skin, result_name, mode, simulation_str, request):
+    import pyvista
+
+    pyvista.OFF_SCREEN = False
+    supports_elemental = True
+
+    simulation = request.getfixturevalue(simulation_str)
+
+    if skin is not True:
+        skin = element_configurations[simulation_str].get(skin)
+        print(skin)
+        if skin is None:
+            return
+
+    if result_name == "displacement":
+        supports_elemental = False
+        if is_principal(mode) or is_equivalent(mode):
+            return
+
+    if isinstance(skin, list):
+        element_ids = skin
+    else:
+        if isinstance(simulation, post.ModalMechanicalSimulation):
+            # The modal result contains different element types. Here
+            # we just extract the solid elements
+            solid_elements = simulation.split_mesh_by_properties(
+                {elemental_properties.element_type: element_types.Hex20.value}
+            )
+            element_ids = solid_elements._meshed_region.elements.scoping.ids
+            skin = element_ids
         else:
-            element_ids = static_simulation.mesh.element_ids
+            element_ids = simulation.mesh.element_ids
 
-        scoping = None
-        if isinstance(skin, list):
-            scoping = Scoping(ids=element_ids, location="elemental")
+    scoping = None
+    if isinstance(skin, list):
+        scoping = Scoping(ids=element_ids, location="elemental")
 
-        elemental_nodal_result_op = None
-        if supports_elemental:
-            fc_elemental_nodal, elemental_nodal_result_op = get_elemental_nodal_results(
-                static_simulation=static_simulation,
-                result_name=result_name,
-                scoping=scoping,
-            )
-
-            get_and_check_elemental_skin_results(
-                static_simulation=static_simulation,
-                fc_elemental_nodal=fc_elemental_nodal,
-                result_name=result_name,
-                mode=mode,
-                element_ids=element_ids,
-            )
-
-        fc_nodal = get_nodal_results(
-            static_simulation=static_simulation,
+    elemental_nodal_result_op = None
+    if supports_elemental:
+        fc_elemental_nodal, elemental_nodal_result_op = get_elemental_nodal_results(
+            simulation=simulation,
             result_name=result_name,
-            mode=mode,
-            elemental_nodal_result_op=elemental_nodal_result_op,
+            scoping=scoping,
         )
 
-        nodal_suffix = "_nodal"
-        if result_name == "displacement":
-            nodal_suffix = ""
+        get_and_check_elemental_skin_results(
+            static_simulation=simulation,
+            fc_elemental_nodal=fc_elemental_nodal,
+            result_name=result_name,
+            mode=mode,
+            element_ids=element_ids,
+        )
 
-        result_skin_scoped_nodal = getattr(
-            static_simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
-        )(all_sets=True, skin=element_ids)
+    fc_nodal = get_nodal_results(
+        simulation=simulation,
+        result_name=result_name,
+        mode=mode,
+        elemental_nodal_result_op=elemental_nodal_result_op,
+    )
+    nodal_suffix = "_nodal"
+    if result_name == "displacement":
+        nodal_suffix = ""
 
-        nodal_skin_field = result_skin_scoped_nodal._fc[0]
+    result_skin_scoped_nodal = getattr(
+        simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
+    )(set_ids=[1], skin=element_ids)
+    nodal_skin_field = result_skin_scoped_nodal._fc[0]
+    # nodal_skin_field.plot()
 
-        for node_id in nodal_skin_field.scoping.ids:
-            assert np.allclose(
-                fc_nodal[0].get_entity_data_by_id(node_id),
-                nodal_skin_field.get_entity_data_by_id(node_id),
-            ), str(node_id)
+    for node_id in nodal_skin_field.scoping.ids:
+        assert np.allclose(
+            fc_nodal[0].get_entity_data_by_id(node_id),
+            nodal_skin_field.get_entity_data_by_id(node_id),
+        ), str(node_id)
 
-        """
-        result_skin_scoped_elemental_nodal = getattr(
-            static_simulation, f"{result_name}{mode_suffix(mode)}"
-        )(all_sets=True, skin=element_ids)
-        """
+    """
+    result_skin_scoped_elemental_nodal = getattr(
+        static_simulation, f"{result_name}{mode_suffix(mode)}"
+    )(all_sets=True, skin=element_ids)
+    """
 
-        # Todo: Elemental nodal does not work
-        # Returns just the element nodal data of the solid
-        # result_skin_scoped_elemental_nodal
+    # Todo: Elemental nodal does not work
+    # Returns just the element nodal data of the solid
+    # result_skin_scoped_elemental_nodal
 
 
 class TestTransientMechanicalSimulation:
@@ -2426,11 +2490,6 @@ class TestModalMechanicalSimulation:
         result_skin_scoped = frame_modal_simulation.stress_elemental(
             all_sets=True, skin=element_ids
         )
-        result_solid_scoped = frame_modal_simulation.stress(
-            all_sets=True, element_ids=element_ids
-        )
-
-        check_skin_consistency(result_solid_scoped, result_skin_scoped)
 
         result_scoped_first_set = result_skin_scoped.select(set_ids=[1])
 
@@ -2528,10 +2587,6 @@ class TestModalMechanicalSimulation:
         result_skin_scoped = frame_modal_simulation.elastic_strain_elemental(
             all_sets=True, skin=element_ids
         )
-        result_solid_scoped = frame_modal_simulation.elastic_strain(
-            all_sets=True, element_ids=element_ids
-        )
-        check_skin_consistency(result_solid_scoped, result_skin_scoped)
 
         result_scoped_first_set = result_skin_scoped.select(set_ids=[1])
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3212,11 +3267,7 @@ class TestHarmonicMechanicalSimulation:
             result_skin_scoped = harmonic_simulation.stress_elemental(
                 all_sets=True, skin=element_ids
             )
-            result_solid_scoped = harmonic_simulation.stress(
-                all_sets=True, element_ids=element_ids
-            )
 
-            check_skin_consistency(result_solid_scoped, result_skin_scoped)
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result_skin_scoped.index.mesh_index) == 360
             elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
