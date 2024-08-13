@@ -5,6 +5,7 @@ from ansys.dpf.core import (
     Field,
     FieldsContainer,
     MeshedRegion,
+    Operator,
     Scoping,
     natures,
     operators,
@@ -14,7 +15,7 @@ import pytest
 from pytest import fixture
 
 from ansys.dpf import post
-from ansys.dpf.post import DataFrame
+from ansys.dpf.post import DataFrame, StaticMechanicalSimulation
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
@@ -132,6 +133,156 @@ def get_expected_average_skin_value(
         average = np.mean(data_to_average, axis=0)
         expected_average_skin_values[skin_element_id] = average
     return expected_average_skin_values
+
+
+def get_and_check_elemental_skin_results(
+    static_simulation: StaticMechanicalSimulation,
+    fc_elemental_nodal: FieldsContainer,
+    result_name: str,
+    mode_suffix: str,
+    element_ids: list[int],
+    is_equivalent: bool,
+    is_principal: bool,
+):
+    result_skin_scoped_elemental = getattr(
+        static_simulation, f"{result_name}{mode_suffix}_elemental"
+    )(all_sets=True, skin=element_ids)
+
+    if is_equivalent and result_name == "elastic_strain":
+        invariant_op = static_simulation._model.operator(name="eqv_fc")
+        invariant_op.inputs.fields_container(fc_elemental_nodal)
+        fc_elemental_nodal = invariant_op.outputs.fields_container()
+
+    for element_id in element_ids:
+        expected_skin_values = get_expected_average_skin_value(
+            element_id=element_id,
+            solid_mesh=static_simulation.mesh._meshed_region,
+            skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
+            elemental_nodal_solid_data_field=fc_elemental_nodal[0],
+        )
+
+        if is_principal or (is_equivalent and result_name != "elastic_strain"):
+            field = Field(nature=natures.symmatrix)
+            for (
+                skin_element_id,
+                expected_skin_value,
+            ) in expected_skin_values.items():
+                field.append(list(expected_skin_value), skin_element_id)
+            if is_principal:
+                invariant_op = operators.invariant.principal_invariants()
+                invariant_op.inputs.field(field)
+                field_out = invariant_op.outputs.field_eig_1()
+            else:
+                invariant_op = static_simulation._model.operator(name="eqv")
+                invariant_op.inputs.field(field)
+                field_out = invariant_op.outputs.field()
+
+            for skin_element_id in expected_skin_values:
+                expected_skin_values[skin_element_id] = field_out.get_entity_data_by_id(
+                    skin_element_id
+                )
+
+        for skin_element_id, expected_skin_value in expected_skin_values.items():
+            actual_skin_value = result_skin_scoped_elemental._fc[
+                0
+            ].get_entity_data_by_id(skin_element_id)
+            assert np.allclose(actual_skin_value, expected_skin_value)
+
+
+def copy_fields_container(fc):
+    fields_container = FieldsContainer()
+    field = Field(nature=natures.symmatrix)
+    for id in fc[0].scoping.ids:
+        entity_data = fc[0].get_entity_data_by_id(id)
+        field.append(entity_data, id)
+    fields_container.add_label("time")
+    fields_container.add_field({"time": 1}, field)
+    return fields_container
+
+
+operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
+
+
+def get_elemental_nodal_results(static_simulation, result_name, scoping):
+    elemental_nodal_result_op = static_simulation._model.operator(
+        name=operator_map[result_name]
+    )
+    if scoping is not None:
+        elemental_nodal_result_op.inputs.mesh_scoping(scoping)
+    elemental_nodal_result_op.inputs.requested_location("ElementalNodal")
+
+    return (
+        elemental_nodal_result_op.outputs.fields_container(),
+        elemental_nodal_result_op,
+    )
+
+
+def get_nodal_results(
+    static_simulation: StaticMechanicalSimulation,
+    result_name: str,
+    is_equivalent: bool,
+    is_principal: bool,
+    elemental_nodal_result_op: Operator | None = None,
+    scoping: Scoping | None = None,
+):
+    # We have two options to get nodal data:
+    # 1)    Request nodal location directly from the operator.
+    #       This way we get the nodal data of the full mesh scoped to
+    #       the elements in the element scope.
+    # 2)    Get the elemental nodal data and then
+    #       average it to nodal. We get different results at the boundaries
+    #       of the element scope compared to 1). This is because the averaging cannot take into
+    #       account the elemental nodal data outside of the element scope. Therefore, the
+    #       averaged node data at the boundaries is different.
+    # Currently, the skin workflow requests elemental nodal data and then averages it to nodal,
+    # which corresponds to the case 2 above. We should probably fix this, so it
+    # matches the data of case 1
+
+    if elemental_nodal_result_op is None:
+        nodal_result_op = static_simulation._model.operator(
+            name=operator_map[result_name]
+        )
+        if hasattr(nodal_result_op, "requested_location"):
+            # Displacement operator does not have the requested location input
+            nodal_result_op.inputs.requested_location("Nodal")
+        fields_container = nodal_result_op.outputs.fields_container()
+
+    else:
+        if is_equivalent and result_name == "elastic_strain":
+            invariant_op = static_simulation._model.operator(name="eqv_fc")
+            invariant_op.inputs.fields_container(elemental_nodal_result_op)
+            fields_container = invariant_op.outputs.fields_container()
+        else:
+            fields_container = elemental_nodal_result_op
+
+    to_nodal = operators.averaging.to_nodal_fc()
+    to_nodal.inputs.fields_container(fields_container)
+    fc_nodal = to_nodal.outputs.fields_container()
+
+    if is_principal:
+        if result_name == "elastic_strain":
+            # For the elastic strain result, the invariants_fc operator
+            # multiplies the off-diagonal components by 0.5
+            # It checks if the field has a "strain" property. See InvariantOperators.cpp
+            # line 1024. Since the field properties are not exposed in python
+            # we copy the strain field in a new field that does not specify the property.
+            # This is just to make the tests pass. The actual solution is
+            # to preserve the strain property in the skin workflow.
+            # See also test_strain_scaling above.
+            fields_container = copy_fields_container(fc_nodal)
+        else:
+            fields_container = fc_nodal
+        invariant_op = static_simulation._model.operator(name="invariants_fc")
+        invariant_op.inputs.fields_container(fields_container)
+        fc_nodal = invariant_op.outputs.fields_eig_1()
+
+    if is_equivalent and result_name != "elastic_strain":
+        fields_container = copy_fields_container(fc_nodal)
+
+        invariant_op = static_simulation._model.operator(name="eqv_fc")
+        invariant_op.inputs.fields_container(fields_container)
+        fc_nodal = invariant_op.outputs.fields_container()
+    return fc_nodal
 
 
 @fixture
@@ -848,7 +999,9 @@ class TestStaticMechanicalSimulation:
             [1, 2, 3, 4, 5, 6, 7, 8],
         ],
     )
-    @pytest.mark.parametrize("result_name", ["stress", "elastic_strain"])
+    @pytest.mark.parametrize(
+        "result_name", ["stress", "elastic_strain", "displacement"]
+    )
     @pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
     def test_skin_stresses(
         self,
@@ -857,20 +1010,15 @@ class TestStaticMechanicalSimulation:
         result_name,
         mode,
     ):
-        def copy_fields_container(fc):
-            fields_container = FieldsContainer()
-            field = Field(nature=natures.symmatrix)
-            for id in fc[0].scoping.ids:
-                entity_data = fc[0].get_entity_data_by_id(id)
-                field.append(entity_data, id)
-            fields_container.add_label("time")
-            fields_container.add_field({"time": 1}, field)
-            return fields_container
+        is_principal = mode == "principal"
+        is_equivalent = mode == "equivalent"
 
-        operator_map = {"stress": "S", "elastic_strain": "EPEL"}
-        principal = mode == "principal"
-        equivalent = mode == "equivalent"
+        supports_elemental = True
 
+        if result_name == "displacement":
+            supports_elemental = False
+            if is_principal or is_equivalent:
+                return
         mode_suffix = ""
         if mode == "equivalent":
             mode_suffix = "_eqv_von_mises"
@@ -881,122 +1029,43 @@ class TestStaticMechanicalSimulation:
             element_ids = skin
         else:
             element_ids = static_simulation.mesh.element_ids
-        result_skin_scoped_elemental = getattr(
-            static_simulation, f"{result_name}{mode_suffix}_elemental"
-        )(all_sets=True, skin=skin)
 
         scoping = None
         if isinstance(skin, list):
             scoping = Scoping(ids=element_ids, location="elemental")
 
-        elemental_nodal_result_op = static_simulation._model.operator(
-            name=operator_map[result_name]
-        )
-        if scoping is not None:
-            elemental_nodal_result_op.inputs.mesh_scoping(scoping)
-        elemental_nodal_result_op.inputs.requested_location("ElementalNodal")
-
-        fc_elemental_nodal = elemental_nodal_result_op.outputs.fields_container()
-
-        if equivalent and result_name == "elastic_strain":
-            invariant_op = static_simulation._model.operator(name="eqv_fc")
-            invariant_op.inputs.fields_container(fc_elemental_nodal)
-            fc_elemental_nodal = invariant_op.outputs.fields_container()
-
-        for element_id in element_ids:
-            expected_skin_values = get_expected_average_skin_value(
-                element_id=element_id,
-                solid_mesh=static_simulation.mesh._meshed_region,
-                skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
-                elemental_nodal_solid_data_field=fc_elemental_nodal[0],
+        elemental_nodal_result_op = None
+        if supports_elemental:
+            fc_elemental_nodal, elemental_nodal_result_op = get_elemental_nodal_results(
+                static_simulation=static_simulation,
+                result_name=result_name,
+                scoping=scoping,
             )
 
-            if principal or (equivalent and result_name != "elastic_strain"):
-                field = Field(nature=natures.symmatrix)
-                for (
-                    skin_element_id,
-                    expected_skin_value,
-                ) in expected_skin_values.items():
-                    field.append(list(expected_skin_value), skin_element_id)
-                if principal:
-                    invariant_op = operators.invariant.principal_invariants()
-                    invariant_op.inputs.field(field)
-                    field_out = invariant_op.outputs.field_eig_1()
-                else:
-                    fields_container = FieldsContainer()
-                    fields_container.add_label("time")
-                    fields_container.add_field({"time": 1}, field)
-                    invariant_op = static_simulation._model.operator(name="eqv_fc")
-                    invariant_op.inputs.fields_container(fields_container)
-                    field_out = invariant_op.outputs.fields_container()[0]
+            get_and_check_elemental_skin_results(
+                static_simulation=static_simulation,
+                fc_elemental_nodal=fc_elemental_nodal,
+                result_name=result_name,
+                mode_suffix=mode_suffix,
+                element_ids=element_ids,
+                is_equivalent=is_equivalent,
+                is_principal=is_principal,
+            )
 
-                for skin_element_id in expected_skin_values:
-                    expected_skin_values[
-                        skin_element_id
-                    ] = field_out.get_entity_data_by_id(skin_element_id)
+        fc_nodal = get_nodal_results(
+            static_simulation=static_simulation,
+            result_name=result_name,
+            is_equivalent=is_equivalent,
+            is_principal=is_principal,
+            elemental_nodal_result_op=elemental_nodal_result_op,
+        )
 
-            for skin_element_id, expected_skin_value in expected_skin_values.items():
-                actual_skin_value = result_skin_scoped_elemental._fc[
-                    0
-                ].get_entity_data_by_id(skin_element_id)
-                assert np.allclose(actual_skin_value, expected_skin_value)
-
-        # We have two options to get nodal data:
-        # 1)    Request nodal location directly from the operator.
-        #       This way we get the nodal data of the full mesh scoped to
-        #       the elements in the element scope.
-        # 2)    Get the elemental nodal data and then
-        #       average it to nodal. We get different results at the boundaries
-        #       of the element scope compared to 1). This is because the averaging cannot take into
-        #       account the elemental nodal data outside of the element scope. Therefore, the
-        #       averaged node data at the boundaries is different.
-        # Currently, the skin workflow requests elemental nodal data and then averages it to nodal,
-        # which corresponds to the case 2 above. We should probably fix this, so it
-        # matches the data of case 1
-        """
-        nodal_result_op = static_simulation._model.operator(name=operator_map[result_name])
-        nodal_result_op.inputs.requested_location("Nodal")
-        if scoping is not None:
-            elemental_nodal_result_op.inputs.mesh_scoping(scoping)
-        fc_native_nodal = nodal_result_op.outputs.fields_container()
-        """
-        if equivalent and result_name == "elastic_strain":
-            invariant_op = static_simulation._model.operator(name="eqv_fc")
-            invariant_op.inputs.fields_container(elemental_nodal_result_op)
-            fields_container = invariant_op.outputs.fields_container()
-        else:
-            fields_container = elemental_nodal_result_op
-
-        to_nodal = operators.averaging.to_nodal_fc()
-        to_nodal.inputs.fields_container(fields_container)
-        fc_nodal = to_nodal.outputs.fields_container()
-
-        if principal:
-            if result_name == "elastic_strain":
-                # For the elastic strain result, the invariants_fc operator
-                # multiplies the off-diagonal components by 0.5
-                # It checks if the field has a "strain" property. See InvariantOperators.cpp
-                # line 1024. Since the field properties are not exposed in python
-                # we copy the strain field in a new field that does not specify the property.
-                # This is just to make the tests pass. The actual solution is
-                # to preserve the strain property in the skin workflow.
-                # See also test_strain_scaling above.
-                fields_container = copy_fields_container(fc_nodal)
-            else:
-                fields_container = fc_nodal
-            invariant_op = static_simulation._model.operator(name="invariants_fc")
-            invariant_op.inputs.fields_container(fields_container)
-            fc_nodal = invariant_op.outputs.fields_eig_1()
-
-        if equivalent and result_name != "elastic_strain":
-            fields_container = copy_fields_container(fc_nodal)
-
-            invariant_op = static_simulation._model.operator(name="eqv_fc")
-            invariant_op.inputs.fields_container(fields_container)
-            fc_nodal = invariant_op.outputs.fields_container()
+        nodal_suffix = "_nodal"
+        if result_name == "displacement":
+            nodal_suffix = ""
 
         result_skin_scoped_nodal = getattr(
-            static_simulation, f"{result_name}{mode_suffix}_nodal"
+            static_simulation, f"{result_name}{mode_suffix}{nodal_suffix}"
         )(all_sets=True, skin=element_ids)
 
         nodal_skin_field = result_skin_scoped_nodal._fc[0]
@@ -1007,13 +1076,15 @@ class TestStaticMechanicalSimulation:
                 nodal_skin_field.get_entity_data_by_id(node_id),
             ), str(node_id)
 
+        """
         result_skin_scoped_elemental_nodal = getattr(
             static_simulation, f"{result_name}{mode_suffix}"
         )(all_sets=True, skin=element_ids)
+        """
 
         # Todo: Elemental nodal does not work
         # Returns just the element nodal data of the solid
-        result_skin_scoped_elemental_nodal
+        # result_skin_scoped_elemental_nodal
 
 
 class TestTransientMechanicalSimulation:
