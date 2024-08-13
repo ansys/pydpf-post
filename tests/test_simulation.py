@@ -27,6 +27,22 @@ from conftest import (
 )
 
 
+def is_principal(mode: str) -> bool:
+    return mode == "principal"
+
+
+def is_equivalent(mode: str) -> bool:
+    return mode == "equivalent"
+
+
+def mode_suffix(mode: str) -> str:
+    if mode == "equivalent":
+        return "_eqv_von_mises"
+    elif mode == "principal":
+        return "_principal"
+    return ""
+
+
 def check_skin_consistency(
     result_solid_scoped: DataFrame, result_skin_scoped: DataFrame, nodal=False
 ):
@@ -139,16 +155,14 @@ def get_and_check_elemental_skin_results(
     static_simulation: StaticMechanicalSimulation,
     fc_elemental_nodal: FieldsContainer,
     result_name: str,
-    mode_suffix: str,
+    mode: str,
     element_ids: list[int],
-    is_equivalent: bool,
-    is_principal: bool,
 ):
     result_skin_scoped_elemental = getattr(
-        static_simulation, f"{result_name}{mode_suffix}_elemental"
+        static_simulation, f"{result_name}{mode_suffix(mode)}_elemental"
     )(all_sets=True, skin=element_ids)
 
-    if is_equivalent and result_name == "elastic_strain":
+    if is_equivalent(mode) and result_name == "elastic_strain":
         invariant_op = static_simulation._model.operator(name="eqv_fc")
         invariant_op.inputs.fields_container(fc_elemental_nodal)
         fc_elemental_nodal = invariant_op.outputs.fields_container()
@@ -161,14 +175,16 @@ def get_and_check_elemental_skin_results(
             elemental_nodal_solid_data_field=fc_elemental_nodal[0],
         )
 
-        if is_principal or (is_equivalent and result_name != "elastic_strain"):
+        if is_principal(mode) or (
+            is_equivalent(mode) and result_name != "elastic_strain"
+        ):
             field = Field(nature=natures.symmatrix)
             for (
                 skin_element_id,
                 expected_skin_value,
             ) in expected_skin_values.items():
                 field.append(list(expected_skin_value), skin_element_id)
-            if is_principal:
+            if is_principal(mode):
                 invariant_op = operators.invariant.principal_invariants()
                 invariant_op.inputs.field(field)
                 field_out = invariant_op.outputs.field_eig_1()
@@ -220,10 +236,8 @@ def get_elemental_nodal_results(static_simulation, result_name, scoping):
 def get_nodal_results(
     static_simulation: StaticMechanicalSimulation,
     result_name: str,
-    is_equivalent: bool,
-    is_principal: bool,
+    mode: str,
     elemental_nodal_result_op: Operator | None = None,
-    scoping: Scoping | None = None,
 ):
     # We have two options to get nodal data:
     # 1)    Request nodal location directly from the operator.
@@ -248,7 +262,7 @@ def get_nodal_results(
         fields_container = nodal_result_op.outputs.fields_container()
 
     else:
-        if is_equivalent and result_name == "elastic_strain":
+        if is_equivalent(mode) and result_name == "elastic_strain":
             invariant_op = static_simulation._model.operator(name="eqv_fc")
             invariant_op.inputs.fields_container(elemental_nodal_result_op)
             fields_container = invariant_op.outputs.fields_container()
@@ -259,7 +273,7 @@ def get_nodal_results(
     to_nodal.inputs.fields_container(fields_container)
     fc_nodal = to_nodal.outputs.fields_container()
 
-    if is_principal:
+    if is_principal(mode):
         if result_name == "elastic_strain":
             # For the elastic strain result, the invariants_fc operator
             # multiplies the off-diagonal components by 0.5
@@ -276,7 +290,7 @@ def get_nodal_results(
         invariant_op.inputs.fields_container(fields_container)
         fc_nodal = invariant_op.outputs.fields_eig_1()
 
-    if is_equivalent and result_name != "elastic_strain":
+    if is_equivalent(mode) and result_name != "elastic_strain":
         fields_container = copy_fields_container(fc_nodal)
 
         invariant_op = static_simulation._model.operator(name="eqv_fc")
@@ -1010,20 +1024,12 @@ class TestStaticMechanicalSimulation:
         result_name,
         mode,
     ):
-        is_principal = mode == "principal"
-        is_equivalent = mode == "equivalent"
-
         supports_elemental = True
 
         if result_name == "displacement":
             supports_elemental = False
-            if is_principal or is_equivalent:
+            if is_principal(mode) or is_equivalent(mode):
                 return
-        mode_suffix = ""
-        if mode == "equivalent":
-            mode_suffix = "_eqv_von_mises"
-        elif mode == "principal":
-            mode_suffix = "_principal"
 
         if isinstance(skin, list):
             element_ids = skin
@@ -1046,17 +1052,14 @@ class TestStaticMechanicalSimulation:
                 static_simulation=static_simulation,
                 fc_elemental_nodal=fc_elemental_nodal,
                 result_name=result_name,
-                mode_suffix=mode_suffix,
+                mode=mode,
                 element_ids=element_ids,
-                is_equivalent=is_equivalent,
-                is_principal=is_principal,
             )
 
         fc_nodal = get_nodal_results(
             static_simulation=static_simulation,
             result_name=result_name,
-            is_equivalent=is_equivalent,
-            is_principal=is_principal,
+            mode=mode,
             elemental_nodal_result_op=elemental_nodal_result_op,
         )
 
@@ -1065,7 +1068,7 @@ class TestStaticMechanicalSimulation:
             nodal_suffix = ""
 
         result_skin_scoped_nodal = getattr(
-            static_simulation, f"{result_name}{mode_suffix}{nodal_suffix}"
+            static_simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
         )(all_sets=True, skin=element_ids)
 
         nodal_skin_field = result_skin_scoped_nodal._fc[0]
@@ -1078,7 +1081,7 @@ class TestStaticMechanicalSimulation:
 
         """
         result_skin_scoped_elemental_nodal = getattr(
-            static_simulation, f"{result_name}{mode_suffix}"
+            static_simulation, f"{result_name}{mode_suffix(mode)}"
         )(all_sets=True, skin=element_ids)
         """
 
