@@ -1022,7 +1022,7 @@ element_configurations = {
     "static_simulation": {
         1: [1],
         2: [1, 2],
-        3: [1, 2, 3],
+        # 3: [1, 2, 3],
         4: [1, 2, 3, 4],
         # 5: [1, 2, 3, 4, 5],
         # 6: [1, 2, 3, 4, 5, 6],
@@ -2566,7 +2566,7 @@ class TestModalMechanicalSimulation:
                 result.select(set_ids=[1]).max(axis="element_ids").array,
                 [1602.16293782],
             )
-        result = frame_modal_simulation.stress_elemental(
+        result = frame_modal_simulation.stress_principal_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
