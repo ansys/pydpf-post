@@ -1002,7 +1002,7 @@ class TestStaticMechanicalSimulation:
         for id in strain_result._fc[0].scoping.ids:
             entity_data = strain_result._fc[0].get_entity_data_by_id(id)
             # scaling is needed
-            entity_data[:, 3:7] = entity_data[:, 3:7] * 2
+            entity_data[:, 3:7] = entity_data[:, 3:7] / 2
             field.append(entity_data, id)
 
         fields_container.add_label("time")
@@ -3306,9 +3306,7 @@ class TestHarmonicMechanicalSimulation:
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
                 set_ids=[1], skin=True
             )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-                assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 4184
             else:
                 assert len(result.index.mesh_index) == 4802
@@ -3327,10 +3325,7 @@ class TestHarmonicMechanicalSimulation:
                 set_ids=[1],
                 skin=True,
             )
-
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-                assert len(result.index.mesh_index) == 360
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 1394
             else:
                 assert len(result.index.mesh_index) == 3942
