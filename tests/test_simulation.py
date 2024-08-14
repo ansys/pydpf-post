@@ -2547,7 +2547,6 @@ class TestModalMechanicalSimulation:
 
     def test_strain_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         if frame_modal_simulation._model._server.meet_version("7.1"):
-            # todo I think this should be strain instead of stress
             result = frame_modal_simulation.stress_principal_elemental(
                 all_sets=True, skin=True
             )
@@ -2567,11 +2566,9 @@ class TestModalMechanicalSimulation:
                 result.select(set_ids=[1]).max(axis="element_ids").array,
                 [1602.16293782],
             )
-
-        result = frame_modal_simulation.elastic_strain_elemental(
+        result = frame_modal_simulation.stress_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
-
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
             assert len(result.index.mesh_index) == 132
         elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
