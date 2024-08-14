@@ -1,5 +1,5 @@
 import os.path
-from typing import Optional
+from typing import Optional, Union
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import (
@@ -129,6 +129,7 @@ def get_and_check_elemental_skin_results(
     result_name: str,
     mode: str,
     element_ids: list[int],
+    skin: Union[list[int], bool],
 ):
     """
     Get the elemental skin results and check if they match the
@@ -136,7 +137,7 @@ def get_and_check_elemental_skin_results(
     """
     result_skin_scoped_elemental = getattr(
         static_simulation, f"{result_name}{mode_suffix(mode)}_elemental"
-    )(set_ids=[1], skin=element_ids)
+    )(set_ids=[1], skin=skin, expand_cyclic=False)
 
     if is_equivalent(mode) and result_name == "elastic_strain":
         # For the elastic strain result, the equivalent strains are computed
@@ -324,6 +325,11 @@ def harmonic_simulation(complex_model):
         data_sources=complex_model,
         simulation_type=AvailableSimulationTypes.harmonic_mechanical,
     )
+
+
+@fixture
+def cyclic_static_simulation(simple_cyclic):
+    return post.StaticMechanicalSimulation(simple_cyclic)
 
 
 def test_simulation_init(static_rst):
@@ -1051,6 +1057,10 @@ element_configurations = {
         3: [1, 2, 3],
         #  4: list(range(1, 100))
     },
+    "cyclic_static_simulation": {
+        # Empty dict because element selection is
+        # not supported for cyclic simulations
+    },
 }
 
 # Get a set of all element configurations defined in the dictionary above
@@ -1074,6 +1084,7 @@ all_configuration_ids = [True] + list(
         "transient_simulation",
         "modal_simulation",
         "harmonic_simulation",
+        "cyclic_static_simulation",
     ],
 )
 def test_skin_stresses(skin, result_name, mode, simulation_str, request):
@@ -1126,6 +1137,7 @@ def test_skin_stresses(skin, result_name, mode, simulation_str, request):
             result_name=result_name,
             mode=mode,
             element_ids=element_ids,
+            skin=skin,
         )
 
     fc_nodal = get_nodal_results(
@@ -1143,7 +1155,7 @@ def test_skin_stresses(skin, result_name, mode, simulation_str, request):
 
     result_skin_scoped_nodal = getattr(
         simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
-    )(set_ids=[1], skin=element_ids)
+    )(set_ids=[1], skin=skin, expand_cyclic=False)
     nodal_skin_field = result_skin_scoped_nodal._fc[0]
 
     for node_id in nodal_skin_field.scoping.ids:
