@@ -3250,7 +3250,6 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
-
             result = harmonic_simulation.stress_eqv_von_mises_nodal(
                 set_ids=[1], skin=list(range(1, 100))
             )
@@ -3282,7 +3281,7 @@ class TestHarmonicMechanicalSimulation:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
             result = harmonic_simulation.stress_principal_elemental(
-                skin=list(range(1, 100)), set_ids=[1]
+                set_ids=[1], skin=list(range(1, 100))
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3292,9 +3291,8 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
-
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                skin=list(range(1, 100)), set_ids=[1]
+                set_ids=[1], skin=list(range(1, 100))
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3309,15 +3307,15 @@ class TestHarmonicMechanicalSimulation:
                 [1.37163319e-06],
             )
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                set_ids=[1], skin=list(range(1, 100))
+                set_ids=[1], skin=True
             )
-
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result.index.mesh_index) == 1080
+            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+                assert len(result.index.mesh_index) == 4184
             else:
                 assert len(result.index.mesh_index) == 4802
             assert len(result.columns.set_ids) == 1
-
             result = harmonic_simulation.elastic_strain_principal_nodal(
                 set_ids=[1], skin=list(range(1, 100))
             )
@@ -3328,7 +3326,6 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
-
             result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
                 set_ids=[1],
                 skin=True,
