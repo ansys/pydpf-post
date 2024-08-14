@@ -2471,19 +2471,13 @@ class TestModalMechanicalSimulation:
             result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
             assert len(result.index.mesh_index) == 2048
             assert len(result.columns.set_ids) == 6
-
         elif frame_modal_simulation._model._server.meet_version("6.2"):
             result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
             assert len(result.index.mesh_index) == 11146
             assert len(result.columns.set_ids) == 6
-
-        element_ids = list(range(1, 100))
         result = frame_modal_simulation.stress_elemental(
-            all_sets=True, skin=element_ids
+            set_ids=[1], skin=list(range(1, 100))
         )
-
-        result = result.select(set_ids=[1])
-
         assert len(result.columns.set_ids) == 1
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
             assert len(result.index.mesh_index) == 132
@@ -2574,12 +2568,10 @@ class TestModalMechanicalSimulation:
                 [1602.16293782],
             )
 
-        element_ids = list(range(1, 100))
-        result_skin_scoped = frame_modal_simulation.elastic_strain_elemental(
-            all_sets=True, skin=element_ids
+        result = frame_modal_simulation.elastic_strain_elemental(
+            set_ids=[1], skin=list(range(1, 100))
         )
 
-        result = result_skin_scoped.select(set_ids=[1])
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
             assert len(result.index.mesh_index) == 132
         elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
@@ -3247,9 +3239,8 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
-            element_ids = list(range(1, 100))
             result = harmonic_simulation.stress_elemental(
-                all_sets=True, skin=element_ids
+                set_ids=[1], skin=list(range(1, 100))
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3261,7 +3252,7 @@ class TestHarmonicMechanicalSimulation:
             assert len(result.columns.set_ids) == 1
 
             result = harmonic_simulation.stress_eqv_von_mises_nodal(
-                set_ids=[1], skin=element_ids
+                set_ids=[1], skin=list(range(1, 100))
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3290,9 +3281,8 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 3942
             assert len(result.columns.set_ids) == 1
-            element_ids = list(range(1, 100))
             result = harmonic_simulation.stress_principal_elemental(
-                skin=element_ids, set_ids=[1]
+                skin=list(range(1, 100)), set_ids=[1]
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3304,7 +3294,7 @@ class TestHarmonicMechanicalSimulation:
             assert len(result.columns.set_ids) == 1
 
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                skin=element_ids, set_ids=[1]
+                skin=list(range(1, 100)), set_ids=[1]
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -3319,7 +3309,7 @@ class TestHarmonicMechanicalSimulation:
                 [1.37163319e-06],
             )
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                skin=element_ids, set_ids=[1]
+                set_ids=[1], skin=list(range(1, 100))
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
@@ -3329,7 +3319,7 @@ class TestHarmonicMechanicalSimulation:
             assert len(result.columns.set_ids) == 1
 
             result = harmonic_simulation.elastic_strain_principal_nodal(
-                skin=element_ids, set_ids=[1]
+                set_ids=[1], skin=list(range(1, 100))
             )
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
                 assert len(result.index.mesh_index) == 1080
@@ -3340,7 +3330,8 @@ class TestHarmonicMechanicalSimulation:
             assert len(result.columns.set_ids) == 1
 
             result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
-                skin=element_ids, set_ids=[1]
+                set_ids=[1],
+                skin=True,
             )
 
             if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
