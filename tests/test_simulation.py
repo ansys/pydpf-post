@@ -6,7 +6,6 @@ from ansys.dpf.core import (
     Field,
     FieldsContainer,
     MeshedRegion,
-    Operator,
     Scoping,
     element_types,
     natures,
@@ -130,14 +129,20 @@ def get_and_check_elemental_skin_results(
     mode: str,
     element_ids: list[int],
     skin: Union[list[int], bool],
+    expand_cyclic: bool,
 ):
     """
     Get the elemental skin results and check if they match the
     expected average skin values.
     """
+
+    # Not all the simulation types have the expand cyclic option
+    kwargs = {}
+    if expand_cyclic:
+        kwargs["expand_cyclic"] = True
     result_skin_scoped_elemental = getattr(
         static_simulation, f"{result_name}{mode_suffix(mode)}_elemental"
-    )(set_ids=[1], skin=skin, expand_cyclic=False)
+    )(set_ids=[1], skin=skin, **kwargs)
 
     if is_equivalent(mode) and result_name == "elastic_strain":
         # For the elastic strain result, the equivalent strains are computed
@@ -149,7 +154,7 @@ def get_and_check_elemental_skin_results(
     for element_id in element_ids:
         expected_skin_values = get_expected_average_skin_value(
             element_id=element_id,
-            solid_mesh=static_simulation.mesh._meshed_region,
+            solid_mesh=fc_elemental_nodal[0].meshed_region,
             skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
             elemental_nodal_solid_data_field=fc_elemental_nodal[0],
         )
@@ -206,26 +211,38 @@ def copy_fields_container(fc):
 operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
 
 
-def get_elemental_nodal_results(simulation, result_name, scoping):
-    elemental_nodal_result_op = simulation._model.operator(
-        name=operator_map[result_name]
-    )
-    if scoping is not None:
-        elemental_nodal_result_op.inputs.mesh_scoping(scoping)
-    elemental_nodal_result_op.inputs.time_scoping([1])
-    elemental_nodal_result_op.inputs.requested_location("ElementalNodal")
+def get_elemental_nodal_results(
+    simulation: Simulation,
+    result_name: str,
+    scoping: Scoping,
+    mode: str,
+    expand_cyclic: bool,
+):
+    time_id = 1
+    if expand_cyclic:
+        result_result_scoped_elemental = getattr(
+            simulation, f"{result_name}{mode_suffix(mode)}"
+        )(set_ids=[time_id], expand_cyclic=True)
 
-    return (
-        elemental_nodal_result_op.outputs.fields_container(),
-        elemental_nodal_result_op,
-    )
+        return result_result_scoped_elemental._fc
+
+    else:
+        elemental_nodal_result_op = simulation._model.operator(
+            name=operator_map[result_name]
+        )
+        if scoping is not None:
+            elemental_nodal_result_op.inputs.mesh_scoping(scoping)
+        elemental_nodal_result_op.inputs.time_scoping([time_id])
+        elemental_nodal_result_op.inputs.requested_location("ElementalNodal")
+
+        return elemental_nodal_result_op.outputs.fields_container()
 
 
 def get_nodal_results(
     simulation: Simulation,
     result_name: str,
     mode: str,
-    elemental_nodal_result_op: Optional[Operator] = None,
+    elemental_nodal_results: Optional[FieldsContainer] = None,
 ):
     # We have two options to get nodal data:
     # 1)    Request nodal location directly from the operator.
@@ -243,7 +260,7 @@ def get_nodal_results(
     # If we don't get a elemental_nodal_result_op, this means the result does not support
     # elemental nodal evaluation. Currently used only for displacement.
     # In this case we just get the nodal results directly (case 1 above)
-    if elemental_nodal_result_op is None:
+    if elemental_nodal_results is None:
         nodal_result_op = simulation._model.operator(name=operator_map[result_name])
         if hasattr(nodal_result_op, "requested_location"):
             # Displacement operator does not have the requested location input
@@ -256,10 +273,10 @@ def get_nodal_results(
             # For elastic strain results, the computation of the equivalent
             # value happens before the averaging.
             invariant_op = simulation._model.operator(name="eqv_fc")
-            invariant_op.inputs.fields_container(elemental_nodal_result_op)
+            invariant_op.inputs.fields_container(elemental_nodal_results)
             fields_container = invariant_op.outputs.fields_container()
         else:
-            fields_container = elemental_nodal_result_op
+            fields_container = elemental_nodal_results
 
     to_nodal = operators.averaging.to_nodal_fc()
     to_nodal.inputs.fields_container(fields_container)
@@ -1084,13 +1101,23 @@ all_configuration_ids = [True] + list(
         "transient_simulation",
         "modal_simulation",
         "harmonic_simulation",
+        # Just some very basic tests for the cyclic simulation
         "cyclic_static_simulation",
     ],
 )
-def test_skin_stresses(skin, result_name, mode, simulation_str, request):
+def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     simulation = request.getfixturevalue(simulation_str)
 
     supports_elemental = True
+    is_cyclic_simulation = simulation_str == "cyclic_static_simulation"
+
+    if is_cyclic_simulation:
+        if result_name == "elastic_strain":
+            # cyclic simulation does not have elastic strain results
+            return
+        if is_equivalent(mode) or is_principal(mode):
+            # Test for equivalent and principal modes not implemented
+            return
 
     if skin is not True:
         skin = element_configurations[simulation_str].get(skin)
@@ -1123,12 +1150,14 @@ def test_skin_stresses(skin, result_name, mode, simulation_str, request):
     if isinstance(skin, list):
         scoping = Scoping(ids=element_ids, location="elemental")
 
-    elemental_nodal_result_op = None
+    fc_elemental_nodal = None
     if supports_elemental:
-        fc_elemental_nodal, elemental_nodal_result_op = get_elemental_nodal_results(
+        fc_elemental_nodal = get_elemental_nodal_results(
             simulation=simulation,
             result_name=result_name,
             scoping=scoping,
+            expand_cyclic=is_cyclic_simulation,
+            mode=mode,
         )
 
         get_and_check_elemental_skin_results(
@@ -1138,24 +1167,34 @@ def test_skin_stresses(skin, result_name, mode, simulation_str, request):
             mode=mode,
             element_ids=element_ids,
             skin=skin,
+            expand_cyclic=is_cyclic_simulation,
         )
-
-    fc_nodal = get_nodal_results(
-        simulation=simulation,
-        result_name=result_name,
-        mode=mode,
-        elemental_nodal_result_op=elemental_nodal_result_op,
-    )
-    # For displacements the nodal result
-    # is just called displacement without
-    # the "nodal" suffix
     nodal_suffix = "_nodal"
     if result_name == "displacement":
         nodal_suffix = ""
+    if not is_cyclic_simulation:
+        fc_nodal = get_nodal_results(
+            simulation=simulation,
+            result_name=result_name,
+            mode=mode,
+            elemental_nodal_results=fc_elemental_nodal,
+        )
+    else:
+        fc_nodal = getattr(
+            simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
+        )(set_ids=[1], skin=skin, expand_cyclic=True)._fc
+    # For displacements the nodal result
+    # is just called displacement without
+    # the "nodal" suffix
+
+    # Not all the simulation types have the expand cyclic option
+    kwargs = {}
+    if is_cyclic_simulation:
+        kwargs["expand_cyclic"] = True
 
     result_skin_scoped_nodal = getattr(
         simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
-    )(set_ids=[1], skin=skin, expand_cyclic=False)
+    )(set_ids=[1], skin=skin, **kwargs)
     nodal_skin_field = result_skin_scoped_nodal._fc[0]
 
     for node_id in nodal_skin_field.scoping.ids:
