@@ -32,6 +32,7 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.selection import Selection, _WfNames
+from tests.conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0
 
 component_label_to_index = {
     "1": 0,
@@ -358,7 +359,7 @@ class Simulation(ABC):
             List[elemental_properties],
             Dict[elemental_properties, Union[int, List[int]]],
         ],
-    ) -> Meshes:
+    ) -> Union[Mesh, Meshes, None]:
         """Splits the simulation Mesh according to properties and returns it as Meshes.
 
         Parameters
@@ -1022,9 +1023,12 @@ class MechanicalSimulation(Simulation, ABC):
             else:
                 inpt = first_average_op.inputs.mesh
 
-            average_wf.set_input_name(
-                _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
-            )
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+                # solid mesh_input only supported for server version
+                # 8.0 and up
+                average_wf.set_input_name(
+                    _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
+                )
             average_wf.set_input_name(_WfNames.skin, inpt)
             average_wf.connect_with(
                 selection.spatial_selection._selection,
