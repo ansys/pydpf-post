@@ -1145,10 +1145,13 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
         if isinstance(simulation, post.ModalMechanicalSimulation):
             # The modal result contains different element types. Here
             # we just extract the solid elements
-            solid_elements = simulation.split_mesh_by_properties(
+            solid_elements_mesh = simulation.split_mesh_by_properties(
                 {elemental_properties.element_type: element_types.Hex20.value}
             )
-            element_ids = solid_elements.element_ids
+            if isinstance(solid_elements_mesh, Meshes):
+                element_ids = solid_elements_mesh[0].element_ids
+            else:
+                element_ids = solid_elements_mesh.element_ids
             skin = element_ids
         else:
             element_ids = simulation.mesh.element_ids
