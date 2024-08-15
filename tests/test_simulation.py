@@ -201,9 +201,9 @@ def copy_fields_container(fc):
     """
     fields_container = FieldsContainer()
     field = Field(nature=natures.symmatrix)
-    for id in fc[0].scoping.ids:
-        entity_data = fc[0].get_entity_data_by_id(id)
-        field.append(entity_data, id)
+    for entity_id in fc[0].scoping.ids:
+        entity_data = fc[0].get_entity_data_by_id(entity_id)
+        field.append(entity_data, entity_id)
     fields_container.add_label("time")
     fields_container.add_field({"time": 1}, field)
     return fields_container
@@ -1023,11 +1023,11 @@ class TestStaticMechanicalSimulation:
 
         fields_container = FieldsContainer()
         field = Field(nature=natures.symmatrix)
-        for id in strain_result._fc[0].scoping.ids:
-            entity_data = strain_result._fc[0].get_entity_data_by_id(id)
+        for entity_id in strain_result._fc[0].scoping.ids:
+            entity_data = strain_result._fc[0].get_entity_data_by_id(entity_id)
             # scaling is needed
             entity_data[:, 3:7] = entity_data[:, 3:7] / 2
-            field.append(entity_data, id)
+            field.append(entity_data, entity_id)
 
         fields_container.add_label("time")
         fields_container.add_field({"time": 1}, field)
@@ -1107,6 +1107,12 @@ all_configuration_ids = [True] + list(
     ],
 )
 def test_skin_extraction(skin, result_name, mode, simulation_str, request):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+        # Before 8.0, the solid mesh cannot be connected to the solid_to_skin
+        # operator. This yield incorrect results. Therefore we skip all the tests
+        # for older versions.
+        return
+
     simulation = request.getfixturevalue(simulation_str)
 
     supports_elemental = True
@@ -1205,11 +1211,9 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
             nodal_skin_field.get_entity_data_by_id(node_id),
         ), str(node_id)
 
-    """
-    result_skin_scoped_elemental_nodal = getattr(
-        static_simulation, f"{result_name}{mode_suffix(mode)}"
-    )(all_sets=True, skin=element_ids)
-    """
+    # result_skin_scoped_elemental_nodal = getattr(
+    #     static_simulation, f"{result_name}{mode_suffix(mode)}"
+    # )(all_sets=True, skin=element_ids)
 
     # Todo: Elemental nodal does not work
     # Returns just the element nodal data of the solid

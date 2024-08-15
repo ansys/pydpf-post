@@ -4,6 +4,7 @@ Launch or connect to a persistent local DPF service to be shared in
 pytest as a sesson fixture
 """
 import os
+import pathlib
 import re
 
 from ansys.dpf.core.check_version import get_server_version, meets_version
@@ -46,9 +47,6 @@ running_docker = os.environ.get("DPF_DOCKER", False)
 
 def save_screenshot(dataframe, suffix=""):
     """Save a screenshot of a dataframe plot, with the current test name."""
-    import os
-    import pathlib
-
     test_path = pathlib.Path(os.environ.get("PYTEST_CURRENT_TEST"))
     dataframe.plot(screenshot=f"{'_'.join(test_path.name.split('::'))}_{suffix}.jpeg")
 

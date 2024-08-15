@@ -406,10 +406,10 @@ class SpatialSelection:
             on the expanded mesh.
         """
 
-        def connect_any(input, input_value):
+        def connect_any(operator_input, input_value):
             # Workaround to connect any inputs: see
             # https://github.com/ansys/pydpf-core/issues/1670
-            input._operator().connect(input._pin, input_value)
+            operator_input._operator().connect(operator_input._pin, input_value)
 
         skin_operator = operators.mesh.skin(server=self._server)
         self._selection.add_operator(skin_operator)
