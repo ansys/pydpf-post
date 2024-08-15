@@ -3356,10 +3356,16 @@ class TestHarmonicMechanicalSimulation:
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
-            assert np.allclose(
-                result.select(complex=0).max(axis="node_ids").array,
-                [1.37163319e-06],
-            )
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+                assert np.allclose(
+                    result.select(complex=0).max(axis="node_ids").array,
+                    [1.37163319e-06],
+                )
+            else:
+                assert np.allclose(
+                    result.select(complex=0).max(axis="node_ids").array,
+                    [1.34699501e-06],
+                )
             result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
                 set_ids=[1], skin=True
             )
