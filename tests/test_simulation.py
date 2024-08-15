@@ -1170,6 +1170,10 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
             skin=skin,
             expand_cyclic=is_cyclic_simulation,
         )
+
+    # For displacements the nodal result
+    # is just called displacement without
+    # the "nodal" suffix
     nodal_suffix = "_nodal"
     if result_name == "displacement":
         nodal_suffix = ""
@@ -1184,11 +1188,8 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
         fc_nodal = getattr(
             simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
         )(set_ids=[1], skin=skin, expand_cyclic=True)._fc
-    # For displacements the nodal result
-    # is just called displacement without
-    # the "nodal" suffix
 
-    # Not all the simulation types have the expand cyclic option
+    # Not all the simulation types have the expand_cyclic argument
     kwargs = {}
     if is_cyclic_simulation:
         kwargs["expand_cyclic"] = True
