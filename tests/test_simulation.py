@@ -2530,7 +2530,7 @@ class TestModalMechanicalSimulation:
             set_ids=[1], skin=list(range(1, 100))
         )
         assert len(result.columns.set_ids) == 1
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 132
             assert np.allclose(
                 result.max(axis="element_ids").array,
@@ -2542,21 +2542,6 @@ class TestModalMechanicalSimulation:
                         30.50066868464152,
                         412.8089192708333,
                         109.25983428955078,
-                    ]
-                ],
-            )
-        elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 36
-            assert np.allclose(
-                result.max(axis="element_ids").array,
-                [
-                    [
-                        36.52192259,
-                        58.73246002,
-                        371.72294617,
-                        12.80614456,
-                        134.60557556,
-                        38.0447108,
                     ]
                 ],
             )
@@ -2620,10 +2605,8 @@ class TestModalMechanicalSimulation:
         result = frame_modal_simulation.stress_principal_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
             assert len(result.index.mesh_index) == 132
-        elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 36
         else:
             assert len(result.index.mesh_index) == 110
         assert len(result.columns.set_ids) == 1
@@ -3291,10 +3274,8 @@ class TestHarmonicMechanicalSimulation:
                 set_ids=[1], skin=list(range(1, 100))
             )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 360
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
@@ -3302,10 +3283,8 @@ class TestHarmonicMechanicalSimulation:
                 set_ids=[1], skin=list(range(1, 100))
             )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
@@ -3332,10 +3311,8 @@ class TestHarmonicMechanicalSimulation:
                 set_ids=[1], skin=list(range(1, 100))
             )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 360
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
             else:
                 assert len(result.index.mesh_index) == 192
             assert len(result.columns.set_ids) == 1
@@ -3343,10 +3320,8 @@ class TestHarmonicMechanicalSimulation:
                 set_ids=[1], skin=list(range(1, 100))
             )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
@@ -3365,10 +3340,8 @@ class TestHarmonicMechanicalSimulation:
             result = harmonic_simulation.elastic_strain_principal_nodal(
                 set_ids=[1], skin=list(range(1, 100))
             )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
                 assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
             else:
                 assert len(result.index.mesh_index) == 530
             assert len(result.columns.set_ids) == 1
