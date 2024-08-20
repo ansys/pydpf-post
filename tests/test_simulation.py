@@ -13,6 +13,7 @@ from ansys.dpf.core import (
 )
 import numpy as np
 import pytest
+from ansys.dpf.core.plotter import DpfPlotter
 from pytest import fixture
 
 from ansys.dpf import post
@@ -1221,6 +1222,43 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     # Todo: Elemental nodal does not work
     # Returns just the element nodal data of the solid
     # result_skin_scoped_elemental_nodal
+
+def test_averaging_across_bodies():
+    import pyvista
+    pyvista.OFF_SCREEN = False
+
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
+        #data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    res = simulation.stress_nodal(skin=True, average_across_bodies=False)
+
+    filtered_res = res.select(mat=1)
+    filtered_res.plot()
+
+    meshes = simulation.split_mesh_by_properties(properties=[elemental_properties.material])
+
+    pl = DpfPlotter()
+    for mat_id in res._fc.get_label_scoping("mat").ids:
+        #mesh = meshes.select(mat=mat_id)
+        field = res._fc.get_field({"mat": mat_id})
+
+        if field.elementary_data_count > 0:
+           # field.meshed_region = mesh._meshed_region
+            pl.add_field(field)
+
+    pl.show_figure()
+
+
+    mesh = simulation.mesh._meshed_region
+
+
+    meshes.plot()
+
+    mesh.plot(filtered_res._fc)
+
 
 
 class TestTransientMechanicalSimulation:

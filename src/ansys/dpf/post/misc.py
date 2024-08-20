@@ -65,3 +65,8 @@ class Report(ScoobyReport):
             sort=sort,
             extra_meta=extra_meta,
         )
+
+def connect_any(operator_input, input_value):
+    # Workaround to connect any inputs: see
+    # https://github.com/ansys/pydpf-core/issues/1670
+    operator_input._operator().connect(operator_input._pin, input_value)

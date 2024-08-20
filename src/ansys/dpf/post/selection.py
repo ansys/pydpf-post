@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
+from ansys.dpf.post.misc import connect_any
+
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.dpf.post.simulation import Simulation
     from ansys.dpf.post.mesh import Mesh
@@ -46,6 +48,8 @@ class _WfNames:
     cyclic_sectors_to_expand = "cyclic_sectors_to_expand"
     cyclic_phase = "cyclic_phase"
     result = "result"
+    input_data = "input_data"
+    output_data = "output_data"
 
 
 def _is_model_cyclic(is_cyclic: str):
@@ -405,11 +409,6 @@ class SpatialSelection:
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
         """
-
-        def connect_any(operator_input, input_value):
-            # Workaround to connect any inputs: see
-            # https://github.com/ansys/pydpf-core/issues/1670
-            operator_input._operator().connect(operator_input._pin, input_value)
 
         skin_operator = operators.mesh.skin(server=self._server)
         self._selection.add_operator(skin_operator)

@@ -31,6 +31,7 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
+from ansys.dpf.post.misc import connect_any
 from ansys.dpf.post.selection import Selection, _WfNames
 
 component_label_to_index = {
@@ -535,19 +536,27 @@ class Simulation(ABC):
         location: Union[locations, str],
         force_elemental_nodal: bool,
     ) -> (dpf.Workflow, dpf.Operator):
-        op = self._model.operator(name=name)
-        op.connect(7, self.mesh._meshed_region)
+        initial_result_workflow = Workflow(server=self._model._server)
+
+        initial_result_op = self._model.operator(name=name)
+        initial_result_op.connect(7, self.mesh._meshed_region)
         if force_elemental_nodal:
-            op.connect(9, "ElementalNodal")
+            initial_result_op.connect(9, "ElementalNodal")
         elif location:
-            op.connect(9, location)
-        wf = Workflow(server=self._model._server)
-        wf.add_operator(op)
-        wf.set_input_name(_WfNames.read_cyclic, op, 14)
-        wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
-        wf.set_input_name(_WfNames.cyclic_phase, op, 19)
-        wf.set_output_name(_WfNames.result, op, 0)
-        return wf, op
+            initial_result_op.connect(9, location)
+
+        initial_result_workflow.add_operator(initial_result_op)
+        initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
+        initial_result_workflow.set_input_name("time_scoping", initial_result_op.inputs.time_scoping)
+        initial_result_workflow.set_input_name("mesh_scoping", initial_result_op.inputs.mesh_scoping)
+
+        overall_workflow = Workflow(server=self._model._server)
+        overall_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
+        overall_workflow.set_input_name(_WfNames.cyclic_sectors_to_expand, initial_result_op, 18)
+        overall_workflow.set_input_name(_WfNames.cyclic_phase, initial_result_op, 19)
+        overall_workflow.set_output_name(_WfNames.result, initial_result_op, 0)
+
+        return overall_workflow, initial_result_workflow
 
     def _append_norm(self, wf, out, base_name):
         """Append a norm operator to the current result workflow."""
@@ -684,14 +693,17 @@ class Simulation(ABC):
                 values = fc.get_available_ids_for_label(label)
                 # Then try to gather the correspond string values for display
                 try:
-                    label_support = self.result_info.qualifier_label_support(label)
-                    names_field = label_support.string_field_support_by_property(
-                        "names"
-                    )
-                    values = [
-                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
-                        for value in values
-                    ]
+                    if label == "mat":
+                        values = fc.get_available_ids_for_label("mat")
+                    else:
+                        label_support = self.result_info.qualifier_label_support(label)
+                        names_field = label_support.string_field_support_by_property(
+                            "names"
+                        )
+                        values = [
+                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                            for value in values
+                        ]
                 except (
                     ValueError,
                     errors.DPFServerException,
@@ -702,6 +714,8 @@ class Simulation(ABC):
             else:
                 values = []
             label_indexes.append(LabelIndex(name=label, values=values))
+        #if "mat" in fc.labels:
+            #column_indexes.append(material_index)
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
@@ -1002,51 +1016,62 @@ class MechanicalSimulation(Simulation, ABC):
         self,
         location: str,
         selection: Selection,
+        mesh_averaging_needed: bool,
+        average_across_bodies: bool = True,
     ):
-        average_op = None
-        first_average_op = None
-        forward = None
+        average_wf = dpf.Workflow(server=self._model._server)
+
+        input_data_fwd = self._model.operator(name="forward_fc")
+        averaged_data_fwd = self._model.operator(name="forward_fc")
+
+        mesh_averaging_input_fwd = self._model.operator(name="forward_fc")
+        average_wf.add_operators([input_data_fwd, averaged_data_fwd, mesh_averaging_input_fwd])
+        mesh_averaging_input_fwd.connect(0, input_data_fwd, 0)
+
+        average_wf.set_input_name(_WfNames.input_data, input_data_fwd)
+        average_wf.set_output_name(_WfNames.output_data, averaged_data_fwd, 0)
+
+        skin_mesh_fwd = self._model.operator(name="forward")
+
         if _WfNames.skin in selection.spatial_selection._selection.output_names:
+            average_wf.add_operator(skin_mesh_fwd)
+            average_wf.set_input_name(_WfNames.skin, skin_mesh_fwd)
+
             if self._model._server.meet_version("6.2"):
-                first_average_op = self._model.operator(name="solid_to_skin_fc")
-                forward = first_average_op
+                solid_to_skin_operator = self._model.operator(name="solid_to_skin_fc")
             else:
-                first_average_op = self._model.operator(name="solid_to_skin")
-                forward = self._model.operator(name="forward_fc")
-                forward.connect(0, first_average_op, 0)
-            average_wf = dpf.Workflow(server=self._model._server)
-            if hasattr(first_average_op.inputs, "mesh_scoping"):
-                inpt = (
-                    first_average_op.inputs.mesh_scoping
-                )  # To keep for retro-compatibility
+                solid_to_skin_operator = self._model.operator(name="solid_to_skin")
+
+            average_wf.add_operator(solid_to_skin_operator)
+            solid_to_skin_operator.connect(0, input_data_fwd, 0)
+            mesh_averaging_input_fwd.connect(0, solid_to_skin_operator, 0)
+
+            if hasattr(solid_to_skin_operator.inputs, "mesh_scoping"):
+                connect_any(solid_to_skin_operator.inputs.mesh_scoping, skin_mesh_fwd)
+                # To keep for retro-compatibility
             else:
-                inpt = first_average_op.inputs.mesh
+                connect_any(solid_to_skin_operator.inputs.mesh, skin_mesh_fwd)
 
             if self._model._server.meet_version("8.0"):
                 # solid mesh_input only supported for server version
                 # 8.0 and up
                 average_wf.set_input_name(
-                    _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
+                    _WfNames.skin_input_mesh, solid_to_skin_operator.inputs.solid_mesh
                 )
-            average_wf.set_input_name(_WfNames.skin, inpt)
-            average_wf.connect_with(
-                selection.spatial_selection._selection,
-                output_input_names={_WfNames.skin: _WfNames.skin},
-            )
 
-            average_wf.connect_with(
-                selection.spatial_selection._selection,
-                output_input_names={_WfNames.skin_input_mesh: _WfNames.skin_input_mesh},
-            )
-
-        if location == locations.nodal:
-            average_op = self._model.operator(name="to_nodal_fc")
-        elif location == locations.elemental:
-            average_op = self._model.operator(name="to_elemental_fc")
-        if average_op and forward:
-            average_op.connect(0, forward, 0)
+        if location == locations.nodal or location == locations.elemental and mesh_averaging_needed:
+            if location == locations.nodal:
+                operator_name = "to_nodal_fc"
+            else:
+                operator_name = "to_elemental_fc"
+            mesh_average_op = self._model.operator(name=operator_name)
+            average_wf.add_operator(mesh_average_op)
+            mesh_average_op.connect(0, mesh_averaging_input_fwd, 0)
+            averaged_data_fwd.connect(0, mesh_average_op, 0)
         else:
-            first_average_op = average_op
-        # Todo: returns None if location is ElementalNodal and skin is active
-        if first_average_op is not None and average_op is not None:
-            return (first_average_op, average_op)
+            averaged_data_fwd.connect(0, mesh_averaging_input_fwd, 0)
+
+
+        return average_wf
+
+
