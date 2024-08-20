@@ -546,13 +546,21 @@ class Simulation(ABC):
             initial_result_op.connect(9, location)
 
         initial_result_workflow.add_operator(initial_result_op)
-        initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
-        initial_result_workflow.set_input_name("time_scoping", initial_result_op.inputs.time_scoping)
-        initial_result_workflow.set_input_name("mesh_scoping", initial_result_op.inputs.mesh_scoping)
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, initial_result_op, 0
+        )
+        initial_result_workflow.set_input_name(
+            "time_scoping", initial_result_op.inputs.time_scoping
+        )
+        initial_result_workflow.set_input_name(
+            "mesh_scoping", initial_result_op.inputs.mesh_scoping
+        )
 
         overall_workflow = Workflow(server=self._model._server)
         overall_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
-        overall_workflow.set_input_name(_WfNames.cyclic_sectors_to_expand, initial_result_op, 18)
+        overall_workflow.set_input_name(
+            _WfNames.cyclic_sectors_to_expand, initial_result_op, 18
+        )
         overall_workflow.set_input_name(_WfNames.cyclic_phase, initial_result_op, 19)
         overall_workflow.set_output_name(_WfNames.result, initial_result_op, 0)
 
@@ -714,8 +722,8 @@ class Simulation(ABC):
             else:
                 values = []
             label_indexes.append(LabelIndex(name=label, values=values))
-        #if "mat" in fc.labels:
-            #column_indexes.append(material_index)
+        # if "mat" in fc.labels:
+        # column_indexes.append(material_index)
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
@@ -1025,7 +1033,9 @@ class MechanicalSimulation(Simulation, ABC):
         averaged_data_fwd = self._model.operator(name="forward_fc")
 
         mesh_averaging_input_fwd = self._model.operator(name="forward_fc")
-        average_wf.add_operators([input_data_fwd, averaged_data_fwd, mesh_averaging_input_fwd])
+        average_wf.add_operators(
+            [input_data_fwd, averaged_data_fwd, mesh_averaging_input_fwd]
+        )
         mesh_averaging_input_fwd.connect(0, input_data_fwd, 0)
 
         average_wf.set_input_name(_WfNames.input_data, input_data_fwd)
@@ -1059,7 +1069,11 @@ class MechanicalSimulation(Simulation, ABC):
                     _WfNames.skin_input_mesh, solid_to_skin_operator.inputs.solid_mesh
                 )
 
-        if location == locations.nodal or location == locations.elemental and mesh_averaging_needed:
+        if (
+            location == locations.nodal
+            or location == locations.elemental
+            and mesh_averaging_needed
+        ):
             if location == locations.nodal:
                 operator_name = "to_nodal_fc"
             else:
@@ -1071,7 +1085,4 @@ class MechanicalSimulation(Simulation, ABC):
         else:
             averaged_data_fwd.connect(0, mesh_averaging_input_fwd, 0)
 
-
         return average_wf
-
-

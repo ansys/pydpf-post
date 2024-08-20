@@ -4,9 +4,9 @@ StaticMechanicalSimulation
 --------------------------
 
 """
-from typing import List, Tuple, Union, Optional
+from typing import List, Optional, Tuple, Union
 
-from ansys.dpf.core import operators, Workflow
+from ansys.dpf.core import Workflow, operators
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
@@ -28,8 +28,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        average_across_bodies: bool = False
-
+        average_across_bodies: bool = False,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, _ = self._create_components(base_name, category, components)
@@ -69,7 +68,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Treat cyclic cases
-        #overall_result_wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, overall_result_wf)
+        # overall_result_wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, overall_result_wf)
 
         # Connect data_sources and streams_container inputs of selection if necessary
         if "streams" in overall_result_wf.input_names:
@@ -78,7 +77,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             overall_result_wf.connect("data_sources", self._model.metadata.data_sources)
 
         average_wf = self._create_averaging_operator(
-            location=location, selection=selection, mesh_averaging_needed=force_elemental_nodal,
+            location=location,
+            selection=selection,
+            mesh_averaging_needed=force_elemental_nodal,
         )
 
         output_wf = initial_result_wf
@@ -93,19 +94,23 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             principal_or_eqv_wf.set_input_name(_WfNames.input_data, principal_op)
             # Set as future output of the workflow
             if len(to_extract) == 1:
-                principal_output = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
-                principal_or_eqv_wf.set_output_name(_WfNames.output_data, principal_output)
+                principal_output = getattr(
+                    principal_op.outputs, f"fields_eig_{to_extract[0]+1}"
+                )
+                principal_or_eqv_wf.set_output_name(
+                    _WfNames.output_data, principal_output
+                )
             else:
                 raise NotImplementedError("Cannot combine principal results yet.")
                 # We need to define the behavior for storing different results in a DataFrame
             # Corresponds to scripting name principal_invariants
             average_wf.connect_with(
                 initial_result_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data}
+                output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
             principal_or_eqv_wf.connect_with(
                 average_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data}
+                output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
 
             output_wf = principal_or_eqv_wf
@@ -120,41 +125,45 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             principal_or_eqv_wf.set_input_name(_WfNames.input_data, equivalent_op)
 
             # If a strain result, change the location now
-            if (
-                category == ResultCategory.equivalent
-                and base_name[0] == "E"
-            ):
+            if category == ResultCategory.equivalent and base_name[0] == "E":
+                # Todo connect principal operator directly to result
                 principal_or_eqv_wf.connect_with(
-                    average_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
+                    average_wf,
+                    output_input_names={_WfNames.output_data: _WfNames.input_data},
                 )
-                average_wf.connect_with(initial_result_wf, output_input_names={
-                    _WfNames.output_data: _WfNames.input_data
-                })
+                average_wf.connect_with(
+                    initial_result_wf,
+                    output_input_names={_WfNames.output_data: _WfNames.input_data},
+                )
                 output_wf = average_wf
             else:
-                average_wf.connect_with(initial_result_wf, output_input_names={
-                    _WfNames.output_data, _WfNames.input_data
-                })
+                average_wf.connect_with(
+                    initial_result_wf,
+                    output_input_names={_WfNames.output_data, _WfNames.input_data},
+                )
                 principal_or_eqv_wf.connect_with(
-                    average_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
+                    average_wf,
+                    output_input_names={_WfNames.output_data: _WfNames.input_data},
                 )
                 output_wf = principal_or_eqv_wf
 
             base_name += "_VM"
 
         else:
-            average_wf.connect_with(initial_result_wf, output_input_names={
-                _WfNames.output_data: _WfNames.input_data,
-                _WfNames.skin: _WfNames.skin,
-                _WfNames.skin_input_mesh: _WfNames.skin_input_mesh
-            })
+            average_wf.connect_with(
+                initial_result_wf,
+                output_input_names={
+                    _WfNames.output_data: _WfNames.input_data,
+                    _WfNames.skin: _WfNames.skin,
+                    _WfNames.skin_input_mesh: _WfNames.skin_input_mesh,
+                },
+            )
             principal_or_eqv_wf.connect_with(
                 average_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data}
+                output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
 
             output_wf = average_wf
-
 
         # Add an optional component selection step if result is vector, matrix, or principal
         if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
@@ -167,15 +176,15 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             # Feed it the current workflow output
             extract_component_wf.set_input_name(_WfNames.input_data, extract_op)
             extract_component_wf.connect_with(
-                output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
+                output_wf,
+                output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
             # Feed it the requested components
             extract_op.connect(1, to_extract)
             extract_component_wf.add_operator(operator=extract_op)
             # Set as future output of the workflow
             extract_component_wf.set_output_name(
-                _WfNames.output_data,
-                extract_op.outputs.fields_container
+                _WfNames.output_data, extract_op.outputs.fields_container
             )
             output_wf = extract_component_wf
             if len(to_extract) == 1:
@@ -184,8 +193,13 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         # Add an optional norm operation if requested
         # todo
-        if False:
-            overall_result_wf, initial_result_output, comp, base_name = self._append_norm(overall_result_wf, initial_result_output, base_name)
+        if norm:
+            (
+                overall_result_wf,
+                initial_result_output,
+                comp,
+                base_name,
+            ) = self._append_norm(overall_result_wf, initial_result_output, base_name)
 
         # Set the workflow output
         forward_output_wf = Workflow(server=self._model._server)
@@ -193,8 +207,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         forward_output_wf.add_operator(forward_op)
         forward_output_wf.set_input_name(_WfNames.input_data, forward_op)
         forward_output_wf.set_output_name("out", forward_op)
-        forward_output_wf.connect_with(output_wf,
-            output_input_names={_WfNames.output_data: _WfNames.input_data})
+        forward_output_wf.connect_with(
+            output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
+        )
         overall_result_wf.connect_with(forward_output_wf)
         overall_result_wf.progress_bar = False
 
@@ -221,7 +236,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True
+        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -334,7 +349,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
-            average_across_bodies=average_across_bodies
+            average_across_bodies=average_across_bodies,
         )
 
         # Evaluate  the workflow
@@ -669,7 +684,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True
+        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -747,7 +762,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
-            average_across_bodies=average_across_bodies
+            average_across_bodies=average_across_bodies,
         )
 
     def stress_principal(
