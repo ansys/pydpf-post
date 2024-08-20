@@ -13,6 +13,20 @@ from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
+from ansys.dpf.post.workflows import (
+    connect_averaging_eqv_and_principal_workflows,
+    connect_cyclic_inputs,
+    connect_initial_results_inputs,
+    create_averaging_workflow,
+    create_equivalent_workflow,
+    create_extract_component_workflow,
+    create_initial_result_workflow,
+    create_mesh_workflow,
+    create_norm_workflow,
+    create_output_workflow,
+    create_principal_workflow,
+    create_result_workflows,
+)
 
 
 class StaticMechanicalSimulation(MechanicalSimulation):
@@ -40,180 +54,71 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
         )
 
-        overall_result_wf, initial_result_wf = self._build_result_workflow(
-            name=base_name,
+        should_extract_components = (
+            category in [ResultCategory.vector, ResultCategory.matrix]
+        ) and to_extract is not None
+        result_workflows = create_result_workflows(
+            base_name=base_name,
             location=location,
             force_elemental_nodal=force_elemental_nodal,
+            server=self._model._server,
+            mesh=self.mesh._meshed_region,
+            create_operator_callable=self._model.operator,
+            is_mesh_required=selection.requires_mesh,
+            has_skin=_WfNames.skin
+            in selection.spatial_selection._selection.output_names,
+            mesh_provider=self._model.metadata.mesh_provider,
+            has_principal=category == ResultCategory.principal,
+            has_equivalent=category == ResultCategory.equivalent,
+            components_to_extract=to_extract,
+            should_extract_components=should_extract_components,
+            has_norm=norm,
         )
 
-        if selection.requires_mesh:
-            mesh_wf = Workflow(server=self._model._server)
-            mesh_wf.add_operator(self._model.metadata.mesh_provider)
-            mesh_wf.set_output_name(
-                _WfNames.initial_mesh, self._model.metadata.mesh_provider
-            )
+        connect_initial_results_inputs(
+            initial_result_workflow=result_workflows.initial_result_workflow,
+            selection=selection,
+            data_sources=self._model.metadata.data_sources,
+            streams_provider=self._model.metadata.streams_provider,
+            expand_cyclic=expand_cyclic,
+            phase_angle_cyclic=phase_angle_cyclic,
+        )
+
+        if result_workflows.mesh_workflow:
             selection.spatial_selection._selection.connect_with(
-                mesh_wf,
+                result_workflows.mesh_workflow,
                 output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
-        initial_result_wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names={"scoping": "mesh_scoping"},
-        )
-
-        initial_result_wf.connect_with(
-            selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
-        )
-
-        # Treat cyclic cases
-        # overall_result_wf = self._treat_cyclic(expand_cyclic, phase_angle_cyclic, overall_result_wf)
-
-        # Connect data_sources and streams_container inputs of selection if necessary
-        if "streams" in overall_result_wf.input_names:
-            overall_result_wf.connect("streams", self._model.metadata.streams_provider)
-        if "data_sources" in overall_result_wf.input_names:
-            overall_result_wf.connect("data_sources", self._model.metadata.data_sources)
-
-        average_wf = self._create_averaging_operator(
-            location=location,
-            selection=selection,
-            mesh_averaging_needed=force_elemental_nodal,
-        )
-
-        output_wf = initial_result_wf
-        principal_or_eqv_wf = None
-        # Add a step to compute principal invariants if result is principal
-        if category == ResultCategory.principal:
-            principal_or_eqv_wf = Workflow(server=self._model._server)
-
-            # Instantiate the required operator
-            principal_op = self._model.operator(name="invariants_fc")
-            principal_or_eqv_wf.add_operator(principal_op)
-            principal_or_eqv_wf.set_input_name(_WfNames.input_data, principal_op)
-            # Set as future output of the workflow
-            if len(to_extract) == 1:
-                principal_output = getattr(
-                    principal_op.outputs, f"fields_eig_{to_extract[0]+1}"
-                )
-                principal_or_eqv_wf.set_output_name(
-                    _WfNames.output_data, principal_output
-                )
-            else:
-                raise NotImplementedError("Cannot combine principal results yet.")
-                # We need to define the behavior for storing different results in a DataFrame
-            # Corresponds to scripting name principal_invariants
-            average_wf.connect_with(
-                initial_result_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-            principal_or_eqv_wf.connect_with(
-                average_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-
-            output_wf = principal_or_eqv_wf
-
-        # Add a step to compute equivalent if result is equivalent
-        elif category == ResultCategory.equivalent:
-            principal_or_eqv_wf = Workflow(server=self._model._server)
-
-            equivalent_op = self._model.operator(name="eqv_fc")
-
-            principal_or_eqv_wf.add_operator(operator=equivalent_op)
-            principal_or_eqv_wf.set_input_name(_WfNames.input_data, equivalent_op)
-
-            # If a strain result, change the location now
-            if category == ResultCategory.equivalent and base_name[0] == "E":
-                # Todo connect principal operator directly to result
-                principal_or_eqv_wf.connect_with(
-                    average_wf,
-                    output_input_names={_WfNames.output_data: _WfNames.input_data},
-                )
-                average_wf.connect_with(
-                    initial_result_wf,
-                    output_input_names={_WfNames.output_data: _WfNames.input_data},
-                )
-                output_wf = average_wf
-            else:
-                average_wf.connect_with(
-                    initial_result_wf,
-                    output_input_names={_WfNames.output_data, _WfNames.input_data},
-                )
-                principal_or_eqv_wf.connect_with(
-                    average_wf,
-                    output_input_names={_WfNames.output_data: _WfNames.input_data},
-                )
-                output_wf = principal_or_eqv_wf
-
-            base_name += "_VM"
-
-        else:
-            average_wf.connect_with(
-                initial_result_wf,
-                output_input_names={
-                    _WfNames.output_data: _WfNames.input_data,
-                    _WfNames.skin: _WfNames.skin,
-                    _WfNames.skin_input_mesh: _WfNames.skin_input_mesh,
-                },
-            )
-            principal_or_eqv_wf.connect_with(
-                average_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-
-            output_wf = average_wf
+        output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
 
         # Add an optional component selection step if result is vector, matrix, or principal
-        if (category in [ResultCategory.vector, ResultCategory.matrix]) and (
-            to_extract is not None
-        ):
-            extract_component_wf = Workflow(server=self._model._server)
-
-            # Instantiate a component selector operator
-            extract_op = self._model.operator(name="component_selector_fc")
-            # Feed it the current workflow output
-            extract_component_wf.set_input_name(_WfNames.input_data, extract_op)
-            extract_component_wf.connect_with(
+        if result_workflows.component_extraction_workflow is not None:
+            result_workflows.component_extraction_workflow.connect_with(
                 output_wf,
                 output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
-            # Feed it the requested components
-            extract_op.connect(1, to_extract)
-            extract_component_wf.add_operator(operator=extract_op)
-            # Set as future output of the workflow
-            extract_component_wf.set_output_name(
-                _WfNames.output_data, extract_op.outputs.fields_container
-            )
-            output_wf = extract_component_wf
-            if len(to_extract) == 1:
-                base_name += f"_{comp[0]}"
-                comp = None
+            output_wf = result_workflows.component_extraction_workflow
 
         # Add an optional norm operation if requested
-        # todo
-        if norm:
-            (
-                overall_result_wf,
-                initial_result_output,
-                comp,
-                base_name,
-            ) = self._append_norm(overall_result_wf, initial_result_output, base_name)
+        if result_workflows.norm_workflow is not None:
+            result_workflows.norm_workflow.connect_with(
+                output_wf,
+                output_input_names={_WfNames.output_data: _WfNames.input_data},
+            )
+            output_wf = result_workflows.norm_workflow
 
-        # Set the workflow output
-        forward_output_wf = Workflow(server=self._model._server)
-        forward_op = self._model.operator(name="forward")
-        forward_output_wf.add_operator(forward_op)
-        forward_output_wf.set_input_name(_WfNames.input_data, forward_op)
-        forward_output_wf.set_output_name("out", forward_op)
-        forward_output_wf.connect_with(
+        result_workflows.forward_output_workflow.connect_with(
             output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
         )
-        overall_result_wf.connect_with(forward_output_wf)
-        overall_result_wf.progress_bar = False
+        result_workflows.forward_output_workflow.progress_bar = False
 
-        return overall_result_wf, comp, base_name
+        comp_out = None if result_workflows.is_single_component_result else comp
+        return (
+            result_workflows.forward_output_workflow,
+            comp_out,
+            result_workflows.base_name,
+        )
 
     def _get_result(
         self,
