@@ -507,3 +507,14 @@ def connect_averaging_eqv_and_principal_workflows(
         output_wf = result_workflows.averaging_workflow
 
     return output_wf
+
+
+def append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
+    if new_wf is not None:
+        new_wf.connect_with(
+            last_wf,
+            output_input_names={_WfNames.output_data: _WfNames.input_data},
+        )
+        return new_wf
+    else:
+        return last_wf

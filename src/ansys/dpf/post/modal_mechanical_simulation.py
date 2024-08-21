@@ -12,6 +12,7 @@ from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 from ansys.dpf.post.workflows import (
+    append_workflow,
     connect_averaging_eqv_and_principal_workflows,
     connect_initial_results_inputs,
     create_result_workflows,
@@ -32,7 +33,6 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
-        """Generate (without evaluating) the Workflow to extract results."""
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, _ = self._create_components(base_name, category, components)
 
@@ -81,21 +81,13 @@ class ModalMechanicalSimulation(MechanicalSimulation):
 
         output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        # Add an optional component selection step if result is vector, matrix, or principal
-        if result_workflows.component_extraction_workflow is not None:
-            result_workflows.component_extraction_workflow.connect_with(
-                output_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-            output_wf = result_workflows.component_extraction_workflow
+        output_wf = append_workflow(
+            new_wf=result_workflows.component_extraction_workflow, last_wf=output_wf
+        )
 
-        # Add an optional norm operation if requested
-        if result_workflows.norm_workflow is not None:
-            result_workflows.norm_workflow.connect_with(
-                output_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-            output_wf = result_workflows.norm_workflow
+        output_wf = append_workflow(
+            new_wf=result_workflows.norm_workflow, last_wf=output_wf
+        )
 
         result_workflows.forward_output_workflow.connect_with(
             output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}

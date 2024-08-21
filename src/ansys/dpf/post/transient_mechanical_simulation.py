@@ -12,6 +12,7 @@ from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 from ansys.dpf.post.workflows import (
+    append_workflow,
     connect_averaging_eqv_and_principal_workflows,
     connect_initial_results_inputs,
     create_result_workflows,
@@ -78,19 +79,13 @@ class TransientMechanicalSimulation(MechanicalSimulation):
 
         output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        if result_workflows.component_extraction_workflow is not None:
-            result_workflows.component_extraction_workflow.connect_with(
-                output_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-            output_wf = result_workflows.component_extraction_workflow
+        output_wf = append_workflow(
+            new_wf=result_workflows.component_extraction_workflow, last_wf=output_wf
+        )
 
-        if result_workflows.norm_workflow is not None:
-            result_workflows.norm_workflow.connect_with(
-                output_wf,
-                output_input_names={_WfNames.output_data: _WfNames.input_data},
-            )
-            output_wf = result_workflows.norm_workflow
+        output_wf = append_workflow(
+            new_wf=result_workflows.norm_workflow, last_wf=output_wf
+        )
 
         result_workflows.forward_output_workflow.connect_with(
             output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
