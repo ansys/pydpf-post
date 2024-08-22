@@ -11,6 +11,7 @@ from ansys.dpf.core import (
     natures,
     operators,
 )
+from ansys.dpf.gate.common import locations
 import numpy as np
 import pytest
 from pytest import fixture
@@ -20,7 +21,7 @@ from ansys.dpf.post import StaticMechanicalSimulation
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
-from ansys.dpf.post.simulation import Simulation
+from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
@@ -46,7 +47,7 @@ def mode_suffix(mode: str) -> str:
     return ""
 
 
-def get_expected_average_skin_value(
+def get_expected_elemental_average_skin_value(
     element_id: int,
     solid_mesh: MeshedRegion,
     skin_mesh: MeshedRegion,
@@ -153,7 +154,7 @@ def get_and_check_elemental_skin_results(
         fc_elemental_nodal = invariant_op.outputs.fields_container()
 
     for element_id in element_ids:
-        expected_skin_values = get_expected_average_skin_value(
+        expected_skin_values = get_expected_elemental_average_skin_value(
             element_id=element_id,
             solid_mesh=fc_elemental_nodal[0].meshed_region,
             skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
@@ -209,6 +210,19 @@ def copy_fields_container(fc):
     return fields_container
 
 
+def copy_field(field):
+    """
+    Create a copy of a fields container. Just works with a single field
+    and a symmetric matrix field.
+    """
+    field_out = Field(nature=field.dimensionality.nature, location=field.location)
+    for entity_id in field.scoping.ids:
+        entity_data = field.get_entity_data_by_id(entity_id)
+        field_out.append(entity_data, entity_id)
+
+    return field_out
+
+
 operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
 
 
@@ -239,10 +253,120 @@ def get_elemental_nodal_results(
         return elemental_nodal_result_op.outputs.fields_container()
 
 
-def get_nodal_results(
-    simulation: Simulation,
+def get_expected_nodal_averaged_skin_results(
+    skin_mesh: MeshedRegion, solid_elemental_nodal_results: Field
+):
+    nodal_averaged_skin_values = Field(
+        nature=solid_elemental_nodal_results.field_definition.dimensionality.nature,
+        location=locations.nodal,
+    )
+    solid_mesh = solid_elemental_nodal_results.meshed_region
+
+    all_midside_node_ids = get_all_midside_node_ids(
+        solid_elemental_nodal_results.meshed_region
+    )
+    for skin_node_id in skin_mesh.nodes.scoping.ids:
+        if skin_node_id in all_midside_node_ids:
+            # Skip midside nodes. We don't extract results for
+            # midside nodes
+            continue
+        solid_elements_indices = (
+            solid_mesh.nodes.nodal_connectivity_field.get_entity_data_by_id(
+                skin_node_id
+            )
+        )
+        solid_elements_ids = solid_mesh.elements.scoping.ids[solid_elements_indices]
+
+        solid_elemental_nodal_value = {}
+
+        # Get the correct elemental nodal value for each adjacent solid element
+        # will be later used to average the nodal values
+        for solid_element_id in solid_elements_ids:
+            if solid_element_id not in solid_elemental_nodal_results.scoping.ids:
+                # Solid element is connected to the node but does not have
+                # a value because it was not selected with the scoping
+                continue
+            solid_element_data = solid_elemental_nodal_results.get_entity_data_by_id(
+                solid_element_id
+            )
+            connected_node_indices = (
+                solid_mesh.elements.connectivities_field.get_entity_data_by_id(
+                    solid_element_id
+                )
+            )
+            connected_node_ids = solid_mesh.nodes.scoping.ids[connected_node_indices]
+            node_index_in_elemental_data = np.where(connected_node_ids == skin_node_id)[
+                0
+            ][0]
+            solid_elemental_nodal_value[solid_element_id] = solid_element_data[
+                node_index_in_elemental_data
+            ]
+
+        # Average over the adjacent skin elements
+        values_to_average = np.empty(
+            shape=(0, solid_elemental_nodal_results.component_count)
+        )
+        skin_element_indices = (
+            skin_mesh.nodes.nodal_connectivity_field.get_entity_data_by_id(skin_node_id)
+        )
+        skin_element_ids = skin_mesh.elements.scoping.ids[skin_element_indices]
+        for skin_element_id in skin_element_ids:
+            matching_solid_element_id = None
+            connected_skin_node_indices = (
+                skin_mesh.elements.connectivities_field.get_entity_data_by_id(
+                    skin_element_id
+                )
+            )
+            connected_skin_node_ids = skin_mesh.nodes.scoping.ids[
+                connected_skin_node_indices
+            ]
+
+            for solid_element_id in solid_elemental_nodal_value.keys():
+                connected_solid_node_indices = (
+                    solid_mesh.elements.connectivities_field.get_entity_data_by_id(
+                        solid_element_id
+                    )
+                )
+                connected_solid_node_ids = solid_mesh.nodes.scoping.ids[
+                    connected_solid_node_indices
+                ]
+
+                if set(connected_skin_node_ids).issubset(connected_solid_node_ids):
+                    matching_solid_element_id = solid_element_id
+                    break
+
+            if matching_solid_element_id is None:
+                raise RuntimeError(
+                    f"No matching solid element found for skin element {skin_element_id}"
+                )
+            skin_nodal_value = solid_elemental_nodal_value[matching_solid_element_id]
+            values_to_average = np.vstack((values_to_average, skin_nodal_value))
+
+        nodal_averaged_skin_values.append(
+            list(np.mean(values_to_average, axis=0)), skin_node_id
+        )
+    return nodal_averaged_skin_values
+
+
+def get_all_midside_node_ids(mesh: MeshedRegion):
+    all_midside_nodes = set()
+    for element in mesh.elements:
+        element_descriptor = element_types.descriptor(element.type)
+
+        all_node_ids = element.node_ids
+        for idx, node_id in enumerate(all_node_ids):
+            if idx >= element_descriptor.n_corner_nodes:
+                all_midside_nodes.add(node_id)
+
+    return all_midside_nodes
+
+
+def get_expected_nodal_results(
+    simulation: MechanicalSimulation,
     result_name: str,
     mode: str,
+    skin_mesh: MeshedRegion,
+    expand_cyclic: bool,
     elemental_nodal_results: Optional[FieldsContainer] = None,
 ):
     # We have two options to get nodal data:
@@ -262,13 +386,11 @@ def get_nodal_results(
     # elemental nodal evaluation. Currently used only for displacement.
     # In this case we just get the nodal results directly (case 1 above)
     if elemental_nodal_results is None:
-        nodal_result_op = simulation._model.operator(name=operator_map[result_name])
-        if hasattr(nodal_result_op, "requested_location"):
-            # Displacement operator does not have the requested location input
-            nodal_result_op.inputs.requested_location("Nodal")
-        nodal_result_op.inputs.time_scoping([1])
-        fields_container = nodal_result_op.outputs.fields_container()
-
+        assert result_name == "displacement"
+        kwargs = {}
+        if expand_cyclic:
+            kwargs["expand_cyclic"] = True
+        nodal_field = simulation.displacement(set_ids=[1], **kwargs)._fc[0]
     else:
         if is_equivalent(mode) and result_name == "elastic_strain":
             # For elastic strain results, the computation of the equivalent
@@ -279,9 +401,9 @@ def get_nodal_results(
         else:
             fields_container = elemental_nodal_results
 
-    to_nodal = operators.averaging.to_nodal_fc()
-    to_nodal.inputs.fields_container(fields_container)
-    fc_nodal = to_nodal.outputs.fields_container()
+        nodal_field = get_expected_nodal_averaged_skin_results(
+            skin_mesh=skin_mesh, solid_elemental_nodal_results=fields_container[0]
+        )
 
     if is_principal(mode):
         if result_name == "elastic_strain":
@@ -293,24 +415,23 @@ def get_nodal_results(
             # This is just to make the tests pass. The actual solution is
             # to preserve the strain property in the skin workflow.
             # See also test_strain_scaling above.
-            fields_container = copy_fields_container(fc_nodal)
-        else:
-            fields_container = fc_nodal
-        invariant_op = simulation._model.operator(name="invariants_fc")
-        invariant_op.inputs.fields_container(fields_container)
-        fc_nodal = invariant_op.outputs.fields_eig_1()
+            nodal_field = copy_field(nodal_field)
+
+        invariant_op = simulation._model.operator(name="invariants")
+        invariant_op.inputs.field(nodal_field)
+        nodal_field = invariant_op.outputs.field_eig_1()
 
     if is_equivalent(mode) and result_name != "elastic_strain":
         # The copy is needed for the same reason as above for the
         # principal results.
         # For elastic strain results, the computation of the equivalent
         # value happens before the averaging.
-        fields_container = copy_fields_container(fc_nodal)
+        nodal_field = copy_field(nodal_field)
 
-        invariant_op = simulation._model.operator(name="eqv_fc")
-        invariant_op.inputs.fields_container(fields_container)
-        fc_nodal = invariant_op.outputs.fields_container()
-    return fc_nodal
+        invariant_op = simulation._model.operator(name="eqv")
+        invariant_op.inputs.field(nodal_field)
+        nodal_field = invariant_op.outputs.field()
+    return nodal_field
 
 
 @fixture
@@ -1046,35 +1167,21 @@ element_configurations = {
     "static_simulation": {
         1: [1],
         2: [1, 2],
-        # 3: [1, 2, 3],
+        3: [1, 2, 3],
         4: [1, 2, 3, 4],
-        # 5: [1, 2, 3, 4, 5],
-        # 6: [1, 2, 3, 4, 5, 6],
-        # 7: [1, 2, 3, 4, 5, 6, 7],
-        8: [1, 2, 3, 4, 5, 6, 7, 8],
+        5: [1, 2, 3, 4, 5],
+        6: [1, 2, 3, 4, 5, 6, 7, 8],
     },
     "transient_simulation": {
         1: [1],
         2: [1, 2],
-        #  3: [1, 2, 3],
+        3: [1, 2, 3],
         4: [1, 2, 3, 4],
-        # 5: [1, 2, 3, 4, 5],
-        # 6: [1, 2, 3, 4, 5, 6],
-        # 7: [1, 2, 3, 4, 5, 6, 7],
-        8: [1, 2, 3, 4, 5, 6, 7, 8],
+        5: [1, 2, 3, 4, 5],
+        6: [1, 2, 3, 4, 5, 6, 7, 8],
     },
-    "modal_simulation": {
-        1: [1],
-        2: [1, 2],
-        3: [1, 2, 3],
-        #  4: [1, 2, 3, 4, 5, 6, 7, 8]
-    },
-    "harmonic_simulation": {
-        1: [1],
-        2: [1, 2],
-        3: [1, 2, 3],
-        #  4: list(range(1, 100))
-    },
+    "modal_simulation": {1: [1], 2: [1, 2], 3: [1, 2, 3], 4: [1, 2, 3, 4, 5, 6, 7, 8]},
+    "harmonic_simulation": {1: [1], 2: [1, 2], 3: [1, 2, 3], 4: list(range(1, 100))},
     "cyclic_static_simulation": {
         # Empty dict because element selection is
         # not supported for cyclic simulations
@@ -1180,37 +1287,40 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
             expand_cyclic=is_cyclic_simulation,
         )
 
+    # Not all the simulation types have the expand_cyclic argument
+    kwargs = {}
+    if is_cyclic_simulation:
+        kwargs["expand_cyclic"] = True
+
     # For displacements the nodal result
     # is just called displacement without
     # the "nodal" suffix
     nodal_suffix = "_nodal"
     if result_name == "displacement":
         nodal_suffix = ""
-    if not is_cyclic_simulation:
-        fc_nodal = get_nodal_results(
-            simulation=simulation,
-            result_name=result_name,
-            mode=mode,
-            elemental_nodal_results=fc_elemental_nodal,
-        )
-    else:
-        fc_nodal = getattr(
-            simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
-        )(set_ids=[1], skin=skin, expand_cyclic=True)._fc
-
-    # Not all the simulation types have the expand_cyclic argument
-    kwargs = {}
-    if is_cyclic_simulation:
-        kwargs["expand_cyclic"] = True
 
     result_skin_scoped_nodal = getattr(
         simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
     )(set_ids=[1], skin=skin, **kwargs)
     nodal_skin_field = result_skin_scoped_nodal._fc[0]
 
-    for node_id in nodal_skin_field.scoping.ids:
+    expected_nodal_values_field = get_expected_nodal_results(
+        simulation=simulation,
+        result_name=result_name,
+        mode=mode,
+        skin_mesh=nodal_skin_field.meshed_region,
+        elemental_nodal_results=fc_elemental_nodal,
+        expand_cyclic=is_cyclic_simulation,
+    )
+
+    for node_id in expected_nodal_values_field.scoping.ids:
+        if result_name == "displacement":
+            if node_id not in nodal_skin_field.scoping.ids:
+                # We get the displacement results also for internal
+                # nodes. We skip these nodes here.
+                continue
         assert np.allclose(
-            fc_nodal[0].get_entity_data_by_id(node_id),
+            expected_nodal_values_field.get_entity_data_by_id(node_id),
             nodal_skin_field.get_entity_data_by_id(node_id),
         ), str(node_id)
 
