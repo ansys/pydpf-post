@@ -5,14 +5,13 @@ Simulation
 
 """
 from abc import ABC
-from enum import Enum
 from os import PathLike
 import re
 from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, errors
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
@@ -21,6 +20,7 @@ import numpy as np
 
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.enums import ResultCategory
 from ansys.dpf.post.index import (
     CompIndex,
     LabelIndex,
@@ -31,48 +31,12 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
-from ansys.dpf.post.misc import connect_any
-from ansys.dpf.post.selection import Selection, _WfNames
-
-component_label_to_index = {
-    "1": 0,
-    "2": 1,
-    "3": 2,
-    "4": 3,
-    "5": 4,
-    "6": 5,
-    "X": 0,
-    "Y": 1,
-    "Z": 2,
-    "XX": 0,
-    "YY": 1,
-    "ZZ": 2,
-    "XY": 3,
-    "YZ": 4,
-    "XZ": 5,
-}
-
-vector_component_names = ["X", "Y", "Z"]
-matrix_component_names = ["XX", "YY", "ZZ", "XY", "YZ", "XZ"]
-principal_names = ["1", "2", "3"]
-
-
-class ResultCategory(Enum):
-    """Enum for available result categories."""
-
-    scalar = 1
-    vector = 2
-    matrix = 3
-    principal = 4
-    equivalent = 5
+from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.workflows import requires_manual_averaging
 
 
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
-
-    _vector_component_names = vector_component_names
-    _matrix_component_names = matrix_component_names
-    _principal_names = principal_names
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -435,87 +399,6 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_components_for_vector(self, base_name, components):
-        out, columns = self._build_components(
-            base_name, components, self._vector_component_names
-        )
-        return out, columns
-
-    def _build_components_for_matrix(self, base_name, components):
-        out, columns = self._build_components(
-            base_name, components, self._matrix_component_names
-        )
-        return out, columns
-
-    def _build_components(self, base_name, components, component_names):
-        # Create operator internal names based on components
-        out = []
-        if components is None:
-            out = None
-        else:
-            if isinstance(components, int) or isinstance(components, str):
-                components = [components]
-            if not isinstance(components, list):
-                raise ValueError(
-                    "Argument 'components' must be an int, a str, or a list of either."
-                )
-            for comp in components:
-                if not (isinstance(comp, str) or isinstance(comp, int)):
-                    raise ValueError(
-                        "Argument 'components' can only contain integers and/or strings.\n"
-                        f"The provided component '{comp}' is not valid."
-                    )
-                if isinstance(comp, int):
-                    comp = str(comp)
-                if comp not in component_label_to_index.keys():
-                    raise ValueError(
-                        f"Component {comp} is not valid. Please use one of: "
-                        f"{list(component_label_to_index.keys())}."
-                    )
-                out.append(component_label_to_index[comp])
-
-        # Take unique values and build names list
-        if out is None:
-            columns = [base_name + comp for comp in component_names]
-        else:
-            out = list(set(out))
-            columns = [base_name + component_names[i] for i in out]
-        return out, columns
-
-    def _build_components_for_principal(self, base_name, components):
-        # Create operator internal names based on principal components
-        out = []
-        if components is None:
-            components = [1]
-
-        if isinstance(components, int) or isinstance(components, str):
-            components = [components]
-        if not isinstance(components, list):
-            raise ValueError(
-                "Argument 'components' must be an int, a str, or a list of either."
-            )
-        for comp in components:
-            if not (isinstance(comp, str) or isinstance(comp, int)):
-                raise ValueError(
-                    "Argument 'components' can only contain integers and/or strings."
-                )
-            if str(comp) not in self._principal_names:
-                raise ValueError(
-                    "A principal component ID must be one of: "
-                    f"{self._principal_names}."
-                )
-            out.append(int(comp) - 1)
-
-        # Take unique values
-        if out is not None:
-            out = list(set(out))
-        # Build columns names
-        if out is None:
-            columns = [base_name + str(comp) for comp in self._principal_names]
-        else:
-            columns = [base_name + self._principal_names[i] for i in out]
-        return out, columns
-
     def _build_result_operator(
         self,
         name: str,
@@ -529,41 +412,6 @@ class Simulation(ABC):
         else:
             op.connect(9, location)
         return op
-
-    def _create_components(self, base_name, category, components):
-        comp = None
-        # Build the list of requested results
-        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
-            # A scalar or equivalent result has no components
-            to_extract = None
-            columns = [base_name]
-        elif category == ResultCategory.vector:
-            # A vector result can have components selected
-            to_extract, columns = self._build_components_for_vector(
-                base_name=base_name, components=components
-            )
-            if to_extract is not None:
-                comp = [self._vector_component_names[i] for i in to_extract]
-            else:
-                comp = self._vector_component_names
-        elif category == ResultCategory.matrix:
-            # A vector result can have components selected
-            to_extract, columns = self._build_components_for_matrix(
-                base_name=base_name, components=components
-            )
-            if to_extract is not None:
-                comp = [self._matrix_component_names[i] for i in to_extract]
-            else:
-                comp = self._matrix_component_names
-        elif category == ResultCategory.principal:
-            # A principal type of result can have components selected
-            to_extract, columns = self._build_components_for_principal(
-                base_name=base_name, components=components
-            )
-            comp = [self._principal_names[i] for i in to_extract]
-        else:
-            raise ValueError(f"'{category}' is not a valid category value.")
-        return comp, to_extract, columns
 
     def _generate_disp_workflow(self, fc, selection) -> Union[dpf.Workflow, None]:
         # Check displacement is an available result
@@ -768,7 +616,9 @@ class MechanicalSimulation(Simulation, ABC):
             )
             location = (
                 locations.elemental_nodal
-                if self._requires_manual_averaging(base_name, location, category, None)
+                if requires_manual_averaging(
+                    base_name, location, category, None, self._model.operator
+                )
                 else location
             )
             if external_layer not in [None, False]:
@@ -883,21 +733,3 @@ class MechanicalSimulation(Simulation, ABC):
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
         return selection
-
-    def _requires_manual_averaging(
-        self,
-        base_name: str,
-        location: str,
-        category: ResultCategory,
-        selection: Selection,
-    ):
-        res = _result_properties[base_name] if base_name in _result_properties else None
-        if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
-            return True
-        if res is not None and selection is not None:
-            return selection.requires_manual_averaging(
-                location=location,
-                result_native_location=res["location"],
-                is_model_cyclic=self._model.operator("is_cyclic").eval(),
-            )
-        return False

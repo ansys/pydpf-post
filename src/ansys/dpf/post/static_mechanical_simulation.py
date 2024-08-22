@@ -4,28 +4,18 @@ StaticMechanicalSimulation
 --------------------------
 
 """
-from typing import List, Optional, Tuple, Union
-
-from ansys.dpf.core import Workflow, operators
+from typing import List, Tuple, Union
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
+from ansys.dpf.post.component_helper import create_components
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
 from ansys.dpf.post.workflows import (
-    append_workflow,
+    append_workflows,
     connect_averaging_eqv_and_principal_workflows,
-    connect_cyclic_inputs,
     connect_initial_results_inputs,
-    create_averaging_workflow,
-    create_equivalent_workflow,
-    create_extract_component_workflow,
-    create_initial_result_workflow,
-    create_mesh_workflow,
-    create_norm_workflow,
-    create_output_workflow,
-    create_principal_workflow,
     create_result_workflows,
 )
 
@@ -45,36 +35,18 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        comp, to_extract, _ = self._create_components(base_name, category, components)
 
-        force_elemental_nodal = self._requires_manual_averaging(
-            base_name=base_name,
-            location=location,
-            category=category,
-            selection=selection,
-        )
-
-        should_extract_components = (
-            category in [ResultCategory.vector, ResultCategory.matrix]
-        ) and to_extract is not None
         result_workflows = create_result_workflows(
             base_name=base_name,
+            category=category,
+            components=components,
+            norm=norm,
             location=location,
-            force_elemental_nodal=force_elemental_nodal,
-            server=self._model._server,
-            mesh=self.mesh._meshed_region,
+            selection=selection,
             create_operator_callable=self._model.operator,
-            is_mesh_required=selection.requires_mesh,
-            has_skin=_WfNames.skin
-            in selection.spatial_selection._selection.output_names,
             mesh_provider=self._model.metadata.mesh_provider,
-            has_principal=category == ResultCategory.principal,
-            has_equivalent=category == ResultCategory.equivalent,
-            components_to_extract=to_extract,
-            should_extract_components=should_extract_components,
-            has_norm=norm,
+            server=self._model._server,
         )
-
         connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
             selection=selection,
@@ -82,6 +54,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             streams_provider=self._model.metadata.streams_provider,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
+            mesh=self.mesh._meshed_region,
+            location=location,
+            force_elemental_nodal=result_workflows.force_elemental_nodal,
         )
 
         if result_workflows.mesh_workflow:
@@ -92,23 +67,19 @@ class StaticMechanicalSimulation(MechanicalSimulation):
 
         output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        output_wf = append_workflow(
-            new_wf=result_workflows.component_extraction_workflow, last_wf=output_wf
+        append_workflows(
+            [
+                result_workflows.component_extraction_workflow,
+                result_workflows.norm_workflow,
+            ],
+            output_wf,
         )
 
-        output_wf = append_workflow(
-            new_wf=result_workflows.norm_workflow, last_wf=output_wf
-        )
+        output_wf.progress_bar = False
 
-        result_workflows.forward_output_workflow.connect_with(
-            output_wf, output_input_names={_WfNames.output_data: _WfNames.input_data}
-        )
-        result_workflows.forward_output_workflow.progress_bar = False
-
-        comp_out = None if result_workflows.is_single_component_result else comp
         return (
-            result_workflows.forward_output_workflow,
-            comp_out,
+            output_wf,
+            result_workflows.components,
             result_workflows.base_name,
         )
 
@@ -248,7 +219,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         )
 
         # Evaluate  the workflow
-        fc = wf.get_output("out", core.types.fields_container)
+        fc = wf.get_output(_WfNames.output_data, core.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
         submesh = None
@@ -258,7 +229,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 _WfNames.mesh, core.types.meshed_region
             )
 
-        _, _, columns = self._create_components(base_name, category, components)
+        _, _, columns = create_components(base_name, category, components)
 
         return self._create_dataframe(
             fc, location, columns, comp, base_name, disp_wf, submesh

@@ -2,8 +2,11 @@ import dataclasses
 from typing import Any, Callable, Optional, Protocol, Union
 
 from ansys.dpf.core import MeshedRegion, Operator, Scoping, ScopingsContainer, Workflow
+from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.gate.common import locations
 
+from ansys.dpf.post.component_helper import create_components
+from ansys.dpf.post.enums import ResultCategory
 from ansys.dpf.post.misc import connect_any
 from ansys.dpf.post.selection import Selection, _WfNames
 
@@ -168,31 +171,14 @@ def create_norm_workflow(
     return norm_wf, new_base_name
 
 
-def create_output_workflow(create_operator_callable: CreateOperatorCallable, server):
-    forward_output_wf = Workflow(server=server)
-    forward_op = create_operator_callable(name="forward")
-    forward_output_wf.add_operator(forward_op)
-    forward_output_wf.set_input_name(_WfNames.input_data, forward_op)
-    forward_output_wf.set_output_name("out", forward_op)
-    return forward_output_wf
-
-
 def create_initial_result_workflow(
-    name: str,
-    location: Union[locations, str],
-    force_elemental_nodal: bool,
-    server,
-    create_operator_callable: CreateOperatorCallable,
-    mesh: MeshedRegion,
+    name: str, server, create_operator_callable: CreateOperatorCallable
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
-    initial_result_op.connect(7, mesh)
-    if force_elemental_nodal:
-        initial_result_op.connect(9, "ElementalNodal")
-    elif location:
-        initial_result_op.connect(9, location)
+    initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
+    initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
     initial_result_workflow.add_operator(initial_result_op)
     initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
@@ -250,10 +236,10 @@ def create_sweeping_phase_workflow(
 class ResultWorkflows:
     initial_result_workflow: Workflow
     averaging_workflow: Workflow
-    forward_output_workflow: Workflow
     base_name: str
+    force_elemental_nodal: bool
     compute_equivalent_before_average: bool = False
-    is_single_component_result: bool = False
+    components: Optional[Any] = None
     mesh_workflow: Optional[Workflow] = None
     principal_workflow: Optional[Workflow] = None
     equivalent_workflow: Optional[Workflow] = None
@@ -262,66 +248,80 @@ class ResultWorkflows:
     sweeping_phase_workflow: Optional[Workflow] = None
 
 
-def create_result_workflows(
-    base_name: str,
-    location: Union[locations, str],
-    force_elemental_nodal: bool,
+@dataclasses.dataclass
+class AveragingWorkflowInputs:
+    location: Union[locations, str]
+    force_elemental_nodal: bool
+
+
+@dataclasses.dataclass
+class MeshWorkflowInputs:
+    mesh_provider: Any
+
+
+@dataclasses.dataclass
+class ComponentExtractorWorkflowInputs:
+    components_to_extract: list[int]
+
+
+@dataclasses.dataclass
+class PrincipalWorkflowInputs:
+    components_to_extract: list[int]
+
+
+@dataclasses.dataclass
+class SweepingPhaseWorkflowInputs:
+    amplitude: bool = (False,)
+    sweeping_phase: Union[float, None] = (None,)
+
+
+def _create_result_workflows(
     server,
-    mesh: MeshedRegion,
     create_operator_callable: CreateOperatorCallable,
-    is_mesh_required: bool,
+    base_name: str,
+    averaging_workflow_inputs: AveragingWorkflowInputs,
     has_skin: bool,
-    mesh_provider: Any,
-    has_principal: bool,
     has_equivalent: bool,
-    components_to_extract: list[int],
-    should_extract_components: bool,
     has_norm: bool,
-    amplitude: bool = False,
-    sweeping_phase: Union[float, None] = None,
+    components: Any,
+    principal_workflow_inputs: Optional[PrincipalWorkflowInputs],
+    sweeping_phase_workflow_inputs: Optional[SweepingPhaseWorkflowInputs],
+    component_extractor_workflow_inputs: Optional[ComponentExtractorWorkflowInputs],
+    mesh_workflow_inputs: Optional[MeshWorkflowInputs],
 ) -> ResultWorkflows:
     initial_result_wf = create_initial_result_workflow(
         name=base_name,
-        location=location,
-        force_elemental_nodal=force_elemental_nodal,
         server=server,
         create_operator_callable=create_operator_callable,
-        mesh=mesh,
     )
 
     average_wf = create_averaging_workflow(
-        location=location,
+        location=averaging_workflow_inputs.location,
         has_skin=has_skin,
-        mesh_averaging_needed=force_elemental_nodal,
+        mesh_averaging_needed=averaging_workflow_inputs.force_elemental_nodal,
         create_operator_callable=create_operator_callable,
         server=server,
     )
 
-    forward_output_wf = create_output_workflow(
-        create_operator_callable=create_operator_callable, server=server
-    )
-
-    result_workflows = ResultWorkflows(
+    result_workflows: ResultWorkflows = ResultWorkflows(
         initial_result_workflow=initial_result_wf,
         averaging_workflow=average_wf,
-        forward_output_workflow=forward_output_wf,
         base_name=base_name,
+        force_elemental_nodal=averaging_workflow_inputs.force_elemental_nodal,
     )
 
-    if is_mesh_required:
+    if mesh_workflow_inputs is not None:
         result_workflows.mesh_workflow = create_mesh_workflow(
-            mesh_provider=mesh_provider, server=server
+            mesh_provider=mesh_workflow_inputs.mesh_provider, server=server
         )
 
-    # Add a step to compute principal invariants if result is principal
-    if has_principal:
+    if principal_workflow_inputs is not None:
         result_workflows.principal_workflow = create_principal_workflow(
-            components_to_extract=components_to_extract,
+            components_to_extract=principal_workflow_inputs.components_to_extract,
             create_operator_callable=create_operator_callable,
             server=server,
         )
 
-    # Add a step to compute equivalent if result is equivalent
     if has_equivalent:
         result_workflows.equivalent_workflow = create_equivalent_workflow(
             create_operator_callable=create_operator_callable, server=server
@@ -329,22 +329,23 @@ def create_result_workflows(
         result_workflows.base_name += "_VM"
 
         # If a strain result, change the location now
-        if has_equivalent and base_name[0] == "E":
+        if base_name[0] == "E":
             result_workflows.compute_equivalent_before_average = True
 
-    if should_extract_components:
+    if component_extractor_workflow_inputs is not None:
         (
             extract_component_wf,
             base_name,
             result_is_single_component,
         ) = create_extract_component_workflow(
             create_operator_callable=create_operator_callable,
-            components_to_extract=components_to_extract,
+            components_to_extract=component_extractor_workflow_inputs.components_to_extract,
             base_name=base_name,
             server=server,
         )
         result_workflows.component_extraction_workflow = extract_component_wf
-        result_workflows.is_single_component_result = result_is_single_component
+        if result_is_single_component:
+            result_workflows.components = None
         result_workflows.base_name = base_name
 
     if has_norm:
@@ -354,17 +355,37 @@ def create_result_workflows(
             server=server,
         )
         result_workflows.norm_workflow = norm_wf
-        result_workflows.is_single_component_result = True
+        result_workflows.components = None
         result_workflows.base_name = base_name
 
-    result_workflows.sweeping_phase_workflow = create_sweeping_phase_workflow(
-        create_operator_callable=create_operator_callable,
-        server=server,
-        amplitude=amplitude,
-        sweeping_phase=sweeping_phase,
-    )
+    if sweeping_phase_workflow_inputs is not None:
+        result_workflows.sweeping_phase_workflow = create_sweeping_phase_workflow(
+            create_operator_callable=create_operator_callable,
+            server=server,
+            amplitude=sweeping_phase_workflow_inputs.amplitude,
+            sweeping_phase=sweeping_phase_workflow_inputs.sweeping_phase,
+        )
 
     return result_workflows
+
+
+def requires_manual_averaging(
+    base_name: str,
+    location: str,
+    category: ResultCategory,
+    selection: Optional[Selection],
+    create_operator_callable: Callable[[str], Operator],
+):
+    res = _result_properties[base_name] if base_name in _result_properties else None
+    if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
+        return True
+    if res is not None and selection is not None:
+        return selection.requires_manual_averaging(
+            location=location,
+            result_native_location=res["location"],
+            is_model_cyclic=create_operator_callable("is_cyclic").eval(),
+        )
+    return False
 
 
 def connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
@@ -433,11 +454,14 @@ def connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
 
 def connect_initial_results_inputs(
     initial_result_workflow: Workflow,
+    force_elemental_nodal: bool,
+    location: str,
     selection: Selection,
     data_sources: Any,
     streams_provider: Any,
     expand_cyclic: bool,
     phase_angle_cyclic: Any,
+    mesh: MeshedRegion,
 ):
     initial_result_workflow.connect_with(
         selection.spatial_selection._selection,
@@ -461,6 +485,13 @@ def connect_initial_results_inputs(
         phase_angle_cyclic=phase_angle_cyclic,
         result_wf=initial_result_workflow,
     )
+
+    if force_elemental_nodal:
+        initial_result_workflow.connect(_WfNames.location, "ElementalNodal")
+    elif location:
+        initial_result_workflow.connect(_WfNames.location, location)
+
+    initial_result_workflow.connect(_WfNames.mesh, mesh)
 
 
 def connect_averaging_eqv_and_principal_workflows(
@@ -509,12 +540,94 @@ def connect_averaging_eqv_and_principal_workflows(
     return output_wf
 
 
-def append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
-    if new_wf is not None:
-        new_wf.connect_with(
-            last_wf,
-            output_input_names={_WfNames.output_data: _WfNames.input_data},
+def create_result_workflows(
+    base_name: str,
+    category: ResultCategory,
+    components,
+    location: str,
+    norm: bool,
+    selection: Selection,
+    create_operator_callable: Callable[[str], Operator],
+    mesh_provider: Any,
+    server,
+    amplitude: bool = False,
+    sweeping_phase: Union[float, None] = 0.0,
+) -> ResultWorkflows:
+    comp, components_to_extract, _ = create_components(base_name, category, components)
+
+    force_elemental_nodal = requires_manual_averaging(
+        base_name=base_name,
+        location=location,
+        category=category,
+        selection=selection,
+        create_operator_callable=create_operator_callable,
+    )
+
+    averaging_workflow_inputs = AveragingWorkflowInputs(
+        location=location,
+        force_elemental_nodal=force_elemental_nodal,
+    )
+
+    mesh_workflow_inputs: Optional[MeshWorkflowInputs] = None
+    if selection.spatial_selection.requires_mesh:
+        mesh_workflow_inputs = MeshWorkflowInputs(mesh_provider=mesh_provider)
+
+    principal_workflow_inputs: Optional[PrincipalWorkflowInputs] = None
+    if category == ResultCategory.principal:
+        principal_workflow_inputs = PrincipalWorkflowInputs(
+            components_to_extract=components_to_extract
         )
-        return new_wf
-    else:
+
+    should_extract_components = (
+        category in [ResultCategory.vector, ResultCategory.matrix]
+    ) and components_to_extract is not None
+    component_extractor_workflow_inputs: Optional[
+        ComponentExtractorWorkflowInputs
+    ] = None
+    if should_extract_components:
+        component_extractor_workflow_inputs = ComponentExtractorWorkflowInputs(
+            components_to_extract=components_to_extract
+        )
+
+    sweeping_phase_workflow_inputs: Optional[SweepingPhaseWorkflowInputs] = None
+    if amplitude or sweeping_phase is not None:
+        sweeping_phase_workflow_inputs = SweepingPhaseWorkflowInputs(
+            amplitude=amplitude,
+            sweeping_phase=sweeping_phase,
+        )
+
+    return _create_result_workflows(
+        components=components,
+        server=server,
+        create_operator_callable=create_operator_callable,
+        base_name=base_name,
+        averaging_workflow_inputs=averaging_workflow_inputs,
+        has_skin=_WfNames.skin in selection.spatial_selection._selection.output_names,
+        has_norm=norm,
+        principal_workflow_inputs=principal_workflow_inputs,
+        mesh_workflow_inputs=mesh_workflow_inputs,
+        has_equivalent=category == ResultCategory.equivalent,
+        component_extractor_workflow_inputs=component_extractor_workflow_inputs,
+        sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
+    )
+
+
+def append_workflows(workflows: list[Workflow], current_output_workflow: Workflow):
+    for workflow in workflows:
+        current_output_workflow = append_workflow(
+            new_wf=workflow, last_wf=current_output_workflow
+        )
+    return current_output_workflow
+
+
+def append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
+    if new_wf is None:
         return last_wf
+
+    assert _WfNames.input_data in new_wf.input_names
+    assert _WfNames.output_data in last_wf.output_names
+    new_wf.connect_with(
+        last_wf,
+        output_input_names={_WfNames.output_data: _WfNames.input_data},
+    )
+    return new_wf

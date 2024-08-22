@@ -42,6 +42,7 @@ class _WfNames:
     streams = "streams"
     initial_mesh = "initial_mesh"
     mesh = "mesh"
+    location = "location"
     external_layer = "external_layer"
     skin = "skin"
     read_cyclic = "read_cyclic"
