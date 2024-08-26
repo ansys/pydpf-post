@@ -33,6 +33,8 @@ from numpy import ndarray
 class _WfNames:
     data_sources = "data_sources"
     scoping = "scoping"
+    time_scoping = "time_scoping"
+    mesh_scoping = "mesh_scoping"
     final_scoping = "final_scoping"
     scoping_a = "scoping_a"
     scoping_b = "scoping_b"
@@ -93,7 +95,7 @@ class TimeFreqSelection:
         )
         op = operators.utility.forward(sets, server=self._server)
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+        self._selection.set_output_name(_WfNames.time_scoping, op.outputs.any)
 
     def select_load_steps(self, load_steps: List[int]) -> None:
         """Select a list of load steps (one-based indexing).
@@ -106,7 +108,7 @@ class TimeFreqSelection:
         sets = time_freq_scoping_factory.scoping_by_load_steps(load_steps=load_steps)
         op = operators.utility.forward(sets, server=self._server)
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+        self._selection.set_output_name(_WfNames.time_scoping, op.outputs.any)
 
     def select_with_scoping(self, scoping: Scoping):
         """Directly sets the scoping as the time/freq selection.
@@ -124,7 +126,7 @@ class TimeFreqSelection:
 
         op = operators.utility.forward(scoping, server=self._server)
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+        self._selection.set_output_name(_WfNames.time_scoping, op.outputs.any)
 
     def select_time_freq_values(
         self, time_freq_values: Union[List[float], ndarray, Field]
@@ -147,7 +149,7 @@ class TimeFreqSelection:
             values = time_freq_field
         op = operators.utility.forward(values, server=self._server)
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+        self._selection.set_output_name(_WfNames.time_scoping, op.outputs.any)
 
     def _evaluate_on(self, simulation: Simulation) -> Union[Scoping, None]:
         """Returns what is evaluated from the selections made on a given Simulation.
@@ -178,7 +180,7 @@ class TimeFreqSelection:
                 _WfNames.data_sources, simulation._model.metadata.data_sources
             )
 
-        return self._selection.get_output(_WfNames.scoping, types.scoping)
+        return self._selection.get_output(_WfNames.time_scoping, types.scoping)
 
     def apply_to(self, simulation: Simulation) -> List[int]:
         """Performs the currently defined selection on the given Simulation.
@@ -253,7 +255,9 @@ class SpatialSelection:
             # self._selection.set_input_name(
             #     _WfNames.streams, op.inputs.streams_container
             # )
-            self._selection.set_output_name(_WfNames.scoping, op.outputs.mesh_scoping)
+            self._selection.set_output_name(
+                _WfNames.mesh_scoping, op.outputs.mesh_scoping
+            )
         else:
             op = operators.utility.merge_scopings(server=self._server)
             forward_ds = operators.utility.forward(any=None, server=self._server)
@@ -273,7 +277,9 @@ class SpatialSelection:
                 mesh_scoping_op.connect(3, forward_sc.outputs.any)
                 mesh_scoping_op.connect(4, forward_ds.outputs.any)
                 op.connect(pin, mesh_scoping_op.outputs.mesh_scoping)
-            self._selection.set_output_name(_WfNames.scoping, op.outputs.merged_scoping)
+            self._selection.set_output_name(
+                _WfNames.mesh_scoping, op.outputs.merged_scoping
+            )
 
     def select_external_layer(
         self,
@@ -365,11 +371,11 @@ class SpatialSelection:
         self._selection.set_output_name(_WfNames.external_layer, op.outputs.mesh)
         if location == locations.nodal:
             self._selection.set_output_name(
-                _WfNames.scoping, op.outputs.nodes_mesh_scoping
+                _WfNames.mesh_scoping, op.outputs.nodes_mesh_scoping
             )
         elif location == locations.elemental or location == locations.elemental_nodal:
             self._selection.set_output_name(
-                _WfNames.scoping, op.outputs.elements_mesh_scoping
+                _WfNames.mesh_scoping, op.outputs.elements_mesh_scoping
             )
 
     def select_skin(
@@ -463,7 +469,7 @@ class SpatialSelection:
         self._selection.set_output_name(_WfNames.skin, op.outputs.mesh)
         if location == locations.nodal and result_native_location == locations.nodal:
             self._selection.set_output_name(
-                _WfNames.scoping, op.outputs.nodes_mesh_scoping
+                _WfNames.mesh_scoping, op.outputs.nodes_mesh_scoping
             )
 
         elif not _is_model_cyclic(is_model_cyclic) and (
@@ -478,7 +484,7 @@ class SpatialSelection:
                 _WfNames.initial_mesh, transpose_op.inputs.meshed_region
             )
             self._selection.set_output_name(
-                _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
+                _WfNames.mesh_scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
 
     def select_with_scoping(self, scoping: Scoping):
@@ -497,7 +503,7 @@ class SpatialSelection:
 
         op = operators.utility.forward(scoping, server=self._server)
         self._selection.add_operator(op)
-        self._selection.set_output_name(_WfNames.scoping, op.outputs.any)
+        self._selection.set_output_name(_WfNames.mesh_scoping, op.outputs.any)
 
     def select_nodes(self, nodes: Union[List[int], Scoping]) -> None:
         """Select nodes using their IDs or a nodal mesh scoping.
@@ -546,7 +552,7 @@ class SpatialSelection:
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(
-            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+            _WfNames.mesh_scoping, op.outputs.mesh_scoping_as_scoping
         )
 
     def select_nodes_of_faces(
@@ -576,7 +582,7 @@ class SpatialSelection:
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(
-            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+            _WfNames.mesh_scoping, op.outputs.mesh_scoping_as_scoping
         )
 
     def select_faces_of_elements(
@@ -608,7 +614,7 @@ class SpatialSelection:
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(
-            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+            _WfNames.mesh_scoping, op.outputs.mesh_scoping_as_scoping
         )
 
     def select_faces(self, faces: Union[List[int], Scoping]) -> None:
@@ -665,10 +671,12 @@ class SpatialSelection:
         new_wf.add_operator(intersect_op)
         new_wf.set_input_name(_WfNames.scoping_a, intersect_op.inputs.scopingA)
         new_wf.set_input_name(_WfNames.scoping_b, intersect_op.inputs.scopingB)
-        new_wf.set_output_name(_WfNames.scoping, intersect_op.outputs.intersection)
-        new_wf.connect_with(self._selection, {_WfNames.scoping: _WfNames.scoping_a})
+        new_wf.set_output_name(_WfNames.mesh_scoping, intersect_op.outputs.intersection)
         new_wf.connect_with(
-            spatial_selection._selection, {_WfNames.scoping: _WfNames.scoping_b}
+            self._selection, {_WfNames.mesh_scoping: _WfNames.scoping_a}
+        )
+        new_wf.connect_with(
+            spatial_selection._selection, {_WfNames.mesh_scoping: _WfNames.scoping_b}
         )
         self._selection = new_wf
 
@@ -704,7 +712,7 @@ class SpatialSelection:
                 _WfNames.data_sources, simulation._model.metadata.data_sources
             )
 
-        return self._selection.get_output(_WfNames.scoping, types.scoping)
+        return self._selection.get_output(_WfNames.mesh_scoping, types.scoping)
 
     def apply_to(self, simulation: Simulation) -> List[int]:
         """Performs the currently defined selection on the given Simulation.
