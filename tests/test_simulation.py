@@ -385,12 +385,13 @@ def get_expected_nodal_results(
     # If we don't get a elemental_nodal_result_op, this means the result does not support
     # elemental nodal evaluation. Currently used only for displacement.
     # In this case we just get the nodal results directly (case 1 above)
+    time_id = 1
     if elemental_nodal_results is None:
         assert result_name == "displacement"
         kwargs = {}
         if expand_cyclic:
             kwargs["expand_cyclic"] = True
-        nodal_field = simulation.displacement(set_ids=[1], **kwargs)._fc[0]
+        nodal_field = simulation.displacement(set_ids=[time_id], **kwargs)._fc[0]
     else:
         if is_equivalent(mode) and result_name == "elastic_strain":
             # For elastic strain results, the computation of the equivalent
@@ -1220,6 +1221,8 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
         # for older versions.
         return
 
+    time_id = 1
+
     simulation = request.getfixturevalue(simulation_str)
 
     supports_elemental = True
@@ -1301,7 +1304,7 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
 
     result_skin_scoped_nodal = getattr(
         simulation, f"{result_name}{mode_suffix(mode)}{nodal_suffix}"
-    )(set_ids=[1], skin=skin, **kwargs)
+    )(set_ids=[time_id], skin=skin, **kwargs)
     nodal_skin_field = result_skin_scoped_nodal._fc[0]
 
     expected_nodal_values_field = get_expected_nodal_results(
