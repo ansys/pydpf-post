@@ -52,6 +52,7 @@ def get_expected_elemental_average_skin_value(
     solid_mesh: MeshedRegion,
     skin_mesh: MeshedRegion,
     elemental_nodal_solid_data_field: Field,
+    is_principal_strain_result: bool,
 ) -> dict[int, float]:
     """
     Get the average skin value of all the skin elements that belong to the solid
@@ -120,6 +121,14 @@ def get_expected_elemental_average_skin_value(
             data_to_average = elemental_nodal_solid_data[indices_to_average]
 
         average = np.mean(data_to_average, axis=0)
+        if is_principal_strain_result:
+            # Workaround: The principal operator divides
+            # offdiagonal components by 2 if the input field has
+            # a integer "strain" property set. Since int
+            # field properties are not exposed in python, division is done
+            # here before the the data is passed to the principle operator
+            average[3:7] = average[3:7] / 2
+
         expected_average_skin_values[skin_element_id] = average
     return expected_average_skin_values
 
@@ -159,6 +168,8 @@ def get_and_check_elemental_skin_results(
             solid_mesh=fc_elemental_nodal[0].meshed_region,
             skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
             elemental_nodal_solid_data_field=fc_elemental_nodal[0],
+            is_principal_strain_result=is_principal(mode)
+            and result_name == "elastic_strain",
         )
 
         if is_principal(mode) or (
@@ -195,34 +206,6 @@ def get_and_check_elemental_skin_results(
             assert np.allclose(actual_skin_value, expected_skin_value)
 
 
-def copy_fields_container(fc):
-    """
-    Create a copy of a fields container. Just works with a single field
-    and a symmetric matrix field.
-    """
-    fields_container = FieldsContainer()
-    field = Field(nature=natures.symmatrix)
-    for entity_id in fc[0].scoping.ids:
-        entity_data = fc[0].get_entity_data_by_id(entity_id)
-        field.append(entity_data, entity_id)
-    fields_container.add_label("time")
-    fields_container.add_field({"time": 1}, field)
-    return fields_container
-
-
-def copy_field(field):
-    """
-    Create a copy of a fields container. Just works with a single field
-    and a symmetric matrix field.
-    """
-    field_out = Field(nature=field.dimensionality.nature, location=field.location)
-    for entity_id in field.scoping.ids:
-        entity_data = field.get_entity_data_by_id(entity_id)
-        field_out.append(entity_data, entity_id)
-
-    return field_out
-
-
 operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
 
 
@@ -254,7 +237,9 @@ def get_elemental_nodal_results(
 
 
 def get_expected_nodal_averaged_skin_results(
-    skin_mesh: MeshedRegion, solid_elemental_nodal_results: Field
+    skin_mesh: MeshedRegion,
+    solid_elemental_nodal_results: Field,
+    is_principal_strain_result: bool,
 ):
     nodal_averaged_skin_values = Field(
         nature=solid_elemental_nodal_results.field_definition.dimensionality.nature,
@@ -341,10 +326,16 @@ def get_expected_nodal_averaged_skin_results(
                 )
             skin_nodal_value = solid_elemental_nodal_value[matching_solid_element_id]
             values_to_average = np.vstack((values_to_average, skin_nodal_value))
+        skin_values = np.mean(values_to_average, axis=0)
+        if is_principal_strain_result:
+            # Workaround: The principal operator divides
+            # offdiagonal components by 2 if the input field has
+            # a integer "strain" property set. Since int
+            # field properties are not exposed in python, division is done
+            # here before the the data is passed to the principle operator
+            skin_values[3:7] = skin_values[3:7] / 2
 
-        nodal_averaged_skin_values.append(
-            list(np.mean(values_to_average, axis=0)), skin_node_id
-        )
+        nodal_averaged_skin_values.append(list(skin_values), skin_node_id)
     return nodal_averaged_skin_values
 
 
@@ -403,32 +394,18 @@ def get_expected_nodal_results(
             fields_container = elemental_nodal_results
 
         nodal_field = get_expected_nodal_averaged_skin_results(
-            skin_mesh=skin_mesh, solid_elemental_nodal_results=fields_container[0]
+            skin_mesh=skin_mesh,
+            solid_elemental_nodal_results=fields_container[0],
+            is_principal_strain_result=is_principal(mode)
+            and result_name == "elastic_strain",
         )
 
     if is_principal(mode):
-        if result_name == "elastic_strain":
-            # For the elastic strain result, the invariants_fc operator
-            # multiplies the off-diagonal components by 0.5
-            # It checks if the field has a "strain" property. See InvariantOperators.cpp
-            # line 1024. Since the field properties are not exposed in python
-            # we copy the strain field in a new field that does not specify the property.
-            # This is just to make the tests pass. The actual solution is
-            # to preserve the strain property in the skin workflow.
-            # See also test_strain_scaling above.
-            nodal_field = copy_field(nodal_field)
-
         invariant_op = simulation._model.operator(name="invariants")
         invariant_op.inputs.field(nodal_field)
         nodal_field = invariant_op.outputs.field_eig_1()
 
     if is_equivalent(mode) and result_name != "elastic_strain":
-        # The copy is needed for the same reason as above for the
-        # principal results.
-        # For elastic strain results, the computation of the equivalent
-        # value happens before the averaging.
-        nodal_field = copy_field(nodal_field)
-
         invariant_op = simulation._model.operator(name="eqv")
         invariant_op.inputs.field(nodal_field)
         nodal_field = invariant_op.outputs.field()
@@ -1133,32 +1110,6 @@ class TestStaticMechanicalSimulation:
             assert len(result.index.mesh_index) == 14
         else:
             assert len(result.index.mesh_index) == 18
-
-    def test_strain_scaling(self, static_simulation: post.StaticMechanicalSimulation):
-        # Documents that strain scaling is needed to get the same result, when
-        # the strain is copied to a new field.
-        strain_result = static_simulation.elastic_strain_elemental()
-
-        invariant_op = static_simulation._model.operator(name="invariants_fc")
-        invariant_op.inputs.fields_container(strain_result._fc)
-        invariant_fc = invariant_op.outputs.fields_eig_1()
-
-        fields_container = FieldsContainer()
-        field = Field(nature=natures.symmatrix)
-        for entity_id in strain_result._fc[0].scoping.ids:
-            entity_data = strain_result._fc[0].get_entity_data_by_id(entity_id)
-            # scaling is needed
-            entity_data[:, 3:7] = entity_data[:, 3:7] / 2
-            field.append(entity_data, entity_id)
-
-        fields_container.add_label("time")
-        fields_container.add_field({"time": 1}, field)
-        invariant_op.inputs.fields_container(fields_container)
-        invariant_fc_with_scale = invariant_op.outputs.fields_eig_1()
-
-        assert invariant_fc[0].get_entity_data_by_id(1) == invariant_fc_with_scale[
-            0
-        ].get_entity_data_by_id(1)
 
 
 # List of element configurations for each simulation type
