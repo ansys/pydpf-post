@@ -370,8 +370,7 @@ def get_expected_nodal_results(
     #       account the elemental nodal data outside of the element scope. Therefore, the
     #       averaged node data at the boundaries is different.
     # Currently, the skin workflow requests elemental nodal data and then averages it to nodal,
-    # which corresponds to the case 2 above. We should probably fix this, so it
-    # matches the data of case 1
+    # which corresponds to the case 2 above.
 
     # If we don't get a elemental_nodal_result_op, this means the result does not support
     # elemental nodal evaluation. Currently used only for displacement.
@@ -1113,8 +1112,6 @@ class TestStaticMechanicalSimulation:
 
 
 # List of element configurations for each simulation type
-# The commented configurations contain "corners" which yield incorrect
-# results because the skin data is interpolated
 element_configurations = {
     "static_simulation": {
         1: [1],
@@ -1171,6 +1168,13 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
         # operator. This yield incorrect results. Therefore we skip all the tests
         # for older versions.
         return
+
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        if is_principal(mode) and result_name == "elastic_strain":
+            # Principal results for elastic strain were wrong before version
+            # 9_0 because the strain flag was not propagated correctly
+            # by the skin to solid mapping operator
+            return
 
     time_id = 1
 
