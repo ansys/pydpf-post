@@ -308,6 +308,7 @@ def _create_result_workflows(
         averaging_workflow=average_wf,
         base_name=base_name,
         force_elemental_nodal=averaging_workflow_inputs.force_elemental_nodal,
+        components=components,
     )
 
     if mesh_workflow_inputs is not None:
@@ -553,7 +554,9 @@ def create_result_workflows(
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> ResultWorkflows:
-    comp, components_to_extract, _ = create_components(base_name, category, components)
+    components_out, components_to_extract, _ = create_components(
+        base_name, category, components
+    )
 
     force_elemental_nodal = requires_manual_averaging(
         base_name=base_name,
@@ -597,7 +600,7 @@ def create_result_workflows(
         )
 
     return _create_result_workflows(
-        components=components,
+        components=components_out,
         server=server,
         create_operator_callable=create_operator_callable,
         base_name=base_name,

@@ -503,17 +503,14 @@ class Simulation(ABC):
                 values = fc.get_available_ids_for_label(label)
                 # Then try to gather the correspond string values for display
                 try:
-                    if label == "mat":
-                        values = fc.get_available_ids_for_label("mat")
-                    else:
-                        label_support = self.result_info.qualifier_label_support(label)
-                        names_field = label_support.string_field_support_by_property(
-                            "names"
-                        )
-                        values = [
-                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
-                            for value in values
-                        ]
+                    label_support = self.result_info.qualifier_label_support(label)
+                    names_field = label_support.string_field_support_by_property(
+                        "names"
+                    )
+                    values = [
+                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                        for value in values
+                    ]
                 except (
                     ValueError,
                     errors.DPFServerException,
@@ -524,8 +521,6 @@ class Simulation(ABC):
             else:
                 values = []
             label_indexes.append(LabelIndex(name=label, values=values))
-        # if "mat" in fc.labels:
-        # column_indexes.append(material_index)
 
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)

@@ -273,7 +273,7 @@ class DataFrame:
 
         # # Treat selection on components
         if ref_labels.components in axis_kwargs.keys():
-            from ansys.dpf.post.simulation import component_label_to_index
+            from ansys.dpf.post.component_helper import component_label_to_index
 
             comp_to_extract = axis_kwargs[ref_labels.components]
             if not isinstance(comp_to_extract, list):

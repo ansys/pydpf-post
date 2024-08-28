@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import List
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.faces import Face
 from ansys.dpf.core.nodes import Node
 from ansys.dpf.core.property_fields_container import (
     _MockPropertyFieldsContainer as PropertyFieldsContainer,
@@ -16,6 +17,7 @@ from ansys.dpf.core.property_fields_container import (
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
+from ansys.dpf.post.component_helper import vector_component_names
 from ansys.dpf.post.connectivity import ConnectivityListByIndex, ReturnMode
 from ansys.dpf.post.elements import Element, ElementListByIndex
 from ansys.dpf.post.faces import FaceListByIndex
@@ -501,7 +503,6 @@ class Mesh:
                            Z 0.0000e+00
               ...        ...        ...
         """
-        from ansys.dpf.post.simulation import vector_component_names
 
         label = "coord"
         fields_container = dpf.FieldsContainer()
