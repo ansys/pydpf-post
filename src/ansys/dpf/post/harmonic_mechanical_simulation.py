@@ -125,6 +125,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             equivalent_op = self._model.operator(name="eqv_fc")
             wf.add_operator(operator=equivalent_op)
             # If a strain result, change the location now
+            # TBD: Why do we put the the equivalent operator
+            # before the averaging operator for strain results?
             if (
                 average_op is not None
                 and category == ResultCategory.equivalent
