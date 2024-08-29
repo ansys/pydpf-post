@@ -11,7 +11,6 @@ from ansys.dpf.core import (
     natures,
     operators,
 )
-from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.gate.common import locations
 import numpy as np
 import pytest

@@ -410,7 +410,6 @@ class SpatialSelection:
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
         """
-
         skin_operator = operators.mesh.skin(server=self._server)
         self._selection.add_operator(skin_operator)
 

@@ -11,6 +11,7 @@ from ansys.dpf.core.server_types import BaseServer
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
+from ansys.dpf.post.component_helper import create_components
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.mesh_info import FluidMeshInfo
 from ansys.dpf.post.phase import PhasesDict
@@ -223,9 +224,7 @@ class FluidSimulation(Simulation):
         qualifiers: Union[dict, None] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        comp, to_extract, columns = self._create_components(
-            base_name, category, components
-        )
+        comp, to_extract, columns = create_components(base_name, category, components)
 
         # Initialize a workflow
         wf, result_op = self._build_result_workflow(

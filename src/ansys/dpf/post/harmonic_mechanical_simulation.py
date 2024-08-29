@@ -19,14 +19,14 @@ from ansys.dpf.post.index import (
     ResultsIndex,
     SetIndex,
 )
+from ansys.dpf.post.result_workflows._build_workflow import _create_result_workflows
+from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
+    _connect_averaging_eqv_and_principal_workflows,
+    _connect_initial_results_inputs,
+)
+from ansys.dpf.post.result_workflows._utils import _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
-from ansys.dpf.post.workflows import (
-    append_workflows,
-    connect_averaging_eqv_and_principal_workflows,
-    connect_initial_results_inputs,
-    create_result_workflows,
-)
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
@@ -46,7 +46,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        result_workflows = create_result_workflows(
+        result_workflows = _create_result_workflows(
             base_name=base_name,
             category=category,
             components=components,
@@ -59,7 +59,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             amplitude=amplitude,
             sweeping_phase=sweeping_phase,
         )
-        connect_initial_results_inputs(
+        _connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
@@ -77,9 +77,9 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
-        output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
+        output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        append_workflows(
+        output_wf = _append_workflows(
             [
                 result_workflows.component_extraction_workflow,
                 result_workflows.sweeping_phase_workflow,

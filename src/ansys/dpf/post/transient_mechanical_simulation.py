@@ -10,14 +10,14 @@ from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.component_helper import create_components
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.result_workflows._build_workflow import _create_result_workflows
+from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
+    _connect_averaging_eqv_and_principal_workflows,
+    _connect_initial_results_inputs,
+)
+from ansys.dpf.post.result_workflows._utils import _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
-from ansys.dpf.post.workflows import (
-    append_workflows,
-    connect_averaging_eqv_and_principal_workflows,
-    connect_initial_results_inputs,
-    create_result_workflows,
-)
 
 
 class TransientMechanicalSimulation(MechanicalSimulation):
@@ -33,7 +33,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        result_workflows = create_result_workflows(
+        result_workflows = _create_result_workflows(
             base_name=base_name,
             category=category,
             components=components,
@@ -44,7 +44,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             mesh_provider=self._model.metadata.mesh_provider,
             server=self._model._server,
         )
-        connect_initial_results_inputs(
+        _connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
@@ -62,9 +62,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
             )
 
-        output_wf = connect_averaging_eqv_and_principal_workflows(result_workflows)
+        output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        append_workflows(
+        output_wf = _append_workflows(
             [
                 result_workflows.component_extraction_workflow,
                 result_workflows.norm_workflow,

@@ -31,8 +31,8 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
+from ansys.dpf.post.result_workflows._build_workflow import _requires_manual_averaging
 from ansys.dpf.post.selection import Selection
-from ansys.dpf.post.workflows import requires_manual_averaging
 
 
 class Simulation(ABC):
@@ -611,7 +611,7 @@ class MechanicalSimulation(Simulation, ABC):
             )
             location = (
                 locations.elemental_nodal
-                if requires_manual_averaging(
+                if _requires_manual_averaging(
                     base_name, location, category, None, self._model.operator
                 )
                 else location
