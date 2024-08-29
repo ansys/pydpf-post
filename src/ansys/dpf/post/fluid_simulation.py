@@ -7,6 +7,7 @@ FluidSimulation
 from os import PathLike
 from typing import List, Union
 
+from ansys.dpf.core import Workflow
 from ansys.dpf.core.server_types import BaseServer
 
 from ansys.dpf import core as dpf
@@ -15,7 +16,15 @@ from ansys.dpf.post.component_helper import create_components
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.mesh_info import FluidMeshInfo
 from ansys.dpf.post.phase import PhasesDict
-from ansys.dpf.post.selection import Selection
+from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
+    _connect_initial_results_inputs,
+)
+from ansys.dpf.post.result_workflows._sub_workflows import (
+    _create_initial_result_workflow,
+    _create_norm_workflow,
+)
+from ansys.dpf.post.result_workflows._utils import _append_workflows
+from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import ResultCategory, Simulation
 from ansys.dpf.post.species import SpeciesDict
 
@@ -226,12 +235,41 @@ class FluidSimulation(Simulation):
         """Generate (without evaluating) the Workflow to extract results."""
         comp, to_extract, columns = create_components(base_name, category, components)
 
-        # Initialize a workflow
-        wf, result_op = self._build_result_workflow(
-            name=base_name,
-            location=location,
-            force_elemental_nodal=False,
+        initial_result_workflow = Workflow(server=self._model._server)
+
+        initial_result_op = self._model._server(name=base_name)
+        initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
+        initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
+
+        initial_result_workflow.add_operator(initial_result_op)
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, initial_result_op, 0
         )
+        initial_result_workflow.set_input_name(
+            "time_scoping", initial_result_op.inputs.time_scoping
+        )
+        initial_result_workflow.set_input_name(
+            "mesh_scoping", initial_result_op.inputs.mesh_scoping
+        )
+
+        initial_result_workflow = _create_initial_result_workflow(
+            name=base_name,
+            server=self._model._server,
+            create_operator_callable=self._model.operator,
+        )
+
+        _connect_initial_results_inputs(
+            initial_result_workflow=initial_result_workflow,
+            force_elemental_nodal=False,
+            location=location,
+            selection=selection,
+            expand_cyclic=False,
+            phase_angle_cyclic=None,
+            mesh=self.mesh._meshed_region,
+            streams_provider=self._model.metadata.streams_provider,
+            data_sources=self._model.metadata.data_sources,
+        )
+
         query_regions_meshes = False
         lists = []
         lists_labels = []
@@ -267,7 +305,7 @@ class FluidSimulation(Simulation):
                 label_space = {}
                 for j, label in enumerate(lists_labels):
                     label_space[label] = c[j]
-                result_op.connect(1000 + i, label_space)
+                initial_result_op.connect(1000 + i, label_space)
         # Its output is selected as future workflow output for now
         # print(result_op)
 
@@ -276,44 +314,35 @@ class FluidSimulation(Simulation):
             # A MeshesProvider is required to give meshes as input of the source operator
             meshes_provider_op = self._model.operator("meshes_provider")
             meshes_provider_op.connect(25, query_regions_meshes)
-            result_op.connect(7, meshes_provider_op.outputs.meshes)
-            wf.add_operator(meshes_provider_op)
+            initial_result_workflow.connect(
+                _WfNames.mesh, meshes_provider_op.outputs.meshes
+            )
+
+            initial_result_workflow.add_operator(meshes_provider_op)
         else:
             # Results have been queried on the whole mesh,
             # A MeshProvider is required to give the mesh as input of the source operator
             mesh_provider_op = self._model.operator("mesh_provider")
-            result_op.connect(7, mesh_provider_op.outputs.mesh)
-            wf.add_operator(mesh_provider_op)
+            initial_result_workflow.connect(
+                _WfNames.mesh, mesh_provider_op.outputs.mesh
+            )
+            initial_result_workflow.add_operator(mesh_provider_op)
 
-        out = result_op.outputs.fields_container
-        # Its inputs are selected as workflow inputs for merging with selection workflows
-        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
-        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
-
-        wf.connect_with(
-            selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
-        )
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names=("scoping", "mesh_scoping"),
-        )
-
-        # Connect data_sources and streams_container inputs of selection if necessary
-        if "streams" in wf.input_names:
-            wf.connect("streams", self._model.metadata.streams_provider)
-        if "data_sources" in wf.input_names:
-            wf.connect("data_sources", self._model.metadata.data_sources)
-
-        # Add an optional norm operation if requested
+        output_wf = initial_result_workflow
         if norm:
-            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
+            norm_workflow, base_name = _create_norm_workflow(
+                create_operator_callable=self._model.operator,
+                base_name=base_name,
+                server=self._model._server,
+            )
 
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
+            output_wf = _append_workflows(
+                [norm_workflow], current_output_workflow=initial_result_workflow
+            )
 
-        return wf, comp, base_name
+        output_wf.progress_bar = False
+
+        return output_wf, comp, base_name
 
     def _get_result(
         self,
@@ -509,14 +538,14 @@ class FluidSimulation(Simulation):
         )
 
         # Evaluate  the workflow
-        fc = wf.get_output("out", dpf.types.fields_container)
+        fc = wf.get_output(_WfNames.output_data, dpf.types.fields_container)
         # print(fc)
         if location is None and len(fc) > 0:
             location = fc[0].location
         if location == locations.elemental:
             location = "cells"
 
-        _, _, columns = self._create_components(base_name, category, components)
+        _, _, columns = create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
         )
