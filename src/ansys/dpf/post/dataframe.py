@@ -273,12 +273,14 @@ class DataFrame:
 
         # # Treat selection on components
         if ref_labels.components in axis_kwargs.keys():
-            from ansys.dpf.post.component_helper import component_label_to_index
+            from ansys.dpf.post.result_workflows._component_helper import (
+                _component_label_to_index,
+            )
 
             comp_to_extract = axis_kwargs[ref_labels.components]
             if not isinstance(comp_to_extract, list):
                 comp_to_extract = [comp_to_extract]
-            component_indexes = [component_label_to_index[c] for c in comp_to_extract]
+            component_indexes = [_component_label_to_index[c] for c in comp_to_extract]
             selector_fc = dpf.operators.logic.component_selector_fc(
                 fields_container=input_fc,
                 component_number=component_indexes,

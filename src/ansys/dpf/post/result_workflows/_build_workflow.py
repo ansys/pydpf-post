@@ -5,8 +5,10 @@ from ansys.dpf.core import Operator, Workflow
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.gate.common import locations
 
-from ansys.dpf.post.component_helper import create_components
-from ansys.dpf.post.enums import ResultCategory
+from ansys.dpf.post.result_workflows._component_helper import (
+    ResultCategory,
+    _create_components,
+)
 from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_averaging_workflow,
     _create_equivalent_workflow,
@@ -219,7 +221,7 @@ def _create_result_workflows(
     sweeping_phase: Union[float, None] = 0.0,
 ) -> ResultWorkflows:
     """Creates a ResultsWorkflows object that contains the workflows to compute a result."""
-    components_out, components_to_extract, _ = create_components(
+    components_out, components_to_extract, _ = _create_components(
         base_name, category, components
     )
 

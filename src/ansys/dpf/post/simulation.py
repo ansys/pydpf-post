@@ -20,7 +20,6 @@ import numpy as np
 
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
-from ansys.dpf.post.enums import ResultCategory
 from ansys.dpf.post.index import (
     CompIndex,
     LabelIndex,
@@ -32,6 +31,7 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.result_workflows._build_workflow import _requires_manual_averaging
+from ansys.dpf.post.result_workflows._component_helper import ResultCategory
 from ansys.dpf.post.selection import Selection
 
 

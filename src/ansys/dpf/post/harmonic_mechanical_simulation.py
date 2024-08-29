@@ -9,7 +9,6 @@ import warnings
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
-from ansys.dpf.post.component_helper import create_components
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
     CompIndex,
@@ -20,13 +19,17 @@ from ansys.dpf.post.index import (
     SetIndex,
 )
 from ansys.dpf.post.result_workflows._build_workflow import _create_result_workflows
+from ansys.dpf.post.result_workflows._component_helper import (
+    ResultCategory,
+    _create_components,
+)
 from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
     _connect_averaging_eqv_and_principal_workflows,
     _connect_initial_results_inputs,
 )
 from ansys.dpf.post.result_workflows._utils import _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
-from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
+from ansys.dpf.post.simulation import MechanicalSimulation
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
@@ -257,7 +260,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
-        _, _, columns = create_components(base_name, category, components)
+        _, _, columns = _create_components(base_name, category, components)
 
         # Test for empty results
         if (len(fc) == 0) or all([len(f) == 0 for f in fc]):
