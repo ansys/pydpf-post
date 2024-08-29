@@ -75,6 +75,7 @@ class _MeshWorkflowInputs:
 @dataclasses.dataclass
 class _ComponentExtractorWorkflowInputs:
     components_to_extract: list[int]
+    component_names: list[str]
 
 
 @dataclasses.dataclass
@@ -174,6 +175,7 @@ def _create_result_workflows_impl(
         ) = _create_extract_component_workflow(
             create_operator_callable=create_operator_callable,
             components_to_extract=component_extractor_workflow_inputs.components_to_extract,
+            component_names=component_extractor_workflow_inputs.component_names,
             base_name=base_name,
             server=server,
         )
@@ -252,7 +254,8 @@ def _create_result_workflows(
     ] = None
     if should_extract_components:
         component_extractor_workflow_inputs = _ComponentExtractorWorkflowInputs(
-            components_to_extract=components_to_extract
+            components_to_extract=components_to_extract,
+            component_names=components_out,
         )
 
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None

@@ -75,11 +75,11 @@ def _connect_initial_results_inputs(
     force_elemental_nodal: bool,
     location: str,
     selection: Selection,
-    data_sources: Any,
-    streams_provider: Any,
     expand_cyclic: bool,
     phase_angle_cyclic: Any,
     mesh: MeshedRegion,
+    streams_provider: Any,
+    data_sources: Any,
 ):
     initial_result_workflow.connect_with(
         selection.spatial_selection._selection,
@@ -93,7 +93,10 @@ def _connect_initial_results_inputs(
 
     # Connect data_sources and streams_container inputs of selection if necessary
     # Todo: was this working before?
-    if "streams" in initial_result_workflow.input_names:
+    if (
+        "streams" in initial_result_workflow.input_names
+        and streams_provider is not None
+    ):
         initial_result_workflow.connect("streams", streams_provider)
     if "data_sources" in initial_result_workflow.input_names:
         initial_result_workflow.connect("data_sources", data_sources)

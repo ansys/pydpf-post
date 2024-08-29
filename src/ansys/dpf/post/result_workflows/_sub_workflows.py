@@ -123,6 +123,7 @@ def _create_mesh_workflow(mesh_provider: Any, server):
 def _create_extract_component_workflow(
     create_operator_callable: _CreateOperatorCallable,
     components_to_extract: list[int],
+    component_names: list[str],
     base_name: str,
     server,
 ):
@@ -143,7 +144,7 @@ def _create_extract_component_workflow(
 
     result_is_single_component = False
     if len(components_to_extract) == 1:
-        new_base_name = base_name + f"_{components_to_extract[0]}"
+        new_base_name = base_name + f"_{component_names[0]}"
         result_is_single_component = True
     else:
         new_base_name = base_name
