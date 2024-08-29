@@ -18,7 +18,10 @@ from ansys.dpf.post.index import (
     ResultsIndex,
     SetIndex,
 )
-from ansys.dpf.post.result_workflows._build_workflow import _create_result_workflows
+from ansys.dpf.post.result_workflows._build_workflow import (
+    _create_result_workflow_inputs,
+    _create_result_workflows,
+)
 from ansys.dpf.post.result_workflows._component_helper import (
     ResultCategory,
     _create_components,
@@ -49,7 +52,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        result_workflows = _create_result_workflows(
+        result_workflow_inputs = _create_result_workflow_inputs(
             base_name=base_name,
             category=category,
             components=components,
@@ -58,9 +61,13 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             create_operator_callable=self._model.operator,
             mesh_provider=self._model.metadata.mesh_provider,
-            server=self._model._server,
             amplitude=amplitude,
             sweeping_phase=sweeping_phase,
+        )
+        result_workflows = _create_result_workflows(
+            server=self._model._server,
+            create_operator_callable=self._model.operator,
+            create_workflow_inputs=result_workflow_inputs,
         )
         _connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,

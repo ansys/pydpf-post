@@ -22,10 +22,7 @@ from ansys.dpf.post.result_workflows._component_helper import (
 from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
     _connect_initial_results_inputs,
 )
-from ansys.dpf.post.result_workflows._sub_workflows import (
-    _create_initial_result_workflow,
-    _create_norm_workflow,
-)
+from ansys.dpf.post.result_workflows._sub_workflows import _create_norm_workflow
 from ansys.dpf.post.result_workflows._utils import _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import Simulation
@@ -253,12 +250,6 @@ class FluidSimulation(Simulation):
         )
         initial_result_workflow.set_input_name(
             "mesh_scoping", initial_result_op.inputs.mesh_scoping
-        )
-
-        initial_result_workflow = _create_initial_result_workflow(
-            name=base_name,
-            server=self._model._server,
-            create_operator_callable=self._model.operator,
         )
 
         _connect_initial_results_inputs(

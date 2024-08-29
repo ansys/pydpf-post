@@ -67,7 +67,6 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
                 "'phase_angle_cyclic' argument only accepts a single float value."
             )
         result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
-    return result_wf
 
 
 def _connect_initial_results_inputs(
@@ -92,7 +91,8 @@ def _connect_initial_results_inputs(
     )
 
     # Connect data_sources and streams_container inputs of selection if necessary
-    # Todo: was this working before?
+    # Note: streams and data_sources inputs are inherited from the selection_workflow
+    # connected above
     if (
         "streams" in initial_result_workflow.input_names
         and streams_provider is not None
