@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from ansys.dpf.post.misc import connect_any
+from ansys.dpf.post.misc import _connect_any
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.dpf.post.simulation import Simulation
@@ -420,7 +420,7 @@ class SpatialSelection:
         self._selection.add_operator(initial_mesh_fwd_op)
 
         skin_operator_input_mesh_fwd_op = operators.utility.forward(server=self._server)
-        connect_any(skin_operator_input_mesh_fwd_op.inputs.any, initial_mesh_fwd_op)
+        _connect_any(skin_operator_input_mesh_fwd_op.inputs.any, initial_mesh_fwd_op)
         self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
         if _is_model_cyclic(is_model_cyclic):
@@ -467,7 +467,7 @@ class SpatialSelection:
             )
             self._selection.add_operator(mesh_by_scop_op)
             skin_operator_input_mesh_fwd_op.inputs.any(mesh_by_scop_op.outputs.mesh)
-            connect_any(mesh_by_scop_op.inputs.mesh, initial_mesh_fwd_op.outputs.any)
+            _connect_any(mesh_by_scop_op.inputs.mesh, initial_mesh_fwd_op.outputs.any)
 
         if not _is_model_cyclic(is_model_cyclic):
             if location == result_native_location:
@@ -490,14 +490,14 @@ class SpatialSelection:
                 server=self._server,
             )
             self._selection.add_operator(transpose_op)
-            connect_any(
+            _connect_any(
                 transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
             )
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
 
-        connect_any(
+        _connect_any(
             skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any
         )
 

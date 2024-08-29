@@ -3,7 +3,7 @@ from typing import Any, Union
 from ansys.dpf.core import Workflow
 from ansys.dpf.gate.common import locations
 
-from ansys.dpf.post.misc import connect_any
+from ansys.dpf.post.misc import _connect_any
 from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
 from ansys.dpf.post.selection import _WfNames
 
@@ -45,10 +45,10 @@ def _create_averaging_workflow(
         mesh_averaging_input_fwd.connect(0, solid_to_skin_operator, 0)
 
         if hasattr(solid_to_skin_operator.inputs, "mesh_scoping"):
-            connect_any(solid_to_skin_operator.inputs.mesh_scoping, skin_mesh_fwd)
+            _connect_any(solid_to_skin_operator.inputs.mesh_scoping, skin_mesh_fwd)
             # To keep for retro-compatibility
         else:
-            connect_any(solid_to_skin_operator.inputs.mesh, skin_mesh_fwd)
+            _connect_any(solid_to_skin_operator.inputs.mesh, skin_mesh_fwd)
 
         if server.meet_version("8.0"):
             # solid mesh_input only supported for server version

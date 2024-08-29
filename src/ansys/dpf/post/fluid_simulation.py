@@ -548,7 +548,7 @@ class FluidSimulation(Simulation):
         if location == locations.elemental:
             location = "cells"
 
-        _, _, columns = create_components(base_name, category, components)
+        _, _, columns = _create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name.split("::")[-1], None
         )
