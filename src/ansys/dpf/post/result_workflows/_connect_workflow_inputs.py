@@ -57,7 +57,7 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
                 "'expand_cyclic' argument can only be a boolean or a list."
             )
         result_wf.connect(_WfNames.read_cyclic, 3)  # Connect the read_cyclic pin
-    else:
+    elif _WfNames.read_cyclic in result_wf.input_names:
         result_wf.connect(_WfNames.read_cyclic, 1)  # Connect the read_cyclic pin
     if phase_angle_cyclic is not None:
         if isinstance(phase_angle_cyclic, int):
