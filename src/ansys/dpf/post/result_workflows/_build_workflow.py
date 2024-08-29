@@ -17,6 +17,7 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_mesh_workflow,
     _create_norm_workflow,
     _create_principal_workflow,
+    _create_split_scope_by_body_workflow,
     _create_sweeping_phase_workflow,
 )
 from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
@@ -61,6 +62,7 @@ class ResultWorkflows:
     component_extraction_workflow: Optional[Workflow] = None
     # Workflow to sweep the phase of the result
     sweeping_phase_workflow: Optional[Workflow] = None
+    split_by_bodies_workflow: Optional[Workflow] = None
 
 
 @dataclasses.dataclass
@@ -91,6 +93,7 @@ class _CreateWorkflowInputs:
     component_names: list[str]
     components_to_extract: list[int]
     should_extract_components: bool
+    average_across_bodies: bool
     mesh_workflow_inputs: Optional[_MeshWorkflowInputs] = None
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
 
@@ -204,6 +207,13 @@ def _create_result_workflows(
             sweeping_phase=create_workflow_inputs.sweeping_phase_workflow_inputs.sweeping_phase,
         )
 
+    if not create_workflow_inputs.average_across_bodies:
+        result_workflows.split_by_bodies_workflow = (
+            _create_split_scope_by_body_workflow(
+                server=server,
+            )
+        )
+
     return result_workflows
 
 
@@ -216,6 +226,8 @@ def _create_result_workflow_inputs(
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
     mesh_provider: Any,
+    # todo: make this input required
+    average_across_bodies: bool = True,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:
@@ -266,4 +278,5 @@ def _create_result_workflow_inputs(
         mesh_workflow_inputs=mesh_workflow_inputs,
         has_equivalent=category == ResultCategory.equivalent,
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
+        average_across_bodies=average_across_bodies,
     )

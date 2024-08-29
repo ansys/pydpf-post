@@ -1,6 +1,6 @@
 from typing import Any, Union
 
-from ansys.dpf.core import Workflow
+from ansys.dpf.core import Workflow, operators
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
@@ -223,3 +223,21 @@ def _create_sweeping_phase_workflow(
         return None
 
     return sweeping_phase_workflow
+
+
+def _create_split_scope_by_body_workflow(server):
+    split_scope_by_body_wf = Workflow(server=server)
+    split_scop_op = operators.scoping.split_on_property_type()
+    split_scope_by_body_wf.add_operator(split_scop_op)
+    split_scope_by_body_wf.set_input_name(_WfNames.mesh, split_scop_op.inputs.mesh)
+    split_scope_by_body_wf.set_input_name(
+        _WfNames.location, split_scop_op.inputs.requested_location
+    )
+    split_scope_by_body_wf.set_input_name(
+        _WfNames.scoping, split_scop_op.inputs.mesh_scoping
+    )
+    split_scop_op.inputs.label1.connect("mat")
+    split_scope_by_body_wf.set_output_name(
+        _WfNames.scoping, split_scop_op.outputs.mesh_scoping
+    )
+    return split_scope_by_body_wf

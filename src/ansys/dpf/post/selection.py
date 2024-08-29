@@ -493,6 +493,7 @@ class SpatialSelection:
             _connect_any(
                 transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
             )
+
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )

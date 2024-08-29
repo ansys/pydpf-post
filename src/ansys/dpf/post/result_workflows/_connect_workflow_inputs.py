@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from ansys.dpf.core import MeshedRegion, Scoping, ScopingsContainer, Workflow
 
@@ -71,6 +71,7 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
 
 def _connect_initial_results_inputs(
     initial_result_workflow: Workflow,
+    split_by_body_workflow: Optional[Workflow],
     force_elemental_nodal: bool,
     location: str,
     selection: Selection,
@@ -80,13 +81,22 @@ def _connect_initial_results_inputs(
     streams_provider: Any,
     data_sources: Any,
 ):
+    selection_wf = selection.spatial_selection._selection
+    if split_by_body_workflow is not None:
+        split_by_body_workflow.connect(_WfNames.mesh, mesh)
+        split_by_body_workflow.connect(_WfNames.location, location)
+        split_by_body_workflow.connect_with(
+            selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
+        )
+        selection_wf = split_by_body_workflow
+
     initial_result_workflow.connect_with(
-        selection.spatial_selection._selection,
+        selection_wf,
         output_input_names={"scoping": "mesh_scoping"},
     )
 
     initial_result_workflow.connect_with(
-        selection.time_freq_selection._selection,
+        selection_wf,
         output_input_names=("scoping", "time_scoping"),
     )
 

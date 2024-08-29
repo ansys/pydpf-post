@@ -11,6 +11,7 @@ from ansys.dpf.core import (
     natures,
     operators,
 )
+from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.gate.common import locations
 import numpy as np
 import pytest
@@ -3472,3 +3473,42 @@ def test_elemental_ns_on_nodal_result(modal_frame):
     disp = simulation.displacement(named_selections=["BAR_1"])
     assert disp.index[0].name == ref_labels.node_ids
     assert len(disp.index[0].values) == 1370
+
+
+def test_averaging_across_bodies():
+    import pyvista
+
+    pyvista.OFF_SCREEN = False
+
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
+        # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    res = simulation.stress_nodal(skin=True, average_across_bodies=False)
+
+    filtered_res = res.select(mat=1)
+    # filtered_res.plot()
+
+    meshes = simulation.split_mesh_by_properties(
+        properties=[elemental_properties.material]
+    )
+
+    pl = DpfPlotter()
+    for mat_id in res._fc.get_label_scoping("mat").ids:
+        mesh = meshes.select(mat=mat_id)
+        field = res._fc.get_field({"mat": mat_id})
+
+        if field.elementary_data_count > 0:
+            field.meshed_region = mesh._meshed_region
+            pl.add_field(field)
+
+    pl.show_figure()
+
+    mesh = simulation.mesh._meshed_region
+
+
+# meshes.plot()
+
+# mesh.plot(filtered_res._fc)
