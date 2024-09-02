@@ -6,7 +6,7 @@ from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
-def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
+def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf: Workflow):
     if expand_cyclic is not False:
         # If expand_cyclic is a list
         if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
@@ -57,7 +57,7 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf):
                 "'expand_cyclic' argument can only be a boolean or a list."
             )
         result_wf.connect(_WfNames.read_cyclic, 3)  # Connect the read_cyclic pin
-    else:
+    elif _WfNames.read_cyclic in result_wf.input_names:
         result_wf.connect(_WfNames.read_cyclic, 1)  # Connect the read_cyclic pin
     if phase_angle_cyclic is not None:
         if isinstance(phase_angle_cyclic, int):
@@ -81,6 +81,11 @@ def _connect_initial_results_inputs(
     streams_provider: Any,
     data_sources: Any,
 ):
+    """Connects the inputs of the initial result workflow.
+
+    The initial result workflow is the first workflow in the result workflows chain, which
+    extracts the raw results from the data sources.
+    """
     selection_wf = selection.spatial_selection._selection
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
@@ -128,12 +133,16 @@ def _connect_initial_results_inputs(
 def _connect_averaging_eqv_and_principal_workflows(
     result_workflows: ResultWorkflows,
 ):
+    """Connects the averaging, equivalent, and principal workflows.
+
+    The order of these workflows depends on result_workflows.compute_equivalent_before_average.
+    Only one of equivalent_workflow or principal_workflow can be active at the same time.
+    """
     averaging_wf_connections = {
         _WfNames.output_data: _WfNames.input_data,
         _WfNames.skin: _WfNames.skin,
         _WfNames.skin_input_mesh: _WfNames.skin_input_mesh,
     }
-    # Only one of equivalent_workflow or principal_workflow can be active at the same time.
     assert not (
         result_workflows.equivalent_workflow is not None
         and result_workflows.principal_workflow is not None

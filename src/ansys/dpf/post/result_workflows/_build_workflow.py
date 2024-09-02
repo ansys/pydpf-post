@@ -122,7 +122,10 @@ def _create_result_workflows(
     create_operator_callable: _CreateOperatorCallable,
     create_workflow_inputs: _CreateWorkflowInputs,
 ) -> ResultWorkflows:
-    """Internal function to create the result workflows. Use _create_result_workflows instead."""
+    """Creates all the sub-workflows needed to compute a result.
+
+    The resulting workflows are stored in a ResultWorkflows object.
+    """
     initial_result_wf = _create_initial_result_workflow(
         name=create_workflow_inputs.base_name,
         server=server,
@@ -135,7 +138,7 @@ def _create_result_workflows(
     average_wf = _create_averaging_workflow(
         location=create_workflow_inputs.averaging_workflow_inputs.location,
         has_skin=create_workflow_inputs.has_skin,
-        mesh_averaging_needed=force_elemental_nodal,
+        force_elemental_nodal=force_elemental_nodal,
         create_operator_callable=create_operator_callable,
         server=server,
     )

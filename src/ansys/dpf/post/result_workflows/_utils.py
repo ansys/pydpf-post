@@ -6,6 +6,8 @@ from ansys.dpf.post.selection import _WfNames
 
 
 class _CreateOperatorCallable(Protocol):
+    # Callable to create an operator with a given name.
+    # This usually corresponds to model.operator
     def __call__(self, name: str) -> Operator:
         ...
 
