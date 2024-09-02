@@ -11,7 +11,7 @@ from ansys.dpf.post.selection import _WfNames
 def _create_averaging_workflow(
     has_skin: bool,
     location: str,
-    mesh_averaging_needed: bool,
+    force_elemental_nodal: bool,
     create_operator_callable: _CreateOperatorCallable,
     server,
 ):
@@ -31,7 +31,16 @@ def _create_averaging_workflow(
 
     skin_mesh_fwd = create_operator_callable(name="forward")
 
-    if has_skin:
+    map_to_skin = True
+    if not server.meet_version("8.0"):
+        # Before 8.0, the skin mapping was not supported
+        # for elemental and nodal results (only elemental nodal).
+        # In the nodal case the mapping is not needed, but we still
+        # call the operator to be consistent.
+        # For elemental results the mapping was not working before 8.0.
+        map_to_skin = force_elemental_nodal
+
+    if has_skin and map_to_skin:
         average_wf.add_operator(skin_mesh_fwd)
         average_wf.set_input_name(_WfNames.skin, skin_mesh_fwd)
 
@@ -58,10 +67,8 @@ def _create_averaging_workflow(
             )
 
     if (
-        location == locations.nodal
-        or location == locations.elemental
-        and mesh_averaging_needed
-    ):
+        location == locations.nodal or location == locations.elemental
+    ) and force_elemental_nodal:
         if location == locations.nodal:
             operator_name = "to_nodal_fc"
         else:
