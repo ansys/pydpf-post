@@ -211,6 +211,14 @@ def grpc_server():
     server.shutdown()
 
 
+@pytest.fixture(scope="session", autouse=True)
+def license_context():
+    with core.LicenseContextManager(
+        increment_name="preppost", license_timeout_in_seconds=1.0
+    ) as lic:
+        yield
+
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
     get_server_version(core._global_server()), "9.0"
 )
