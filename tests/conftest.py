@@ -213,7 +213,7 @@ def grpc_server():
 
 @pytest.fixture(scope="session", autouse=True)
 def license_context():
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
         with core.LicenseContextManager(
             increment_name="preppost", license_timeout_in_seconds=1.0
         ) as lic:
