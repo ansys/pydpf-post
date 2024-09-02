@@ -119,7 +119,10 @@ def _create_result_workflows(
     create_operator_callable: _CreateOperatorCallable,
     create_workflow_inputs: _CreateWorkflowInputs,
 ) -> ResultWorkflows:
-    """Internal function to create the result workflows. Use _create_result_workflows instead."""
+    """Creates all the sub-workflows needed to compute a result.
+
+    The resulting workflows are stored in a ResultWorkflows object.
+    """
     initial_result_wf = _create_initial_result_workflow(
         name=create_workflow_inputs.base_name,
         server=server,
