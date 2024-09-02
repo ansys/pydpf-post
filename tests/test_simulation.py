@@ -11,7 +11,6 @@ from ansys.dpf.core import (
     natures,
     operators,
 )
-from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.gate.common import locations
 import numpy as np
 import pytest
@@ -3476,6 +3475,50 @@ def test_elemental_ns_on_nodal_result(modal_frame):
 
 
 def test_averaging_across_bodies():
+    import pyvista as pv
+
+    def fields_container_to_vtk_mesh(
+        fields_container: dpf.FieldsContainer,
+    ):
+        pd = pv.PolyData()
+        mesh = fields_container[0].meshed_region
+
+        nodes = mesh.nodes
+        element_id_to_index_map = mesh.elements.mapping_id_to_index
+
+        vtk_mesh = mesh.grid
+
+        for idx, field in enumerate(fields_container):
+            transpose = operators.scoping.transpose()
+            transpose.inputs.mesh_scoping(field.scoping)
+            transpose.inputs.meshed_region(field.meshed_region)
+            transpose.inputs.inclusive(0)
+            transpose.inputs.requested_location(post.locations.elemental)
+            scoping = transpose.outputs.mesh_scoping_as_scoping()
+            if scoping.size == 0 or field.data.size == 0:
+                continue
+            # add field data
+
+            component_count = field.component_count
+            if component_count > 1:
+                overall_data = np.full((len(nodes), component_count), np.nan)
+            else:
+                overall_data = np.full(len(nodes), np.nan)
+
+            ind, mask = nodes.map_scoping(field.scoping)
+            overall_data[ind] = field.data[mask]
+
+            vtk_mesh.point_data.set_array(overall_data, name="vm_stress")
+            vtk_mesh.set_active_scalars("vm_stress")
+
+            cell_ids = np.vectorize(element_id_to_index_map.get)(scoping.ids)
+            body_mesh = vtk_mesh.extract_cells(cell_ids)
+
+            skin = body_mesh.extract_geometry()
+            pd.append_polydata(skin, inplace=True)
+
+        return pd
+
     import pyvista
 
     pyvista.OFF_SCREEN = False
@@ -3488,27 +3531,8 @@ def test_averaging_across_bodies():
 
     res = simulation.stress_nodal(skin=True, average_across_bodies=False)
 
-    filtered_res = res.select(mat=1)
-    # filtered_res.plot()
-
-    meshes = simulation.split_mesh_by_properties(
-        properties=[elemental_properties.material]
+    pd = fields_container_to_vtk_mesh(
+        fields_container=res._fc,
     )
-
-    pl = DpfPlotter()
-    for mat_id in res._fc.get_label_scoping("mat").ids:
-        mesh = meshes.select(mat=mat_id)
-        field = res._fc.get_field({"mat": mat_id})
-
-        if field.elementary_data_count > 0:
-            field.meshed_region = mesh._meshed_region
-            pl.add_field(field)
-
-    pl.show_figure()
-
-    mesh = simulation.mesh._meshed_region
-
-
-# meshes.plot()
-
-# mesh.plot(filtered_res._fc)
+    pd.set_active_scalars("vm_stress")
+    pd.plot(show_edges=True)
