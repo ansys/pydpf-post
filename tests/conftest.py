@@ -218,6 +218,8 @@ def license_context():
             increment_name="preppost", license_timeout_in_seconds=1.0
         ) as lic:
             yield
+    else:
+        yield
 
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
