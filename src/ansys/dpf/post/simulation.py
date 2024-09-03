@@ -616,7 +616,12 @@ class MechanicalSimulation(Simulation, ABC):
             location = (
                 locations.elemental_nodal
                 if _requires_manual_averaging(
-                    base_name, location, category, None, self._model.operator
+                    base_name,
+                    location,
+                    category,
+                    None,
+                    self._model.operator,
+                    average_across_bodies,
                 )
                 else location
             )
