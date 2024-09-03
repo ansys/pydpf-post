@@ -3489,15 +3489,14 @@ def test_averaging_across_bodies():
         vtk_mesh = mesh.grid
 
         for idx, field in enumerate(fields_container):
+            if field.scoping.size == 0 or field.data.size == 0:
+                continue
             transpose = operators.scoping.transpose()
             transpose.inputs.mesh_scoping(field.scoping)
             transpose.inputs.meshed_region(field.meshed_region)
             transpose.inputs.inclusive(0)
             transpose.inputs.requested_location(post.locations.elemental)
             scoping = transpose.outputs.mesh_scoping_as_scoping()
-            if scoping.size == 0 or field.data.size == 0:
-                continue
-            # add field data
 
             component_count = field.component_count
             if component_count > 1:
@@ -3524,8 +3523,8 @@ def test_averaging_across_bodies():
     pyvista.OFF_SCREEN = False
 
     simulation: StaticMechanicalSimulation = post.load_simulation(
-        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
-        # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
+        # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
+        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
