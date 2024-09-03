@@ -954,6 +954,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract equivalent von Mises stress results from the simulation.
 
@@ -1036,6 +1037,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
+            average_across_bodies=average_across_bodies,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -1143,6 +1145,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        average_across_bodies: bool = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises stress results from the simulation.
 
@@ -1217,6 +1220,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
+            average_across_bodies=average_across_bodies,
         )
 
     def elastic_strain(

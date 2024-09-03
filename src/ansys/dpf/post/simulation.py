@@ -7,7 +7,7 @@ Simulation
 from abc import ABC
 from os import PathLike
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
@@ -577,6 +577,7 @@ class MechanicalSimulation(Simulation, ABC):
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        average_across_bodies: Optional[bool] = True,
     ) -> Selection:
         tot = (
             (node_ids is not None)

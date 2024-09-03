@@ -104,7 +104,10 @@ def _requires_manual_averaging(
     category: ResultCategory,
     selection: Optional[Selection],
     create_operator_callable: Callable[[str], Operator],
+    average_across_bodies: bool,
 ):
+    if average_across_bodies is False:
+        return True
     res = _result_properties[base_name] if base_name in _result_properties else None
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
@@ -245,6 +248,7 @@ def _create_result_workflow_inputs(
         category=category,
         selection=selection,
         create_operator_callable=create_operator_callable,
+        average_across_bodies=average_across_bodies,
     )
 
     averaging_workflow_inputs = _AveragingWorkflowInputs(
