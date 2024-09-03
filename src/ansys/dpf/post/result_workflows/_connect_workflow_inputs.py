@@ -101,7 +101,7 @@ def _connect_initial_results_inputs(
     )
 
     initial_result_workflow.connect_with(
-        selection_wf,
+        selection.time_freq_selection._selection,
         output_input_names=("scoping", "time_scoping"),
     )
 
