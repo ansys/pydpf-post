@@ -106,9 +106,14 @@ def _requires_manual_averaging(
     create_operator_callable: Callable[[str], Operator],
     average_across_bodies: bool,
 ):
-    if average_across_bodies is False:
-        return True
     res = _result_properties[base_name] if base_name in _result_properties else None
+    native_location = res["location"] if res is not None else None
+
+    if average_across_bodies and (
+        native_location == locations.elemental
+        or native_location == locations.elemental_nodal
+    ):
+        return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
     if res is not None and selection is not None:
