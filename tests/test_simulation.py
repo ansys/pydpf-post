@@ -3480,7 +3480,7 @@ def test_averaging_across_bodies():
     def fields_container_to_vtk_mesh(
         fields_container: dpf.FieldsContainer,
     ):
-        pd = pv.PolyData()
+        pd = pv.UnstructuredGrid()
         mesh = fields_container[0].meshed_region
 
         nodes = mesh.nodes
@@ -3513,8 +3513,8 @@ def test_averaging_across_bodies():
             cell_ids = np.vectorize(element_id_to_index_map.get)(scoping.ids)
             body_mesh = vtk_mesh.extract_cells(cell_ids)
 
-            skin = body_mesh.extract_geometry()
-            pd.append_polydata(skin, inplace=True)
+            #    skin = body_mesh.extract_geometry()
+            pd.merge(body_mesh, merge_points=False, inplace=True)
 
         return pd
 
@@ -3523,12 +3523,15 @@ def test_averaging_across_bodies():
     pyvista.OFF_SCREEN = False
 
     simulation: StaticMechanicalSimulation = post.load_simulation(
-        # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
-        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
+        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
+        # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
-    res = simulation.stress_nodal(skin=True, average_across_bodies=False)
+    res = simulation.stress_eqv_von_mises_nodal(skin=False, average_across_bodies=False)
+    # res = simulation.stress_eqv_von_mises_nodal(skin=True, average_across_bodies=False)
+    sel = res.select(mat=1)
+    print(sel._fc[0].max().data[0])
 
     pd = fields_container_to_vtk_mesh(
         fields_container=res._fc,
