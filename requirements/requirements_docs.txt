@@ -12,5 +12,6 @@ sphinx-notfound-page==1.0.0
 sphinx-copybutton==0.5.0
 sphinx-gallery==0.16.0
 ansys_sphinx_theme==0.16.0
-sphinx-autodoc-typehints==2.0.0
+sphinx-autodoc-typehints==2.0.0; python_version == '3.8'
+sphinx-autodoc-typehints==2.4.1; python_version >= '3.9'
 pyvista==0.43.8
