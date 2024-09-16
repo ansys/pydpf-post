@@ -4,6 +4,7 @@ Launch or connect to a persistent local DPF service to be shared in
 pytest as a sesson fixture
 """
 import os
+import pathlib
 import re
 
 from ansys.dpf.core.check_version import get_server_version, meets_version
@@ -42,6 +43,12 @@ pv.global_theme.lighting = get_lighting()
 
 # currently running dpf on docker.  Used for testing on CI
 running_docker = os.environ.get("DPF_DOCKER", False)
+
+
+def save_screenshot(dataframe, suffix=""):
+    """Save a screenshot of a dataframe plot, with the current test name."""
+    test_path = pathlib.Path(os.environ.get("PYTEST_CURRENT_TEST"))
+    dataframe.plot(screenshot=f"{'_'.join(test_path.name.split('::'))}_{suffix}.jpeg")
 
 
 def resolve_test_file(basename, additional_path=""):
@@ -202,6 +209,17 @@ def grpc_server():
     )
     yield server
     server.shutdown()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def license_context():
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+        with core.LicenseContextManager(
+            increment_name="preppost", license_timeout_in_seconds=1.0
+        ):
+            yield
+    else:
+        yield
 
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(

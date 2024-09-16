@@ -358,7 +358,7 @@ class Simulation(ABC):
             List[elemental_properties],
             Dict[elemental_properties, Union[int, List[int]]],
         ],
-    ) -> Meshes:
+    ) -> Union[Mesh, Meshes, None]:
         """Splits the simulation Mesh according to properties and returns it as Meshes.
 
         Parameters
@@ -1021,10 +1021,22 @@ class MechanicalSimulation(Simulation, ABC):
                 )  # To keep for retro-compatibility
             else:
                 inpt = first_average_op.inputs.mesh
+
+            if self._model._server.meet_version("8.0"):
+                # solid mesh_input only supported for server version
+                # 8.0 and up
+                average_wf.set_input_name(
+                    _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
+                )
             average_wf.set_input_name(_WfNames.skin, inpt)
             average_wf.connect_with(
                 selection.spatial_selection._selection,
                 output_input_names={_WfNames.skin: _WfNames.skin},
+            )
+
+            average_wf.connect_with(
+                selection.spatial_selection._selection,
+                output_input_names={_WfNames.skin_input_mesh: _WfNames.skin_input_mesh},
             )
 
         if location == locations.nodal:
@@ -1035,6 +1047,6 @@ class MechanicalSimulation(Simulation, ABC):
             average_op.connect(0, forward, 0)
         else:
             first_average_op = average_op
-
+        # Todo: returns None if location is ElementalNodal and skin is active
         if first_average_op is not None and average_op is not None:
             return (first_average_op, average_op)

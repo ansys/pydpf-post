@@ -33,6 +33,7 @@ from numpy import ndarray
 class _WfNames:
     data_sources = "data_sources"
     scoping = "scoping"
+    skin_input_mesh = "skin_input_mesh"
     final_scoping = "final_scoping"
     scoping_a = "scoping_a"
     scoping_b = "scoping_b"
@@ -404,9 +405,24 @@ class SpatialSelection:
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
         """
-        op = operators.mesh.skin(server=self._server)
-        self._selection.add_operator(op)
-        mesh_input = op.inputs.mesh
+
+        def connect_any(operator_input, input_value):
+            # Workaround to connect any inputs: see
+            # https://github.com/ansys/pydpf-core/issues/1670
+            operator_input._operator().connect(operator_input._pin, input_value)
+
+        skin_operator = operators.mesh.skin(server=self._server)
+        self._selection.add_operator(skin_operator)
+
+        initial_mesh_fwd_op = operators.utility.forward(server=self._server)
+        self._selection.set_input_name(
+            _WfNames.initial_mesh, initial_mesh_fwd_op.inputs.any
+        )
+        self._selection.add_operator(initial_mesh_fwd_op)
+
+        skin_operator_input_mesh_fwd_op = operators.utility.forward(server=self._server)
+        connect_any(skin_operator_input_mesh_fwd_op.inputs.any, initial_mesh_fwd_op)
+        self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
         if _is_model_cyclic(is_model_cyclic):
             mesh_provider_cyc = operators.mesh.mesh_provider()
@@ -436,13 +452,11 @@ class SpatialSelection:
                     server=self._server,
                 )
                 self._selection.add_operator(mesh_by_scop_op)
-                op.inputs.mesh.connect(mesh_by_scop_op)
+                skin_operator_input_mesh_fwd_op.inputs.any(mesh_by_scop_op)
             else:
-                op.inputs.mesh.connect(mesh_provider_cyc)
-            self._selection.set_input_name(
-                _WfNames.initial_mesh, mesh_provider_cyc, 100
-            )  # hack
-            mesh_input = None
+                skin_operator_input_mesh_fwd_op.inputs.any(mesh_provider_cyc)
+
+            mesh_provider_cyc.connect(100, initial_mesh_fwd_op.outputs.any)
 
         elif elements is not None:
             if not isinstance(elements, Scoping):
@@ -453,17 +467,19 @@ class SpatialSelection:
                 scoping=elements, server=self._server
             )
             self._selection.add_operator(mesh_by_scop_op)
-            mesh_input = mesh_by_scop_op.inputs.mesh
-            op.inputs.mesh.connect(mesh_by_scop_op)
+            skin_operator_input_mesh_fwd_op.inputs.any(mesh_by_scop_op.outputs.mesh)
+            connect_any(mesh_by_scop_op.inputs.mesh, initial_mesh_fwd_op.outputs.any)
 
-        if mesh_input is not None:
-            self._selection.set_input_name(_WfNames.initial_mesh, mesh_input)
+        if not _is_model_cyclic(is_model_cyclic):
             if location == result_native_location:
-                self._selection.set_output_name(_WfNames.mesh, op.outputs.mesh)
-        self._selection.set_output_name(_WfNames.skin, op.outputs.mesh)
+                self._selection.set_output_name(
+                    _WfNames.mesh, skin_operator.outputs.mesh
+                )
+
+        self._selection.set_output_name(_WfNames.skin, skin_operator.outputs.mesh)
         if location == locations.nodal and result_native_location == locations.nodal:
             self._selection.set_output_name(
-                _WfNames.scoping, op.outputs.nodes_mesh_scoping
+                _WfNames.scoping, skin_operator.outputs.nodes_mesh_scoping
             )
 
         elif not _is_model_cyclic(is_model_cyclic) and (
@@ -471,15 +487,29 @@ class SpatialSelection:
             or result_native_location == locations.elemental_nodal
         ):
             transpose_op = operators.scoping.transpose(
-                mesh_scoping=op.outputs.nodes_mesh_scoping, server=self._server
+                mesh_scoping=skin_operator.outputs.nodes_mesh_scoping,
+                server=self._server,
             )
             self._selection.add_operator(transpose_op)
-            self._selection.set_input_name(
-                _WfNames.initial_mesh, transpose_op.inputs.meshed_region
+            connect_any(
+                transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
             )
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
+
+        connect_any(
+            skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any
+        )
+
+        # Provide the input mesh from which a skin was generated
+        # This is useful because the skin_mesh contains the mapping of
+        # skin elements to the original mesh element indices, which is used
+        # by the solid_to_skin_fc operator. The skin_input_mesh can be passed
+        # to the solid_to_skin_fc operator to ensure that the mapping is correct.
+        self._selection.set_output_name(
+            _WfNames.skin_input_mesh, skin_operator_input_mesh_fwd_op.outputs.any
+        )
 
     def select_with_scoping(self, scoping: Scoping):
         """Directly sets the scoping as the spatial selection.
