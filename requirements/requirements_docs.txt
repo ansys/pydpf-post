@@ -10,7 +10,7 @@ sphinxcontrib-websupport==1.2.7
 pytest-sphinx==0.6.3
 sphinx-notfound-page==1.0.0
 sphinx-copybutton==0.5.0
-sphinx-gallery==0.16.0
+sphinx-gallery==0.17.1
 ansys_sphinx_theme==1.0.9
 sphinx-autodoc-typehints==2.0.0; python_version == '3.8'
 sphinx-autodoc-typehints==2.4.1; python_version >= '3.9'
