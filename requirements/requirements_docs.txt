@@ -4,7 +4,7 @@ numpydoc==1.8.0
 imageio-ffmpeg==0.5.1
 Sphinx<7.2.0; python_version == '3.8'
 Sphinx==8.0.2; python_version >= '3.9'
-sphinx-autobuild==2024.4.16
+sphinx-autobuild==2024.9.19
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-websupport==2.0.0
 pytest-sphinx==0.6.3
