@@ -1,4 +1,6 @@
+import dataclasses
 import os.path
+import pathlib
 from typing import Optional, Union
 
 import ansys.dpf.core as dpf
@@ -3474,6 +3476,146 @@ def test_elemental_ns_on_nodal_result(modal_frame):
     assert len(disp.index[0].values) == 1370
 
 
+@dataclasses.dataclass
+class ReferenceCsvFiles:
+    combined: pathlib.Path
+    per_id: dict[str, pathlib.Path]
+
+
+@dataclasses.dataclass
+class ReferenceDataItem:
+    node_ids: list[int]
+    data: list[float]
+
+
+@dataclasses.dataclass
+class ReferenceData:
+    combined: ReferenceDataItem
+    per_id: dict[str, ReferenceDataItem]
+
+
+def get_node_and_data_map(mesh: MeshedRegion, csv_file_name, is_skin):
+    import csv
+
+    with open(csv_file_name) as csv_file:
+        reader = csv.reader(csv_file, delimiter="\t")
+        next(reader, None)
+        node_coordinates = mesh.nodes.coordinates_field
+        node_coordinates_csv = []
+        data_rows = []
+        for idx, row in enumerate(reader):
+            node_coordinates_csv.append(
+                np.array([float(row[1]), float(row[2]), float(row[3])])
+            )
+            data_rows.append(float(row[4]))
+
+        node_coordinates_dpf = node_coordinates.data
+        node_ids = []
+        for row_index, csv_coord in enumerate(node_coordinates_csv):
+            index = np.where(np.isclose(node_coordinates_dpf, csv_coord).all(axis=1))[0]
+            if index.size > 0:
+                node_id = mesh.nodes.scoping.ids[index[0]]
+
+                assert index.size == 1
+                node_ids.append(node_id)
+            else:
+                if not is_skin:
+                    raise RuntimeError("Node not found in dpf mesh")
+                else:
+                    node_ids.append(None)
+
+        return ReferenceDataItem(node_ids, data_rows)
+
+
+def get_ref_data(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles, is_skin):
+    combined_ref_data = get_node_and_data_map(mesh, csv_file_name.combined, is_skin)
+    per_id_ref_data = {}
+    for mat_id, csv_file in csv_file_name.per_id.items():
+        per_id_ref_data[mat_id] = get_node_and_data_map(mesh, csv_file, is_skin)
+    return ReferenceData(combined_ref_data, per_id_ref_data)
+
+
+def get_ref_result(mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles, is_skin):
+    ref_data = get_ref_data(mesh, reference_csv_files, is_skin)
+
+    node_id_to_row_index_map_combined = {}
+    for idx, node_id in enumerate(ref_data.combined.node_ids):
+        if node_id is not None:
+            if node_id in node_id_to_row_index_map_combined:
+                node_id_to_row_index_map_combined[node_id].append(idx)
+            else:
+                node_id_to_row_index_map_combined[node_id] = [idx]
+
+    # Ensure we have found each node in the input mesh
+    assert sorted(node_id_to_row_index_map_combined.keys()) == sorted(
+        mesh.nodes.scoping.ids
+    )
+
+    data_per_node_and_material = {}
+
+    for node_id, combined_row_indices in node_id_to_row_index_map_combined.items():
+        multiplicity_of_node = len(combined_row_indices)
+        material_wise_data = {}
+        for mat_id, ref_data_item in ref_data.per_id.items():
+            if node_id in ref_data_item.node_ids:
+                row_index = ref_data_item.node_ids.index(node_id)
+                material_wise_data[mat_id] = ref_data_item.data[row_index]
+
+        if len(material_wise_data) != multiplicity_of_node:
+            raise RuntimeError(
+                f"Inconsistent combined and per material data for node id: {node_id}"
+                f" number of entries in combined data: {multiplicity_of_node}, "
+                f" number of entries in per material data: {len(material_wise_data)}"
+            )
+
+        for mat_id, data_per_material in material_wise_data.items():
+            # Check that the data per material is close to one of the
+            # data for one of the combined nodes
+            assert np.isclose(
+                data_per_material,
+                np.array(ref_data.combined.data)[combined_row_indices],
+            ).any(), f"{node_id}, {mat_id}"
+
+        data_per_node_and_material[node_id] = material_wise_data
+
+    return data_per_node_and_material
+
+
+@pytest.mark.parametrize("is_skin", [True, False])
+@pytest.mark.parametrize("result", ["stress", "elastic_strain"])
+def test_averaging_per_body(is_skin, result):
+    rst_file = r"D:\ANSYSDev\remote_post\models\two_bodies_files\dp0\SYS\MECH\file.rst"
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=rst_file,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    csv_root_path = pathlib.Path(r"D:\ANSYSDev\remote_post\pydpf-post\tests\testfiles")
+
+    res = getattr(simulation, f"{result}_nodal")(
+        skin=is_skin, average_across_bodies=False, components=["XX"]
+    )
+
+    reference_csv_files = ReferenceCsvFiles(
+        combined=csv_root_path / f"{result}_combined.txt",
+        per_id={
+            "1": csv_root_path / f"{result}_mat_1.txt",
+            "2": csv_root_path / f"{result}_mat_2.txt",
+        },
+    )
+
+    ref_data = get_ref_result(res._fc[0].meshed_region, reference_csv_files, is_skin)
+
+    for node_id in ref_data:
+        for mat_id in ref_data[node_id]:
+            field = res._fc.get_field({"mat": int(mat_id)})
+            nodal_value = field.get_entity_data_by_id(node_id)
+
+            assert np.isclose(
+                nodal_value[0], ref_data[node_id][mat_id], rtol=1e-3
+            ), f"{result}, {mat_id}, {node_id}"
+
+
 def test_averaging_across_bodies():
     import pyvista as pv
 
@@ -3481,16 +3623,17 @@ def test_averaging_across_bodies():
         fields_container: dpf.FieldsContainer,
     ):
         pd = pv.UnstructuredGrid()
-        mesh = fields_container[0].meshed_region
-
-        nodes = mesh.nodes
-        element_id_to_index_map = mesh.elements.mapping_id_to_index
-
-        vtk_mesh = mesh.grid
 
         for idx, field in enumerate(fields_container):
             if field.scoping.size == 0 or field.data.size == 0:
                 continue
+            mesh = field.meshed_region
+            nodes = mesh.nodes
+
+            vtk_mesh = mesh.grid
+
+            element_id_to_index_map = mesh.elements.mapping_id_to_index
+
             transpose = operators.scoping.transpose()
             transpose.inputs.mesh_scoping(field.scoping)
             transpose.inputs.meshed_region(field.meshed_region)
@@ -3523,12 +3666,14 @@ def test_averaging_across_bodies():
     pyvista.OFF_SCREEN = False
 
     simulation: StaticMechanicalSimulation = post.load_simulation(
-        data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\md_particles\staticX.rst",
+        data_sources=r"D:\ANSYSDev\remote_post\models\two_bodies_files\dp0\SYS\MECH\file.rst",
         # data_sources=r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\averaging\md_ud.rst",
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
-    res = simulation.stress_eqv_von_mises_nodal(skin=False, average_across_bodies=False)
+    res = simulation.stress_nodal(
+        skin=False, average_across_bodies=False, components=["XX"]
+    )
     # res = simulation.stress_eqv_von_mises_nodal(skin=True, average_across_bodies=False)
     sel = res.select(mat=1)
     print(sel._fc[0].max().data[0])

@@ -109,7 +109,7 @@ def _requires_manual_averaging(
     res = _result_properties[base_name] if base_name in _result_properties else None
     native_location = res["location"] if res is not None else None
 
-    if average_across_bodies and (
+    if not average_across_bodies and (
         native_location == locations.elemental
         or native_location == locations.elemental_nodal
     ):
