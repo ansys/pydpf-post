@@ -238,7 +238,7 @@ def _create_split_scope_by_body_workflow(server):
     split_scope_by_body_wf.add_operator(split_scop_op)
     split_scope_by_body_wf.set_input_name(_WfNames.mesh, split_scop_op.inputs.mesh)
     split_scope_by_body_wf.set_input_name(
-        _WfNames.location, split_scop_op.inputs.requested_location
+        _WfNames.scoping_location, split_scop_op.inputs.requested_location
     )
     split_scope_by_body_wf.set_input_name(
         _WfNames.scoping, split_scop_op.inputs.mesh_scoping

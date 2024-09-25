@@ -89,7 +89,10 @@ def _connect_initial_results_inputs(
     selection_wf = selection.spatial_selection._selection
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
-        split_by_body_workflow.connect(_WfNames.location, location)
+        if force_elemental_nodal:
+            split_by_body_workflow.connect(_WfNames.scoping_location, "ElementalNodal")
+        else:
+            split_by_body_workflow.connect(_WfNames.scoping_location, location)
         split_by_body_workflow.connect_with(
             selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
         )
