@@ -5,14 +5,13 @@ Simulation
 
 """
 from abc import ABC
-from enum import Enum
 from os import PathLike
 import re
 from typing import Dict, List, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
-from ansys.dpf.core import DataSources, Model, TimeFreqSupport, Workflow, errors
+from ansys.dpf.core import DataSources, Model, TimeFreqSupport, errors
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
@@ -31,47 +30,13 @@ from ansys.dpf.post.index import (
 )
 from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
-from ansys.dpf.post.selection import Selection, _WfNames
-
-component_label_to_index = {
-    "1": 0,
-    "2": 1,
-    "3": 2,
-    "4": 3,
-    "5": 4,
-    "6": 5,
-    "X": 0,
-    "Y": 1,
-    "Z": 2,
-    "XX": 0,
-    "YY": 1,
-    "ZZ": 2,
-    "XY": 3,
-    "YZ": 4,
-    "XZ": 5,
-}
-
-vector_component_names = ["X", "Y", "Z"]
-matrix_component_names = ["XX", "YY", "ZZ", "XY", "YZ", "XZ"]
-principal_names = ["1", "2", "3"]
-
-
-class ResultCategory(Enum):
-    """Enum for available result categories."""
-
-    scalar = 1
-    vector = 2
-    matrix = 3
-    principal = 4
-    equivalent = 5
+from ansys.dpf.post.result_workflows._build_workflow import _requires_manual_averaging
+from ansys.dpf.post.result_workflows._component_helper import ResultCategory
+from ansys.dpf.post.selection import Selection
 
 
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types."""
-
-    _vector_component_names = vector_component_names
-    _matrix_component_names = matrix_component_names
-    _principal_names = principal_names
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -434,87 +399,6 @@ class Simulation(ABC):
         txt += self._model.__str__()
         return txt
 
-    def _build_components_for_vector(self, base_name, components):
-        out, columns = self._build_components(
-            base_name, components, self._vector_component_names
-        )
-        return out, columns
-
-    def _build_components_for_matrix(self, base_name, components):
-        out, columns = self._build_components(
-            base_name, components, self._matrix_component_names
-        )
-        return out, columns
-
-    def _build_components(self, base_name, components, component_names):
-        # Create operator internal names based on components
-        out = []
-        if components is None:
-            out = None
-        else:
-            if isinstance(components, int) or isinstance(components, str):
-                components = [components]
-            if not isinstance(components, list):
-                raise ValueError(
-                    "Argument 'components' must be an int, a str, or a list of either."
-                )
-            for comp in components:
-                if not (isinstance(comp, str) or isinstance(comp, int)):
-                    raise ValueError(
-                        "Argument 'components' can only contain integers and/or strings.\n"
-                        f"The provided component '{comp}' is not valid."
-                    )
-                if isinstance(comp, int):
-                    comp = str(comp)
-                if comp not in component_label_to_index.keys():
-                    raise ValueError(
-                        f"Component {comp} is not valid. Please use one of: "
-                        f"{list(component_label_to_index.keys())}."
-                    )
-                out.append(component_label_to_index[comp])
-
-        # Take unique values and build names list
-        if out is None:
-            columns = [base_name + comp for comp in component_names]
-        else:
-            out = list(set(out))
-            columns = [base_name + component_names[i] for i in out]
-        return out, columns
-
-    def _build_components_for_principal(self, base_name, components):
-        # Create operator internal names based on principal components
-        out = []
-        if components is None:
-            components = [1]
-
-        if isinstance(components, int) or isinstance(components, str):
-            components = [components]
-        if not isinstance(components, list):
-            raise ValueError(
-                "Argument 'components' must be an int, a str, or a list of either."
-            )
-        for comp in components:
-            if not (isinstance(comp, str) or isinstance(comp, int)):
-                raise ValueError(
-                    "Argument 'components' can only contain integers and/or strings."
-                )
-            if str(comp) not in self._principal_names:
-                raise ValueError(
-                    "A principal component ID must be one of: "
-                    f"{self._principal_names}."
-                )
-            out.append(int(comp) - 1)
-
-        # Take unique values
-        if out is not None:
-            out = list(set(out))
-        # Build columns names
-        if out is None:
-            columns = [base_name + str(comp) for comp in self._principal_names]
-        else:
-            columns = [base_name + self._principal_names[i] for i in out]
-        return out, columns
-
     def _build_result_operator(
         self,
         name: str,
@@ -528,71 +412,6 @@ class Simulation(ABC):
         else:
             op.connect(9, location)
         return op
-
-    def _build_result_workflow(
-        self,
-        name: str,
-        location: Union[locations, str],
-        force_elemental_nodal: bool,
-    ) -> (dpf.Workflow, dpf.Operator):
-        op = self._model.operator(name=name)
-        op.connect(7, self.mesh._meshed_region)
-        if force_elemental_nodal:
-            op.connect(9, "ElementalNodal")
-        elif location:
-            op.connect(9, location)
-        wf = Workflow(server=self._model._server)
-        wf.add_operator(op)
-        wf.set_input_name(_WfNames.read_cyclic, op, 14)
-        wf.set_input_name(_WfNames.cyclic_sectors_to_expand, op, 18)
-        wf.set_input_name(_WfNames.cyclic_phase, op, 19)
-        wf.set_output_name(_WfNames.result, op, 0)
-        return wf, op
-
-    def _append_norm(self, wf, out, base_name):
-        """Append a norm operator to the current result workflow."""
-        norm_op = self._model.operator(name="norm_fc")
-        norm_op.connect(0, out)
-        wf.add_operator(operator=norm_op)
-        base_name += "_N"
-        out = norm_op.outputs.fields_container
-        comp = None
-        return wf, out, comp, base_name
-
-    def _create_components(self, base_name, category, components):
-        comp = None
-        # Build the list of requested results
-        if category in [ResultCategory.scalar, ResultCategory.equivalent]:
-            # A scalar or equivalent result has no components
-            to_extract = None
-            columns = [base_name]
-        elif category == ResultCategory.vector:
-            # A vector result can have components selected
-            to_extract, columns = self._build_components_for_vector(
-                base_name=base_name, components=components
-            )
-            if to_extract is not None:
-                comp = [self._vector_component_names[i] for i in to_extract]
-            else:
-                comp = self._vector_component_names
-        elif category == ResultCategory.matrix:
-            # A vector result can have components selected
-            to_extract, columns = self._build_components_for_matrix(
-                base_name=base_name, components=components
-            )
-            if to_extract is not None:
-                comp = [self._matrix_component_names[i] for i in to_extract]
-            else:
-                comp = self._matrix_component_names
-        elif category == ResultCategory.principal:
-            # A principal type of result can have components selected
-            to_extract, columns = self._build_components_for_principal(
-                base_name=base_name, components=components
-            )
-            comp = [self._principal_names[i] for i in to_extract]
-        else:
-            raise ValueError(f"'{category}' is not a valid category value.")
-        return comp, to_extract, columns
 
     def _generate_disp_workflow(self, fc, selection) -> Union[dpf.Workflow, None]:
         # Check displacement is an available result
@@ -720,78 +539,6 @@ class Simulation(ABC):
         # Return the result wrapped in a DPF_Dataframe
         return df
 
-    @staticmethod
-    def _treat_cyclic(expand_cyclic, phase_angle_cyclic, result_wf):
-        if expand_cyclic is not False:
-            # If expand_cyclic is a list
-            if isinstance(expand_cyclic, list) and len(expand_cyclic) > 0:
-                # If a list of sector numbers, directly connect it to the num_sectors pin
-                if all(
-                    [
-                        isinstance(expand_cyclic_i, int)
-                        for expand_cyclic_i in expand_cyclic
-                    ]
-                ):
-                    if any([i < 1 for i in expand_cyclic]):
-                        raise ValueError(
-                            "Sector selection with 'expand_cyclic' starts at 1."
-                        )
-                    result_wf.connect(
-                        _WfNames.cyclic_sectors_to_expand,
-                        [i - 1 for i in expand_cyclic],
-                    )
-                # If any is a list, treat it as per stage num_sectors
-                elif any(
-                    [
-                        isinstance(expand_cyclic_i, list)
-                        for expand_cyclic_i in expand_cyclic
-                    ]
-                ):
-                    # Create a ScopingsContainer to fill
-                    sectors_scopings = dpf.ScopingsContainer()
-                    sectors_scopings.labels = ["stage"]
-                    # For each potential num_sectors, check either an int or a list of ints
-                    for i, num_sectors_stage_i in enumerate(expand_cyclic):
-                        # Prepare num_sectors data
-                        if isinstance(num_sectors_stage_i, int):
-                            num_sectors_stage_i = [num_sectors_stage_i]
-                        elif isinstance(num_sectors_stage_i, list):
-                            if not all(
-                                [isinstance(n, int) for n in num_sectors_stage_i]
-                            ):
-                                raise ValueError(
-                                    "'expand_cyclic' only accepts lists of int values >= 1."
-                                )
-                        # num_sectors_stage_i is now a list of int,
-                        # add an equivalent Scoping with the correct 'stage' label value
-                        if any([i < 1 for i in num_sectors_stage_i]):
-                            raise ValueError(
-                                "Sector selection with 'expand_cyclic' starts at 1."
-                            )
-                        sectors_scopings.add_scoping(
-                            {"stage": i},
-                            dpf.Scoping(ids=[i - 1 for i in num_sectors_stage_i]),
-                        )
-                    result_wf.connect(
-                        _WfNames.cyclic_sectors_to_expand, inpt=sectors_scopings
-                    )
-            elif not isinstance(expand_cyclic, bool):
-                raise ValueError(
-                    "'expand_cyclic' argument can only be a boolean or a list."
-                )
-            result_wf.connect(_WfNames.read_cyclic, 3)  # Connect the read_cyclic pin
-        else:
-            result_wf.connect(_WfNames.read_cyclic, 1)  # Connect the read_cyclic pin
-        if phase_angle_cyclic is not None:
-            if isinstance(phase_angle_cyclic, int):
-                phase_angle_cyclic = float(phase_angle_cyclic)
-            if not isinstance(phase_angle_cyclic, float):
-                raise ValueError(
-                    "'phase_angle_cyclic' argument only accepts a single float value."
-                )
-            result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
-        return result_wf
-
 
 class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
@@ -864,7 +611,9 @@ class MechanicalSimulation(Simulation, ABC):
             )
             location = (
                 locations.elemental_nodal
-                if self._requires_manual_averaging(base_name, location, category, None)
+                if _requires_manual_averaging(
+                    base_name, location, category, None, self._model.operator
+                )
                 else location
             )
             if external_layer not in [None, False]:
@@ -979,74 +728,3 @@ class MechanicalSimulation(Simulation, ABC):
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
         return selection
-
-    def _requires_manual_averaging(
-        self,
-        base_name: str,
-        location: str,
-        category: ResultCategory,
-        selection: Selection,
-    ):
-        res = _result_properties[base_name] if base_name in _result_properties else None
-        if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
-            return True
-        if res is not None and selection is not None:
-            return selection.requires_manual_averaging(
-                location=location,
-                result_native_location=res["location"],
-                is_model_cyclic=self._model.operator("is_cyclic").eval(),
-            )
-        return False
-
-    def _create_averaging_operator(
-        self,
-        location: str,
-        selection: Selection,
-    ):
-        average_op = None
-        first_average_op = None
-        forward = None
-        if _WfNames.skin in selection.spatial_selection._selection.output_names:
-            if self._model._server.meet_version("6.2"):
-                first_average_op = self._model.operator(name="solid_to_skin_fc")
-                forward = first_average_op
-            else:
-                first_average_op = self._model.operator(name="solid_to_skin")
-                forward = self._model.operator(name="forward_fc")
-                forward.connect(0, first_average_op, 0)
-            average_wf = dpf.Workflow(server=self._model._server)
-            if hasattr(first_average_op.inputs, "mesh_scoping"):
-                inpt = (
-                    first_average_op.inputs.mesh_scoping
-                )  # To keep for retro-compatibility
-            else:
-                inpt = first_average_op.inputs.mesh
-
-            if self._model._server.meet_version("8.0"):
-                # solid mesh_input only supported for server version
-                # 8.0 and up
-                average_wf.set_input_name(
-                    _WfNames.skin_input_mesh, first_average_op.inputs.solid_mesh
-                )
-            average_wf.set_input_name(_WfNames.skin, inpt)
-            average_wf.connect_with(
-                selection.spatial_selection._selection,
-                output_input_names={_WfNames.skin: _WfNames.skin},
-            )
-
-            average_wf.connect_with(
-                selection.spatial_selection._selection,
-                output_input_names={_WfNames.skin_input_mesh: _WfNames.skin_input_mesh},
-            )
-
-        if location == locations.nodal:
-            average_op = self._model.operator(name="to_nodal_fc")
-        elif location == locations.elemental:
-            average_op = self._model.operator(name="to_elemental_fc")
-        if average_op and forward:
-            average_op.connect(0, forward, 0)
-        else:
-            first_average_op = average_op
-        # Todo: returns None if location is ElementalNodal and skin is active
-        if first_average_op is not None and average_op is not None:
-            return (first_average_op, average_op)
