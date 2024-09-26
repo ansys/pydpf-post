@@ -56,6 +56,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         )
         _connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
+            split_by_body_workflow=result_workflows.split_by_bodies_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,

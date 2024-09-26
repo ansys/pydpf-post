@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: "Setup Python"
-        uses: actions/setup-python@v5.1.0
+        uses: actions/setup-python@v5.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -97,6 +97,7 @@ jobs:
 
       - name: "Test Docstrings"
         uses: ansys/pydpf-actions/test_docstrings@v2.3
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
         with:
           MODULE: ${{env.MODULE}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
@@ -208,7 +209,7 @@ jobs:
     needs: [docs]
     steps:
       - name: "Upload development documentation"
-        uses: ansys/actions/doc-deploy-dev@v6
+        uses: ansys/actions/doc-deploy-dev@v7
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
