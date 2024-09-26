@@ -25,6 +25,7 @@ from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.result_workflows._sub_workflows import _create_split_scope_by_body_workflow
+from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
 from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
@@ -36,15 +37,15 @@ from conftest import (
 )
 
 
-def is_principal(mode: str) -> bool:
+def is_principal(mode: Optional[str]) -> bool:
     return mode == "principal"
 
 
-def is_equivalent(mode: str) -> bool:
+def is_equivalent(mode: Optional[str]) -> bool:
     return mode == "equivalent"
 
 
-def mode_suffix(mode: str) -> str:
+def mode_suffix(mode: Optional[str]) -> str:
     if mode == "equivalent":
         return "_eqv_von_mises"
     elif mode == "principal":
@@ -138,6 +139,55 @@ def get_expected_elemental_average_skin_value(
     return expected_average_skin_values
 
 
+def get_expected_skin_results(
+    create_operator_callable: _CreateOperatorCallable,
+    element_ids: list[int],
+    elemental_nodal_fc: FieldsContainer,
+    meshed_region: MeshedRegion,
+    mode: Optional[str],
+    result_name: str,
+):
+    expected_skin_values = {}
+    for element_id in element_ids:
+        expected_skin_values_per_element = get_expected_elemental_average_skin_value(
+            element_id=element_id,
+            solid_mesh=elemental_nodal_fc[0].meshed_region,
+            skin_mesh=meshed_region,
+            elemental_nodal_solid_data_field=elemental_nodal_fc[0],
+            is_principal_strain_result=is_principal(mode)
+            and result_name == "elastic_strain",
+        )
+
+        if is_principal(mode) or (
+            is_equivalent(mode) and result_name != "elastic_strain"
+        ):
+            # We need to put the expected skin values in a Field, to compute
+            # the equivalent or principal values with a dpf operator.
+            # For the elastic strain result, the invariants are computed before the
+            # averaging
+            field = Field(nature=natures.symmatrix)
+            for (
+                skin_element_id,
+                expected_skin_value,
+            ) in expected_skin_values_per_element.items():
+                field.append(list(expected_skin_value), skin_element_id)
+            if is_principal(mode):
+                invariant_op = operators.invariant.principal_invariants()
+                invariant_op.inputs.field(field)
+                field_out = invariant_op.outputs.field_eig_1()
+            else:
+                invariant_op = create_operator_callable(name="eqv")
+                invariant_op.inputs.field(field)
+                field_out = invariant_op.outputs.field()
+
+            for skin_element_id in expected_skin_values_per_element:
+                expected_skin_values_per_element[skin_element_id] = field_out.get_entity_data_by_id(
+                    skin_element_id
+                )
+        expected_skin_values.update(expected_skin_values_per_element)
+    return expected_skin_values
+
+
 def get_and_check_elemental_skin_results(
     static_simulation: StaticMechanicalSimulation,
     fc_elemental_nodal: FieldsContainer,
@@ -167,48 +217,21 @@ def get_and_check_elemental_skin_results(
         invariant_op.inputs.fields_container(fc_elemental_nodal)
         fc_elemental_nodal = invariant_op.outputs.fields_container()
 
-    for element_id in element_ids:
-        expected_skin_values = get_expected_elemental_average_skin_value(
-            element_id=element_id,
-            solid_mesh=fc_elemental_nodal[0].meshed_region,
-            skin_mesh=result_skin_scoped_elemental._fc[0].meshed_region,
-            elemental_nodal_solid_data_field=fc_elemental_nodal[0],
-            is_principal_strain_result=is_principal(mode)
-            and result_name == "elastic_strain",
-        )
 
-        if is_principal(mode) or (
-            is_equivalent(mode) and result_name != "elastic_strain"
-        ):
-            # We need to put the expected skin values in a Field, to compute
-            # the equivalent or principal values with a dpf operator.
-            # For the elastic strain result, the invariants are computed before the
-            # averaging
-            field = Field(nature=natures.symmatrix)
-            for (
-                skin_element_id,
-                expected_skin_value,
-            ) in expected_skin_values.items():
-                field.append(list(expected_skin_value), skin_element_id)
-            if is_principal(mode):
-                invariant_op = operators.invariant.principal_invariants()
-                invariant_op.inputs.field(field)
-                field_out = invariant_op.outputs.field_eig_1()
-            else:
-                invariant_op = static_simulation._model.operator(name="eqv")
-                invariant_op.inputs.field(field)
-                field_out = invariant_op.outputs.field()
+    expected_skin_values = get_expected_skin_results(
+        create_operator_callable=static_simulation._model.operator,
+        element_ids=element_ids,
+        elemental_nodal_fc=fc_elemental_nodal,
+        meshed_region=result_skin_scoped_elemental._fc[0].meshed_region,
+        mode=mode,
+        result_name=result_name,
+    )
 
-            for skin_element_id in expected_skin_values:
-                expected_skin_values[skin_element_id] = field_out.get_entity_data_by_id(
-                    skin_element_id
-                )
-
-        for skin_element_id, expected_skin_value in expected_skin_values.items():
-            actual_skin_value = result_skin_scoped_elemental._fc[
-                0
-            ].get_entity_data_by_id(skin_element_id)
-            assert np.allclose(actual_skin_value, expected_skin_value)
+    for skin_element_id, expected_skin_value in expected_skin_values.items():
+        actual_skin_value = result_skin_scoped_elemental._fc[
+            0
+        ].get_entity_data_by_id(skin_element_id)
+        assert np.allclose(actual_skin_value, expected_skin_value)
 
 
 operator_map = {"stress": "S", "elastic_strain": "EPEL", "displacement": "U"}
@@ -360,7 +383,7 @@ def get_all_midside_node_ids(mesh: MeshedRegion):
 def get_expected_nodal_results(
     simulation: MechanicalSimulation,
     result_name: str,
-    mode: str,
+    mode: Optional[str],
     skin_mesh: MeshedRegion,
     expand_cyclic: bool,
     elemental_nodal_results: Optional[FieldsContainer] = None,
@@ -3497,7 +3520,7 @@ class ReferenceData:
     per_id: dict[str, ReferenceDataItem]
 
 
-def get_node_and_data_map(mesh: MeshedRegion, csv_file_name, is_skin):
+def get_node_and_data_map(mesh: MeshedRegion, csv_file_name):
     import csv
 
     with open(csv_file_name) as csv_file:
@@ -3522,19 +3545,16 @@ def get_node_and_data_map(mesh: MeshedRegion, csv_file_name, is_skin):
                 assert index.size == 1
                 node_ids.append(node_id)
             else:
-                if not is_skin:
-                    raise RuntimeError(f"Node not found in dpf mesh. Node coordinate: {csv_coord}")
-                else:
-                    node_ids.append(None)
+                raise RuntimeError(f"Node not found in dpf mesh. Node coordinate: {csv_coord}")
 
         return ReferenceDataItem(node_ids, data_rows)
 
 
-def get_ref_data(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles, is_skin):
-    combined_ref_data = get_node_and_data_map(mesh, csv_file_name.combined, is_skin)
+def get_ref_data(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles):
+    combined_ref_data = get_node_and_data_map(mesh, csv_file_name.combined)
     per_id_ref_data = {}
     for mat_id, csv_file in csv_file_name.per_id.items():
-        per_id_ref_data[mat_id] = get_node_and_data_map(mesh, csv_file, is_skin)
+        per_id_ref_data[mat_id] = get_node_and_data_map(mesh, csv_file_name)
     return ReferenceData(combined_ref_data, per_id_ref_data)
 
 
@@ -3560,10 +3580,11 @@ def get_bodies_in_named_selection(
 
     rescoped_mat_field = rescoped_mat_field_op.outputs.fields_as_property_field()
 
-    return set(rescoped_mat_field.data)
+    return list(set(rescoped_mat_field.data))
 
-def get_ref_result(mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles, is_skin):
-    ref_data = get_ref_data(mesh, reference_csv_files, is_skin)
+
+def get_ref_result(mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles):
+    ref_data = get_ref_data(mesh, reference_csv_files)
 
     node_id_to_row_index_map_combined = {}
     for idx, node_id in enumerate(ref_data.combined.node_ids):
@@ -3606,6 +3627,125 @@ def get_ref_result(mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles, i
         data_per_node_and_material[node_id] = material_wise_data
 
     return data_per_node_and_material
+
+
+def get_ref_per_body_results_mechanical(
+    result: str,
+    csv_root_path: pathlib.Path,
+    mesh: MeshedRegion
+):
+    per_mat_files = glob.glob(
+        pathname=f"{result}_mat_*.txt",
+        root_dir=csv_root_path,
+    )
+
+    per_id_files = {}
+    for mat_file in per_mat_files:
+        mat_id = mat_file.split("_")[-1].split(".")[0]
+        per_id_files[mat_id] = csv_root_path / mat_file
+
+    reference_csv_files = ReferenceCsvFiles(
+        combined=csv_root_path / f"{result}_combined.txt",
+        per_id=per_id_files,
+    )
+
+    return get_ref_result(mesh, reference_csv_files)
+
+
+def get_ref_per_body_results_skin(
+        simulation: StaticMechanicalSimulation,
+        result_type: str,
+        mat_ids: list[int],
+        components: list[str],
+        skin_mesh: MeshedRegion
+):
+    mesh = simulation.mesh._meshed_region
+    split_by_property_op = operators.scoping.split_on_property_type()
+    split_by_property_op.inputs.mesh(mesh)
+    split_by_property_op.inputs.label1("mat")
+
+    body_scopings = split_by_property_op.eval()
+    # todo: what to do about named selection
+    if result_type == "stress":
+        elemental_nodal_result = simulation.stress(components=components)._fc
+    else:
+        raise RuntimeError("Invalid")
+    skin_values = {}
+
+    solid_mesh = elemental_nodal_result[0].meshed_region
+
+    for mat_id in mat_ids:
+        body_scoping = body_scopings.get_scoping({"mat": mat_id})
+        assert body_scoping.location == locations.elemental
+
+        rescope_op = operators.scoping.rescope_fc()
+        rescope_op.inputs.mesh_scoping(body_scoping)
+        rescope_op.inputs.fields_container(elemental_nodal_result)
+
+        transpose_scoping = operators.scoping.transpose()
+        transpose_scoping.inputs.mesh_scoping(body_scoping)
+        transpose_scoping.inputs.meshed_region(solid_mesh)
+        transpose_scoping.inputs.inclusive(1)
+
+        nodal_scoping = transpose_scoping.eval()
+
+        rescope_mesh_op_shell = operators.mesh.from_scoping()
+        rescope_mesh_op_shell.inputs.mesh(skin_mesh)
+        rescope_mesh_op_shell.inputs.scoping(nodal_scoping)
+        rescope_mesh_op_shell.inputs.inclusive(0)
+
+        rescoped_skin_mesh = rescope_mesh_op_shell.eval()
+
+        ser = operators.serialization.serializer()
+        ser.inputs.file_path("mesh")
+        ser.inputs.any_input1(solid_mesh)
+        ser.run()
+
+        ser.inputs.file_path("scoping")
+        ser.inputs.any_input1(body_scoping)
+        ser.run()
+
+        rescope_mesh_op_solid = operators.mesh.from_scoping()
+        rescope_mesh_op_solid.inputs.mesh(solid_mesh)
+        rescope_mesh_op_solid.inputs.scoping(body_scoping)
+
+        rescoped_solid_mesh = rescope_mesh_op_solid.eval()
+
+        for field in elemental_nodal_result:
+            field.meshed_region = rescoped_solid_mesh
+
+        nodal_field = get_expected_nodal_results(
+            simulation=simulation,
+            result_name=result_type,
+            mode=None,
+            skin_mesh=rescoped_skin_mesh,
+            expand_cyclic=False,
+            elemental_nodal_results=rescope_op.eval(),
+        )
+
+        skin_values_per_mat = {}
+        for node_id in nodal_field.scoping.ids:
+            entity_data = nodal_field.get_entity_data_by_id(node_id)
+            assert len(entity_data) == 1
+            skin_values_per_mat[node_id] = entity_data[0]
+
+        skin_values[mat_id] = skin_values_per_mat
+
+    all_node_ids = set()
+    for mat_id in mat_ids:
+        all_node_ids.update(skin_values[mat_id].keys())
+
+    expected_results = {}
+    for node_id in all_node_ids:
+        expected_results_per_node = {}
+        for mat_id in mat_ids:
+            if node_id in skin_values[mat_id]:
+                expected_results_per_node[mat_id] = skin_values[mat_id][node_id]
+        expected_results[node_id] = expected_results_per_node
+    return expected_results
+
+
+
 # Test more complex geometry
 # Test that average per body yields the same results for elemental results
 # Try again with skin True
@@ -3672,9 +3812,9 @@ def test_scoping_single_node():
 
 
 
-@pytest.mark.parametrize("is_skin", [False])
+@pytest.mark.parametrize("is_skin", [False, True])
 @pytest.mark.parametrize("named_selection_name", [None, "SELECTION"])
-@pytest.mark.parametrize("result", ["stress"])
+@pytest.mark.parametrize("result", ["stress", "elastic_strain"])
 @pytest.mark.parametrize("result_file, ref_file_folder", [
     (r"two_cubes_files\dp0\SYS\MECH\file.rst", "two_cubes_ref"),
     (r"complex_multi_body_files\dp0\SYS\MECH\file.rst", "complex_multi_body_ref")
@@ -3691,43 +3831,48 @@ def test_averaging_per_body(is_skin, result, result_file, ref_file_folder, named
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
+    mesh = simulation.mesh._meshed_region
+
     csv_root_path = root_path / ref_file_folder
+
+    components = ["XX"]
 
     named_selections = None
     if named_selection_name is not None:
        named_selections = [named_selection_name]
     res = getattr(simulation, f"{result}_nodal")(
-        skin=is_skin, average_across_bodies=False, components=["XX"], named_selections=named_selections
+        skin=is_skin, average_across_bodies=False, components=components, named_selections=named_selections
     )
 
-    if named_selection_name is not None:
-        bodies_in_named_selection = get_bodies_in_named_selection(
+    if named_selection_name is None:
+        mat_field = mesh.property_field("mat")
+        bodies_in_selection = list(set(mat_field.data))
+    else:
+        bodies_in_selection = get_bodies_in_named_selection(
             meshed_region=simulation.mesh._meshed_region,
             named_selection_name=named_selection_name
         )
 
-    per_mat_files = glob.glob(
-        pathname=f"{result}_mat_*.txt",
-        root_dir=csv_root_path,
-    )
-
-    per_id_files = {}
-    for mat_file in per_mat_files:
-        mat_id = mat_file.split("_")[-1].split(".")[0]
-        per_id_files[mat_id] = csv_root_path / mat_file
-
-    reference_csv_files = ReferenceCsvFiles(
-        combined=csv_root_path / f"{result}_combined.txt",
-        per_id=per_id_files,
-    )
-
-    ref_data = get_ref_result(res._fc[0].meshed_region, reference_csv_files, is_skin)
+    if is_skin:
+        ref_data = get_ref_per_body_results_skin(
+            simulation=simulation,
+            result_type=result,
+            mat_ids=bodies_in_selection,
+            components=components,
+            skin_mesh=res._fc[0].meshed_region
+        )
+    else:
+        ref_data = get_ref_per_body_results_mechanical(
+            result,
+            csv_root_path,
+            mesh
+        )
 
     for node_id in ref_data:
         for mat_id in ref_data[node_id]:
             mat_id_int = int(mat_id)
 
-            if named_selection_name is not None and mat_id_int not in bodies_in_named_selection:
+            if named_selection_name is not None and mat_id_int not in bodies_in_selection:
                 continue
             field = res._fc.get_field({"mat": mat_id_int})
             nodal_value = field.get_entity_data_by_id(node_id)
