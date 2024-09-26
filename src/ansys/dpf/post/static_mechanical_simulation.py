@@ -39,7 +39,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
-        average_across_bodies: bool = True,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -51,7 +50,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             create_operator_callable=self._model.operator,
             mesh_provider=self._model.metadata.mesh_provider,
-            average_across_bodies=average_across_bodies,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -116,7 +114,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -229,7 +226,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
-            average_across_bodies=average_across_bodies,
         )
 
         # Evaluate  the workflow
@@ -564,7 +560,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract nodal stress results from the simulation.
 
@@ -642,7 +637,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
-            average_across_bodies=average_across_bodies,
         )
 
     def stress_principal(
@@ -954,7 +948,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract equivalent von Mises stress results from the simulation.
 
@@ -1037,7 +1030,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
-            average_across_bodies=average_across_bodies,
         )
 
     def stress_eqv_von_mises_elemental(
@@ -1145,7 +1137,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = False,
     ) -> DataFrame:
         """Extract nodal equivalent von Mises stress results from the simulation.
 
@@ -1220,7 +1211,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
-            average_across_bodies=average_across_bodies,
         )
 
     def elastic_strain(
@@ -1345,7 +1335,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
-        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract stress results from the simulation.
 
@@ -1423,7 +1412,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             external_layer=external_layer,
             skin=skin,
-            average_across_bodies=average_across_bodies,
         )
 
     def elastic_strain_elemental(
