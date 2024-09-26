@@ -3554,17 +3554,15 @@ def get_ref_data(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles):
     combined_ref_data = get_node_and_data_map(mesh, csv_file_name.combined)
     per_id_ref_data = {}
     for mat_id, csv_file in csv_file_name.per_id.items():
-        per_id_ref_data[mat_id] = get_node_and_data_map(mesh, csv_file_name)
+        per_id_ref_data[mat_id] = get_node_and_data_map(mesh, csv_file)
     return ReferenceData(combined_ref_data, per_id_ref_data)
 
 
 def get_bodies_in_named_selection(
     meshed_region: MeshedRegion,
-    named_selection_name: str
+    named_selection_nodal_scoping: str
 ):
 
-    named_selection_nodal_scoping = meshed_region.named_selection(named_selection_name)
-    assert named_selection_nodal_scoping.location == locations.nodal
     named_selection_elemental_scoping = operators.scoping.transpose(
         mesh_scoping=named_selection_nodal_scoping,
         meshed_region=meshed_region,
@@ -3665,11 +3663,8 @@ def get_ref_per_body_results_skin(
     split_by_property_op.inputs.label1("mat")
 
     body_scopings = split_by_property_op.eval()
-    # todo: what to do about named selection
-    if result_type == "stress":
-        elemental_nodal_result = simulation.stress(components=components)._fc
-    else:
-        raise RuntimeError("Invalid")
+    elemental_nodal_result = getattr(simulation, result_type)(components=components)._fc
+
     skin_values = {}
 
     solid_mesh = elemental_nodal_result[0].meshed_region
@@ -3695,15 +3690,6 @@ def get_ref_per_body_results_skin(
         rescope_mesh_op_shell.inputs.inclusive(0)
 
         rescoped_skin_mesh = rescope_mesh_op_shell.eval()
-
-        ser = operators.serialization.serializer()
-        ser.inputs.file_path("mesh")
-        ser.inputs.any_input1(solid_mesh)
-        ser.run()
-
-        ser.inputs.file_path("scoping")
-        ser.inputs.any_input1(body_scoping)
-        ser.run()
 
         rescope_mesh_op_solid = operators.mesh.from_scoping()
         rescope_mesh_op_solid.inputs.mesh(solid_mesh)
@@ -3744,41 +3730,8 @@ def get_ref_per_body_results_skin(
         expected_results[node_id] = expected_results_per_node
     return expected_results
 
-
-
-# Test more complex geometry
 # Test that average per body yields the same results for elemental results
-# Try again with skin True
 
-
-def test_split_scoping():
-
-    root_path = pathlib.Path(r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body")
-
-    rst_file = root_path / pathlib.Path(r"complex_multi_body_files\dp0\SYS\MECH\file.rst")
-    simulation: StaticMechanicalSimulation = post.load_simulation(
-        data_sources=rst_file,
-        simulation_type=AvailableSimulationTypes.static_mechanical,
-    )
-
-    split_scope_wf = _create_split_scope_by_body_workflow(simulation._model._server)
-
-
-    meshed_region = simulation.mesh._meshed_region
-
-    split_scope_wf.connect(_WfNames.mesh, meshed_region)
-    split_scope_wf.connect(_WfNames.location, locations.nodal)
-
-
-
-    named_selection_nodal_scoping = meshed_region.named_selection("SELECTION")
-
-
-    split_scope_wf.connect(_WfNames.scoping, named_selection_nodal_scoping)
-
-    scope = split_scope_wf.get_output(_WfNames.scoping, dpf.ScopingsContainer)
-
-    pass
 
 def test_scoping_single_node():
 
@@ -3819,10 +3772,7 @@ def test_scoping_single_node():
     (r"two_cubes_files\dp0\SYS\MECH\file.rst", "two_cubes_ref"),
     (r"complex_multi_body_files\dp0\SYS\MECH\file.rst", "complex_multi_body_ref")
 ])
-def test_averaging_per_body(is_skin, result, result_file, ref_file_folder, named_selection_name):
-    if ref_file_folder == "complex_multi_body_ref" and is_skin:
-        return
-
+def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder, named_selection_name):
     root_path = pathlib.Path(r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body")
 
     rst_file = root_path / pathlib.Path(result_file)
@@ -3844,13 +3794,17 @@ def test_averaging_per_body(is_skin, result, result_file, ref_file_folder, named
         skin=is_skin, average_across_bodies=False, components=components, named_selections=named_selections
     )
 
+    named_selection = None
     if named_selection_name is None:
         mat_field = mesh.property_field("mat")
         bodies_in_selection = list(set(mat_field.data))
     else:
+        named_selection = mesh.named_selection(named_selection_name)
+        assert named_selection.location == "Nodal"
+
         bodies_in_selection = get_bodies_in_named_selection(
             meshed_region=simulation.mesh._meshed_region,
-            named_selection_name=named_selection_name
+            named_selection_nodal_scoping=named_selection
         )
 
     if is_skin:
@@ -3875,13 +3829,20 @@ def test_averaging_per_body(is_skin, result, result_file, ref_file_folder, named
             if named_selection_name is not None and mat_id_int not in bodies_in_selection:
                 continue
             field = res._fc.get_field({"mat": mat_id_int})
+
+            if named_selection is not None:
+                # Todd: Currently not working because nodal named selections are
+                # not correctly implemented. All nodes that are contained in the element_nodal
+                # result are part of the output.
+                #  assert set(field.scoping.ids).issubset(set(named_selection.ids)), set(field.scoping.ids).difference(set(named_selection.ids))
+                pass
             nodal_value = field.get_entity_data_by_id(node_id)
 
             assert np.isclose(
                 nodal_value[0], ref_data[node_id][mat_id], rtol=1e-3
             ), f"{result}, {mat_id}, {node_id}"
 
-
+# Todo: remove
 def test_averaging_across_bodies():
     import pyvista as pv
 
