@@ -24,7 +24,10 @@ from ansys.dpf.post import StaticMechanicalSimulation
 from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
-from ansys.dpf.post.result_workflows._sub_workflows import _create_split_scope_by_body_workflow
+from ansys.dpf.post.result_workflows._component_helper import ResultCategory
+from ansys.dpf.post.result_workflows._sub_workflows import (
+    _create_split_scope_by_body_workflow,
+)
 from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
 from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
@@ -181,9 +184,9 @@ def get_expected_skin_results(
                 field_out = invariant_op.outputs.field()
 
             for skin_element_id in expected_skin_values_per_element:
-                expected_skin_values_per_element[skin_element_id] = field_out.get_entity_data_by_id(
+                expected_skin_values_per_element[
                     skin_element_id
-                )
+                ] = field_out.get_entity_data_by_id(skin_element_id)
         expected_skin_values.update(expected_skin_values_per_element)
     return expected_skin_values
 
@@ -217,7 +220,6 @@ def get_and_check_elemental_skin_results(
         invariant_op.inputs.fields_container(fc_elemental_nodal)
         fc_elemental_nodal = invariant_op.outputs.fields_container()
 
-
     expected_skin_values = get_expected_skin_results(
         create_operator_callable=static_simulation._model.operator,
         element_ids=element_ids,
@@ -228,9 +230,9 @@ def get_and_check_elemental_skin_results(
     )
 
     for skin_element_id, expected_skin_value in expected_skin_values.items():
-        actual_skin_value = result_skin_scoped_elemental._fc[
-            0
-        ].get_entity_data_by_id(skin_element_id)
+        actual_skin_value = result_skin_scoped_elemental._fc[0].get_entity_data_by_id(
+            skin_element_id
+        )
         assert np.allclose(actual_skin_value, expected_skin_value)
 
 
@@ -3538,14 +3540,18 @@ def get_node_and_data_map(mesh: MeshedRegion, csv_file_name):
         node_coordinates_dpf = node_coordinates.data
         node_ids = []
         for row_index, csv_coord in enumerate(node_coordinates_csv):
-            index = np.where(np.isclose(node_coordinates_dpf, csv_coord, rtol=1E-3).all(axis=1))[0]
+            index = np.where(
+                np.isclose(node_coordinates_dpf, csv_coord, rtol=1e-3).all(axis=1)
+            )[0]
             if index.size > 0:
                 node_id = mesh.nodes.scoping.ids[index[0]]
 
                 assert index.size == 1
                 node_ids.append(node_id)
             else:
-                raise RuntimeError(f"Node not found in dpf mesh. Node coordinate: {csv_coord}")
+                raise RuntimeError(
+                    f"Node not found in dpf mesh. Node coordinate: {csv_coord}"
+                )
 
         return ReferenceDataItem(node_ids, data_rows)
 
@@ -3559,10 +3565,8 @@ def get_ref_data(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles):
 
 
 def get_bodies_in_named_selection(
-    meshed_region: MeshedRegion,
-    named_selection_nodal_scoping: str
+    meshed_region: MeshedRegion, named_selection_nodal_scoping: str
 ):
-
     named_selection_elemental_scoping = operators.scoping.transpose(
         mesh_scoping=named_selection_nodal_scoping,
         meshed_region=meshed_region,
@@ -3628,9 +3632,7 @@ def get_ref_result(mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles):
 
 
 def get_ref_per_body_results_mechanical(
-    result: str,
-    csv_root_path: pathlib.Path,
-    mesh: MeshedRegion
+    result: str, csv_root_path: pathlib.Path, mesh: MeshedRegion
 ):
     per_mat_files = glob.glob(
         pathname=f"{result}_mat_*.txt",
@@ -3651,11 +3653,11 @@ def get_ref_per_body_results_mechanical(
 
 
 def get_ref_per_body_results_skin(
-        simulation: StaticMechanicalSimulation,
-        result_type: str,
-        mat_ids: list[int],
-        components: list[str],
-        skin_mesh: MeshedRegion
+    simulation: StaticMechanicalSimulation,
+    result_type: str,
+    mat_ids: list[int],
+    components: list[str],
+    skin_mesh: MeshedRegion,
 ):
     mesh = simulation.mesh._meshed_region
     split_by_property_op = operators.scoping.split_on_property_type()
@@ -3730,25 +3732,28 @@ def get_ref_per_body_results_skin(
         expected_results[node_id] = expected_results_per_node
     return expected_results
 
+
 # Test that average per body yields the same results for elemental results
 
 
 def test_scoping_single_node():
+    root_path = pathlib.Path(
+        r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body"
+    )
 
-    root_path = pathlib.Path(r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body")
-
-    rst_file = root_path / pathlib.Path(r"complex_multi_body_files\dp0\SYS\MECH\file.rst")
+    rst_file = root_path / pathlib.Path(
+        r"complex_multi_body_files\dp0\SYS\MECH\file.rst"
+    )
     simulation: StaticMechanicalSimulation = post.load_simulation(
         data_sources=rst_file,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
-    nodal_stress = simulation.stress_nodal(
-        node_ids=[1], skin=True
-    )
+    nodal_stress = simulation.stress_nodal(node_ids=[1], skin=True)
 
     nodal_stress.mesh_index
     import pyvista
+
     pyvista.OFF_SCREEN = False
 
     split_scope_wf = _create_split_scope_by_body_workflow(simulation._model._server)
@@ -3764,16 +3769,22 @@ def test_scoping_single_node():
     pass
 
 
-
 @pytest.mark.parametrize("is_skin", [False, True])
 @pytest.mark.parametrize("named_selection_name", [None, "SELECTION"])
 @pytest.mark.parametrize("result", ["stress", "elastic_strain"])
-@pytest.mark.parametrize("result_file, ref_file_folder", [
-    (r"two_cubes_files\dp0\SYS\MECH\file.rst", "two_cubes_ref"),
-    (r"complex_multi_body_files\dp0\SYS\MECH\file.rst", "complex_multi_body_ref")
-])
-def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder, named_selection_name):
-    root_path = pathlib.Path(r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body")
+@pytest.mark.parametrize(
+    "result_file, ref_file_folder",
+    [
+        (r"two_cubes_files\dp0\SYS\MECH\file.rst", "two_cubes_ref"),
+        (r"complex_multi_body_files\dp0\SYS\MECH\file.rst", "complex_multi_body_ref"),
+    ],
+)
+def test_averaging_per_body_nodal(
+    is_skin, result, result_file, ref_file_folder, named_selection_name
+):
+    root_path = pathlib.Path(
+        r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body"
+    )
 
     rst_file = root_path / pathlib.Path(result_file)
     simulation: StaticMechanicalSimulation = post.load_simulation(
@@ -3789,9 +3800,15 @@ def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder,
 
     named_selections = None
     if named_selection_name is not None:
-       named_selections = [named_selection_name]
-    res = getattr(simulation, f"{result}_nodal")(
-        skin=is_skin, average_across_bodies=False, components=components, named_selections=named_selections
+        named_selections = [named_selection_name]
+    res = simulation._get_result(
+        base_name=operator_map[result],
+        location=locations.nodal,
+        category=ResultCategory.matrix,
+        skin=is_skin,
+        average_across_bodies=False,
+        components=components,
+        named_selections=named_selections,
     )
 
     named_selection = None
@@ -3804,7 +3821,7 @@ def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder,
 
         bodies_in_selection = get_bodies_in_named_selection(
             meshed_region=simulation.mesh._meshed_region,
-            named_selection_nodal_scoping=named_selection
+            named_selection_nodal_scoping=named_selection,
         )
 
     if is_skin:
@@ -3813,20 +3830,19 @@ def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder,
             result_type=result,
             mat_ids=bodies_in_selection,
             components=components,
-            skin_mesh=res._fc[0].meshed_region
+            skin_mesh=res._fc[0].meshed_region,
         )
     else:
-        ref_data = get_ref_per_body_results_mechanical(
-            result,
-            csv_root_path,
-            mesh
-        )
+        ref_data = get_ref_per_body_results_mechanical(result, csv_root_path, mesh)
 
     for node_id in ref_data:
         for mat_id in ref_data[node_id]:
             mat_id_int = int(mat_id)
 
-            if named_selection_name is not None and mat_id_int not in bodies_in_selection:
+            if (
+                named_selection_name is not None
+                and mat_id_int not in bodies_in_selection
+            ):
                 continue
             field = res._fc.get_field({"mat": mat_id_int})
 
@@ -3842,7 +3858,64 @@ def test_averaging_per_body_nodal(is_skin, result, result_file, ref_file_folder,
                 nodal_value[0], ref_data[node_id][mat_id], rtol=1e-3
             ), f"{result}, {mat_id}, {node_id}"
 
-# Todo: remove
+
+@pytest.mark.parametrize("is_skin", [False, True])
+@pytest.mark.parametrize("named_selection_name", [None, "SELECTION"])
+@pytest.mark.parametrize("result", ["stress", "elastic_strain"])
+@pytest.mark.parametrize(
+    "result_file, ref_file_folder",
+    [
+        (r"two_cubes_files\dp0\SYS\MECH\file.rst", "two_cubes_ref"),
+        (r"complex_multi_body_files\dp0\SYS\MECH\file.rst", "complex_multi_body_ref"),
+    ],
+)
+def test_averaging_per_body_elemental(
+    is_skin, result, result_file, ref_file_folder, named_selection_name
+):
+    root_path = pathlib.Path(
+        r"C:\Users\jvonrick\OneDrive - ANSYS, Inc\General - Remote Post Processing\Models\average_per_body"
+    )
+
+    rst_file = root_path / pathlib.Path(result_file)
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=rst_file,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    components = ["XX"]
+
+    named_selections = None
+    if named_selection_name is not None:
+        named_selections = [named_selection_name]
+
+    kwargs = {
+        "base_name": operator_map[result],
+        "location": locations.elemental,
+        "category": ResultCategory.matrix,
+        "skin": is_skin,
+        "components": components,
+        "named_selections": named_selections,
+    }
+    res_per_body_fc = simulation._get_result(**kwargs, average_across_bodies=False)._fc
+
+    res_across_bodies_fc = simulation._get_result(
+        **kwargs, average_across_bodies=True
+    )._fc
+
+    assert len(res_across_bodies_fc) == 1
+    res_across_bodies_field = res_across_bodies_fc[0]
+
+    mat_property_field = res_across_bodies_field.meshed_region.property_field("mat")
+    for element_id in res_across_bodies_field.scoping.ids:
+        mat_id_arr = mat_property_field.get_entity_data_by_id(element_id)
+        assert len(mat_id_arr) == 1
+
+        res_per_body_field = res_per_body_fc.get_field({"mat": mat_id_arr[0]})
+        assert res_across_bodies_field.get_entity_data_by_id(
+            element_id
+        ) == res_per_body_field.get_entity_data_by_id(element_id)
+
+
 def test_averaging_across_bodies():
     import pyvista as pv
 
