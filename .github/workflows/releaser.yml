@@ -17,8 +17,6 @@ on:
 
 env:
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
-  MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
-  MEILISEARCH_PUBLIC_API_KEY: ${{ secrets.MEILISEARCH_PUBLIC_API_KEY }}
 
 jobs:
 
@@ -111,25 +109,6 @@ jobs:
         run: |
           python3 -m venv .venv
           .venv/bin/python -m pip install -e .
-
-      - name: "Get the version to PyMeilisearch"
-        run: |
-          VERSION=$(.venv/bin/python -c "from ansys.dpf.post import __version__; print('.'.join(__version__.split('.')[:2]))")
-          VERSION_MEILI=$(.venv/bin/python -c "from ansys.dpf.post import __version__; print('-'.join(__version__.split('.')[:2]))")
-          echo "Calculated VERSION: $VERSION"
-          echo "Calculated VERSION_MEILI: $VERSION_MEILI"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "VERSION_MEILI=$VERSION_MEILI" >> $GITHUB_ENV
-
-      - name: "Deploy the latest documentation index"
-        uses: ansys/actions/doc-deploy-index@v8
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}/version/${{ env.VERSION }}
-          index-name: pydpf-post-v${{ env.VERSION_MEILI }}
-          host-url: ${{ vars.MEILISEARCH_HOST_URL }}
-          api-key: ${{ env.MEILISEARCH_API_KEY }}
-          doc-artifact-name: HTML-doc-ansys-dpf-post.zip
-          decompress-artifact: true
 
   update_ansys_lab_examples:
     uses: ./.github/workflows/ansys_lab.yml
