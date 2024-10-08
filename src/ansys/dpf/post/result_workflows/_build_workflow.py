@@ -237,8 +237,7 @@ def _create_result_workflow_inputs(
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
     mesh_provider: Any,
-    # todo: make this input required
-    average_across_bodies: bool = True,
+    average_across_bodies: bool,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:

@@ -37,6 +37,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
+        average_across_bodies: bool = True,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -48,6 +49,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             create_operator_callable=self._model.operator,
             mesh_provider=self._model.metadata.mesh_provider,
+            average_across_bodies=average_across_bodies,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -110,6 +112,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -171,6 +174,9 @@ class TransientMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        average_across_bodies:
+            If true, averaging happens across all bodies. If False the resulting dataframe
+            contains an entry for each body.
 
         Returns
         -------
@@ -214,6 +220,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
+            average_across_bodies=average_across_bodies,
         )
 
         # Evaluate  the workflow

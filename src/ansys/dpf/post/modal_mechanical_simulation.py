@@ -39,6 +39,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
+        average_across_bodies: bool = True,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -50,6 +51,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             create_operator_callable=self._model.operator,
             mesh_provider=self._model.metadata.mesh_provider,
+            average_across_bodies=average_across_bodies,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -111,6 +113,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        average_across_bodies: bool = True,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -176,6 +179,9 @@ class ModalMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        average_across_bodies:
+            If true, averaging happens across all bodies. If False the resulting dataframe
+            contains an entry for each body.
 
         Returns
         -------

@@ -184,6 +184,9 @@ class StaticMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        average_across_bodies:
+            If true, averaging happens across all bodies. If False the resulting dataframe
+            contains an entry for each body.
 
         Returns
         -------

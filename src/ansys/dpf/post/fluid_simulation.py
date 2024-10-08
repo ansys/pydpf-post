@@ -254,6 +254,7 @@ class FluidSimulation(Simulation):
 
         _connect_initial_results_inputs(
             initial_result_workflow=initial_result_workflow,
+            split_by_body_workflow=None,
             force_elemental_nodal=False,
             location=location,
             selection=selection,

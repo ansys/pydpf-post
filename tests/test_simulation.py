@@ -3844,7 +3844,7 @@ def test_averaging_per_body_nodal(
     ],
 )
 def test_averaging_per_body_elemental(
-    request, is_skin, result, result_file, ref_file_folder, named_selection_name
+    request, is_skin, result, result_file, named_selection_name
 ):
     # Expectation is that elemental results are not affected by the average per body flag.
 
