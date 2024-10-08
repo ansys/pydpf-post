@@ -3545,9 +3545,9 @@ def get_node_and_data_map(
                 np.isclose(node_coordinates_dpf, csv_coord, rtol=1e-3).all(axis=1)
             )[0]
             if index.size > 0:
+                assert index.size == 1
                 node_id = mesh.nodes.scoping.ids[index[0]]
 
-                assert index.size == 1
                 node_ids.append(node_id)
             else:
                 raise RuntimeError(
@@ -3754,6 +3754,10 @@ def get_ref_per_body_results_skin(
 def test_averaging_per_body_nodal(
     request, is_skin, result, result_file, ref_files, named_selection_name
 ):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        # average per body not supported before 9.0
+        return
+
     ref_files = request.getfixturevalue(ref_files)
 
     result_file = request.getfixturevalue(result_file)
@@ -3847,6 +3851,10 @@ def test_averaging_per_body_elemental(
     request, is_skin, result, result_file, named_selection_name
 ):
     # Expectation is that elemental results are not affected by the average per body flag.
+
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        # average per body not supported before 9.0
+        return
 
     result_file = request.getfixturevalue(result_file)
     rst_file = pathlib.Path(result_file)
