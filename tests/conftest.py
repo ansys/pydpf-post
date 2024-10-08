@@ -3,11 +3,13 @@
 Launch or connect to a persistent local DPF service to be shared in
 pytest as a sesson fixture
 """
+import dataclasses
 import os
 import pathlib
 import re
 
 from ansys.dpf.core.check_version import get_server_version, meets_version
+from ansys.dpf.core.examples.downloads import _download_file
 import matplotlib as mpl
 import pytest
 import pyvista as pv
@@ -146,6 +148,61 @@ def plate_msup():
     UnitTestDataFiles/DataProcessing/expansion/msup/Transient/plate1/file.rst
     """
     return examples.msup_transient
+
+
+@pytest.fixture()
+def average_per_body_two_cubes():
+    return _download_file(
+        "result_files/average_per_body/two_cubes", "file.rst", True, None, False
+    )
+
+
+@pytest.fixture()
+def average_per_body_complex_multi_body():
+    return _download_file(
+        "result_files/average_per_body/complex_multi_body",
+        "file.rst",
+        True,
+        None,
+        False,
+    )
+
+
+@dataclasses.dataclass
+class ReferenceCsvFiles:
+    # reference result with all bodies combined
+    # The node ids of nodes at body interfaces are duplicated
+    combined: pathlib.Path
+    # reference result per body (node ids are unique)
+    per_id: dict[str, pathlib.Path]
+
+
+def get_per_body_ref_files(
+    root_path: str, n_bodies: int
+) -> dict[str, ReferenceCsvFiles]:
+    ref_files = {}
+    for result in ["stress", "elastic_strain"]:
+        per_mat_id_dict = {}
+        for mat in range(1, n_bodies + 1):
+            per_mat_id_dict[str(mat)] = _download_file(
+                root_path, f"{result}_mat_{mat}.txt", True, None, False
+            )
+        combined = _download_file(
+            root_path, f"{result}_combined.txt", True, None, False
+        )
+        ref_files[result] = ReferenceCsvFiles(combined=combined, per_id=per_mat_id_dict)
+
+    return ref_files
+
+
+@pytest.fixture()
+def average_per_body_complex_multi_body_ref():
+    return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+
+
+@pytest.fixture()
+def average_per_body_two_cubes_ref():
+    return get_per_body_ref_files("result_files/average_per_body/two_cubes", 2)
 
 
 @pytest.fixture()
