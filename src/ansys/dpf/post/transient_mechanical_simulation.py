@@ -69,12 +69,6 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             force_elemental_nodal=result_workflows.force_elemental_nodal,
         )
 
-        if result_workflows.mesh_workflow:
-            selection.spatial_selection._selection.connect_with(
-                result_workflows.mesh_workflow,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
-            )
-
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
         output_wf = _append_workflows(

@@ -12,6 +12,14 @@ class _CreateOperatorCallable(Protocol):
         ...
 
 
+body_defining_properties = [
+    "mat",
+    "apdl_element_type",
+    "elshape",
+    "apdl_real_id",
+]
+
+
 def _append_workflows(workflows: list[Workflow], current_output_workflow: Workflow):
     # Append multiple workflows to last_wf. The new
     # workflows must have an _WfNames.input_data and _WfNames.output_data pin. The

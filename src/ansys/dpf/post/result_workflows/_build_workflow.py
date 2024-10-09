@@ -14,7 +14,6 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_equivalent_workflow,
     _create_extract_component_workflow,
     _create_initial_result_workflow,
-    _create_mesh_workflow,
     _create_norm_workflow,
     _create_principal_workflow,
     _create_split_scope_by_body_workflow,
@@ -50,8 +49,6 @@ class ResultWorkflows:
     compute_equivalent_before_average: bool = False
     # List of component names at the end of the workflow. If None, the result is a scalar.
     components: Optional[list[str]] = None
-    # Workflow to compute the mesh
-    mesh_workflow: Optional[Workflow] = None
     # Workflow to compute the principal components of the result
     principal_workflow: Optional[Workflow] = None
     # Workflow to compute the equivalent result
@@ -72,11 +69,6 @@ class _AveragingWorkflowInputs:
 
 
 @dataclasses.dataclass
-class _MeshWorkflowInputs:
-    mesh_provider: Any
-
-
-@dataclasses.dataclass
 class _SweepingPhaseWorkflowInputs:
     amplitude: bool = (False,)
     sweeping_phase: Union[float, None] = (None,)
@@ -94,7 +86,6 @@ class _CreateWorkflowInputs:
     components_to_extract: list[int]
     should_extract_components: bool
     average_across_bodies: bool
-    mesh_workflow_inputs: Optional[_MeshWorkflowInputs] = None
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
 
 
@@ -158,12 +149,6 @@ def _create_result_workflows(
         force_elemental_nodal=force_elemental_nodal,
         components=create_workflow_inputs.component_names,
     )
-
-    if create_workflow_inputs.mesh_workflow_inputs is not None:
-        result_workflows.mesh_workflow = _create_mesh_workflow(
-            mesh_provider=create_workflow_inputs.mesh_workflow_inputs.mesh_provider,
-            server=server,
-        )
 
     if create_workflow_inputs.has_principal:
         result_workflows.principal_workflow = _create_principal_workflow(
@@ -260,10 +245,6 @@ def _create_result_workflow_inputs(
         force_elemental_nodal=force_elemental_nodal,
     )
 
-    mesh_workflow_inputs: Optional[_MeshWorkflowInputs] = None
-    if selection.spatial_selection.requires_mesh:
-        mesh_workflow_inputs = _MeshWorkflowInputs(mesh_provider=mesh_provider)
-
     has_principal = category == ResultCategory.principal
 
     should_extract_components = (
@@ -286,7 +267,6 @@ def _create_result_workflow_inputs(
         components_to_extract=components_to_extract,
         should_extract_components=should_extract_components,
         has_principal=has_principal,
-        mesh_workflow_inputs=mesh_workflow_inputs,
         has_equivalent=category == ResultCategory.equivalent,
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
         average_across_bodies=average_across_bodies,

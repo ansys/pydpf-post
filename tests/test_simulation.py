@@ -3812,6 +3812,28 @@ def test_averaging_per_body_nodal(
         # get reference data from mechanical
         ref_data = get_ref_per_body_results_mechanical(ref_files[result], mesh)
 
+    def get_expected_label_space_by_mat_id(mat_id: int):
+        return {
+            "apdl_element_type": 185,
+            "apdl_real_id": 1,
+            "elshape": 1,
+            "mat": mat_id,
+            "time": 1,
+        }
+
+    label_spaces_by_mat_id = {}
+    for idx in range(len(bodies_in_selection)):
+        label_space = res._fc.get_label_space(idx)
+        label_spaces_by_mat_id[label_space["mat"]] = label_space
+
+    assert len(label_spaces_by_mat_id) == len(bodies_in_selection)
+    for mat_id in bodies_in_selection:
+        assert label_spaces_by_mat_id[mat_id] == get_expected_label_space_by_mat_id(
+            mat_id
+        )
+
+    assert res._fc.get_label_space(len(bodies_in_selection)) == {}
+
     for node_id in ref_data:
         for mat_id in ref_data[node_id]:
             mat_id_int = int(mat_id)

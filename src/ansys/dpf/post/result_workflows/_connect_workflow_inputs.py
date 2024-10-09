@@ -3,6 +3,10 @@ from typing import Any, Optional
 from ansys.dpf.core import MeshedRegion, Scoping, ScopingsContainer, Workflow
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
+from ansys.dpf.post.result_workflows._sub_workflows import (
+    _enrich_mesh_with_property_fields,
+)
+from ansys.dpf.post.result_workflows._utils import body_defining_properties
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
@@ -87,6 +91,15 @@ def _connect_initial_results_inputs(
     extracts the raw results from the data sources.
     """
     selection_wf = selection.spatial_selection._selection
+
+    if selection.spatial_selection.requires_mesh:
+        selection_wf.connect(_WfNames.initial_mesh, mesh)
+
+    if split_by_body_workflow is not None:
+        _enrich_mesh_with_property_fields(
+            mesh, body_defining_properties, streams_provider
+        )
+
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
         if force_elemental_nodal:
