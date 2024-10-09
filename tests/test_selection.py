@@ -6,7 +6,10 @@ from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
 from ansys.dpf.post.selection import SpatialSelection
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
+)
 
 
 def test_spatial_selection_select_nodes(allkindofcomplexity):
@@ -99,7 +102,11 @@ class TestSpatialSelectionFaces:
         )
         scoping = selection._evaluate_on(fluent_simulation)
         assert scoping.location == post.locations.faces
-        assert np.allclose(scoping.ids, [12481, 12502, 39941, 43681, 12504, 12505])
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+            list_ref = [11479, 11500, -1, 11502, 11503]
+        else:
+            list_ref = [12481, 12502, 39941, 43681, 12504, 12505]
+        assert np.allclose(scoping.ids, list_ref)
 
 
 #
