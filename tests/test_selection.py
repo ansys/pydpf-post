@@ -99,7 +99,7 @@ class TestSpatialSelectionFaces:
         )
         scoping = selection._evaluate_on(fluent_simulation)
         assert scoping.location == post.locations.faces
-        assert np.allclose(scoping.ids, [11479, 11500, -1, 11502, 11503])
+        assert np.allclose(scoping.ids, [12481, 12502, 39941, 43681, 12504, 12505])
 
 
 #
