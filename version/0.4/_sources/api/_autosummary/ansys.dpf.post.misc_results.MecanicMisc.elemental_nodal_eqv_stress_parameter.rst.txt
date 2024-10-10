@@ -1,0 +1,6 @@
+elemental\_nodal\_eqv\_stress\_parameter
+========================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_nodal_eqv_stress_parameter
