@@ -242,8 +242,15 @@ def _enrich_mesh_with_property_fields(
         if property_name not in mesh.available_property_fields:
             property_operator.inputs.property_name(property_name)
             property_field = property_operator.eval()
-            mesh.set_property_field(property_name, property_field)
 
+            # Rescope the property field to the element scoping of the mesh
+            # to ensure the split by property operator works correctly
+            rescope_op = operators.scoping.rescope_property_field(
+                mesh_scoping=mesh.elements.scoping,
+                fields=property_field
+            )
+
+            mesh.set_property_field(property_name, rescope_op.outputs.fields_as_property_field())
 
 def _create_split_scope_by_body_workflow(server):
     split_scope_by_body_wf = Workflow(server=server)
