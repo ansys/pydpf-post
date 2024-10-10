@@ -43,6 +43,7 @@ class _WfNames:
     initial_mesh = "initial_mesh"
     mesh = "mesh"
     location = "location"
+    scoping_location = "scoping_location"
     external_layer = "external_layer"
     skin = "skin"
     read_cyclic = "read_cyclic"
@@ -493,6 +494,7 @@ class SpatialSelection:
             _connect_any(
                 transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
             )
+
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )

@@ -7,7 +7,7 @@ Simulation
 from abc import ABC
 from os import PathLike
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
@@ -503,14 +503,17 @@ class Simulation(ABC):
                 values = fc.get_available_ids_for_label(label)
                 # Then try to gather the correspond string values for display
                 try:
-                    label_support = self.result_info.qualifier_label_support(label)
-                    names_field = label_support.string_field_support_by_property(
-                        "names"
-                    )
-                    values = [
-                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
-                        for value in values
-                    ]
+                    if label == "mat":
+                        values = fc.get_available_ids_for_label("mat")
+                    else:
+                        label_support = self.result_info.qualifier_label_support(label)
+                        names_field = label_support.string_field_support_by_property(
+                            "names"
+                        )
+                        values = [
+                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                            for value in values
+                        ]
                 except (
                     ValueError,
                     errors.DPFServerException,
@@ -574,6 +577,7 @@ class MechanicalSimulation(Simulation, ABC):
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
+        average_per_body: Optional[bool] = False,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -612,7 +616,12 @@ class MechanicalSimulation(Simulation, ABC):
             location = (
                 locations.elemental_nodal
                 if _requires_manual_averaging(
-                    base_name, location, category, None, self._model.operator
+                    base_name,
+                    location,
+                    category,
+                    None,
+                    self._model.operator,
+                    average_per_body,
                 )
                 else location
             )

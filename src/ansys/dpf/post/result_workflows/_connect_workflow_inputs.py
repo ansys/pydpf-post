@@ -1,8 +1,12 @@
-from typing import Any
+from typing import Any, Optional
 
 from ansys.dpf.core import MeshedRegion, Scoping, ScopingsContainer, Workflow
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
+from ansys.dpf.post.result_workflows._sub_workflows import (
+    _enrich_mesh_with_property_fields,
+)
+from ansys.dpf.post.result_workflows._utils import AveragingConfig
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
@@ -71,6 +75,7 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf: Workflo
 
 def _connect_initial_results_inputs(
     initial_result_workflow: Workflow,
+    split_by_body_workflow: Optional[Workflow],
     force_elemental_nodal: bool,
     location: str,
     selection: Selection,
@@ -79,14 +84,36 @@ def _connect_initial_results_inputs(
     mesh: MeshedRegion,
     streams_provider: Any,
     data_sources: Any,
+    averaging_config: AveragingConfig,
 ):
     """Connects the inputs of the initial result workflow.
 
     The initial result workflow is the first workflow in the result workflows chain, which
     extracts the raw results from the data sources.
     """
+    selection_wf = selection.spatial_selection._selection
+
+    if selection.spatial_selection.requires_mesh:
+        selection_wf.connect(_WfNames.initial_mesh, mesh)
+
+    if averaging_config.average_per_body:
+        _enrich_mesh_with_property_fields(
+            mesh, averaging_config.body_defining_properties, streams_provider
+        )
+
+    if split_by_body_workflow is not None:
+        split_by_body_workflow.connect(_WfNames.mesh, mesh)
+        if force_elemental_nodal:
+            split_by_body_workflow.connect(_WfNames.scoping_location, "ElementalNodal")
+        else:
+            split_by_body_workflow.connect(_WfNames.scoping_location, location)
+        split_by_body_workflow.connect_with(
+            selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
+        )
+        selection_wf = split_by_body_workflow
+
     initial_result_workflow.connect_with(
-        selection.spatial_selection._selection,
+        selection_wf,
         output_input_names={"scoping": "mesh_scoping"},
     )
 
