@@ -2,6 +2,7 @@ import dataclasses
 from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
+from ansys.dpf.core.common import elemental_properties
 
 from ansys.dpf.post.selection import _WfNames
 
@@ -27,9 +28,9 @@ class AveragingConfig:
 
 default_per_body_averaging_config = AveragingConfig(
     body_defining_properties=[
-        "mat",
-        "apdl_element_type",
-        "elshape",
+        elemental_properties.material,
+        elemental_properties.apdl_element_type,
+        elemental_properties.element_shape,
         "apdl_real_id",
     ],
     average_per_body=True,
