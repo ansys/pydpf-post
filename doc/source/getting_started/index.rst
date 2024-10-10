@@ -10,7 +10,7 @@ or later or of the standalone DPF Server.
 For more information on getting a licensed copy of Ansys, visit the
 `Ansys website <https://www.ansys.com/>`_.
 For more information on getting the standalone DPF Server, visit the
-`PyDPF-Core documentation <https://dpf.docs.pyansys.com/dev/user_guide/getting_started_with_dpf_server.html>`_.
+`PyDPF-Core documentation <https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html>`_.
 
 
 .. toctree::
