@@ -279,6 +279,10 @@ def license_context():
         yield
 
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1 = meets_version(
+    get_server_version(core._global_server()), "9.1"
+)
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
     get_server_version(core._global_server()), "9.0"
 )
