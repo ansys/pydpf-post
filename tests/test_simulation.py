@@ -3818,10 +3818,8 @@ def test_averaging_per_body_nodal(
 
     def get_expected_label_space_by_mat_id(mat_id: int):
         return {
-            "apdl_element_type": 185,
-            "apdl_real_id": 1,
-            "elshape": 1,
-            "mat": mat_id,
+            elemental_properties.material: mat_id,
+            "mapdl_element_type_id": mat_id,
             "time": 1,
         }
 
