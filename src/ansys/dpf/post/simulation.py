@@ -577,7 +577,7 @@ class MechanicalSimulation(Simulation, ABC):
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
-        average_across_bodies: Optional[bool] = True,
+        average_per_body: Optional[bool] = False,
     ) -> Selection:
         tot = (
             (node_ids is not None)
@@ -621,7 +621,7 @@ class MechanicalSimulation(Simulation, ABC):
                     category,
                     None,
                     self._model.operator,
-                    average_across_bodies,
+                    average_per_body,
                 )
                 else location
             )

@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
@@ -12,12 +13,27 @@ class _CreateOperatorCallable(Protocol):
         ...
 
 
-body_defining_properties = [
-    "mat",
-    "apdl_element_type",
-    "elshape",
-    "apdl_real_id",
-]
+@dataclasses.dataclass
+class AveragingConfig:
+    """Configuration for averaging of results."""
+
+    # List of properties that define a body. The mesh is split by these properties to
+    # get the bodies.
+    body_defining_properties: Optional[list[str]] = None
+    # If True, the results are averaged per body. The bodies are determined
+    # by the body_defining_properties.
+    average_per_body: bool = False
+
+
+default_per_body_averaging_config = AveragingConfig(
+    body_defining_properties=[
+        "mat",
+        "apdl_element_type",
+        "elshape",
+        "apdl_real_id",
+    ],
+    average_per_body=True,
+)
 
 
 def _append_workflows(workflows: list[Workflow], current_output_workflow: Workflow):

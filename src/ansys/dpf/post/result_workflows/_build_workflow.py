@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from ansys.dpf.core import Operator, Workflow
 from ansys.dpf.core.available_result import _result_properties
@@ -19,7 +19,10 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_split_scope_by_body_workflow,
     _create_sweeping_phase_workflow,
 )
-from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
+from ansys.dpf.post.result_workflows._utils import (
+    AveragingConfig,
+    _CreateOperatorCallable,
+)
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
@@ -85,7 +88,7 @@ class _CreateWorkflowInputs:
     component_names: list[str]
     components_to_extract: list[int]
     should_extract_components: bool
-    average_across_bodies: bool
+    averaging_config: AveragingConfig
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
 
 
@@ -95,12 +98,12 @@ def _requires_manual_averaging(
     category: ResultCategory,
     selection: Optional[Selection],
     create_operator_callable: Callable[[str], Operator],
-    average_across_bodies: bool,
+    average_per_body: bool,
 ):
     res = _result_properties[base_name] if base_name in _result_properties else None
     native_location = res["location"] if res is not None else None
 
-    if not average_across_bodies and (
+    if average_per_body and (
         native_location == locations.elemental
         or native_location == locations.elemental_nodal
     ):
@@ -203,10 +206,12 @@ def _create_result_workflows(
             sweeping_phase=create_workflow_inputs.sweeping_phase_workflow_inputs.sweeping_phase,
         )
 
-    if not create_workflow_inputs.average_across_bodies:
+    avg_config = create_workflow_inputs.averaging_config
+    if avg_config.average_per_body:
         result_workflows.split_by_bodies_workflow = (
             _create_split_scope_by_body_workflow(
                 server=server,
+                body_defining_properties=avg_config.body_defining_properties,
             )
         )
 
@@ -221,8 +226,7 @@ def _create_result_workflow_inputs(
     norm: bool,
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
-    mesh_provider: Any,
-    average_across_bodies: bool,
+    averaging_config: AveragingConfig,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:
@@ -237,7 +241,7 @@ def _create_result_workflow_inputs(
         category=category,
         selection=selection,
         create_operator_callable=create_operator_callable,
-        average_across_bodies=average_across_bodies,
+        average_per_body=averaging_config.average_per_body,
     )
 
     averaging_workflow_inputs = _AveragingWorkflowInputs(
@@ -269,5 +273,5 @@ def _create_result_workflow_inputs(
         has_principal=has_principal,
         has_equivalent=category == ResultCategory.equivalent,
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
-        average_across_bodies=average_across_bodies,
+        averaging_config=averaging_config,
     )

@@ -6,7 +6,7 @@ from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
 from ansys.dpf.post.result_workflows._sub_workflows import (
     _enrich_mesh_with_property_fields,
 )
-from ansys.dpf.post.result_workflows._utils import body_defining_properties
+from ansys.dpf.post.result_workflows._utils import AveragingConfig
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
@@ -84,6 +84,7 @@ def _connect_initial_results_inputs(
     mesh: MeshedRegion,
     streams_provider: Any,
     data_sources: Any,
+    averaging_config: AveragingConfig,
 ):
     """Connects the inputs of the initial result workflow.
 
@@ -95,9 +96,9 @@ def _connect_initial_results_inputs(
     if selection.spatial_selection.requires_mesh:
         selection_wf.connect(_WfNames.initial_mesh, mesh)
 
-    if split_by_body_workflow is not None:
+    if averaging_config.average_per_body:
         _enrich_mesh_with_property_fields(
-            mesh, body_defining_properties, streams_provider
+            mesh, averaging_config.body_defining_properties, streams_provider
         )
 
     if split_by_body_workflow is not None:

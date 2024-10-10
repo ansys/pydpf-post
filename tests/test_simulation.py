@@ -25,7 +25,11 @@ from ansys.dpf.post.common import AvailableSimulationTypes, elemental_properties
 from ansys.dpf.post.index import ref_labels
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.result_workflows._component_helper import ResultCategory
-from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
+from ansys.dpf.post.result_workflows._utils import (
+    AveragingConfig,
+    _CreateOperatorCallable,
+    default_per_body_averaging_config,
+)
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
@@ -3779,7 +3783,7 @@ def test_averaging_per_body_nodal(
         location=locations.nodal,
         category=ResultCategory.matrix,
         skin=is_skin,
-        average_across_bodies=False,
+        averaging_config=default_per_body_averaging_config,
         components=components,
         named_selections=named_selections,
     )
@@ -3899,10 +3903,12 @@ def test_averaging_per_body_elemental(
         "components": components,
         "named_selections": named_selections,
     }
-    res_per_body_fc = simulation._get_result(**kwargs, average_across_bodies=False)._fc
+    res_per_body_fc = simulation._get_result(
+        **kwargs, averaging_config=default_per_body_averaging_config
+    )._fc
 
     res_across_bodies_fc = simulation._get_result(
-        **kwargs, average_across_bodies=True
+        **kwargs, averaging_config=AveragingConfig()
     )._fc
 
     assert len(res_across_bodies_fc) == 1

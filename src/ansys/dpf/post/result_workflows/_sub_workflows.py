@@ -4,10 +4,7 @@ from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
-from ansys.dpf.post.result_workflows._utils import (
-    _CreateOperatorCallable,
-    body_defining_properties,
-)
+from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
 from ansys.dpf.post.selection import _WfNames
 
 
@@ -246,13 +243,15 @@ def _enrich_mesh_with_property_fields(
             # Rescope the property field to the element scoping of the mesh
             # to ensure the split by property operator works correctly
             rescope_op = operators.scoping.rescope_property_field(
-                mesh_scoping=mesh.elements.scoping,
-                fields=property_field
+                mesh_scoping=mesh.elements.scoping, fields=property_field
             )
 
-            mesh.set_property_field(property_name, rescope_op.outputs.fields_as_property_field())
+            mesh.set_property_field(
+                property_name, rescope_op.outputs.fields_as_property_field()
+            )
 
-def _create_split_scope_by_body_workflow(server):
+
+def _create_split_scope_by_body_workflow(server, body_defining_properties: list[str]):
     split_scope_by_body_wf = Workflow(server=server)
     split_scop_op = operators.scoping.split_on_property_type()
     split_scope_by_body_wf.add_operator(split_scop_op)
