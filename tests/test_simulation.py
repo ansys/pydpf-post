@@ -28,7 +28,6 @@ from ansys.dpf.post.result_workflows._component_helper import ResultCategory
 from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
-    default_per_body_averaging_config,
 )
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
@@ -3740,6 +3739,15 @@ def get_ref_per_body_results_skin(
                 expected_results_per_node[mat_id] = skin_values[mat_id][node_id]
         expected_results[node_id] = expected_results_per_node
     return expected_results
+
+
+default_per_body_averaging_config = AveragingConfig(
+    body_defining_properties=[
+        elemental_properties.material,
+        "mapdl_element_type_id",
+    ],
+    average_per_body=True,
+)
 
 
 @pytest.mark.parametrize("is_skin", [False, True])

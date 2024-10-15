@@ -2,7 +2,6 @@ import dataclasses
 from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
-from ansys.dpf.core.common import elemental_properties
 
 from ansys.dpf.post.selection import _WfNames
 
@@ -24,15 +23,6 @@ class AveragingConfig:
     # If True, the results are averaged per body. The bodies are determined
     # by the body_defining_properties.
     average_per_body: bool = False
-
-
-default_per_body_averaging_config = AveragingConfig(
-    body_defining_properties=[
-        elemental_properties.material,
-        "mapdl_element_type_id",
-    ],
-    average_per_body=True,
-)
 
 
 def _append_workflows(workflows: list[Workflow], current_output_workflow: Workflow):
