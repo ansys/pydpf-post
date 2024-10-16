@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from ansys.dpf.core import Operator, Workflow
 from ansys.dpf.core.available_result import _result_properties
@@ -14,12 +14,15 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_equivalent_workflow,
     _create_extract_component_workflow,
     _create_initial_result_workflow,
-    _create_mesh_workflow,
     _create_norm_workflow,
     _create_principal_workflow,
+    _create_split_scope_by_body_workflow,
     _create_sweeping_phase_workflow,
 )
-from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
+from ansys.dpf.post.result_workflows._utils import (
+    AveragingConfig,
+    _CreateOperatorCallable,
+)
 from ansys.dpf.post.selection import Selection, _WfNames
 
 
@@ -49,8 +52,6 @@ class ResultWorkflows:
     compute_equivalent_before_average: bool = False
     # List of component names at the end of the workflow. If None, the result is a scalar.
     components: Optional[list[str]] = None
-    # Workflow to compute the mesh
-    mesh_workflow: Optional[Workflow] = None
     # Workflow to compute the principal components of the result
     principal_workflow: Optional[Workflow] = None
     # Workflow to compute the equivalent result
@@ -61,17 +62,13 @@ class ResultWorkflows:
     component_extraction_workflow: Optional[Workflow] = None
     # Workflow to sweep the phase of the result
     sweeping_phase_workflow: Optional[Workflow] = None
+    split_by_bodies_workflow: Optional[Workflow] = None
 
 
 @dataclasses.dataclass
 class _AveragingWorkflowInputs:
     location: Union[locations, str]
     force_elemental_nodal: bool
-
-
-@dataclasses.dataclass
-class _MeshWorkflowInputs:
-    mesh_provider: Any
 
 
 @dataclasses.dataclass
@@ -91,7 +88,7 @@ class _CreateWorkflowInputs:
     component_names: list[str]
     components_to_extract: list[int]
     should_extract_components: bool
-    mesh_workflow_inputs: Optional[_MeshWorkflowInputs] = None
+    averaging_config: AveragingConfig
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
 
 
@@ -101,8 +98,16 @@ def _requires_manual_averaging(
     category: ResultCategory,
     selection: Optional[Selection],
     create_operator_callable: Callable[[str], Operator],
+    average_per_body: bool,
 ):
     res = _result_properties[base_name] if base_name in _result_properties else None
+    native_location = res["location"] if res is not None else None
+
+    if average_per_body and (
+        native_location == locations.elemental
+        or native_location == locations.elemental_nodal
+    ):
+        return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
     if res is not None and selection is not None:
@@ -147,12 +152,6 @@ def _create_result_workflows(
         force_elemental_nodal=force_elemental_nodal,
         components=create_workflow_inputs.component_names,
     )
-
-    if create_workflow_inputs.mesh_workflow_inputs is not None:
-        result_workflows.mesh_workflow = _create_mesh_workflow(
-            mesh_provider=create_workflow_inputs.mesh_workflow_inputs.mesh_provider,
-            server=server,
-        )
 
     if create_workflow_inputs.has_principal:
         result_workflows.principal_workflow = _create_principal_workflow(
@@ -207,6 +206,15 @@ def _create_result_workflows(
             sweeping_phase=create_workflow_inputs.sweeping_phase_workflow_inputs.sweeping_phase,
         )
 
+    avg_config = create_workflow_inputs.averaging_config
+    if avg_config.average_per_body:
+        result_workflows.split_by_bodies_workflow = (
+            _create_split_scope_by_body_workflow(
+                server=server,
+                body_defining_properties=avg_config.body_defining_properties,
+            )
+        )
+
     return result_workflows
 
 
@@ -218,7 +226,7 @@ def _create_result_workflow_inputs(
     norm: bool,
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
-    mesh_provider: Any,
+    averaging_config: AveragingConfig,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:
@@ -233,16 +241,13 @@ def _create_result_workflow_inputs(
         category=category,
         selection=selection,
         create_operator_callable=create_operator_callable,
+        average_per_body=averaging_config.average_per_body,
     )
 
     averaging_workflow_inputs = _AveragingWorkflowInputs(
         location=location,
         force_elemental_nodal=force_elemental_nodal,
     )
-
-    mesh_workflow_inputs: Optional[_MeshWorkflowInputs] = None
-    if selection.spatial_selection.requires_mesh:
-        mesh_workflow_inputs = _MeshWorkflowInputs(mesh_provider=mesh_provider)
 
     has_principal = category == ResultCategory.principal
 
@@ -266,7 +271,7 @@ def _create_result_workflow_inputs(
         components_to_extract=components_to_extract,
         should_extract_components=should_extract_components,
         has_principal=has_principal,
-        mesh_workflow_inputs=mesh_workflow_inputs,
         has_equivalent=category == ResultCategory.equivalent,
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
+        averaging_config=averaging_config,
     )

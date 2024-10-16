@@ -21,7 +21,7 @@ from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
     _connect_averaging_eqv_and_principal_workflows,
     _connect_initial_results_inputs,
 )
-from ansys.dpf.post.result_workflows._utils import _append_workflows
+from ansys.dpf.post.result_workflows._utils import AveragingConfig, _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation
 
@@ -37,6 +37,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
+        averaging_config: AveragingConfig = AveragingConfig(),
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -47,7 +48,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             location=location,
             selection=selection,
             create_operator_callable=self._model.operator,
-            mesh_provider=self._model.metadata.mesh_provider,
+            averaging_config=averaging_config,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -56,6 +57,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         )
         _connect_initial_results_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
+            split_by_body_workflow=result_workflows.split_by_bodies_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,
@@ -64,13 +66,8 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             mesh=self.mesh._meshed_region,
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
+            averaging_config=averaging_config,
         )
-
-        if result_workflows.mesh_workflow:
-            selection.spatial_selection._selection.connect_with(
-                result_workflows.mesh_workflow,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
-            )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
@@ -109,6 +106,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        averaging_config: AveragingConfig = AveragingConfig(),
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -170,6 +168,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        averaging_config:
+            Per default averaging happens across all bodies. The averaging config
+            can define that averaging happens per body and defines the properties that
+            are used to define a body.
 
         Returns
         -------
@@ -213,6 +215,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
+            averaging_config=averaging_config,
         )
 
         # Evaluate  the workflow
