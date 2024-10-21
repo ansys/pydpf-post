@@ -9,8 +9,21 @@ from typing import List, Tuple, Union
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.result_workflows._build_workflow import (
+    _create_result_workflow_inputs,
+    _create_result_workflows,
+)
+from ansys.dpf.post.result_workflows._component_helper import (
+    ResultCategory,
+    _create_components,
+)
+from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
+    _connect_averaging_eqv_and_principal_workflows,
+    _connect_initial_results_inputs,
+)
+from ansys.dpf.post.result_workflows._utils import AveragingConfig, _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
-from ansys.dpf.post.simulation import MechanicalSimulation, ResultCategory
+from ansys.dpf.post.simulation import MechanicalSimulation
 
 
 class TransientMechanicalSimulation(MechanicalSimulation):
@@ -24,146 +37,55 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         components: Union[str, List[str], int, List[int], None] = None,
         norm: bool = False,
         selection: Union[Selection, None] = None,
+        averaging_config: AveragingConfig = AveragingConfig(),
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
-        comp, to_extract, _ = self._create_components(base_name, category, components)
-
-        force_elemental_nodal = self._requires_manual_averaging(
+        result_workflow_inputs = _create_result_workflow_inputs(
             base_name=base_name,
-            location=location,
             category=category,
-            selection=selection,
-        )
-
-        # Instantiate the main result operator
-        wf, result_op = self._build_result_workflow(
-            name=base_name,
+            components=components,
+            norm=norm,
             location=location,
-            force_elemental_nodal=force_elemental_nodal,
+            selection=selection,
+            create_operator_callable=self._model.operator,
+            averaging_config=averaging_config,
         )
-        # Its output is selected as future workflow output for now
-        out = result_op.outputs.fields_container
-        # Its inputs are selected as workflow inputs for merging with selection workflows
-        wf.set_input_name("time_scoping", result_op.inputs.time_scoping)
-        wf.set_input_name("mesh_scoping", result_op.inputs.mesh_scoping)
-
-        wf.connect_with(
-            selection.time_freq_selection._selection,
-            output_input_names=("scoping", "time_scoping"),
+        result_workflows = _create_result_workflows(
+            server=self._model._server,
+            create_operator_callable=self._model.operator,
+            create_workflow_inputs=result_workflow_inputs,
         )
-        if selection.requires_mesh:
-            # wf.set_input_name(_WfNames.mesh, result_op.inputs.mesh)
-            mesh_wf = dpf.Workflow(server=self._model._server)
-            mesh_wf.add_operator(self._model.metadata.mesh_provider)
-            mesh_wf.set_output_name(
-                _WfNames.initial_mesh, self._model.metadata.mesh_provider
-            )
-            selection.spatial_selection._selection.connect_with(
-                mesh_wf,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
-            )
-        wf.connect_with(
-            selection.spatial_selection._selection,
-            output_input_names={
-                "scoping": "mesh_scoping",
-            },
+        _connect_initial_results_inputs(
+            initial_result_workflow=result_workflows.initial_result_workflow,
+            split_by_body_workflow=result_workflows.split_by_bodies_workflow,
+            selection=selection,
+            data_sources=self._model.metadata.data_sources,
+            streams_provider=self._model.metadata.streams_provider,
+            expand_cyclic=False,
+            phase_angle_cyclic=None,
+            mesh=self.mesh._meshed_region,
+            location=location,
+            force_elemental_nodal=result_workflows.force_elemental_nodal,
+            averaging_config=averaging_config,
         )
 
-        # Connect data_sources and streams_container inputs of selection if necessary
-        if "streams" in wf.input_names:
-            wf.connect("streams", self._model.metadata.streams_provider)
-        if "data_sources" in wf.input_names:
-            wf.connect("data_sources", self._model.metadata.data_sources)
+        output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
-        average_op = None
-        if force_elemental_nodal:
-            average_op = self._create_averaging_operator(
-                location=location, selection=selection
-            )
+        output_wf = _append_workflows(
+            [
+                result_workflows.component_extraction_workflow,
+                result_workflows.norm_workflow,
+            ],
+            output_wf,
+        )
 
-        # Add a step to compute principal invariants if result is principal
-        if category == ResultCategory.principal:
-            # Instantiate the required operator
-            principal_op = self._model.operator(name="invariants_fc")
-            # Corresponds to scripting name principal_invariants
-            if average_op is not None:
-                average_op[0].connect(0, out)
-                principal_op.connect(0, average_op[1])
-                wf.add_operators(list(average_op))
-                # Set as future output of the workflow
-                average_op = None
-            else:
-                principal_op.connect(0, out)
-            wf.add_operator(operator=principal_op)
-            # Set as future output of the workflow
-            if len(to_extract) == 1:
-                out = getattr(principal_op.outputs, f"fields_eig_{to_extract[0]+1}")
-            else:
-                raise NotImplementedError("Cannot combine principal results yet.")
-                # We need to define the behavior for storing different results in a DataFrame
+        output_wf.progress_bar = False
 
-        # Add a step to compute equivalent if result is equivalent
-        elif category == ResultCategory.equivalent:
-            equivalent_op = self._model.operator(name="eqv_fc")
-            wf.add_operator(operator=equivalent_op)
-            # If a strain result, change the location now
-            if (
-                average_op is not None
-                and category == ResultCategory.equivalent
-                and base_name[0] == "E"
-            ):
-                equivalent_op.connect(0, out)
-                average_op[0].connect(0, equivalent_op)
-                wf.add_operators(list(average_op))
-                # Set as future output of the workflow
-                out = average_op[1].outputs.fields_container
-            elif average_op is not None:
-                average_op[0].connect(0, out)
-                equivalent_op.connect(0, average_op[1])
-                wf.add_operators(list(average_op))
-                # Set as future output of the workflow
-                out = equivalent_op.outputs.fields_container
-            else:
-                equivalent_op.connect(0, out)
-                out = equivalent_op.outputs.fields_container
-            average_op = None
-            base_name += "_VM"
-
-        if average_op is not None:
-            average_op[0].connect(0, out)
-            wf.add_operators(list(average_op))
-            out = average_op[1].outputs.fields_container
-
-        # Add an optional component selection step if result is vector, matrix, or principal
-        if (
-            category
-            in [
-                ResultCategory.vector,
-                ResultCategory.matrix,
-            ]
-        ) and (to_extract is not None):
-            # Instantiate a component selector operator
-            extract_op = self._model.operator(name="component_selector_fc")
-            # Feed it the current workflow output
-            extract_op.connect(0, out)
-            # Feed it the requested components
-            extract_op.connect(1, to_extract)
-            wf.add_operator(operator=extract_op)
-            # Set as future output of the workflow
-            out = extract_op.outputs.fields_container
-            if len(to_extract) == 1:
-                base_name += f"_{comp[0]}"
-                comp = None
-
-        # Add an optional norm operation if requested
-        if norm:
-            wf, out, comp, base_name = self._append_norm(wf, out, base_name)
-
-        # Set the workflow output
-        wf.set_output_name("out", out)
-        wf.progress_bar = False
-
-        return wf, comp, base_name
+        return (
+            output_wf,
+            result_workflows.components,
+            result_workflows.base_name,
+        )
 
     def _get_result(
         self,
@@ -184,6 +106,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
         named_selections: Union[List[str], str, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        averaging_config: AveragingConfig = AveragingConfig(),
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -245,6 +168,10 @@ class TransientMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        averaging_config:
+            Per default averaging happens across all bodies. The averaging config
+            can define that averaging happens per body and defines the properties that
+            are used to define a body.
 
         Returns
         -------
@@ -288,10 +215,11 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             components=components,
             norm=norm,
             selection=selection,
+            averaging_config=averaging_config,
         )
 
         # Evaluate  the workflow
-        fc = wf.get_output("out", dpf.types.fields_container)
+        fc = wf.get_output(_WfNames.output_data, dpf.types.fields_container)
 
         disp_wf = self._generate_disp_workflow(fc, selection)
 
@@ -302,7 +230,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
                 _WfNames.mesh, dpf.types.meshed_region
             )
 
-        _, _, columns = self._create_components(base_name, category, components)
+        _, _, columns = _create_components(base_name, category, components)
         return self._create_dataframe(
             fc, location, columns, comp, base_name, disp_wf=disp_wf, submesh=submesh
         )

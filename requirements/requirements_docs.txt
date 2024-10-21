@@ -1,16 +1,14 @@
-pypandoc==1.13
-imageio==2.34.0
-numpydoc==1.6.0
-imageio-ffmpeg==0.4.7
-Sphinx<7.2.0; python_version == '3.8'
-Sphinx==7.2.6; python_version >= '3.9'
-sphinx-autobuild==2024.4.16
+pypandoc==1.14
+imageio==2.36.0
+numpydoc==1.8.0
+imageio-ffmpeg==0.5.1
+Sphinx==8.1.3
 sphinxcontrib-napoleon==0.7
-sphinxcontrib-websupport==1.2.7
+sphinxcontrib-websupport==2.0.0
 pytest-sphinx==0.6.3
-sphinx-notfound-page==1.0.0
+sphinx-notfound-page==1.0.4
 sphinx-copybutton==0.5.0
-sphinx-gallery==0.16.0
-ansys_sphinx_theme==0.16.0
-sphinx-autodoc-typehints==2.0.0
-pyvista==0.43.8
+sphinx-gallery==0.18.0
+ansys_sphinx_theme==1.1.6
+sphinx-autodoc-typehints==2.5.0
+pyvista==0.44.1

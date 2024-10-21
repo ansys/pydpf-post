@@ -3,10 +3,13 @@
 Launch or connect to a persistent local DPF service to be shared in
 pytest as a sesson fixture
 """
+import dataclasses
 import os
+import pathlib
 import re
 
 from ansys.dpf.core.check_version import get_server_version, meets_version
+from ansys.dpf.core.examples.downloads import _download_file
 import matplotlib as mpl
 import pytest
 import pyvista as pv
@@ -42,6 +45,12 @@ pv.global_theme.lighting = get_lighting()
 
 # currently running dpf on docker.  Used for testing on CI
 running_docker = os.environ.get("DPF_DOCKER", False)
+
+
+def save_screenshot(dataframe, suffix=""):
+    """Save a screenshot of a dataframe plot, with the current test name."""
+    test_path = pathlib.Path(os.environ.get("PYTEST_CURRENT_TEST"))
+    dataframe.plot(screenshot=f"{'_'.join(test_path.name.split('::'))}_{suffix}.jpeg")
 
 
 def resolve_test_file(basename, additional_path=""):
@@ -142,6 +151,61 @@ def plate_msup():
 
 
 @pytest.fixture()
+def average_per_body_two_cubes():
+    return _download_file(
+        "result_files/average_per_body/two_cubes", "file.rst", True, None, False
+    )
+
+
+@pytest.fixture()
+def average_per_body_complex_multi_body():
+    return _download_file(
+        "result_files/average_per_body/complex_multi_body",
+        "file.rst",
+        True,
+        None,
+        False,
+    )
+
+
+@dataclasses.dataclass
+class ReferenceCsvFiles:
+    # reference result with all bodies combined
+    # The node ids of nodes at body interfaces are duplicated
+    combined: pathlib.Path
+    # reference result per body (node ids are unique)
+    per_id: dict[str, pathlib.Path]
+
+
+def get_per_body_ref_files(
+    root_path: str, n_bodies: int
+) -> dict[str, ReferenceCsvFiles]:
+    ref_files = {}
+    for result in ["stress", "elastic_strain"]:
+        per_mat_id_dict = {}
+        for mat in range(1, n_bodies + 1):
+            per_mat_id_dict[str(mat)] = _download_file(
+                root_path, f"{result}_mat_{mat}.txt", True, None, False
+            )
+        combined = _download_file(
+            root_path, f"{result}_combined.txt", True, None, False
+        )
+        ref_files[result] = ReferenceCsvFiles(combined=combined, per_id=per_mat_id_dict)
+
+    return ref_files
+
+
+@pytest.fixture()
+def average_per_body_complex_multi_body_ref():
+    return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+
+
+@pytest.fixture()
+def average_per_body_two_cubes_ref():
+    return get_per_body_ref_files("result_files/average_per_body/two_cubes", 2)
+
+
+@pytest.fixture()
 def rth_transient():
     """Resolve the path of the "rth/rth_transient.rth" result file."""
     return examples.transient_therm
@@ -203,6 +267,21 @@ def grpc_server():
     yield server
     server.shutdown()
 
+
+@pytest.fixture(scope="session", autouse=True)
+def license_context():
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
+        with core.LicenseContextManager(
+            increment_name="preppost", license_timeout_in_seconds=1.0
+        ):
+            yield
+    else:
+        yield
+
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1 = meets_version(
+    get_server_version(core._global_server()), "9.1"
+)
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
     get_server_version(core._global_server()), "9.0"
