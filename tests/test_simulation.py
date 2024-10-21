@@ -36,6 +36,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
     ReferenceCsvFiles,
 )
 
@@ -3825,6 +3826,12 @@ def test_averaging_per_body_nodal(
         ref_data = get_ref_per_body_results_mechanical(ref_files[result], mesh)
 
     def get_expected_label_space_by_mat_id(mat_id: int):
+        # mapdl_element_type_id is not part of the label space before DPF 9.1
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+            return {
+                elemental_properties.material: mat_id,
+                "time": 1,
+            }
         return {
             elemental_properties.material: mat_id,
             "mapdl_element_type_id": mat_id,
