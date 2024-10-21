@@ -36,6 +36,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
     ReferenceCsvFiles,
 )
 
@@ -1193,18 +1194,8 @@ all_configuration_ids = [True] + list(
     ],
 )
 def test_skin_extraction(skin, result_name, mode, simulation_str, request):
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-        # Before 8.0, the solid mesh cannot be connected to the solid_to_skin
-        # operator. This yield incorrect results. Therefore we skip all the tests
-        # for older versions.
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
         return
-
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-        if is_principal(mode) and result_name == "elastic_strain":
-            # Principal results for elastic strain were wrong before version
-            # 9_0 because the strain flag was not propagated correctly
-            # by the skin to solid mapping operator
-            return
 
     time_id = 1
 
@@ -3825,6 +3816,12 @@ def test_averaging_per_body_nodal(
         ref_data = get_ref_per_body_results_mechanical(ref_files[result], mesh)
 
     def get_expected_label_space_by_mat_id(mat_id: int):
+        # mapdl_element_type_id is not part of the label space before DPF 9.1
+        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+            return {
+                elemental_properties.material: mat_id,
+                "time": 1,
+            }
         return {
             elemental_properties.material: mat_id,
             "mapdl_element_type_id": mat_id,
