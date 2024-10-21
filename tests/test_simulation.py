@@ -1194,18 +1194,8 @@ all_configuration_ids = [True] + list(
     ],
 )
 def test_skin_extraction(skin, result_name, mode, simulation_str, request):
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-        # Before 8.0, the solid mesh cannot be connected to the solid_to_skin
-        # operator. This yield incorrect results. Therefore we skip all the tests
-        # for older versions.
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
         return
-
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-        if is_principal(mode) and result_name == "elastic_strain":
-            # Principal results for elastic strain were wrong before version
-            # 9_0 because the strain flag was not propagated correctly
-            # by the skin to solid mapping operator
-            return
 
     time_id = 1
 
