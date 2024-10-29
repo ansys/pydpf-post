@@ -3839,7 +3839,23 @@ default_per_body_averaging_config = AveragingConfig(
 
 
 @pytest.mark.parametrize("is_skin", [False, True])
-@pytest.mark.parametrize("named_selection_name", [None, "SELECTION", "Custom"])
+# Note: Selections are only tested on the more complex model (average_per_body_complex_multi_body)
+@pytest.mark.parametrize(
+    "selection_name",
+    [
+        None,
+        # Use the named selection (nodal selection) in the model to do the selection.
+        "SELECTION",
+        # Use a custom selection (based on element ids) to do the selection.
+        "Custom",
+        # Use the named selection (nodal selection) in the model, but convert it to
+        # node_ids to test the node_ids argument of the results api.
+        "SELECTION_CONVERT_TO_NODAL",
+        # Use the named selection (nodal selection) in the model, but convert it to
+        # element_ids to test the element_ids argument of the results api.
+        "SELECTION_CONVERT_TO_ELEMENTAL",
+    ],
+)
 @pytest.mark.parametrize("result", ["stress", "elastic_strain"])
 @pytest.mark.parametrize(
     "result_file_str, ref_files",
@@ -3852,7 +3868,7 @@ default_per_body_averaging_config = AveragingConfig(
     ],
 )
 def test_averaging_per_body_nodal(
-    request, is_skin, result, result_file_str, ref_files, named_selection_name
+    request, is_skin, result, result_file_str, ref_files, selection_name
 ):
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # average per body not supported before 9.0
@@ -3862,40 +3878,77 @@ def test_averaging_per_body_nodal(
 
     result_file = request.getfixturevalue(result_file_str)
 
-    is_custom_selection = named_selection_name == "Custom"
-    custom_selection_element_ids = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
-
+    is_custom_selection = selection_name in [
+        "Custom",
+        "SELECTION_CONVERT_TO_NODAL",
+        "SELECTION_CONVERT_TO_ELEMENTAL",
+    ]
     simulation: StaticMechanicalSimulation = post.load_simulation(
         data_sources=result_file,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
-
     mesh = simulation.mesh._meshed_region
+
+    expected_nodal_scope = None
+    if is_custom_selection:
+        if selection_name == "Custom":
+            element_scope = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
+            custom_scoping = Scoping(ids=element_scope, location=locations.elemental)
+            transpose_op = operators.scoping.transpose()
+            transpose_op.inputs.requested_location(locations.nodal)
+            transpose_op.inputs.inclusive(0)
+            transpose_op.inputs.mesh_scoping(custom_scoping)
+            transpose_op.inputs.meshed_region(mesh)
+            expected_nodal_scope = transpose_op.eval().ids
+        else:
+            named_selection_scope = mesh.named_selection("SELECTION")
+            assert named_selection_scope.location == locations.nodal
+            expected_nodal_scope = named_selection_scope.ids
+            transpose_op = operators.scoping.transpose()
+            transpose_op.inputs.requested_location(locations.elemental)
+            transpose_op.inputs.inclusive(0)
+            transpose_op.inputs.mesh_scoping(named_selection_scope)
+            transpose_op.inputs.meshed_region(mesh)
+            custom_elemental_scoping = transpose_op.eval()
+
+            if selection_name == "SELECTION_CONVERT_TO_ELEMENTAL":
+                custom_scoping = Scoping(
+                    ids=custom_elemental_scoping.ids, location=locations.elemental
+                )
+
+            if selection_name == "SELECTION_CONVERT_TO_NODAL":
+                custom_scoping = named_selection_scope
 
     components = ["XX"]
 
     named_selections = None
     selection = None
-    if named_selection_name is not None:
+    if selection_name is not None:
         if is_custom_selection:
             if result_file_str != "average_per_body_complex_multi_body":
                 # Test custom selection only with complex case
                 return
+
+            kwargs = {}
+            if custom_scoping.location == locations.nodal:
+                kwargs["node_ids"] = custom_scoping.ids
+            else:
+                kwargs["element_ids"] = custom_scoping.ids
 
             selection = simulation._build_selection(
                 base_name=operator_map[result],
                 location=locations.nodal,
                 category=ResultCategory.matrix,
                 skin=is_skin,
-                element_ids=custom_selection_element_ids,
                 average_per_body=default_per_body_averaging_config.average_per_body,
                 selection=None,
                 set_ids=None,
                 times=None,
                 all_sets=True,
+                **kwargs,
             )
         else:
-            named_selections = [named_selection_name]
+            named_selections = [selection_name]
     res = simulation._get_result(
         base_name=operator_map[result],
         location=locations.nodal,
@@ -3909,17 +3962,15 @@ def test_averaging_per_body_nodal(
 
     named_selection = None
     additional_scoping = None
-    if named_selection_name is None:
+    if selection_name is None:
         mat_field = mesh.property_field("mat")
         bodies_in_selection = list(set(mat_field.data))
 
     else:
         if is_custom_selection:
-            additional_scoping = Scoping(
-                ids=custom_selection_element_ids, location=locations.elemental
-            )
+            additional_scoping = custom_scoping
         else:
-            additional_scoping = mesh.named_selection(named_selection_name)
+            additional_scoping = mesh.named_selection(selection_name)
             assert additional_scoping.location == "Nodal"
             named_selection = additional_scoping
 
@@ -3944,7 +3995,7 @@ def test_averaging_per_body_nodal(
         # Cannot take reference for Mechanical because the named selection
         # splits a body and therefore the values at the boundaries
         # of the named selection are not the same as in Mechanical
-        if named_selection is not None:
+        if named_selection is not None or is_custom_selection:
             ref_data = get_per_body_resuts_solid(
                 simulation=simulation,
                 result_type=result,
@@ -3986,38 +4037,17 @@ def test_averaging_per_body_nodal(
         for mat_id in ref_data[node_id]:
             mat_id_int = int(mat_id)
 
-            if (
-                named_selection_name is not None
-                and mat_id_int not in bodies_in_selection
-            ):
+            if selection_name is not None and mat_id_int not in bodies_in_selection:
                 continue
             field = res._fc.get_field({"mat": mat_id_int})
-            if is_custom_selection:
-                transpose_op = operators.scoping.transpose()
-                transpose_op.inputs.requested_location(locations.elemental)
-                transpose_op.inputs.meshed_region(field.meshed_region)
-                transpose_op.inputs.mesh_scoping(field.scoping)
-                transpose_op.inputs.inclusive(0)
-                elemental_scoping = transpose_op.eval()
-
-                if is_skin:
-                    # Number of skin elements on the skin of the *full* model
-                    assert len(elemental_scoping.ids) == 20
-                else:
-                    assert set(elemental_scoping.ids) == set(
-                        custom_selection_element_ids
-                    )
 
             nodal_value = None
-            if named_selection is not None:
-                # Todo: Currently not working because nodal named selections are
-                # not correctly implemented. All nodes that are contained in the element_nodal
-                # result are part of the output.
-                assert set(field.scoping.ids).issubset(set(named_selection.ids)), set(
+            if expected_nodal_scope is not None:
+                assert set(field.scoping.ids).issubset(set(expected_nodal_scope)), set(
                     field.scoping.ids
-                ).difference(set(named_selection.ids))
+                ).difference(set(expected_nodal_scope))
 
-                if node_id in named_selection.ids:
+                if node_id in expected_nodal_scope:
                     nodal_value = field.get_entity_data_by_id(node_id)
             else:
                 nodal_value = field.get_entity_data_by_id(node_id)
