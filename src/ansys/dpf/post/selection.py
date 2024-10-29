@@ -580,6 +580,36 @@ class SpatialSelection:
             _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
         )
 
+    def select_elements_of_nodes(
+        self,
+        nodes: Union[List[int], Scoping],
+        mesh: Mesh,
+    ) -> None:
+        """Select all elements of nodes using the nodes' IDs or an nodal mesh scoping.
+
+        Parameters
+        ----------
+        nodes:
+            node IDs or nodal mesh scoping.
+        mesh:
+            Mesh containing the necessary connectivity.
+        """
+        if isinstance(nodes, Scoping):
+            scoping = nodes
+        else:
+            scoping = Scoping(location=locations.nodal, ids=nodes, server=self._server)
+
+        op = operators.scoping.transpose(
+            mesh_scoping=scoping,
+            meshed_region=mesh._meshed_region,
+            inclusive=0,
+            requested_location=locations.elemental,
+        )
+        self._selection.add_operator(op)
+        self._selection.set_output_name(
+            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+        )
+
     def select_nodes_of_faces(
         self,
         faces: Union[List[int], Scoping],
@@ -916,6 +946,22 @@ class Selection:
             Mesh containing the connectivity.
         """
         self._spatial_selection.select_nodes_of_elements(elements, mesh)
+
+    def select_elements_of_nodes(
+        self, nodes: Union[List[int], Scoping], mesh: Mesh
+    ) -> None:
+        """Select elements belonging to nodes defined by their IDs.
+
+        Select a elemental mesh scoping corresponding to nodes.
+
+        Parameters
+        ----------
+        nodes:
+            node IDs.
+        mesh:
+            Mesh containing the connectivity.
+        """
+        self._spatial_selection.select_elements_of_nodes(nodes, mesh)
 
     def select_nodes_of_faces(
         self, faces: Union[List[int], Scoping], mesh: Mesh

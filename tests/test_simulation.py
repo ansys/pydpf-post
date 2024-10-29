@@ -4051,6 +4051,7 @@ def test_averaging_per_body_elemental(
 ):
     # Expectation is that elemental results are not affected by the average per body flag.
 
+    # Todo: Test with named selection converted to nodal and elemental selection
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # average per body not supported before 9.0
         return

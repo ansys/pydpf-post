@@ -602,13 +602,18 @@ class MechanicalSimulation(Simulation, ABC):
         else:
             selection = Selection(server=self._model._server)
 
+        if isinstance(skin, bool):
+            has_skin = skin
+        else:
+            has_skin = len(skin) > 0
+
         location = (
             locations.elemental_nodal
             if _requires_manual_averaging(
                 base_name=base_name,
                 location=location,
                 category=category,
-                has_skin=skin,
+                has_skin=has_skin,
                 has_external_layer=external_layer,
                 create_operator_callable=self._model.operator,
                 average_per_body=average_per_body,
@@ -662,11 +667,9 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
-                raise ValueError(
-                    "Argument 'node_ids' can only be used if 'location' "
-                    "is equal to 'post.locations.nodal'."
-                )
-            selection.select_nodes(nodes=node_ids)
+                selection.select_elements_of_nodes(nodes=node_ids, mesh=self.mesh)
+            else:
+                selection.select_nodes(nodes=node_ids)
 
         # Create the TimeFreqSelection
         if all_sets:
