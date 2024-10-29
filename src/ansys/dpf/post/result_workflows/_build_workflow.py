@@ -96,7 +96,8 @@ def _requires_manual_averaging(
     base_name: str,
     location: str,
     category: ResultCategory,
-    selection: Optional[Selection],
+    has_skin: bool,
+    has_external_layer: bool,
     create_operator_callable: Callable[[str], Operator],
     average_per_body: bool,
 ):
@@ -110,12 +111,18 @@ def _requires_manual_averaging(
         return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
-    if res is not None and selection is not None:
-        return selection.requires_manual_averaging(
-            location=location,
-            result_native_location=res["location"],
-            is_model_cyclic=create_operator_callable("is_cyclic").eval(),
-        )
+    if res is not None:
+        is_model_cyclic = create_operator_callable("is_cyclic").eval()
+        """Whether the selection workflow requires to manually build the averaging workflow."""
+        is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
+        if has_external_layer and is_model_cyclic and location != native_location:
+            return True
+        elif has_skin and (
+            native_location == locations.elemental
+            or native_location == locations.elemental_nodal
+        ):
+            return True
+        return False
     return False
 
 
@@ -239,7 +246,9 @@ def _create_result_workflow_inputs(
         base_name=base_name,
         location=location,
         category=category,
-        selection=selection,
+        has_skin=_WfNames.skin in selection.spatial_selection._selection.output_names,
+        has_external_layer=_WfNames.external_layer
+        in selection.spatial_selection._selection.output_names,
         create_operator_callable=create_operator_callable,
         average_per_body=averaging_config.average_per_body,
     )

@@ -213,6 +213,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             location=location,
             external_layer=external_layer,
             skin=skin,
+            average_per_body=averaging_config.average_per_body,
         )
 
         wf, comp, base_name = self._get_result_workflow(

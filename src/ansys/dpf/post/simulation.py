@@ -601,6 +601,21 @@ class MechanicalSimulation(Simulation, ABC):
             return selection
         else:
             selection = Selection(server=self._model._server)
+
+        location = (
+            locations.elemental_nodal
+            if _requires_manual_averaging(
+                base_name=base_name,
+                location=location,
+                category=category,
+                has_skin=skin,
+                has_external_layer=external_layer,
+                create_operator_callable=self._model.operator,
+                average_per_body=average_per_body,
+            )
+            else location
+        )
+
         # Create the SpatialSelection
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
@@ -613,18 +628,7 @@ class MechanicalSimulation(Simulation, ABC):
                 if base_name in _result_properties
                 else None
             )
-            location = (
-                locations.elemental_nodal
-                if _requires_manual_averaging(
-                    base_name,
-                    location,
-                    category,
-                    None,
-                    self._model.operator,
-                    average_per_body,
-                )
-                else location
-            )
+
             if external_layer not in [None, False]:
                 selection.select_external_layer(
                     elements=external_layer if external_layer is not True else None,

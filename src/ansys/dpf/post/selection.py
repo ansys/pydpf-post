@@ -763,28 +763,6 @@ class SpatialSelection:
         """Whether the selection workflow as an output named ``mesh``."""
         return _WfNames.mesh in self._selection.output_names
 
-    def requires_manual_averaging(
-        self,
-        location: Union[str, locations],
-        result_native_location: Union[str, locations],
-        is_model_cyclic: str = "not_cyclic",
-    ) -> bool:
-        """Whether the selection workflow requires to manually build the averaging workflow."""
-        output_names = self._selection.output_names
-        is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
-        if (
-            _WfNames.external_layer in output_names
-            and is_model_cyclic
-            and location != result_native_location
-        ):
-            return True
-        elif _WfNames.skin in output_names and (
-            result_native_location == locations.elemental
-            or result_native_location == locations.elemental_nodal
-        ):
-            return True
-        return False
-
 
 class Selection:
     """The ``Selection`` class helps define the domain on which results are evaluated.
@@ -1057,16 +1035,3 @@ class Selection:
     def outputs_mesh(self) -> bool:
         """Whether the selection workflow as an output named ``mesh``."""
         return self._spatial_selection.outputs_mesh
-
-    def requires_manual_averaging(
-        self,
-        location: Union[str, locations],
-        result_native_location: Union[str, locations],
-        is_model_cyclic: str = "not_cyclic",
-    ) -> bool:
-        """Whether the selection workflow requires to manually build the averaging workflow."""
-        return self._spatial_selection.requires_manual_averaging(
-            location=location,
-            result_native_location=result_native_location,
-            is_model_cyclic=is_model_cyclic,
-        )

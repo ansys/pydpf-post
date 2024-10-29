@@ -29,6 +29,7 @@ from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
 )
+from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
@@ -3559,20 +3560,20 @@ def get_ref_data_from_csv(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles):
     return ReferenceData(combined_ref_data, per_id_ref_data)
 
 
-def get_bodies_in_named_selection(
-    meshed_region: MeshedRegion, named_selection_nodal_scoping: str
-):
-    named_selection_elemental_scoping = operators.scoping.transpose(
-        mesh_scoping=named_selection_nodal_scoping,
-        meshed_region=meshed_region,
-        inclusive=0,
-        requested_location=locations.elemental,
-    ).eval()
+def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
+    elemental_scoping = scoping
+    if scoping.location == locations.nodal:
+        elemental_scoping = operators.scoping.transpose(
+            mesh_scoping=scoping,
+            meshed_region=meshed_region,
+            inclusive=0,
+            requested_location=locations.elemental,
+        ).eval()
 
     mat_field = meshed_region.property_field("mat")
     rescoped_mat_field_op = dpf.operators.scoping.rescope_property_field(
         fields=mat_field,
-        mesh_scoping=named_selection_elemental_scoping,
+        mesh_scoping=elemental_scoping,
     )
 
     rescoped_mat_field = rescoped_mat_field_op.outputs.fields_as_property_field()
@@ -3639,13 +3640,104 @@ def get_ref_per_body_results_mechanical(
     return get_ref_result_per_node_and_material(mesh, reference_csv_files)
 
 
+def get_per_body_resuts_solid(
+    simulation: StaticMechanicalSimulation,
+    result_type: str,
+    mat_ids: list[int],
+    components: list[str],
+    additional_scoping: Optional[Scoping],
+):
+    if additional_scoping:
+        transpose_scoping = operators.scoping.transpose()
+        transpose_scoping.inputs.mesh_scoping(additional_scoping)
+        transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
+        transpose_scoping.inputs.inclusive(0)
+        transpose_scoping.inputs.requested_location(locations.elemental)
+
+        elemental_scoping = transpose_scoping.eval()
+
+    # Split the mesh by bodies to get an elemental scoping.
+    mesh = simulation.mesh._meshed_region
+    split_by_property_op = operators.scoping.split_on_property_type()
+    split_by_property_op.inputs.mesh(mesh)
+    split_by_property_op.inputs.label1("mat")
+
+    body_scopings = split_by_property_op.eval()
+    elemental_nodal_result = getattr(simulation, result_type)(components=components)._fc
+
+    solid_mesh = elemental_nodal_result[0].meshed_region
+    all_values = {}
+
+    for mat_id in mat_ids:
+        body_scoping = body_scopings.get_scoping({"mat": mat_id})
+        assert body_scoping.location == locations.elemental
+
+        if additional_scoping is not None:
+            scoping_intersect_op = dpf.operators.scoping.intersect()
+            scoping_intersect_op.inputs.scopingA.connect(body_scoping)
+            scoping_intersect_op.inputs.scopingB.connect(elemental_scoping)
+
+            intersected_scoping = scoping_intersect_op.eval()
+            if len(intersected_scoping.ids) == 0:
+                continue
+        else:
+            intersected_scoping = body_scoping
+
+        # Rescope the elemental nodal results to the body
+        # and the optional additional scoping
+        rescope_op = operators.scoping.rescope_fc()
+        rescope_op.inputs.mesh_scoping(intersected_scoping)
+        rescope_op.inputs.fields_container(elemental_nodal_result)
+
+        to_nodal_op = dpf.operators.averaging.to_nodal_fc()
+        to_nodal_op.inputs.fields_container(rescope_op.outputs.fields_container)
+
+        nodal_fc = to_nodal_op.outputs.fields_container()
+        assert len(nodal_fc) == 1
+        nodal_field = nodal_fc[0]
+
+        values_per_mat = {}
+        for node_id in nodal_field.scoping.ids:
+            entity_data = nodal_field.get_entity_data_by_id(node_id)
+            assert len(entity_data) == 1
+            values_per_mat[node_id] = entity_data[0]
+
+        all_values[mat_id] = values_per_mat
+
+    # Get all node_ids so it is easy to build
+    # the dictionary with nested labels [node_id][mat_id]
+    all_node_ids = set()
+    for mat_id in mat_ids:
+        all_node_ids.update(all_values[mat_id].keys())
+
+    # Build nested dictionary with node_id and mat_id as nested keys.
+    expected_results = {}
+    for node_id in all_node_ids:
+        expected_results_per_node = {}
+        for mat_id in mat_ids:
+            if node_id in all_values[mat_id]:
+                expected_results_per_node[mat_id] = all_values[mat_id][node_id]
+        expected_results[node_id] = expected_results_per_node
+    return expected_results
+
+
 def get_ref_per_body_results_skin(
     simulation: StaticMechanicalSimulation,
     result_type: str,
     mat_ids: list[int],
     components: list[str],
     skin_mesh: MeshedRegion,
+    additional_scoping: Optional[Scoping],
 ):
+    if additional_scoping:
+        transpose_scoping = operators.scoping.transpose()
+        transpose_scoping.inputs.mesh_scoping(additional_scoping)
+        transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
+        transpose_scoping.inputs.inclusive(0)
+        transpose_scoping.inputs.requested_location(locations.elemental)
+
+        elemental_scoping = transpose_scoping.eval()
+
     # Get the reference skin results.
     # Rescope the skin mesh to each body and extract the corresponding results.
 
@@ -3666,24 +3758,37 @@ def get_ref_per_body_results_skin(
         body_scoping = body_scopings.get_scoping({"mat": mat_id})
         assert body_scoping.location == locations.elemental
 
+        if additional_scoping is not None:
+            scoping_intersect_op = (
+                dpf.operators.scoping.intersect()
+            )  # operator instantiation
+            scoping_intersect_op.inputs.scopingA.connect(body_scoping)
+            scoping_intersect_op.inputs.scopingB.connect(elemental_scoping)
+
+            intersected_scoping = scoping_intersect_op.eval()
+            if len(intersected_scoping.ids) == 0:
+                continue
+        else:
+            intersected_scoping = body_scoping
+
         # Rescope the elemental nodal results to the body
         # The elemental nodal results are used later to get the nodal
         # results
         rescope_op = operators.scoping.rescope_fc()
-        rescope_op.inputs.mesh_scoping(body_scoping)
+        rescope_op.inputs.mesh_scoping(intersected_scoping)
         rescope_op.inputs.fields_container(elemental_nodal_result)
 
         # Rescope the solid mesh
         rescope_mesh_op_solid = operators.mesh.from_scoping()
         rescope_mesh_op_solid.inputs.mesh(solid_mesh)
-        rescope_mesh_op_solid.inputs.scoping(body_scoping)
+        rescope_mesh_op_solid.inputs.scoping(intersected_scoping)
 
         rescoped_solid_mesh = rescope_mesh_op_solid.eval()
 
         # Get the nodal scoping, which is needed to rescope
         # the skin mesh.
         transpose_scoping = operators.scoping.transpose()
-        transpose_scoping.inputs.mesh_scoping(body_scoping)
+        transpose_scoping.inputs.mesh_scoping(intersected_scoping)
         transpose_scoping.inputs.meshed_region(solid_mesh)
         transpose_scoping.inputs.inclusive(1)
 
@@ -3742,10 +3847,10 @@ default_per_body_averaging_config = AveragingConfig(
 
 
 @pytest.mark.parametrize("is_skin", [False, True])
-@pytest.mark.parametrize("named_selection_name", [None, "SELECTION"])
+@pytest.mark.parametrize("named_selection_name", [None, "SELECTION", "Custom"])
 @pytest.mark.parametrize("result", ["stress", "elastic_strain"])
 @pytest.mark.parametrize(
-    "result_file, ref_files",
+    "result_file_str, ref_files",
     [
         (r"average_per_body_two_cubes", "average_per_body_two_cubes_ref"),
         (
@@ -3755,7 +3860,7 @@ default_per_body_averaging_config = AveragingConfig(
     ],
 )
 def test_averaging_per_body_nodal(
-    request, is_skin, result, result_file, ref_files, named_selection_name
+    request, is_skin, result, result_file_str, ref_files, named_selection_name
 ):
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # average per body not supported before 9.0
@@ -3763,7 +3868,10 @@ def test_averaging_per_body_nodal(
 
     ref_files = request.getfixturevalue(ref_files)
 
-    result_file = request.getfixturevalue(result_file)
+    result_file = request.getfixturevalue(result_file_str)
+
+    is_custom_selection = named_selection_name == "Custom"
+    custom_selection_element_ids = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
 
     simulation: StaticMechanicalSimulation = post.load_simulation(
         data_sources=result_file,
@@ -3775,8 +3883,27 @@ def test_averaging_per_body_nodal(
     components = ["XX"]
 
     named_selections = None
+    selection = None
     if named_selection_name is not None:
-        named_selections = [named_selection_name]
+        if is_custom_selection:
+            if result_file_str != "average_per_body_complex_multi_body":
+                # Test custom selection only with complex case
+                return
+
+            selection = simulation._build_selection(
+                base_name=operator_map[result],
+                location=locations.nodal,
+                category=ResultCategory.matrix,
+                skin=is_skin,
+                element_ids=custom_selection_element_ids,
+                average_per_body=default_per_body_averaging_config.average_per_body,
+                selection=None,
+                set_ids=None,
+                times=None,
+                all_sets=True,
+            )
+        else:
+            named_selections = [named_selection_name]
     res = simulation._get_result(
         base_name=operator_map[result],
         location=locations.nodal,
@@ -3785,21 +3912,30 @@ def test_averaging_per_body_nodal(
         averaging_config=default_per_body_averaging_config,
         components=components,
         named_selections=named_selections,
+        selection=selection,
     )
 
     named_selection = None
+    additional_scoping = None
     if named_selection_name is None:
         mat_field = mesh.property_field("mat")
         bodies_in_selection = list(set(mat_field.data))
+
     else:
-        named_selection = mesh.named_selection(named_selection_name)
-        assert named_selection.location == "Nodal"
+        if is_custom_selection:
+            additional_scoping = Scoping(
+                ids=custom_selection_element_ids, location=locations.elemental
+            )
+        else:
+            additional_scoping = mesh.named_selection(named_selection_name)
+            assert additional_scoping.location == "Nodal"
+            named_selection = additional_scoping
 
         # Get only the bodies that are present in the named selection.
         # Only these bodies are present in the dpf result.
-        bodies_in_selection = get_bodies_in_named_selection(
+        bodies_in_selection = get_bodies_in_scoping(
             meshed_region=simulation.mesh._meshed_region,
-            named_selection_nodal_scoping=named_selection,
+            scoping=additional_scoping,
         )
 
     if is_skin:
@@ -3810,10 +3946,23 @@ def test_averaging_per_body_nodal(
             mat_ids=bodies_in_selection,
             components=components,
             skin_mesh=res._fc[0].meshed_region,
+            additional_scoping=additional_scoping,
         )
     else:
-        # get reference data from mechanical
-        ref_data = get_ref_per_body_results_mechanical(ref_files[result], mesh)
+        # Cannot take reference for Mechanical because the named selection
+        # splits a body and therefore the values at the boundaries
+        # of the named selection are not the same as in Mechanical
+        if named_selection is not None:
+            ref_data = get_per_body_resuts_solid(
+                simulation=simulation,
+                result_type=result,
+                mat_ids=bodies_in_selection,
+                components=components,
+                additional_scoping=additional_scoping,
+            )
+        else:
+            # get reference data from mechanical
+            ref_data = get_ref_per_body_results_mechanical(ref_files[result], mesh)
 
     def get_expected_label_space_by_mat_id(mat_id: int):
         # mapdl_element_type_id is not part of the label space before DPF 9.1
@@ -3851,19 +4000,40 @@ def test_averaging_per_body_nodal(
             ):
                 continue
             field = res._fc.get_field({"mat": mat_id_int})
+            if is_custom_selection:
+                transpose_op = operators.scoping.transpose()
+                transpose_op.inputs.requested_location(locations.elemental)
+                transpose_op.inputs.meshed_region(field.meshed_region)
+                transpose_op.inputs.mesh_scoping(field.scoping)
+                transpose_op.inputs.inclusive(0)
+                elemental_scoping = transpose_op.eval()
 
+                if is_skin:
+                    # Number of skin elements on the skin of the *full* model
+                    assert len(elemental_scoping.ids) == 20
+                else:
+                    assert set(elemental_scoping.ids) == set(
+                        custom_selection_element_ids
+                    )
+
+            nodal_value = None
             if named_selection is not None:
                 # Todo: Currently not working because nodal named selections are
                 # not correctly implemented. All nodes that are contained in the element_nodal
                 # result are part of the output.
-                # assert set(field.scoping.ids).issubset(set(named_selection.ids)),
-                # set(field.scoping.ids).difference(set(named_selection.ids))
-                pass
-            nodal_value = field.get_entity_data_by_id(node_id)
+                assert set(field.scoping.ids).issubset(set(named_selection.ids)), set(
+                    field.scoping.ids
+                ).difference(set(named_selection.ids))
 
-            assert np.isclose(
-                nodal_value[0], ref_data[node_id][mat_id], rtol=1e-3
-            ), f"{result}, {mat_id}, {node_id}"
+                if node_id in named_selection.ids:
+                    nodal_value = field.get_entity_data_by_id(node_id)
+            else:
+                nodal_value = field.get_entity_data_by_id(node_id)
+
+            if nodal_value is not None:
+                assert np.isclose(
+                    nodal_value[0], ref_data[node_id][mat_id], rtol=1e-3
+                ), f"{result}, {mat_id}, {node_id}"
 
 
 @pytest.mark.parametrize("is_skin", [False, True])
@@ -3926,3 +4096,102 @@ def test_averaging_per_body_elemental(
         assert res_across_bodies_field.get_entity_data_by_id(
             element_id
         ) == res_per_body_field.get_entity_data_by_id(element_id)
+
+
+@pytest.mark.parametrize("is_skin", [False, True])
+@pytest.mark.parametrize("average_per_body", [False, True])
+@pytest.mark.parametrize("requested_location", ["Nodal", "Elemental"])
+def test_build_selection(
+    average_per_body_complex_multi_body, average_per_body, is_skin, requested_location
+):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        # Logic has changed with server 9.0
+        return
+
+    rst_file = pathlib.Path(average_per_body_complex_multi_body)
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=rst_file,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    scoping = Scoping(
+        location=locations.elemental,
+        ids=[25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36],
+    )
+
+    selection = simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        location=requested_location,
+        skin=is_skin,
+        average_per_body=average_per_body,
+        selection=None,
+        set_ids=None,
+        times=None,
+        all_sets=True,
+        element_ids=scoping.ids,
+    )
+    selection_wf = selection.spatial_selection._selection
+    if selection.spatial_selection.requires_mesh:
+        selection_wf.connect(_WfNames.initial_mesh, simulation.mesh._meshed_region)
+    scoping_from_selection = selection_wf.get_output(_WfNames.scoping, Scoping)
+
+    if is_skin or average_per_body:
+        # If request is for skin or average per body, the location should be elemental
+        # because force_elemental_nodal is True
+        assert scoping_from_selection.location == locations.elemental
+        assert set(scoping_from_selection.ids) == set(scoping.ids)
+    else:
+        assert scoping_from_selection.location == requested_location
+        if requested_location == locations.nodal:
+            assert len(scoping_from_selection.ids) == 36
+        else:
+            assert set(scoping_from_selection.ids) == set(scoping.ids)
+
+
+def test_get_result_with_element_scoping(
+    average_per_body_complex_multi_body, average_per_body, is_skin, requested_location
+):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+        # Logic has changed with server 9.0
+        return
+
+    rst_file = pathlib.Path(average_per_body_complex_multi_body)
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=rst_file,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    scoping = Scoping(
+        location=locations.elemental,
+        ids=[25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36],
+    )
+
+    selection = simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        location=requested_location,
+        skin=is_skin,
+        average_per_body=average_per_body,
+        selection=None,
+        set_ids=None,
+        times=None,
+        all_sets=True,
+        element_ids=scoping.ids,
+    )
+    selection_wf = selection.spatial_selection._selection
+    if selection.spatial_selection.requires_mesh:
+        selection_wf.connect(_WfNames.initial_mesh, simulation.mesh._meshed_region)
+    scoping_from_selection = selection_wf.get_output(_WfNames.scoping, Scoping)
+
+    if is_skin or average_per_body:
+        # If request is for skin or average per body, the location should be elemental
+        # because force_elemental_nodal is True
+        assert scoping_from_selection.location == locations.elemental
+        assert set(scoping_from_selection.ids) == set(scoping.ids)
+    else:
+        assert scoping_from_selection.location == requested_location
+        if requested_location == locations.nodal:
+            assert len(scoping_from_selection.ids) == 36
+        else:
+            assert set(scoping_from_selection.ids) == set(scoping.ids)
