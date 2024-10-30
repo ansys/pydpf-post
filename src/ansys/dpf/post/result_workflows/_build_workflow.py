@@ -113,7 +113,6 @@ def _requires_manual_averaging(
         return True
     if res is not None:
         is_model_cyclic = create_operator_callable("is_cyclic").eval()
-        """Whether the selection workflow requires to manually build the averaging workflow."""
         is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
         if has_external_layer and is_model_cyclic and location != native_location:
             return True
