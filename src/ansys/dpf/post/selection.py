@@ -585,7 +585,7 @@ class SpatialSelection:
         nodes: Union[List[int], Scoping],
         mesh: Mesh,
     ) -> None:
-        """Select all elements of nodes using the nodes' IDs or an nodal mesh scoping.
+        """Select all elements of nodes using the nodes' IDs or a nodal mesh scoping.
 
         Parameters
         ----------
