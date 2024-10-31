@@ -3638,13 +3638,12 @@ def get_per_body_results_solid(
     mat_ids: list[int],
     components: list[str],
     additional_scoping: Optional[Scoping],
-    is_nodal_selection_inclusive: bool,
 ):
     if additional_scoping:
         transpose_scoping = operators.scoping.transpose()
         transpose_scoping.inputs.mesh_scoping(additional_scoping)
         transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
-        transpose_scoping.inputs.inclusive(1 if is_nodal_selection_inclusive else 0)
+        transpose_scoping.inputs.inclusive(1)
         transpose_scoping.inputs.requested_location(locations.elemental)
 
         elemental_scoping = transpose_scoping.eval()
@@ -3730,13 +3729,12 @@ def get_ref_per_body_results_skin(
     components: list[str],
     skin_mesh: MeshedRegion,
     additional_scoping: Optional[Scoping],
-    is_nodal_selection_inclusive: bool,
 ):
     if additional_scoping:
         transpose_scoping = operators.scoping.transpose()
         transpose_scoping.inputs.mesh_scoping(additional_scoping)
         transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
-        transpose_scoping.inputs.inclusive(1 if is_nodal_selection_inclusive else 0)
+        transpose_scoping.inputs.inclusive(1)
         transpose_scoping.inputs.requested_location(locations.elemental)
 
         elemental_scoping = transpose_scoping.eval()
@@ -3814,6 +3812,12 @@ def get_ref_per_body_results_skin(
             expand_cyclic=False,
             elemental_nodal_results=rescope_op.eval(),
         )
+
+        if additional_scoping and additional_scoping.location == locations.nodal:
+            rescope_to_add_scope = operators.scoping.rescope()
+            rescope_to_add_scope.inputs.mesh_scoping(additional_scoping)
+            rescope_to_add_scope.inputs.fields(nodal_field)
+            nodal_field = rescope_to_add_scope.outputs.fields_as_field()
 
         skin_values_per_mat = {}
         for node_id in nodal_field.scoping.ids:
@@ -3989,7 +3993,6 @@ def test_averaging_per_body_nodal(
             components=components,
             skin_mesh=res._fc[0].meshed_region,
             additional_scoping=additional_scoping,
-            is_nodal_selection_inclusive=named_selection is None,
         )
     else:
         # Cannot take reference for Mechanical because the named selection
@@ -4004,7 +4007,6 @@ def test_averaging_per_body_nodal(
                 mat_ids=bodies_in_selection,
                 components=components,
                 additional_scoping=additional_scoping,
-                is_nodal_selection_inclusive=named_selection is None,
             )
         else:
             # get reference data from mechanical

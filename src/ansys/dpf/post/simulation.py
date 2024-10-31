@@ -668,7 +668,9 @@ class MechanicalSimulation(Simulation, ABC):
                 )
         if named_selections:
             selection.select_named_selection(
-                named_selection=named_selections, location=location
+                named_selection=named_selections,
+                location=location,
+                inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
             if location == locations.nodal:
@@ -677,7 +679,9 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
-                selection.select_elements_of_nodes(nodes=node_ids, mesh=self.mesh)
+                selection.select_elements_of_nodes(
+                    nodes=node_ids, mesh=self.mesh, inclusive=requires_manual_averaging
+                )
             else:
                 selection.select_nodes(nodes=node_ids)
 

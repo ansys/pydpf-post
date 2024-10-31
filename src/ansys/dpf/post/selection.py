@@ -234,6 +234,7 @@ class SpatialSelection:
         self,
         named_selection: Union[str, List[str]],
         location: Union[str, locations, None] = None,
+        inclusive: bool = False,
     ) -> None:
         """Select a mesh scoping corresponding to one or several named selections.
 
@@ -246,12 +247,18 @@ class SpatialSelection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        inclusive:
+            If True and the named selection is nodal,
+            include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
+        int_inclusive = 1 if inclusive else 0
         if isinstance(named_selection, str):
             op = operators.scoping.on_named_selection(
                 requested_location=location,
                 named_selection_name=named_selection,
                 server=self._server,
+                int_inclusive=int_inclusive,
             )
             self._selection.add_operator(op)
             self._selection.set_input_name(
@@ -273,6 +280,7 @@ class SpatialSelection:
                     requested_location=location,
                     named_selection_name=ns,
                     server=self._server,
+                    int_inclusive=int_inclusive
                     # data_sources=forward_ds.outputs.any,
                     # streams_container=forward_sc.outputs.any,
                 )
@@ -882,6 +890,7 @@ class Selection:
         self,
         named_selection: Union[str, List[str]],
         location: Union[str, locations, None] = None,
+        inclusive: bool = False,
     ) -> None:
         """Select a mesh scoping corresponding to one or several named selections.
 
@@ -893,8 +902,14 @@ class Selection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        inclusive:
+            If True and the named selection is nodal,
+            include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
-        self._spatial_selection.select_named_selection(named_selection, location)
+        self._spatial_selection.select_named_selection(
+            named_selection, location, inclusive
+        )
 
     def select_nodes(self, nodes: Union[List[int], Scoping]) -> None:
         """Select a mesh scoping with its node IDs.
