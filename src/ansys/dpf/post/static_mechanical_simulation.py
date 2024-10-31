@@ -4,7 +4,7 @@ StaticMechanicalSimulation
 --------------------------
 
 """
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from ansys.dpf import core
 from ansys.dpf.post import locations
@@ -19,11 +19,11 @@ from ansys.dpf.post.result_workflows._component_helper import (
 )
 from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
     _connect_averaging_eqv_and_principal_workflows,
-    _connect_initial_results_inputs,
+    _connect_workflow_inputs,
 )
 from ansys.dpf.post.result_workflows._utils import AveragingConfig, _append_workflows
 from ansys.dpf.post.selection import Selection, _WfNames
-from ansys.dpf.post.simulation import MechanicalSimulation
+from ansys.dpf.post.simulation import MechanicalSimulation, _Rescoping
 
 
 class StaticMechanicalSimulation(MechanicalSimulation):
@@ -40,6 +40,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
+        rescoping: Optional[_Rescoping] = None,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -51,15 +52,17 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
+            rescoping=rescoping,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
             create_operator_callable=self._model.operator,
             create_workflow_inputs=result_workflow_inputs,
         )
-        _connect_initial_results_inputs(
+        _connect_workflow_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
             split_by_body_workflow=result_workflows.split_by_bodies_workflow,
+            rescoping_workflow=result_workflows.rescoping_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,
@@ -77,6 +80,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             [
                 result_workflows.component_extraction_workflow,
                 result_workflows.norm_workflow,
+                result_workflows.rescoping_workflow,
             ],
             output_wf,
         )
@@ -202,7 +206,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
                 "and load_steps are mutually exclusive."
             )
 
-        selection = self._build_selection(
+        selection, rescoping = self._build_selection(
             base_name=base_name,
             category=category,
             selection=selection,
@@ -229,6 +233,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
             averaging_config=averaging_config,
+            rescoping=rescoping,
         )
 
         # Evaluate  the workflow

@@ -3632,18 +3632,19 @@ def get_ref_per_body_results_mechanical(
     return get_ref_result_per_node_and_material(mesh, reference_csv_files)
 
 
-def get_per_body_resuts_solid(
+def get_per_body_results_solid(
     simulation: StaticMechanicalSimulation,
     result_type: str,
     mat_ids: list[int],
     components: list[str],
     additional_scoping: Optional[Scoping],
+    is_nodal_selection_inclusive: bool,
 ):
     if additional_scoping:
         transpose_scoping = operators.scoping.transpose()
         transpose_scoping.inputs.mesh_scoping(additional_scoping)
         transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
-        transpose_scoping.inputs.inclusive(0)
+        transpose_scoping.inputs.inclusive(1 if is_nodal_selection_inclusive else 0)
         transpose_scoping.inputs.requested_location(locations.elemental)
 
         elemental_scoping = transpose_scoping.eval()
@@ -3684,7 +3685,16 @@ def get_per_body_resuts_solid(
         to_nodal_op = dpf.operators.averaging.to_nodal_fc()
         to_nodal_op.inputs.fields_container(rescope_op.outputs.fields_container)
 
-        nodal_fc = to_nodal_op.outputs.fields_container()
+        nodal_fc = None
+        if additional_scoping.location == locations.nodal:
+            rescope_nodal_op = operators.scoping.rescope_fc()
+            rescope_nodal_op.inputs.fields_container(
+                to_nodal_op.outputs.fields_container()
+            )
+            rescope_nodal_op.inputs.mesh_scoping(additional_scoping)
+            nodal_fc = rescope_nodal_op.eval()
+        else:
+            nodal_fc = to_nodal_op.outputs.fields_container()
         assert len(nodal_fc) == 1
         nodal_field = nodal_fc[0]
 
@@ -3720,12 +3730,13 @@ def get_ref_per_body_results_skin(
     components: list[str],
     skin_mesh: MeshedRegion,
     additional_scoping: Optional[Scoping],
+    is_nodal_selection_inclusive: bool,
 ):
     if additional_scoping:
         transpose_scoping = operators.scoping.transpose()
         transpose_scoping.inputs.mesh_scoping(additional_scoping)
         transpose_scoping.inputs.meshed_region(simulation.mesh._meshed_region)
-        transpose_scoping.inputs.inclusive(0)
+        transpose_scoping.inputs.inclusive(1 if is_nodal_selection_inclusive else 0)
         transpose_scoping.inputs.requested_location(locations.elemental)
 
         elemental_scoping = transpose_scoping.eval()
@@ -3846,6 +3857,7 @@ default_per_body_averaging_config = AveragingConfig(
         None,
         # Use the named selection (nodal selection) in the model to do the selection.
         "SELECTION",
+        # todo: add test with single node
         # Use a custom selection (based on element ids) to do the selection.
         "Custom",
         # Use the named selection (nodal selection) in the model, but convert it to
@@ -3892,6 +3904,7 @@ def test_averaging_per_body_nodal(
     expected_nodal_scope = None
     if is_custom_selection:
         if selection_name == "Custom":
+            # Element scope that corresponds to one body
             element_scope = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
             custom_scoping = Scoping(ids=element_scope, location=locations.elemental)
             transpose_op = operators.scoping.transpose()
@@ -3923,32 +3936,19 @@ def test_averaging_per_body_nodal(
 
     named_selections = None
     selection = None
+    kwargs = {}
     if selection_name is not None:
         if is_custom_selection:
             if result_file_str != "average_per_body_complex_multi_body":
                 # Test custom selection only with complex case
                 return
 
-            kwargs = {}
             if custom_scoping.location == locations.nodal:
                 kwargs["node_ids"] = custom_scoping.ids
             else:
                 kwargs["element_ids"] = custom_scoping.ids
-
-            selection = simulation._build_selection(
-                base_name=operator_map[result],
-                location=locations.nodal,
-                category=ResultCategory.matrix,
-                skin=is_skin,
-                average_per_body=default_per_body_averaging_config.average_per_body,
-                selection=None,
-                set_ids=None,
-                times=None,
-                all_sets=True,
-                **kwargs,
-            )
         else:
-            named_selections = [selection_name]
+            kwargs["named_selections"] = [selection_name]
     res = simulation._get_result(
         base_name=operator_map[result],
         location=locations.nodal,
@@ -3956,8 +3956,7 @@ def test_averaging_per_body_nodal(
         skin=is_skin,
         averaging_config=default_per_body_averaging_config,
         components=components,
-        named_selections=named_selections,
-        selection=selection,
+        **kwargs,
     )
 
     named_selection = None
@@ -3990,6 +3989,7 @@ def test_averaging_per_body_nodal(
             components=components,
             skin_mesh=res._fc[0].meshed_region,
             additional_scoping=additional_scoping,
+            is_nodal_selection_inclusive=named_selection is None,
         )
     else:
         # Cannot take reference for Mechanical because the named selection
@@ -3998,12 +3998,13 @@ def test_averaging_per_body_nodal(
         # Instead the elemental nodal data is rescoped to the additional_scoping and
         # then averaged on that scoping.
         if named_selection is not None or is_custom_selection:
-            ref_data = get_per_body_resuts_solid(
+            ref_data = get_per_body_results_solid(
                 simulation=simulation,
                 result_type=result,
                 mat_ids=bodies_in_selection,
                 components=components,
                 additional_scoping=additional_scoping,
+                is_nodal_selection_inclusive=named_selection is None,
             )
         else:
             # get reference data from mechanical
@@ -4075,7 +4076,6 @@ def test_averaging_per_body_elemental(
 ):
     # Expectation is that elemental results are not affected by the average per body flag.
 
-    # Todo: Test with named selection converted to nodal and elemental selection
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # average per body not supported before 9.0
         return
@@ -4141,10 +4141,10 @@ def test_build_selection(
 
     scoping = Scoping(
         location=locations.elemental,
-        ids=[25],
+        ids=[25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36],
     )
 
-    selection = simulation._build_selection(
+    selection, rescoping = simulation._build_selection(
         base_name="S",
         category=ResultCategory.matrix,
         location=requested_location,
@@ -4169,7 +4169,6 @@ def test_build_selection(
     else:
         assert scoping_from_selection.location == requested_location
         if requested_location == locations.nodal:
-            pass
-        # assert len(scoping_from_selection.ids) == 36
+            assert len(scoping_from_selection.ids) == 36
         else:
             assert set(scoping_from_selection.ids) == set(scoping.ids)

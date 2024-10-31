@@ -581,9 +581,7 @@ class SpatialSelection:
         )
 
     def select_elements_of_nodes(
-        self,
-        nodes: Union[List[int], Scoping],
-        mesh: Mesh,
+        self, nodes: Union[List[int], Scoping], mesh: Mesh, inclusive: bool = True
     ) -> None:
         """Select all elements of nodes using the nodes' IDs or a nodal mesh scoping.
 
@@ -593,6 +591,9 @@ class SpatialSelection:
             node IDs or nodal mesh scoping.
         mesh:
             Mesh containing the necessary connectivity.
+        inclusive:
+            If True, include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
         if isinstance(nodes, Scoping):
             scoping = nodes
@@ -602,7 +603,7 @@ class SpatialSelection:
         op = operators.scoping.transpose(
             mesh_scoping=scoping,
             meshed_region=mesh._meshed_region,
-            inclusive=0,
+            inclusive=1 if inclusive else 0,
             requested_location=locations.elemental,
         )
         self._selection.add_operator(op)
@@ -948,7 +949,7 @@ class Selection:
         self._spatial_selection.select_nodes_of_elements(elements, mesh)
 
     def select_elements_of_nodes(
-        self, nodes: Union[List[int], Scoping], mesh: Mesh
+        self, nodes: Union[List[int], Scoping], mesh: Mesh, inclusive: bool = True
     ) -> None:
         """Select elements belonging to nodes defined by their IDs.
 
@@ -960,8 +961,11 @@ class Selection:
             node IDs.
         mesh:
             Mesh containing the connectivity.
+        inclusive:
+            If True, include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
-        self._spatial_selection.select_elements_of_nodes(nodes, mesh)
+        self._spatial_selection.select_elements_of_nodes(nodes, mesh, inclusive)
 
     def select_nodes_of_faces(
         self, faces: Union[List[int], Scoping], mesh: Mesh

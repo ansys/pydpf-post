@@ -16,12 +16,14 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_initial_result_workflow,
     _create_norm_workflow,
     _create_principal_workflow,
+    _create_rescoping_workflow,
     _create_split_scope_by_body_workflow,
     _create_sweeping_phase_workflow,
 )
 from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
+    _Rescoping,
 )
 from ansys.dpf.post.selection import Selection, _WfNames
 
@@ -63,6 +65,7 @@ class ResultWorkflows:
     # Workflow to sweep the phase of the result
     sweeping_phase_workflow: Optional[Workflow] = None
     split_by_bodies_workflow: Optional[Workflow] = None
+    rescoping_workflow: Optional[Workflow] = None
 
 
 @dataclasses.dataclass
@@ -90,6 +93,7 @@ class _CreateWorkflowInputs:
     should_extract_components: bool
     averaging_config: AveragingConfig
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
+    rescoping_workflow_inputs: Optional[_Rescoping] = None
 
 
 def _requires_manual_averaging(
@@ -221,6 +225,11 @@ def _create_result_workflows(
             )
         )
 
+    if create_workflow_inputs.rescoping_workflow_inputs is not None:
+        result_workflows.rescoping_workflow = _create_rescoping_workflow(
+            server, create_workflow_inputs.rescoping_workflow_inputs
+        )
+
     return result_workflows
 
 
@@ -233,6 +242,7 @@ def _create_result_workflow_inputs(
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
     averaging_config: AveragingConfig,
+    rescoping: Optional[_Rescoping] = None,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:
@@ -282,4 +292,5 @@ def _create_result_workflow_inputs(
         has_equivalent=category == ResultCategory.equivalent,
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
         averaging_config=averaging_config,
+        rescoping_workflow_inputs=rescoping,
     )
