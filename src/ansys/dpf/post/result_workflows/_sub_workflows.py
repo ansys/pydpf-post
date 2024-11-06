@@ -4,8 +4,8 @@ from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
-from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
-from ansys.dpf.post.selection import _WfNames
+from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable, _Rescoping
+from ansys.dpf.post.selection import SpatialSelection, _WfNames
 
 
 def _create_averaging_workflow(
@@ -269,3 +269,43 @@ def _create_split_scope_by_body_workflow(server, body_defining_properties: list[
         _WfNames.scoping, split_scop_op.outputs.mesh_scoping
     )
     return split_scope_by_body_wf
+
+
+def _create_rescoping_workflow(server, rescoping: _Rescoping):
+    selection = SpatialSelection(server=server)
+
+    if rescoping.named_selections is not None:
+        selection.select_named_selection(rescoping.named_selections)
+
+    if rescoping.node_ids is not None:
+        selection.select_nodes(rescoping.node_ids)
+
+    rescoping_wf = Workflow(server=server)
+
+    transpose_scoping_op = operators.scoping.transpose()
+    rescoping_wf.add_operator(transpose_scoping_op)
+    transpose_scoping_op.inputs.requested_location(rescoping.requested_location)
+    rescoping_wf.set_input_name(
+        _WfNames.mesh, transpose_scoping_op.inputs.meshed_region
+    )
+
+    rescoping_op = operators.scoping.rescope_fc()
+    rescoping_wf.add_operator(rescoping_op)
+    rescoping_op.inputs.mesh_scoping(
+        transpose_scoping_op.outputs.mesh_scoping_as_scoping
+    )
+    rescoping_wf.set_input_name(
+        _WfNames.input_data, rescoping_op.inputs.fields_container
+    )
+    rescoping_wf.set_input_name(
+        _WfNames.scoping, transpose_scoping_op.inputs.mesh_scoping
+    )
+    rescoping_wf.set_output_name(
+        _WfNames.output_data, rescoping_op.outputs.fields_container
+    )
+
+    rescoping_wf.connect_with(
+        selection._selection, output_input_names={_WfNames.scoping: _WfNames.scoping}
+    )
+
+    return rescoping_wf

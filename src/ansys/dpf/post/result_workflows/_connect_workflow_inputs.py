@@ -73,9 +73,10 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf: Workflo
         result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
 
 
-def _connect_initial_results_inputs(
+def _connect_workflow_inputs(
     initial_result_workflow: Workflow,
     split_by_body_workflow: Optional[Workflow],
+    rescoping_workflow: Optional[Workflow],
     force_elemental_nodal: bool,
     location: str,
     selection: Selection,
@@ -145,6 +146,11 @@ def _connect_initial_results_inputs(
         initial_result_workflow.connect(_WfNames.location, location)
 
     initial_result_workflow.connect(_WfNames.mesh, mesh)
+
+    if rescoping_workflow:
+        rescoping_workflow.connect(_WfNames.mesh, mesh)
+        if _WfNames.data_sources in rescoping_workflow.input_names:
+            rescoping_workflow.connect(_WfNames.data_sources, data_sources)
 
 
 def _connect_averaging_eqv_and_principal_workflows(

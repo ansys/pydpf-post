@@ -20,7 +20,7 @@ from ansys.dpf.post.result_workflows._component_helper import (
     _create_components,
 )
 from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
-    _connect_initial_results_inputs,
+    _connect_workflow_inputs,
 )
 from ansys.dpf.post.result_workflows._sub_workflows import _create_norm_workflow
 from ansys.dpf.post.result_workflows._utils import AveragingConfig, _append_workflows
@@ -252,9 +252,10 @@ class FluidSimulation(Simulation):
             "mesh_scoping", initial_result_op.inputs.mesh_scoping
         )
 
-        _connect_initial_results_inputs(
+        _connect_workflow_inputs(
             initial_result_workflow=initial_result_workflow,
             split_by_body_workflow=None,
+            rescoping_workflow=None,
             force_elemental_nodal=False,
             location=location,
             selection=selection,
