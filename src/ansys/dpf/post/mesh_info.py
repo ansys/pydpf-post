@@ -139,7 +139,7 @@ class FluidMeshInfo:
             string_field = self._core_object.get_property("face_zone_names")
             for zone_id in string_field.scoping.ids:
                 zone_name = string_field.get_entity_data_by_id(zone_id)[0]
-                zones[zone_id] = zone_name
+                zones[zone_id.item()] = zone_name
             self._face_zones = zones
         return self._face_zones
 
@@ -164,7 +164,7 @@ class FluidMeshInfo:
             string_field = self._core_object.body_names
             for zone_id in string_field.scoping.ids:
                 zone_name = string_field.get_entity_data_by_id(zone_id)[0]
-                zones[zone_id] = zone_name
+                zones[zone_id.item()] = zone_name
             self._cell_zones = zones
         return self._cell_zones
 
