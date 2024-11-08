@@ -192,6 +192,6 @@ class FluidMeshInfo:
                 face_zone_ids = property_field.get_entity_data_by_id(
                     cell_zone_id
                 ).tolist()
-                result[cell_zone_id] = face_zone_ids
+                result[cell_zone_id.item()] = face_zone_ids
             self._cell_zones_to_face_zones = result
         return self._cell_zones_to_face_zones
