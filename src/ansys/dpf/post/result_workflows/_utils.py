@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
@@ -10,6 +11,54 @@ class _CreateOperatorCallable(Protocol):
     # This usually corresponds to model.operator
     def __call__(self, name: str) -> Operator:
         ...
+
+
+class _Rescoping:
+    # Defines a rescoping that needs to be performed at the end
+    # of the results workflow. This is needed, because
+    # the scoping sometimes needs to be broadened when force_elemental_nodal is
+    # True.
+    def __init__(
+        self,
+        requested_location: str,
+        named_selections: Optional[list[str]] = None,
+        node_ids: Optional[list[int]] = None,
+    ):
+        if named_selections is not None and node_ids is not None:
+            raise ValueError(
+                "Arguments named_selections and node_ids are mutually exclusive"
+            )
+        if named_selections is None and node_ids is None:
+            raise ValueError(
+                "At least one of named_selections and node_ids must be provided"
+            )
+        self._node_ids = node_ids
+        self._named_selections = named_selections
+        self._requested_location = requested_location
+
+    @property
+    def node_ids(self):
+        return self._node_ids
+
+    @property
+    def named_selections(self):
+        return self._named_selections
+
+    @property
+    def requested_location(self):
+        return self._requested_location
+
+
+@dataclasses.dataclass
+class AveragingConfig:
+    """Configuration for averaging of results."""
+
+    # List of properties that define a body. The mesh is split by these properties to
+    # get the bodies.
+    body_defining_properties: Optional[list[str]] = None
+    # If True, the results are averaged per body. The bodies are determined
+    # by the body_defining_properties.
+    average_per_body: bool = False
 
 
 def _append_workflows(workflows: list[Workflow], current_output_workflow: Workflow):

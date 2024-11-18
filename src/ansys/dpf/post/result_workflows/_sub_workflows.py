@@ -1,11 +1,11 @@
-from typing import Any, Union
+from typing import Union
 
-from ansys.dpf.core import Workflow
+from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
-from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable
-from ansys.dpf.post.selection import _WfNames
+from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable, _Rescoping
+from ansys.dpf.post.selection import SpatialSelection, _WfNames
 
 
 def _create_averaging_workflow(
@@ -120,13 +120,6 @@ def _create_equivalent_workflow(
     return equivalent_wf
 
 
-def _create_mesh_workflow(mesh_provider: Any, server):
-    mesh_wf = Workflow(server=server)
-    mesh_wf.add_operator(mesh_provider)
-    mesh_wf.set_output_name(_WfNames.initial_mesh, mesh_provider)
-    return mesh_wf
-
-
 def _create_extract_component_workflow(
     create_operator_callable: _CreateOperatorCallable,
     components_to_extract: list[int],
@@ -230,3 +223,89 @@ def _create_sweeping_phase_workflow(
         return None
 
     return sweeping_phase_workflow
+
+
+def _enrich_mesh_with_property_fields(
+    mesh: MeshedRegion,
+    property_names: list[str],
+    streams_provider: StreamsContainer,
+):
+    property_operator = operators.metadata.property_field_provider_by_name()
+    property_operator.inputs.streams_container(streams_provider)
+
+    for property_name in property_names:
+        # Some of the requested properties might already be part of the mesh
+        # property fields
+        if property_name not in mesh.available_property_fields:
+            property_operator.inputs.property_name(property_name)
+            property_field = property_operator.eval()
+
+            # Rescope the property field to the element scoping of the mesh
+            # to ensure the split by property operator works correctly
+            rescope_op = operators.scoping.rescope_property_field(
+                mesh_scoping=mesh.elements.scoping, fields=property_field
+            )
+
+            mesh.set_property_field(
+                property_name, rescope_op.outputs.fields_as_property_field()
+            )
+
+
+def _create_split_scope_by_body_workflow(server, body_defining_properties: list[str]):
+    split_scope_by_body_wf = Workflow(server=server)
+    split_scop_op = operators.scoping.split_on_property_type()
+    split_scope_by_body_wf.add_operator(split_scop_op)
+    split_scope_by_body_wf.set_input_name(_WfNames.mesh, split_scop_op.inputs.mesh)
+    split_scope_by_body_wf.set_input_name(
+        _WfNames.scoping_location, split_scop_op.inputs.requested_location
+    )
+    split_scope_by_body_wf.set_input_name(
+        _WfNames.scoping, split_scop_op.inputs.mesh_scoping
+    )
+
+    for idx, property_name in enumerate(body_defining_properties):
+        split_scop_op.connect(13 + idx, property_name)
+    split_scope_by_body_wf.set_output_name(
+        _WfNames.scoping, split_scop_op.outputs.mesh_scoping
+    )
+    return split_scope_by_body_wf
+
+
+def _create_rescoping_workflow(server, rescoping: _Rescoping):
+    selection = SpatialSelection(server=server)
+
+    if rescoping.named_selections is not None:
+        selection.select_named_selection(rescoping.named_selections)
+
+    if rescoping.node_ids is not None:
+        selection.select_nodes(rescoping.node_ids)
+
+    rescoping_wf = Workflow(server=server)
+
+    transpose_scoping_op = operators.scoping.transpose()
+    rescoping_wf.add_operator(transpose_scoping_op)
+    transpose_scoping_op.inputs.requested_location(rescoping.requested_location)
+    rescoping_wf.set_input_name(
+        _WfNames.mesh, transpose_scoping_op.inputs.meshed_region
+    )
+
+    rescoping_op = operators.scoping.rescope_fc()
+    rescoping_wf.add_operator(rescoping_op)
+    rescoping_op.inputs.mesh_scoping(
+        transpose_scoping_op.outputs.mesh_scoping_as_scoping
+    )
+    rescoping_wf.set_input_name(
+        _WfNames.input_data, rescoping_op.inputs.fields_container
+    )
+    rescoping_wf.set_input_name(
+        _WfNames.scoping, transpose_scoping_op.inputs.mesh_scoping
+    )
+    rescoping_wf.set_output_name(
+        _WfNames.output_data, rescoping_op.outputs.fields_container
+    )
+
+    rescoping_wf.connect_with(
+        selection._selection, output_input_names={_WfNames.scoping: _WfNames.scoping}
+    )
+
+    return rescoping_wf

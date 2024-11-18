@@ -7,7 +7,7 @@ Simulation
 from abc import ABC
 from os import PathLike
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 import warnings
 
 import ansys.dpf.core as dpf
@@ -32,6 +32,7 @@ from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.result_workflows._build_workflow import _requires_manual_averaging
 from ansys.dpf.post.result_workflows._component_helper import ResultCategory
+from ansys.dpf.post.result_workflows._utils import _Rescoping
 from ansys.dpf.post.selection import Selection
 
 
@@ -503,14 +504,17 @@ class Simulation(ABC):
                 values = fc.get_available_ids_for_label(label)
                 # Then try to gather the correspond string values for display
                 try:
-                    label_support = self.result_info.qualifier_label_support(label)
-                    names_field = label_support.string_field_support_by_property(
-                        "names"
-                    )
-                    values = [
-                        names_field.get_entity_data_by_id(value)[0] + f" ({value})"
-                        for value in values
-                    ]
+                    if label == "mat":
+                        values = fc.get_available_ids_for_label("mat")
+                    else:
+                        label_support = self.result_info.qualifier_label_support(label)
+                        names_field = label_support.string_field_support_by_property(
+                            "names"
+                        )
+                        values = [
+                            names_field.get_entity_data_by_id(value)[0] + f" ({value})"
+                            for value in values
+                        ]
                 except (
                     ValueError,
                     errors.DPFServerException,
@@ -574,7 +578,8 @@ class MechanicalSimulation(Simulation, ABC):
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
-    ) -> Selection:
+        average_per_body: Optional[bool] = False,
+    ) -> (Selection, Optional[_Rescoping]):
         tot = (
             (node_ids is not None)
             + (element_ids is not None)
@@ -594,9 +599,38 @@ class MechanicalSimulation(Simulation, ABC):
                 "Arguments selection, skin, and external_layer are mutually exclusive"
             )
         if selection is not None:
-            return selection
+            return selection, None
         else:
             selection = Selection(server=self._model._server)
+
+        if isinstance(skin, bool):
+            has_skin = skin
+        else:
+            has_skin = len(skin) > 0
+
+        requires_manual_averaging = _requires_manual_averaging(
+            base_name=base_name,
+            location=location,
+            category=category,
+            has_skin=has_skin,
+            has_external_layer=external_layer,
+            create_operator_callable=self._model.operator,
+            average_per_body=average_per_body,
+        )
+
+        rescoping = None
+        if requires_manual_averaging:
+            if node_ids is not None and location == locations.nodal:
+                rescoping = _Rescoping(requested_location=location, node_ids=node_ids)
+
+            if named_selections:
+                rescoping = _Rescoping(
+                    requested_location=location, named_selections=named_selections
+                )
+
+        if requires_manual_averaging and location != locations.elemental_nodal:
+            location = locations.elemental_nodal
+
         # Create the SpatialSelection
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
@@ -609,13 +643,7 @@ class MechanicalSimulation(Simulation, ABC):
                 if base_name in _result_properties
                 else None
             )
-            location = (
-                locations.elemental_nodal
-                if _requires_manual_averaging(
-                    base_name, location, category, None, self._model.operator
-                )
-                else location
-            )
+
             if external_layer not in [None, False]:
                 selection.select_external_layer(
                     elements=external_layer if external_layer is not True else None,
@@ -640,7 +668,9 @@ class MechanicalSimulation(Simulation, ABC):
                 )
         if named_selections:
             selection.select_named_selection(
-                named_selection=named_selections, location=location
+                named_selection=named_selections,
+                location=location,
+                inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
             if location == locations.nodal:
@@ -649,11 +679,11 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
-                raise ValueError(
-                    "Argument 'node_ids' can only be used if 'location' "
-                    "is equal to 'post.locations.nodal'."
+                selection.select_elements_of_nodes(
+                    nodes=node_ids, mesh=self.mesh, inclusive=requires_manual_averaging
                 )
-            selection.select_nodes(nodes=node_ids)
+            else:
+                selection.select_nodes(nodes=node_ids)
 
         # Create the TimeFreqSelection
         if all_sets:
@@ -720,11 +750,11 @@ class MechanicalSimulation(Simulation, ABC):
                 if isinstance(load_steps, int):
                     load_steps = [load_steps]
                 selection.time_freq_selection.select_load_steps(load_steps=load_steps)
-            return selection
+            return selection, rescoping
 
         else:
             # Otherwise, no argument was given, create a time_freq_scoping of the last set only
             selection.select_time_freq_sets(
                 time_freq_sets=[self.time_freq_support.n_sets]
             )
-        return selection
+        return selection, rescoping

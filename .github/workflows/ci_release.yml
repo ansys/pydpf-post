@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: "Setup Python"
-        uses: actions/setup-python@v5.2.0
+        uses: actions/setup-python@v5.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -123,7 +123,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
   retro:
     name: "Retro-compatibility"
@@ -184,7 +184,7 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
   examples:
     uses: ./.github/workflows/examples.yml

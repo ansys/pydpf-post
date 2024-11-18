@@ -43,6 +43,7 @@ class _WfNames:
     initial_mesh = "initial_mesh"
     mesh = "mesh"
     location = "location"
+    scoping_location = "scoping_location"
     external_layer = "external_layer"
     skin = "skin"
     read_cyclic = "read_cyclic"
@@ -233,6 +234,7 @@ class SpatialSelection:
         self,
         named_selection: Union[str, List[str]],
         location: Union[str, locations, None] = None,
+        inclusive: bool = False,
     ) -> None:
         """Select a mesh scoping corresponding to one or several named selections.
 
@@ -245,12 +247,18 @@ class SpatialSelection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        inclusive:
+            If True and the named selection is nodal,
+            include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
+        int_inclusive = 1 if inclusive else 0
         if isinstance(named_selection, str):
             op = operators.scoping.on_named_selection(
                 requested_location=location,
                 named_selection_name=named_selection,
                 server=self._server,
+                int_inclusive=int_inclusive,
             )
             self._selection.add_operator(op)
             self._selection.set_input_name(
@@ -272,6 +280,7 @@ class SpatialSelection:
                     requested_location=location,
                     named_selection_name=ns,
                     server=self._server,
+                    int_inclusive=int_inclusive
                     # data_sources=forward_ds.outputs.any,
                     # streams_container=forward_sc.outputs.any,
                 )
@@ -493,6 +502,7 @@ class SpatialSelection:
             _connect_any(
                 transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
             )
+
             self._selection.set_output_name(
                 _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
             )
@@ -572,6 +582,37 @@ class SpatialSelection:
             meshed_region=mesh._meshed_region,
             inclusive=0,
             requested_location=locations.nodal,
+        )
+        self._selection.add_operator(op)
+        self._selection.set_output_name(
+            _WfNames.scoping, op.outputs.mesh_scoping_as_scoping
+        )
+
+    def select_elements_of_nodes(
+        self, nodes: Union[List[int], Scoping], mesh: Mesh, inclusive: bool = True
+    ) -> None:
+        """Select all elements of nodes using the nodes' IDs or a nodal mesh scoping.
+
+        Parameters
+        ----------
+        nodes:
+            node IDs or nodal mesh scoping.
+        mesh:
+            Mesh containing the necessary connectivity.
+        inclusive:
+            If True, include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
+        """
+        if isinstance(nodes, Scoping):
+            scoping = nodes
+        else:
+            scoping = Scoping(location=locations.nodal, ids=nodes, server=self._server)
+
+        op = operators.scoping.transpose(
+            mesh_scoping=scoping,
+            meshed_region=mesh._meshed_region,
+            inclusive=1 if inclusive else 0,
+            requested_location=locations.elemental,
         )
         self._selection.add_operator(op)
         self._selection.set_output_name(
@@ -761,28 +802,6 @@ class SpatialSelection:
         """Whether the selection workflow as an output named ``mesh``."""
         return _WfNames.mesh in self._selection.output_names
 
-    def requires_manual_averaging(
-        self,
-        location: Union[str, locations],
-        result_native_location: Union[str, locations],
-        is_model_cyclic: str = "not_cyclic",
-    ) -> bool:
-        """Whether the selection workflow requires to manually build the averaging workflow."""
-        output_names = self._selection.output_names
-        is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
-        if (
-            _WfNames.external_layer in output_names
-            and is_model_cyclic
-            and location != result_native_location
-        ):
-            return True
-        elif _WfNames.skin in output_names and (
-            result_native_location == locations.elemental
-            or result_native_location == locations.elemental_nodal
-        ):
-            return True
-        return False
-
 
 class Selection:
     """The ``Selection`` class helps define the domain on which results are evaluated.
@@ -871,6 +890,7 @@ class Selection:
         self,
         named_selection: Union[str, List[str]],
         location: Union[str, locations, None] = None,
+        inclusive: bool = False,
     ) -> None:
         """Select a mesh scoping corresponding to one or several named selections.
 
@@ -882,8 +902,14 @@ class Selection:
             Location of the mesh entities to extract results at. Available locations are listed in
             class:`post.locations` and are: `post.locations.nodal` or
             `post.locations.elemental`.
+        inclusive:
+            If True and the named selection is nodal,
+            include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
         """
-        self._spatial_selection.select_named_selection(named_selection, location)
+        self._spatial_selection.select_named_selection(
+            named_selection, location, inclusive
+        )
 
     def select_nodes(self, nodes: Union[List[int], Scoping]) -> None:
         """Select a mesh scoping with its node IDs.
@@ -936,6 +962,25 @@ class Selection:
             Mesh containing the connectivity.
         """
         self._spatial_selection.select_nodes_of_elements(elements, mesh)
+
+    def select_elements_of_nodes(
+        self, nodes: Union[List[int], Scoping], mesh: Mesh, inclusive: bool = True
+    ) -> None:
+        """Select elements belonging to nodes defined by their IDs.
+
+        Select a elemental mesh scoping corresponding to nodes.
+
+        Parameters
+        ----------
+        nodes:
+            node IDs.
+        mesh:
+            Mesh containing the connectivity.
+        inclusive:
+            If True, include all elements that touch a node. If False, include only elements
+            that share all the nodes in the scoping.
+        """
+        self._spatial_selection.select_elements_of_nodes(nodes, mesh, inclusive)
 
     def select_nodes_of_faces(
         self, faces: Union[List[int], Scoping], mesh: Mesh
@@ -1055,16 +1100,3 @@ class Selection:
     def outputs_mesh(self) -> bool:
         """Whether the selection workflow as an output named ``mesh``."""
         return self._spatial_selection.outputs_mesh
-
-    def requires_manual_averaging(
-        self,
-        location: Union[str, locations],
-        result_native_location: Union[str, locations],
-        is_model_cyclic: str = "not_cyclic",
-    ) -> bool:
-        """Whether the selection workflow requires to manually build the averaging workflow."""
-        return self._spatial_selection.requires_manual_averaging(
-            location=location,
-            result_native_location=result_native_location,
-            is_model_cyclic=is_model_cyclic,
-        )

@@ -4,7 +4,7 @@ HarmonicMechanicalSimulation
 ----------------------------
 
 """
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 import warnings
 
 from ansys.dpf import core as dpf
@@ -28,9 +28,13 @@ from ansys.dpf.post.result_workflows._component_helper import (
 )
 from ansys.dpf.post.result_workflows._connect_workflow_inputs import (
     _connect_averaging_eqv_and_principal_workflows,
-    _connect_initial_results_inputs,
+    _connect_workflow_inputs,
 )
-from ansys.dpf.post.result_workflows._utils import _append_workflows
+from ansys.dpf.post.result_workflows._utils import (
+    AveragingConfig,
+    _append_workflows,
+    _Rescoping,
+)
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation
 
@@ -50,6 +54,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         selection: Union[Selection, None] = None,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         phase_angle_cyclic: Union[float, None] = None,
+        averaging_config: AveragingConfig = AveragingConfig(),
+        rescoping: Optional[_Rescoping] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -60,17 +66,20 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             location=location,
             selection=selection,
             create_operator_callable=self._model.operator,
-            mesh_provider=self._model.metadata.mesh_provider,
             amplitude=amplitude,
             sweeping_phase=sweeping_phase,
+            averaging_config=averaging_config,
+            rescoping=rescoping,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
             create_operator_callable=self._model.operator,
             create_workflow_inputs=result_workflow_inputs,
         )
-        _connect_initial_results_inputs(
+        _connect_workflow_inputs(
             initial_result_workflow=result_workflows.initial_result_workflow,
+            split_by_body_workflow=result_workflows.split_by_bodies_workflow,
+            rescoping_workflow=result_workflows.rescoping_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,
@@ -79,13 +88,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             mesh=self.mesh._meshed_region,
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
+            averaging_config=averaging_config,
         )
-
-        if result_workflows.mesh_workflow:
-            selection.spatial_selection._selection.connect_with(
-                result_workflows.mesh_workflow,
-                output_input_names={_WfNames.initial_mesh: _WfNames.initial_mesh},
-            )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
 
@@ -94,6 +98,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 result_workflows.component_extraction_workflow,
                 result_workflows.sweeping_phase_workflow,
                 result_workflows.norm_workflow,
+                result_workflows.rescoping_workflow,
             ],
             output_wf,
         )
@@ -129,6 +134,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
+        averaging_config: AveragingConfig = AveragingConfig(),
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -201,6 +207,10 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
              is computed over list of elements (not supported for cyclic symmetry). Getting the
              skin on more than one result (several time freq sets, split data...) is only
              supported starting with Ansys 2023R2.
+        averaging_config:
+            Per default averaging happens across all bodies. The averaging config
+            can define that averaging happens per body and defines the properties that
+            are used to define a body.
 
         Returns
         -------
@@ -233,7 +243,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
                 "and node_ids are mutually exclusive"
             )
 
-        selection = self._build_selection(
+        selection, rescoping = self._build_selection(
             base_name=base_name,
             category=category,
             selection=selection,
@@ -247,6 +257,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             location=location,
             external_layer=external_layer,
             skin=skin,
+            average_per_body=averaging_config.average_per_body,
         )
 
         wf, comp, base_name = self._get_result_workflow(
@@ -260,6 +271,8 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             expand_cyclic=expand_cyclic,
             phase_angle_cyclic=phase_angle_cyclic,
+            averaging_config=averaging_config,
+            rescoping=rescoping,
         )
 
         # Evaluate  the workflow
