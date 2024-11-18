@@ -10,10 +10,6 @@ on:
         description: 'Release tag'
         default: 'latest'
         type: string
-      checkout_ref:
-        description: 'Ref to checkout for doc index (default to current branch)'
-        default: ''
-        type: string
 
 env:
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
@@ -66,7 +62,7 @@ jobs:
 
   upload_docs_release:
     name: "Upload release documentation"
-    needs: [Publish_to_PyPI]
+    needs: [Publish_to_PyPI, get_latest_tag]
     runs-on: ubuntu-latest
     steps:
       - name: "Download Release Asset - HTML"
