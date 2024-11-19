@@ -131,8 +131,8 @@ def test_dataframe_select_cells():
     reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
 )
 def test_dataframe_select_with_labels():
-    fluid_files = examples.download_cfx_mixing_elbow()
-    simulation = post.FluidSimulation(cas=fluid_files["cas"], dat=fluid_files["dat"])
+    fluid_file = examples.download_cfx_mixing_elbow()
+    simulation = post.FluidSimulation(fluid_file)
     df = simulation.enthalpy()
     df2 = df.select(node_ids=[1])
     ref = """

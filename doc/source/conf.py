@@ -226,6 +226,11 @@ html_theme_options = {
         "version_match": get_version_match(__version__),
     },
     "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "static_search": {
+        "threshold": 0.5,
+        "min_chars_for_search": 2,
+        "ignoreLocation": True,
+    },
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

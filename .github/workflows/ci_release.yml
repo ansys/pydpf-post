@@ -28,7 +28,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
-  ANSYS_VERSION: '242'
+  ANSYS_VERSION: '251'
 
 jobs:
   debug:
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: "Setup Python"
-        uses: actions/setup-python@v5.0.0
+        uses: actions/setup-python@v5.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -62,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ANSYS_VERSION: ["242"]
+        ANSYS_VERSION: ["251"]
         python-version: ["3.9", "3.10", "3.11"]
         os: ["windows-latest", "ubuntu-latest"]
 
@@ -85,7 +85,8 @@ jobs:
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
           install_extras: plotting
-          wheel: true
+          # Upload the wheel artifact for only one of the OS as it is OS-agnostic
+          wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
           wheelhouse: true
           standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
 
@@ -122,7 +123,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
   retro:
     name: "Retro-compatibility"
@@ -132,7 +133,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["241", "232", "231", "222"]
+        ANSYS_VERSION: ["242", "241", "232", "231", "222"]
 
     steps:
       - uses: actions/checkout@v4
@@ -183,12 +184,12 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
   examples:
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: '242'
+      ANSYS_VERSION: '251'
       python_versions: '["3.10"]'
       standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
     secrets: inherit
@@ -196,7 +197,7 @@ jobs:
   docs:
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: '242'
+      ANSYS_VERSION: '251'
       python_version: "3.10"
       standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
       event_name: ${{ github.event_name }}
@@ -215,7 +216,7 @@ jobs:
         run: ls -R
 
       - name: "Create draft release"
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             ./**/*.whl

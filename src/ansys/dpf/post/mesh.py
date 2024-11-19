@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import List
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.faces import Face
 from ansys.dpf.core.nodes import Node
 from ansys.dpf.core.property_fields_container import (
     _MockPropertyFieldsContainer as PropertyFieldsContainer,
@@ -21,6 +22,7 @@ from ansys.dpf.post.elements import Element, ElementListByIndex
 from ansys.dpf.post.faces import FaceListByIndex
 from ansys.dpf.post.named_selection import NamedSelections
 from ansys.dpf.post.nodes import NodeListByIndex
+from ansys.dpf.post.result_workflows._component_helper import _vector_component_names
 
 
 class Mesh:
@@ -501,8 +503,6 @@ class Mesh:
                            Z 0.0000e+00
               ...        ...        ...
         """
-        from ansys.dpf.post.simulation import vector_component_names
-
         label = "coord"
         fields_container = dpf.FieldsContainer()
         fields_container.add_field(
@@ -517,7 +517,7 @@ class Mesh:
                         scoping=self._core_object.nodes.scoping,
                         fc=fields_container,
                     ),
-                    index.CompIndex(values=vector_component_names),
+                    index.CompIndex(values=_vector_component_names),
                 ]
             ),
             columns=index.MultiIndex(

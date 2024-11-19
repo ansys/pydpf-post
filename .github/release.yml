@@ -1,0 +1,24 @@
+changelog:
+    exclude:
+      authors:
+        - dependabot[bot]
+    categories:
+      - title: Enhancements
+        labels:
+          - enhancement
+      - title: Bug fixes
+        labels:
+          - bug
+      - title: Documentation
+        labels:
+          - documentation
+      - title: Examples
+        labels:
+          - examples
+      - title: CI/CD
+        labels:
+          - CI/CD
+      - title: Maintenance
+        labels:
+          - maintenance
+          - dependencies
