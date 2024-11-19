@@ -5,14 +5,14 @@ on:
   workflow_call:
     inputs:
       version:
-        description: "Release version as 'X.Y.Z'"
+        description: "Release version as 'vX.Y.Z'"
         type: string
         required: true
 # Can be called manually
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version as 'X.Y.Z'"
+        description: "Release version as 'vX.Y.Z'"
         type: string
         required: true
 
@@ -39,11 +39,11 @@ jobs:
             print(f"Deleted {example}")
 
       - name: "Download Release Asset - HTML"
-        uses: dsaltares/fetch-gh-release-asset@1.1.1
+        uses: dsaltares/fetch-gh-release-asset@1.1.2
         with:
           file: HTML-doc-ansys-dpf-post.zip
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: tags/v${{ inputs.version }}
+          version: tags/${{ inputs.version }}
 
       - name: "Extract ipynb examples"
         shell: python
@@ -69,8 +69,8 @@ jobs:
       - name: "Push changes"
         shell: bash
         run: |
-          git config --global user.name "rlagha"
+          git config --global user.name "pyansys-ci-bot"
           git add .
           git status
-          git commit -a -m ${{ inputs.version }}
+          git commit -a -m ${{ inputs.version }} || exit 0
           git push https://${{ secrets.PYANSYS_CI_BOT_TOKEN }}@github.com/ansys/pydpf-post.git --follow-tags
