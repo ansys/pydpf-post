@@ -352,15 +352,14 @@ class DataFrame:
             indexes=row_indexes,
         )
 
+        set_index = None
         if "time" in fc.labels:
             set_index = SetIndex(values=fc.get_available_ids_for_label("time"))
-        else:
-            set_index = SetIndex(values=[])
 
-        column_indexes = [
-            results_index,
-            set_index,
-        ]
+        column_indexes = [results_index]
+        if set_index:
+            column_indexes.append(set_index)
+
         if isinstance(fc, PropertyFieldsContainer):
             column_indexes = [results_index]
 
