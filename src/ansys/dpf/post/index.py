@@ -152,7 +152,7 @@ class MeshIndex(Index):
 
     def _evaluate_values(self):
         """Evaluates the values of the MeshIndex."""
-        if self._scoping_ref is not None:
+        if self._scoping_ref is not None and self._scoping_ref() is not None:
             self._values = self._scoping_ref().ids
         else:
             # Merge the fields container scoping
