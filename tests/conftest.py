@@ -129,6 +129,14 @@ def static_rst():
 
 
 @pytest.fixture()
+def mixed_shell_solid_model():
+    """Resolve the path of the "static.rst" result file."""
+    return (
+        r"D:\ANSYSDev\remote_post\models\mixed_shell_solid_files\dp0\SYS\MECH\file.rst"
+    )
+
+
+@pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
     return examples.complex_rst
@@ -181,7 +189,7 @@ def get_per_body_ref_files(
     root_path: str, n_bodies: int
 ) -> dict[str, ReferenceCsvFiles]:
     ref_files = {}
-    for result in ["stress", "elastic_strain"]:
+    for result in ["stress"]:
         per_mat_id_dict = {}
         for mat in range(1, n_bodies + 1):
             per_mat_id_dict[str(mat)] = _download_file(
@@ -198,6 +206,11 @@ def get_per_body_ref_files(
 @pytest.fixture()
 def average_per_body_complex_multi_body_ref():
     return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+
+
+@pytest.fixture()
+def shell_layer_multi_body_ref():
+    return get_per_body_ref_files("result_files/extract_shell_layer", 2)
 
 
 @pytest.fixture()

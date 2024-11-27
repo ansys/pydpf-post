@@ -41,6 +41,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
+        shell_layer: Optional[int] = None,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -53,6 +54,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -63,6 +65,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             initial_result_workflow=result_workflows.initial_result_workflow,
             split_by_body_workflow=result_workflows.split_by_bodies_workflow,
             rescoping_workflow=result_workflows.rescoping_workflow,
+            select_shell_layer_workflow=result_workflows.select_shell_layer_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,
@@ -115,6 +118,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
         averaging_config: AveragingConfig = AveragingConfig(),
+        shell_layer: Optional[int] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -186,6 +190,8 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             Per default averaging happens across all bodies. The averaging config
             can define that averaging happens per body and defines the properties that
             are used to define a body.
+        shell_layer:
+            Shell layer to extract results for.
 
         Returns
         -------
@@ -234,6 +240,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
 
         # Evaluate  the workflow

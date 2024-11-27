@@ -56,6 +56,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
+        shell_layer: Optional[int] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(

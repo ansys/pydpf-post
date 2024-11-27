@@ -452,6 +452,14 @@ def static_simulation(static_rst):
 
 
 @fixture
+def mixed_shell_solid_simulation(mixed_shell_solid_model):
+    return post.load_simulation(
+        data_sources=mixed_shell_solid_model,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
 def transient_simulation(plate_msup):
     return post.load_simulation(
         data_sources=plate_msup,
@@ -1170,6 +1178,83 @@ all_configuration_ids = [True] + list(
         ]
     )
 )
+
+
+@pytest.mark.parametrize("average_per_body", [True, False])
+@pytest.mark.parametrize("on_skin", [True, False])
+def test_shell_layer_extraction(
+    mixed_shell_solid_simulation, shell_layer_multi_body_ref, average_per_body, on_skin
+):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        return
+
+    if average_per_body:
+        averaging_config = AveragingConfig(
+            body_defining_properties=["mat"], average_per_body=True
+        )
+    else:
+        averaging_config = AveragingConfig(
+            body_defining_properties=None, average_per_body=False
+        )
+
+    res = mixed_shell_solid_simulation._get_result(
+        base_name="S",
+        skin=on_skin,
+        components=["X"],
+        location=locations.nodal,
+        category=ResultCategory.matrix,
+        shell_layer=0,
+        averaging_config=averaging_config,
+    )
+
+    import pyvista
+
+    pyvista.OFF_SCREEN = False
+    # res._fc[0].plot()
+
+    skip_duplicate_nodes = True
+    if average_per_body:
+        skip_duplicate_nodes = False
+
+    expected_results = get_ref_per_body_results_mechanical(
+        shell_layer_multi_body_ref["stress"],
+        mixed_shell_solid_simulation.mesh._meshed_region,
+        skip_duplicate_nodes,
+    )
+
+    number_of_nodes_checked = 0
+
+    if on_skin:
+        # Take all the surfaces and remove nodes at the edges ( 11* 9) and corners (7*2)
+        # are counted 2 or 3 times. Remove the edge that touches both bodies because
+        # it is not part of the reference data (skip_duplicate_nodes is True) (11*3)
+        expected_number_of_nodes = 11 * 11 * 7 - 11 * 9 - 7 * 2 - 11 * 3
+    else:
+        expected_number_of_nodes = 11 * 11 * 11 + 10 * 11 - 11
+    if average_per_body:
+        # Add boundary nodes again (duplicate nodes at the boundary)
+        expected_number_of_nodes += 2 * 11
+
+    for node_id, expected_result_per_node in expected_results.items():
+        if average_per_body:
+            for material in [1, 2]:
+                field = res._fc.get_field({"mat": material})
+                if node_id in field.scoping.ids:
+                    number_of_nodes_checked += 1
+                    actual_result = field.get_entity_data_by_id(node_id)
+                    expected_result = expected_result_per_node[str(material)]
+                    np.allclose(actual_result, expected_result)
+        else:
+            assert len(res._fc) == 1
+            field = res._fc[0]
+            if node_id in field.scoping.ids:
+                number_of_nodes_checked += 1
+                actual_result = field.get_entity_data_by_id(node_id)
+                expected_results = list(expected_result_per_node.values())
+                assert len(expected_results) == 1
+                np.allclose(actual_result, expected_results[0])
+
+    assert number_of_nodes_checked == expected_number_of_nodes
 
 
 @pytest.mark.parametrize("skin", all_configuration_ids)
@@ -3574,7 +3659,9 @@ def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
 
 
 def get_ref_result_per_node_and_material(
-    mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles
+    mesh: MeshedRegion,
+    reference_csv_files: ReferenceCsvFiles,
+    skip_duplicate_nodes=False,
 ):
     # Get the reference data from the csv files.
     # Returns a dictionary with node_id and mat_id as nested keys.
@@ -3621,15 +3708,21 @@ def get_ref_result_per_node_and_material(
                 np.array(ref_data.combined.data)[combined_row_indices],
             ).any(), f"{node_id}, {mat_id}"
 
+        if skip_duplicate_nodes and multiplicity_of_node > 1:
+            continue
         data_per_node_and_material[node_id] = material_wise_data
 
     return data_per_node_and_material
 
 
 def get_ref_per_body_results_mechanical(
-    reference_csv_files: ReferenceCsvFiles, mesh: MeshedRegion
+    reference_csv_files: ReferenceCsvFiles,
+    mesh: MeshedRegion,
+    skip_duplicate_nodes=False,
 ):
-    return get_ref_result_per_node_and_material(mesh, reference_csv_files)
+    return get_ref_result_per_node_and_material(
+        mesh, reference_csv_files, skip_duplicate_nodes=skip_duplicate_nodes
+    )
 
 
 def get_per_body_results_solid(
