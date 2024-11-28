@@ -1182,11 +1182,11 @@ all_configuration_ids = [True] + list(
 
 
 @pytest.mark.parametrize("average_per_body", [False, True])
-@pytest.mark.parametrize("on_skin", [False, True])
+@pytest.mark.parametrize("on_skin", [True, False])
 # Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
 # for mixed models.
 @pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
-@pytest.mark.parametrize("location", [locations.nodal, locations.elemental])
+@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
 def test_shell_layer_extraction(
     mixed_shell_solid_simulation,
     shell_layer_multi_body_ref,
@@ -1265,7 +1265,7 @@ def test_shell_layer_extraction(
                         number_of_nodes_checked += 1
                         actual_result = field.get_entity_data_by_id(node_id)
                         expected_result = expected_result_per_node[str(material)]
-                        np.allclose(actual_result, expected_result)
+                        assert np.isclose(actual_result, expected_result, rtol=1e-3)
             else:
                 assert len(res._fc) == 1
                 field = res._fc[0]
@@ -1278,7 +1278,14 @@ def test_shell_layer_extraction(
                     assert values_for_node.size < 3
                     avg_expected_result = np.mean(values_for_node)
 
-                    np.allclose(actual_result, avg_expected_result)
+                    if on_skin and len(values_for_node) > 1:
+                        # Skip elements at the edge that connects the body
+                        # because the averaging on the skin is different. For instance
+                        # 3 skin elements are involved the averaging of the inner elements
+                        continue
+                    assert np.isclose(
+                        actual_result, avg_expected_result, rtol=1e-3
+                    ), f"{values_for_node}, {node_id}"
 
         assert number_of_nodes_checked == expected_number_of_nodes
 
@@ -1296,6 +1303,16 @@ def test_shell_layer_extraction(
 
             element_id_to_skin_ids = {}
             solid_mesh = mixed_shell_solid_simulation.mesh._meshed_region
+
+            split_scoping = operators.scoping.split_on_property_type()
+            split_scoping.inputs.mesh(solid_mesh)
+            split_scoping.inputs.label1("mat")
+            split_scoping.inputs.requested_location(locations.elemental)
+
+            splitted_scoping = split_scoping.eval()
+
+            shell_elements_scoping = splitted_scoping.get_scoping({"mat": 2})
+
             for skin_id in skin_mesh.elements.scoping.ids:
                 element_idx = skin_to_element_indices.get_entity_data_by_id(skin_id)[0]
                 solid_element_id = solid_mesh.elements.scoping.ids[element_idx]
@@ -1304,6 +1321,8 @@ def test_shell_layer_extraction(
                 element_id_to_skin_ids[solid_element_id].append(skin_id)
 
             for element_id, expected_value in ref_result.items():
+                if element_id not in shell_elements_scoping.ids:
+                    continue
                 if element_id in element_id_to_skin_ids:
                     skin_ids = element_id_to_skin_ids[element_id]
                     for skin_id in skin_ids:
@@ -1311,33 +1330,39 @@ def test_shell_layer_extraction(
                             for material in [1, 2]:
                                 field = res._fc.get_field({"mat": material})
                                 if skin_id in field.scoping.ids:
-                                    np.allclose(
+                                    assert np.isclose(
                                         field.get_entity_data_by_id(skin_id),
                                         expected_value,
+                                        rtol=1e-3,
                                     )
                                     checked_elements += 1
                         else:
-                            np.allclose(
+                            assert np.isclose(
                                 res._fc[0].get_entity_data_by_id(skin_id),
                                 expected_value,
+                                rtol=1e-3,
                             )
                             checked_elements += 1
 
-            assert checked_elements == 63
+            assert checked_elements == 9
         else:
             for element_id, expected_value in ref_result.items():
                 if average_per_body:
                     for material in [1, 2]:
                         field = res._fc.get_field({"mat": material})
                         if element_id in field.scoping.ids:
-                            np.allclose(
-                                field.get_entity_data_by_id(element_id), expected_value
-                            )
+                            assert np.isclose(
+                                field.get_entity_data_by_id(element_id),
+                                expected_value,
+                                rtol=1e-3,
+                            ), expected_value
                             checked_elements += 1
                 else:
-                    np.allclose(
-                        res._fc[0].get_entity_data_by_id(element_id), expected_value
-                    )
+                    assert np.isclose(
+                        res._fc[0].get_entity_data_by_id(element_id),
+                        expected_value,
+                        rtol=1e-3,
+                    ), expected_value
                     checked_elements += 1
             assert checked_elements == 36
 
