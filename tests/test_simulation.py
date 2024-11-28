@@ -1212,7 +1212,7 @@ def test_shell_layer_extraction(
     pyvista.OFF_SCREEN = False
     # res._fc[0].plot()
 
-    skip_duplicate_nodes = True
+    skip_duplicate_nodes = False
     if average_per_body:
         skip_duplicate_nodes = False
 
@@ -1226,14 +1226,14 @@ def test_shell_layer_extraction(
 
     if on_skin:
         # Take all the surfaces and remove nodes at the edges ( 11* 9) and corners (7*2)
-        # are counted 2 or 3 times. Remove the edge that touches both bodies because
-        # it is not part of the reference data (skip_duplicate_nodes is True) (11*3)
-        expected_number_of_nodes = 11 * 11 * 7 - 11 * 9 - 7 * 2 - 11 * 3
+        # are counted 2 or 3 times. Remove the edge that touches both bodies. It is counted
+        # 3 times and present twice in the results (2* 11)
+        expected_number_of_nodes = 11 * 11 * 7 - 11 * 9 - 7 * 2 - 2 * 11
     else:
-        expected_number_of_nodes = 11 * 11 * 11 + 10 * 11 - 11
+        expected_number_of_nodes = 11 * 11 * 11 + 10 * 11
     if average_per_body:
         # Add boundary nodes again (duplicate nodes at the boundary)
-        expected_number_of_nodes += 2 * 11
+        expected_number_of_nodes += 11
 
     for node_id, expected_result_per_node in expected_results.items():
         if average_per_body:
@@ -1250,9 +1250,13 @@ def test_shell_layer_extraction(
             if node_id in field.scoping.ids:
                 number_of_nodes_checked += 1
                 actual_result = field.get_entity_data_by_id(node_id)
-                expected_results = list(expected_result_per_node.values())
-                assert len(expected_results) == 1
-                np.allclose(actual_result, expected_results[0])
+
+                values_for_node = np.array(list(expected_result_per_node.values()))
+                assert values_for_node.size > 0
+                assert values_for_node.size < 3
+                avg_expected_result = np.mean(values_for_node)
+
+                np.allclose(actual_result, avg_expected_result)
 
     assert number_of_nodes_checked == expected_number_of_nodes
 
