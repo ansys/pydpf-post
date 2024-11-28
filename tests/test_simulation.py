@@ -3935,7 +3935,6 @@ default_per_body_averaging_config = AveragingConfig(
     body_defining_properties=[
         elemental_properties.material,
         "mapdl_element_type_id",
-        "apdl_real_id",
     ],
     average_per_body=True,
 )
