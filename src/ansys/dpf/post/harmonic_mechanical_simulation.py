@@ -90,6 +90,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
             averaging_config=averaging_config,
+            shell_layer=shell_layer,
         )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)

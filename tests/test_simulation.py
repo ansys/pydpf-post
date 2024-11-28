@@ -1212,14 +1212,9 @@ def test_shell_layer_extraction(
     pyvista.OFF_SCREEN = False
     # res._fc[0].plot()
 
-    skip_duplicate_nodes = False
-    if average_per_body:
-        skip_duplicate_nodes = False
-
     expected_results = get_ref_per_body_results_mechanical(
         shell_layer_multi_body_ref["stress"],
         mixed_shell_solid_simulation.mesh._meshed_region,
-        skip_duplicate_nodes,
     )
 
     number_of_nodes_checked = 0
@@ -3712,8 +3707,6 @@ def get_ref_result_per_node_and_material(
                 np.array(ref_data.combined.data)[combined_row_indices],
             ).any(), f"{node_id}, {mat_id}"
 
-        if skip_duplicate_nodes and multiplicity_of_node > 1:
-            continue
         data_per_node_and_material[node_id] = material_wise_data
 
     return data_per_node_and_material
@@ -3722,11 +3715,8 @@ def get_ref_result_per_node_and_material(
 def get_ref_per_body_results_mechanical(
     reference_csv_files: ReferenceCsvFiles,
     mesh: MeshedRegion,
-    skip_duplicate_nodes=False,
 ):
-    return get_ref_result_per_node_and_material(
-        mesh, reference_csv_files, skip_duplicate_nodes=skip_duplicate_nodes
-    )
+    return get_ref_result_per_node_and_material(mesh, reference_csv_files)
 
 
 def get_per_body_results_solid(

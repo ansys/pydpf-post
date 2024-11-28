@@ -165,12 +165,14 @@ def _create_norm_workflow(
 
 
 def _create_initial_result_workflow(
-    name: str, server, create_operator_callable: _CreateOperatorCallable
+    name: str,
+    server,
+    create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
-    initial_result_op.inputs.shell_layer(0)
+
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
@@ -181,6 +183,9 @@ def _create_initial_result_workflow(
     )
     initial_result_workflow.set_input_name(
         "mesh_scoping", initial_result_op.inputs.mesh_scoping
+    )
+    initial_result_workflow.set_input_name(
+        _WfNames.shell_layer, initial_result_op.inputs.shell_layer
     )
 
     initial_result_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
@@ -310,33 +315,3 @@ def _create_rescoping_workflow(server, rescoping: _Rescoping):
     )
 
     return rescoping_wf
-
-
-def _create_select_shell_layer_workflow(server, shell_layer: int):
-    shell_layer_workflow = Workflow(server=server)
-
-    select_shell_layer_op = operators.utility.change_shell_layers()
-    select_shell_layer_op.config.set_config_option("permissive", False)
-    shell_layer_workflow.add_operator(select_shell_layer_op)
-
-    select_shell_layer_op.inputs.e_shell_layer(shell_layer)
-    select_shell_layer_op.inputs.merge(True)
-    shell_layer_workflow.set_input_name(
-        _WfNames.input_data, select_shell_layer_op.inputs.fields_container
-    )
-    shell_layer_workflow.set_output_name(
-        _WfNames.output_data,
-        select_shell_layer_op.outputs.fields_container_as_fields_container,
-    )
-    return shell_layer_workflow
-
-
-def _create_dummy_forward_workflow(server):
-    forward_wf = Workflow(server=server)
-    forward_op = operators.utility.forward_fields_container()
-    forward_wf.add_operator(forward_op)
-
-    forward_wf.set_input_name(_WfNames.input_data, forward_op)
-    forward_wf.set_input_name(_WfNames.output_data, forward_op)
-
-    return forward_wf

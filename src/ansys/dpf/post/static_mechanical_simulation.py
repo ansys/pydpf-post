@@ -54,7 +54,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
             rescoping=rescoping,
-            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -65,7 +64,6 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             initial_result_workflow=result_workflows.initial_result_workflow,
             split_by_body_workflow=result_workflows.split_by_bodies_workflow,
             rescoping_workflow=result_workflows.rescoping_workflow,
-            select_shell_layer_workflow=result_workflows.select_shell_layer_workflow,
             selection=selection,
             data_sources=self._model.metadata.data_sources,
             streams_provider=self._model.metadata.streams_provider,
@@ -75,6 +73,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
             averaging_config=averaging_config,
+            shell_layer=shell_layer,
         )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)

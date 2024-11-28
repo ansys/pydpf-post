@@ -77,7 +77,6 @@ def _connect_workflow_inputs(
     initial_result_workflow: Workflow,
     split_by_body_workflow: Optional[Workflow],
     rescoping_workflow: Optional[Workflow],
-    select_shell_layer_workflow: Optional[Workflow],
     force_elemental_nodal: bool,
     location: str,
     selection: Selection,
@@ -87,6 +86,7 @@ def _connect_workflow_inputs(
     streams_provider: Any,
     data_sources: Any,
     averaging_config: AveragingConfig,
+    shell_layer: Optional[int] = None,
 ):
     """Connects the inputs of the initial result workflow.
 
@@ -148,10 +148,8 @@ def _connect_workflow_inputs(
 
     initial_result_workflow.connect(_WfNames.mesh, mesh)
 
-    select_shell_layer_workflow.connect_with(
-        initial_result_workflow,
-        output_input_names={_WfNames.output_data: _WfNames.input_data},
-    )
+    if shell_layer is not None:
+        initial_result_workflow.connect(_WfNames.shell_layer, shell_layer)
 
     if rescoping_workflow:
         rescoping_workflow.connect(_WfNames.mesh, mesh)
@@ -183,7 +181,7 @@ def _connect_averaging_eqv_and_principal_workflows(
 
     if not result_workflows.compute_equivalent_before_average:
         result_workflows.averaging_workflow.connect_with(
-            result_workflows.select_shell_layer_workflow,
+            result_workflows.initial_result_workflow,
             output_input_names=averaging_wf_connections,
         )
         if principal_or_eqv_wf is not None:
@@ -198,7 +196,7 @@ def _connect_averaging_eqv_and_principal_workflows(
     else:
         assert principal_or_eqv_wf is not None
         principal_or_eqv_wf.connect_with(
-            result_workflows.select_shell_layer_workflow,
+            result_workflows.initial_result_workflow,
             output_input_names={_WfNames.output_data: _WfNames.input_data},
         )
         result_workflows.averaging_workflow.connect_with(

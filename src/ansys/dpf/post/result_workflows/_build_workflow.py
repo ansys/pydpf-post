@@ -11,14 +11,12 @@ from ansys.dpf.post.result_workflows._component_helper import (
 )
 from ansys.dpf.post.result_workflows._sub_workflows import (
     _create_averaging_workflow,
-    _create_dummy_forward_workflow,
     _create_equivalent_workflow,
     _create_extract_component_workflow,
     _create_initial_result_workflow,
     _create_norm_workflow,
     _create_principal_workflow,
     _create_rescoping_workflow,
-    _create_select_shell_layer_workflow,
     _create_split_scope_by_body_workflow,
     _create_sweeping_phase_workflow,
 )
@@ -52,8 +50,6 @@ class ResultWorkflows:
     # and the averaging_workflow averages the result to the requested location. This is the
     # case for instance for skin results.
     force_elemental_nodal: bool
-    # Always present, just forwards if shell layer selection is not needed
-    select_shell_layer_workflow: Workflow
     # If True, the equivalent_workflow is computed before the averaging_workflow
     compute_equivalent_before_average: bool = False
     # List of component names at the end of the workflow. If None, the result is a scalar.
@@ -98,7 +94,6 @@ class _CreateWorkflowInputs:
     averaging_config: AveragingConfig
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
     rescoping_workflow_inputs: Optional[_Rescoping] = None
-    shell_layer_inputs: Optional[int] = None
 
 
 def _requires_manual_averaging(
@@ -160,20 +155,12 @@ def _create_result_workflows(
         server=server,
     )
 
-    if create_workflow_inputs.shell_layer_inputs is not None:
-        select_shell_layer_workflow = _create_select_shell_layer_workflow(
-            server, create_workflow_inputs.shell_layer_inputs
-        )
-    else:
-        select_shell_layer_workflow = _create_dummy_forward_workflow(server)
-
     result_workflows: ResultWorkflows = ResultWorkflows(
         initial_result_workflow=initial_result_wf,
         averaging_workflow=average_wf,
         base_name=create_workflow_inputs.base_name,
         force_elemental_nodal=force_elemental_nodal,
         components=create_workflow_inputs.component_names,
-        select_shell_layer_workflow=select_shell_layer_workflow,
     )
 
     if create_workflow_inputs.has_principal:
@@ -258,7 +245,6 @@ def _create_result_workflow_inputs(
     rescoping: Optional[_Rescoping] = None,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
-    shell_layer: Optional[int] = None,
 ) -> _CreateWorkflowInputs:
     """Creates a CreateWorkflowInputs object to be used to create the result workflows."""
     component_names, components_to_extract, _ = _create_components(
@@ -294,10 +280,6 @@ def _create_result_workflow_inputs(
             sweeping_phase=sweeping_phase,
         )
 
-    shell_layer_inputs: Optional[int] = None
-    if shell_layer is not None:
-        shell_layer_inputs = shell_layer
-
     return _CreateWorkflowInputs(
         base_name=base_name,
         averaging_workflow_inputs=averaging_workflow_inputs,
@@ -311,5 +293,4 @@ def _create_result_workflow_inputs(
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
         averaging_config=averaging_config,
         rescoping_workflow_inputs=rescoping,
-        shell_layer_inputs=shell_layer_inputs,
     )
