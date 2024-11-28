@@ -186,36 +186,47 @@ class ReferenceCsvFiles:
 
 
 def get_per_body_ref_files(
-    root_path: str, n_bodies: int
+    root_path: str, n_bodies: int, result_names: list[str]
 ) -> dict[str, ReferenceCsvFiles]:
+    # Returns a dict of ReferenceCsvFiles for each result_name
     ref_files = {}
-    for result in ["stress"]:
+    for result_name in result_names:
         per_mat_id_dict = {}
         for mat in range(1, n_bodies + 1):
             per_mat_id_dict[str(mat)] = _download_file(
-                root_path, f"{result}_mat_{mat}.txt", True, None, False
+                root_path, f"{result_name}_mat_{mat}.txt", True, None, False
             )
         combined = _download_file(
-            root_path, f"{result}_combined.txt", True, None, False
+            root_path, f"{result_name}_combined.txt", True, None, False
         )
-        ref_files[result] = ReferenceCsvFiles(combined=combined, per_id=per_mat_id_dict)
+        ref_files[result_name] = ReferenceCsvFiles(
+            combined=combined, per_id=per_mat_id_dict
+        )
 
     return ref_files
 
 
 @pytest.fixture()
 def average_per_body_complex_multi_body_ref():
-    return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+    return get_per_body_ref_files(
+        "result_files/average_per_body/complex_multi_body",
+        7,
+        result_names=["stress", "elastic_strain"],
+    )
 
 
 @pytest.fixture()
 def shell_layer_multi_body_ref():
-    return get_per_body_ref_files("result_files/extract_shell_layer", 2)
+    return get_per_body_ref_files(
+        "result_files/extract_shell_layer", 2, result_names=["stress"]
+    )
 
 
 @pytest.fixture()
 def average_per_body_two_cubes_ref():
-    return get_per_body_ref_files("result_files/average_per_body/two_cubes", 2)
+    return get_per_body_ref_files(
+        "result_files/average_per_body/two_cubes", 2, result_names=["stress"]
+    )
 
 
 @pytest.fixture()
