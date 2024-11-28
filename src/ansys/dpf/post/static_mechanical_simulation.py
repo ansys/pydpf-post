@@ -6,6 +6,8 @@ StaticMechanicalSimulation
 """
 from typing import List, Optional, Tuple, Union
 
+from ansys.dpf.core import shell_layers
+
 from ansys.dpf import core
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
@@ -41,7 +43,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
-        shell_layer: Optional[int] = None,
+        shell_layer: Optional[shell_layers] = None,
     ) -> (core.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(

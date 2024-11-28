@@ -13,6 +13,7 @@ from ansys.dpf.core import (
     element_types,
     natures,
     operators,
+    shell_layers,
 )
 from ansys.dpf.gate.common import locations
 import numpy as np
@@ -1203,7 +1204,7 @@ def test_shell_layer_extraction(
         components=["X"],
         location=locations.nodal,
         category=ResultCategory.matrix,
-        shell_layer=0,
+        shell_layer=shell_layers.top,
         averaging_config=averaging_config,
     )
 

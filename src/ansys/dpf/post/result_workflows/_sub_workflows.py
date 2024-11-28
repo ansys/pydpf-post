@@ -184,9 +184,11 @@ def _create_initial_result_workflow(
     initial_result_workflow.set_input_name(
         "mesh_scoping", initial_result_op.inputs.mesh_scoping
     )
-    initial_result_workflow.set_input_name(
-        _WfNames.shell_layer, initial_result_op.inputs.shell_layer
-    )
+
+    if hasattr(initial_result_op.inputs, "shell_layer"):
+        initial_result_workflow.set_input_name(
+            _WfNames.shell_layer, initial_result_op.inputs.shell_layer
+        )
 
     initial_result_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
     initial_result_workflow.set_input_name(

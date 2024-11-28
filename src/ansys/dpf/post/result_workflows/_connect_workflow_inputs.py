@@ -1,6 +1,12 @@
 from typing import Any, Optional
 
-from ansys.dpf.core import MeshedRegion, Scoping, ScopingsContainer, Workflow
+from ansys.dpf.core import (
+    MeshedRegion,
+    Scoping,
+    ScopingsContainer,
+    Workflow,
+    shell_layers,
+)
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
 from ansys.dpf.post.result_workflows._sub_workflows import (
@@ -86,7 +92,7 @@ def _connect_workflow_inputs(
     streams_provider: Any,
     data_sources: Any,
     averaging_config: AveragingConfig,
-    shell_layer: Optional[int] = None,
+    shell_layer: Optional[shell_layers] = None,
 ):
     """Connects the inputs of the initial result workflow.
 
@@ -149,7 +155,11 @@ def _connect_workflow_inputs(
     initial_result_workflow.connect(_WfNames.mesh, mesh)
 
     if shell_layer is not None:
-        initial_result_workflow.connect(_WfNames.shell_layer, shell_layer)
+        if _WfNames.shell_layer not in initial_result_workflow.input_names:
+            raise RuntimeError(
+                "The shell_layer input is not supported by this workflow."
+            )
+        initial_result_workflow.connect(_WfNames.shell_layer, shell_layer.value)
 
     if rescoping_workflow:
         rescoping_workflow.connect(_WfNames.mesh, mesh)
