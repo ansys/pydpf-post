@@ -172,12 +172,23 @@ def _create_initial_result_workflow(
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
+    merge_shell_solid_fields = create_operator_callable(
+        name="merge::solid_shell_fields"
+    )
 
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
     initial_result_workflow.add_operator(initial_result_op)
-    initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
+    initial_result_workflow.add_operator(merge_shell_solid_fields)
+
+    merge_shell_solid_fields.inputs.fields_container(
+        initial_result_op.outputs.fields_container
+    )
+
+    initial_result_workflow.set_output_name(
+        _WfNames.output_data, merge_shell_solid_fields, 0
+    )
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
     )

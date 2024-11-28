@@ -177,7 +177,7 @@ def average_per_body_complex_multi_body():
 
 
 @dataclasses.dataclass
-class ReferenceCsvFiles:
+class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
     # The node ids of nodes at body interfaces are duplicated
     combined: pathlib.Path
@@ -187,7 +187,7 @@ class ReferenceCsvFiles:
 
 def get_per_body_ref_files(
     root_path: str, n_bodies: int, result_names: list[str]
-) -> dict[str, ReferenceCsvFiles]:
+) -> dict[str, ReferenceCsvFilesNodal]:
     # Returns a dict of ReferenceCsvFiles for each result_name
     ref_files = {}
     for result_name in result_names:
@@ -199,7 +199,7 @@ def get_per_body_ref_files(
         combined = _download_file(
             root_path, f"{result_name}_combined.txt", True, None, False
         )
-        ref_files[result_name] = ReferenceCsvFiles(
+        ref_files[result_name] = ReferenceCsvFilesNodal(
             combined=combined, per_id=per_mat_id_dict
         )
 
@@ -218,7 +218,14 @@ def average_per_body_complex_multi_body_ref():
 @pytest.fixture()
 def shell_layer_multi_body_ref():
     return get_per_body_ref_files(
-        "result_files/extract_shell_layer", 2, result_names=["stress"]
+        "result_files/extract_shell_layer",
+        2,
+        result_names=[
+            "stress_top_nodal",
+            "stress_bot_nodal",
+            "stress_top_elemental",
+            "stress_bot_elemental",
+        ],
     )
 
 
