@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Callable, List, Optional, Union
 
-from ansys.dpf.core import Operator, Workflow
+from ansys.dpf.core import Operator, Workflow, shell_layers
 from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.gate.common import locations
 
@@ -92,6 +92,7 @@ class _CreateWorkflowInputs:
     components_to_extract: list[int]
     should_extract_components: bool
     averaging_config: AveragingConfig
+    shell_layer: Optional[shell_layers]
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
     rescoping_workflow_inputs: Optional[_Rescoping] = None
 
@@ -141,6 +142,7 @@ def _create_result_workflows(
     initial_result_wf = _create_initial_result_workflow(
         name=create_workflow_inputs.base_name,
         server=server,
+        shell_layer=create_workflow_inputs.shell_layer,
         create_operator_callable=create_operator_callable,
     )
 
@@ -242,6 +244,7 @@ def _create_result_workflow_inputs(
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
     averaging_config: AveragingConfig,
+    shell_layer: Optional[shell_layers],
     rescoping: Optional[_Rescoping] = None,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
@@ -293,4 +296,5 @@ def _create_result_workflow_inputs(
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
         averaging_config=averaging_config,
         rescoping_workflow_inputs=rescoping,
+        shell_layer=shell_layer,
     )
