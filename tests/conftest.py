@@ -130,9 +130,9 @@ def static_rst():
 
 @pytest.fixture()
 def mixed_shell_solid_model():
-    """Resolve the path of the "static.rst" result file."""
-    return (
-        r"D:\ANSYSDev\remote_post\models\mixed_shell_solid_files\dp0\SYS\MECH\file.rst"
+    """Resolve the path of the "mixed_shell_solid" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "mixed_shell_solid.rst", True, None, False
     )
 
 
@@ -230,8 +230,8 @@ def shell_layer_multi_body_ref():
         results=[
             ReferenceCsvResult("stress_top_nodal"),
             ReferenceCsvResult("stress_bot_nodal"),
-            ReferenceCsvResult("stress_top_elemental"),
-            ReferenceCsvResult("stress_bot_elemental"),
+            ReferenceCsvResult("stress_top_elemental", False),
+            ReferenceCsvResult("stress_bot_elemental", False),
         ],
     )
 

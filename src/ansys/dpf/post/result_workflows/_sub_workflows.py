@@ -185,29 +185,40 @@ def _create_initial_result_workflow(
     initial_result_workflow.add_operator(initial_result_op)
     initial_result_workflow.add_operator(merge_shell_solid_fields)
 
-    shell_layer_op.inputs.fields_container(initial_result_op.outputs.fields_container)
+    # The next section is only needed, because the shell_layer selection does not
+    # work for elemental results. If elemental results are requested with a chosen
+    # shell layer, the shell layer is not selected and the results are split into solids
+    # and shells. Here, we add an additional shell layer selection and merge_shell_solid
+    # operator to manually merge the results. If the shell layer was already selected, this
+    # should do nothing.
+    forward_shell_layer_op = operators.utility.forward()
+    initial_result_workflow.add_operator(forward_shell_layer_op)
+    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
     initial_result_workflow.set_output_name(
         _WfNames.output_data, merge_shell_solid_fields, 0
     )
+    # End section for elemental results with shell layer selection
+
+    shell_layer_op.inputs.fields_container(initial_result_op.outputs.fields_container)
+    if hasattr(initial_result_op.inputs, "shell_layer"):
+        _connect_any(
+            initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
+        )
+
+    _connect_any(
+        shell_layer_op.inputs.e_shell_layer, forward_shell_layer_op.outputs.any
+    )
+
+    merge_shell_solid_fields.inputs.fields_container(
+        shell_layer_op.outputs.fields_container_as_fields_container
+    )
+
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
     )
     initial_result_workflow.set_input_name(
         "mesh_scoping", initial_result_op.inputs.mesh_scoping
-    )
-
-    forward_op = operators.utility.forward()
-    initial_result_workflow.add_operator(forward_op)
-    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_op)
-
-    if hasattr(initial_result_op.inputs, "shell_layer"):
-        _connect_any(initial_result_op.inputs.shell_layer, forward_op.outputs.any)
-
-    _connect_any(shell_layer_op.inputs.e_shell_layer, forward_op.outputs.any)
-
-    merge_shell_solid_fields.inputs.fields_container(
-        shell_layer_op.outputs.fields_container_as_fields_container
     )
 
     initial_result_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
