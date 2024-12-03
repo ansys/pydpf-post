@@ -1,6 +1,12 @@
-from typing import Union
+from typing import Optional, Union
 
-from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
+from ansys.dpf.core import (
+    MeshedRegion,
+    StreamsContainer,
+    Workflow,
+    operators,
+    shell_layers,
+)
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
@@ -167,23 +173,21 @@ def _create_norm_workflow(
 def _create_initial_result_workflow(
     name: str,
     server,
+    shell_layer: Optional[shell_layers],
     create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
-    merge_shell_solid_fields = create_operator_callable(
-        name="merge::solid_shell_fields"
-    )
-
-    shell_layer_op = operators.utility.change_shell_layers()
-    shell_layer_op.inputs.merge(True)
 
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
     initial_result_workflow.add_operator(initial_result_op)
-    initial_result_workflow.add_operator(merge_shell_solid_fields)
+
+    forward_shell_layer_op = operators.utility.forward()
+    initial_result_workflow.add_operator(forward_shell_layer_op)
+    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
     # The next section is only needed, because the shell_layer selection does not
     # work for elemental results. If elemental results are requested with a chosen
@@ -191,28 +195,35 @@ def _create_initial_result_workflow(
     # and shells. Here, we add an additional shell layer selection and merge_shell_solid
     # operator to manually merge the results. If the shell layer was already selected, this
     # should do nothing.
-    forward_shell_layer_op = operators.utility.forward()
-    initial_result_workflow.add_operator(forward_shell_layer_op)
-    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
+    if shell_layer is not None:
+        merge_shell_solid_fields = create_operator_callable(
+            name="merge::solid_shell_fields"
+        )
+        initial_result_workflow.add_operator(merge_shell_solid_fields)
+        shell_layer_op = operators.utility.change_shell_layers()
+        shell_layer_op.inputs.merge(True)
+        initial_result_workflow.add_operator(shell_layer_op)
 
-    initial_result_workflow.set_output_name(
-        _WfNames.output_data, merge_shell_solid_fields, 0
-    )
-    # End section for elemental results with shell layer selection
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, merge_shell_solid_fields, 0
+        )
+        shell_layer_op.inputs.fields_container(
+            initial_result_op.outputs.fields_container
+        )
+        _connect_any(
+            shell_layer_op.inputs.e_shell_layer, forward_shell_layer_op.outputs.any
+        )
 
-    shell_layer_op.inputs.fields_container(initial_result_op.outputs.fields_container)
+        merge_shell_solid_fields.inputs.fields_container(
+            shell_layer_op.outputs.fields_container_as_fields_container
+        )
+
+        # End section for elemental results with shell layer selection
+
     if hasattr(initial_result_op.inputs, "shell_layer"):
         _connect_any(
             initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
         )
-
-    _connect_any(
-        shell_layer_op.inputs.e_shell_layer, forward_shell_layer_op.outputs.any
-    )
-
-    merge_shell_solid_fields.inputs.fields_container(
-        shell_layer_op.outputs.fields_container_as_fields_container
-    )
 
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping

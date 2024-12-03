@@ -73,6 +73,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             sweeping_phase=sweeping_phase,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,

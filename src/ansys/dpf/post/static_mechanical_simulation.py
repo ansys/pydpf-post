@@ -56,6 +56,7 @@ class StaticMechanicalSimulation(MechanicalSimulation):
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
