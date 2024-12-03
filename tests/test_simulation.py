@@ -3558,7 +3558,7 @@ def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
         elemental_scoping = operators.scoping.transpose(
             mesh_scoping=scoping,
             meshed_region=meshed_region,
-            inclusive=0,
+            inclusive=1,
             requested_location=locations.elemental,
         ).eval()
 
@@ -3853,6 +3853,43 @@ default_per_body_averaging_config = AveragingConfig(
 )
 
 
+def get_custom_scope(selection_name: str, mesh: MeshedRegion):
+    if selection_name == "BODY_BY_ELEMENT_IDS":
+        # Element scope that corresponds to one body
+        element_scope = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
+        custom_scoping = Scoping(ids=element_scope, location=locations.elemental)
+        transpose_op = operators.scoping.transpose()
+        transpose_op.inputs.requested_location(locations.nodal)
+        transpose_op.inputs.inclusive(0)
+        transpose_op.inputs.mesh_scoping(custom_scoping)
+        transpose_op.inputs.meshed_region(mesh)
+        expected_nodal_scope = transpose_op.eval().ids
+        return custom_scoping, expected_nodal_scope
+    elif selection_name == "SINGLE_NODE":
+        expected_nodal_scope = [1]
+        custom_scoping = Scoping(ids=expected_nodal_scope, location=locations.nodal)
+        return custom_scoping, expected_nodal_scope
+    else:
+        named_selection_scope = mesh.named_selection("SELECTION")
+        assert named_selection_scope.location == locations.nodal
+        expected_nodal_scope = named_selection_scope.ids
+        transpose_op = operators.scoping.transpose()
+        transpose_op.inputs.requested_location(locations.elemental)
+        transpose_op.inputs.inclusive(0)
+        transpose_op.inputs.mesh_scoping(named_selection_scope)
+        transpose_op.inputs.meshed_region(mesh)
+        custom_elemental_scoping = transpose_op.eval()
+
+        if selection_name == "SELECTION_CONVERT_TO_ELEMENTAL":
+            custom_scoping = Scoping(
+                ids=custom_elemental_scoping.ids, location=locations.elemental
+            )
+
+        if selection_name == "SELECTION_CONVERT_TO_NODAL":
+            custom_scoping = named_selection_scope
+        return custom_scoping, expected_nodal_scope
+
+
 @pytest.mark.parametrize("is_skin", [False, True])
 # Note: Selections are only tested on the more complex model (average_per_body_complex_multi_body)
 @pytest.mark.parametrize(
@@ -3861,9 +3898,11 @@ default_per_body_averaging_config = AveragingConfig(
         None,
         # Use the named selection (nodal selection) in the model to do the selection.
         "SELECTION",
-        # todo: add test with single node
         # Use a custom selection (based on element ids) to do the selection.
-        "Custom",
+        # Selection coincides with one of the bodies
+        "BODY_BY_ELEMENT_IDS",
+        # Selection of a single node
+        "SINGLE_NODE",
         # Use the named selection (nodal selection) in the model, but convert it to
         # node_ids to test the node_ids argument of the results api.
         "SELECTION_CONVERT_TO_NODAL",
@@ -3894,8 +3933,9 @@ def test_averaging_per_body_nodal(
 
     result_file = request.getfixturevalue(result_file_str)
 
-    is_custom_selection = selection_name in [
-        "Custom",
+    is_named_selection = selection_name not in [
+        "BODY_BY_ELEMENT_IDS",
+        "SINGLE_NODE",
         "SELECTION_CONVERT_TO_NODAL",
         "SELECTION_CONVERT_TO_ELEMENTAL",
     ]
@@ -3906,43 +3946,14 @@ def test_averaging_per_body_nodal(
     mesh = simulation.mesh._meshed_region
 
     expected_nodal_scope = None
-    if is_custom_selection:
-        if selection_name == "Custom":
-            # Element scope that corresponds to one body
-            element_scope = [25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36]
-            custom_scoping = Scoping(ids=element_scope, location=locations.elemental)
-            transpose_op = operators.scoping.transpose()
-            transpose_op.inputs.requested_location(locations.nodal)
-            transpose_op.inputs.inclusive(0)
-            transpose_op.inputs.mesh_scoping(custom_scoping)
-            transpose_op.inputs.meshed_region(mesh)
-            expected_nodal_scope = transpose_op.eval().ids
-        else:
-            named_selection_scope = mesh.named_selection("SELECTION")
-            assert named_selection_scope.location == locations.nodal
-            expected_nodal_scope = named_selection_scope.ids
-            transpose_op = operators.scoping.transpose()
-            transpose_op.inputs.requested_location(locations.elemental)
-            transpose_op.inputs.inclusive(0)
-            transpose_op.inputs.mesh_scoping(named_selection_scope)
-            transpose_op.inputs.meshed_region(mesh)
-            custom_elemental_scoping = transpose_op.eval()
-
-            if selection_name == "SELECTION_CONVERT_TO_ELEMENTAL":
-                custom_scoping = Scoping(
-                    ids=custom_elemental_scoping.ids, location=locations.elemental
-                )
-
-            if selection_name == "SELECTION_CONVERT_TO_NODAL":
-                custom_scoping = named_selection_scope
+    if not is_named_selection:
+        custom_scoping, expected_nodal_scope = get_custom_scope(selection_name, mesh)
 
     components = ["XX"]
 
-    named_selections = None
-    selection = None
     kwargs = {}
     if selection_name is not None:
-        if is_custom_selection:
+        if not is_named_selection:
             if result_file_str != "average_per_body_complex_multi_body":
                 # Test custom selection only with complex case
                 return
@@ -3970,7 +3981,7 @@ def test_averaging_per_body_nodal(
         bodies_in_selection = list(set(mat_field.data))
 
     else:
-        if is_custom_selection:
+        if not is_named_selection:
             additional_scoping = custom_scoping
         else:
             additional_scoping = mesh.named_selection(selection_name)
@@ -4000,7 +4011,7 @@ def test_averaging_per_body_nodal(
         # of the named selection are not the same as in Mechanical
         # Instead the elemental nodal data is rescoped to the additional_scoping and
         # then averaged on that scoping.
-        if named_selection is not None or is_custom_selection:
+        if named_selection is not None or not is_named_selection:
             ref_data = get_per_body_results_solid(
                 simulation=simulation,
                 result_type=result,
