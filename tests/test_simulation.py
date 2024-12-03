@@ -1366,11 +1366,6 @@ def test_shell_layer_extraction(
         averaging_config=averaging_config,
     )
 
-    import pyvista
-
-    pyvista.OFF_SCREEN = False
-    # res._fc[0].plot()
-
     if location == locations.nodal:
         expected_results = get_ref_per_body_results_mechanical(
             shell_layer_multi_body_ref[

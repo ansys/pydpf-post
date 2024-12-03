@@ -219,6 +219,10 @@ def _create_initial_result_workflow(
         )
 
         # End section for elemental results with shell layer selection
+    else:
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, initial_result_op, 0
+        )
 
     if hasattr(initial_result_op.inputs, "shell_layer"):
         _connect_any(
