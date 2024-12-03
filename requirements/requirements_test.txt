@@ -1,6 +1,6 @@
-coverage==7.6.7
+coverage==7.6.8
 pytest-cov==6.0.0
 pytest-rerunfailures==15.0
 pytest==8.3.3
-pyvista==0.44.1
+pyvista==0.44.2
 vtk==9.3.1
