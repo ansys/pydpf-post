@@ -168,11 +168,11 @@ def _connect_averaging_eqv_and_principal_workflows(
     }
 
     if (
-        result_workflows.equivalent_workflow is None
-        and result_workflows.principal_workflow is None
+        result_workflows.equivalent_workflow is not None
+        and result_workflows.principal_workflow is not None
     ):
         raise AssertionError(
-            "The equivalent workflow and principal workflow are both None."
+            "The equivalent workflow and principal workflow are both not None."
         )
 
     principal_or_eqv_wf = (
