@@ -174,6 +174,7 @@ def _create_initial_result_workflow(
     name: str,
     server,
     shell_layer: Optional[shell_layers],
+    is_nodal: bool,
     create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
@@ -190,12 +191,15 @@ def _create_initial_result_workflow(
     initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
     # The next section is only needed, because the shell_layer selection does not
-    # work for elemental results. If elemental results are requested with a chosen
-    # shell layer, the shell layer is not selected and the results are split into solids
+    # work for elemental and elemental nodal results.
+    # If elemental results are requested with a chosen shell layer,
+    # the shell layer is not selected and the results are split into solids
     # and shells. Here, we add an additional shell layer selection and merge_shell_solid
-    # operator to manually merge the results. If the shell layer was already selected, this
-    # should do nothing.
-    if shell_layer is not None:
+    # operator to manually merge the results.
+    # Note that we have to skip this step if the location is nodal, because
+    # the resulting location is wrong when the shell layer is selected again manually, after
+    # it was already selected by the initial result operator.
+    if shell_layer is not None and not is_nodal:
         merge_shell_solid_fields = create_operator_callable(
             name="merge::solid_shell_fields"
         )

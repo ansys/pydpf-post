@@ -137,6 +137,26 @@ def mixed_shell_solid_model():
 
 
 @pytest.fixture()
+def mixed_shell_solid_with_contact_model():
+    """Resolve the path of the "mixed_shell_solid_with_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer",
+        "mixed_shell_solid_with_contact.rst",
+        True,
+        None,
+        False,
+    )
+
+
+@pytest.fixture()
+def two_cubes_contact_model():
+    """Resolve the path of the "two_cubes_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "two_cubes_contact.rst", True, None, False
+    )
+
+
+@pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
     return examples.complex_rst

@@ -139,16 +139,23 @@ def _create_result_workflows(
 
     The resulting workflows are stored in a ResultWorkflows object.
     """
+    force_elemental_nodal = (
+        create_workflow_inputs.averaging_workflow_inputs.force_elemental_nodal
+    )
+
+    is_nodal = (
+        create_workflow_inputs.averaging_workflow_inputs.location == locations.nodal
+        and not force_elemental_nodal
+    )
+
     initial_result_wf = _create_initial_result_workflow(
         name=create_workflow_inputs.base_name,
         server=server,
+        is_nodal=is_nodal,
         shell_layer=create_workflow_inputs.shell_layer,
         create_operator_callable=create_operator_callable,
     )
 
-    force_elemental_nodal = (
-        create_workflow_inputs.averaging_workflow_inputs.force_elemental_nodal
-    )
     average_wf = _create_averaging_workflow(
         location=create_workflow_inputs.averaging_workflow_inputs.location,
         has_skin=create_workflow_inputs.has_skin,

@@ -461,6 +461,22 @@ def mixed_shell_solid_simulation(mixed_shell_solid_model):
 
 
 @fixture
+def mixed_shell_solid_with_contact_simulation(mixed_shell_solid_with_contact_model):
+    return post.load_simulation(
+        data_sources=mixed_shell_solid_with_contact_model,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
+def two_cubes_contact_simulation(two_cubes_contact_model):
+    return post.load_simulation(
+        data_sources=two_cubes_contact_model,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
 def transient_simulation(plate_msup):
     return post.load_simulation(
         data_sources=plate_msup,
@@ -1450,6 +1466,78 @@ def test_shell_layer_extraction(
                     ), expected_value
                     checked_elements += 1
             assert checked_elements == 36
+
+
+@pytest.mark.parametrize(
+    "average_per_body",
+    [
+        False,
+        pytest.param(
+            True,
+            marks=pytest.mark.xfail(
+                reason="Failing because scopings without results"
+                " are not handled correctly in the current implementation."
+            ),
+        ),
+    ],
+)
+@pytest.mark.parametrize("on_skin", [True, False])
+# Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
+# for mixed models.
+@pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
+@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
+@pytest.mark.parametrize(
+    "simulation_str",
+    [
+        "two_cubes_contact_simulation",
+        pytest.param(
+            "mixed_shell_solid_with_contact_simulation",
+            marks=pytest.mark.xfail(
+                reason="Failing because scopings without results"
+                " are not handled correctly in the current implementation."
+            ),
+        ),
+    ],
+)
+def test_shell_layer_extraction_contacts(
+    simulation_str, average_per_body, on_skin, shell_layer, location, request
+):
+    # Test some models with contacts, because models with contacts
+    # result in fields without results which can cause problems in conjunction
+    # with shell layer extraction.
+    simulation = request.getfixturevalue(simulation_str)
+
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        return
+
+    if average_per_body:
+        averaging_config = AveragingConfig(
+            body_defining_properties=["mat"], average_per_body=True
+        )
+    else:
+        averaging_config = AveragingConfig(
+            body_defining_properties=None, average_per_body=False
+        )
+
+    res = simulation._get_result(
+        base_name="S",
+        skin=on_skin,
+        components=["X"],
+        location=location,
+        category=ResultCategory.equivalent,
+        shell_layer=shell_layer,
+        averaging_config=averaging_config,
+    )
+
+    # Just do a rough comparison.
+    # This test is mainly to check if the
+    # workflow runs without errors because of
+    # empty fields for some materials
+    max_val = res.max().array[0]
+    if simulation_str == "two_cubes_contact_simulation":
+        assert max_val > 1 and max_val < 1.1
+    else:
+        assert max_val > 7.7 and max_val < 7.8
 
 
 @pytest.mark.parametrize("skin", all_configuration_ids)
