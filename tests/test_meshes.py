@@ -1,5 +1,5 @@
 import ansys.dpf.core as dpf
-import pytest
+# import pytest
 from pytest import fixture
 
 from ansys.dpf import post
