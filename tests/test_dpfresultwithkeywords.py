@@ -7,7 +7,8 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
+
+# from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
