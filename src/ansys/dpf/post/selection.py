@@ -52,6 +52,7 @@ class _WfNames:
     result = "result"
     input_data = "input_data"
     output_data = "output_data"
+    shell_layer = "shell_layer"
 
 
 def _is_model_cyclic(is_cyclic: str):

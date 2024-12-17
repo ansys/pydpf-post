@@ -129,6 +129,34 @@ def static_rst():
 
 
 @pytest.fixture()
+def mixed_shell_solid_model():
+    """Resolve the path of the "mixed_shell_solid" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "mixed_shell_solid.rst", True, None, False
+    )
+
+
+@pytest.fixture()
+def mixed_shell_solid_with_contact_model():
+    """Resolve the path of the "mixed_shell_solid_with_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer",
+        "mixed_shell_solid_with_contact.rst",
+        True,
+        None,
+        False,
+    )
+
+
+@pytest.fixture()
+def two_cubes_contact_model():
+    """Resolve the path of the "two_cubes_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "two_cubes_contact.rst", True, None, False
+    )
+
+
+@pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
     return examples.complex_rst
@@ -169,7 +197,7 @@ def average_per_body_complex_multi_body():
 
 
 @dataclasses.dataclass
-class ReferenceCsvFiles:
+class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
     # The node ids of nodes at body interfaces are duplicated
     combined: pathlib.Path
@@ -177,32 +205,64 @@ class ReferenceCsvFiles:
     per_id: dict[str, pathlib.Path]
 
 
-def get_per_body_ref_files(
-    root_path: str, n_bodies: int
-) -> dict[str, ReferenceCsvFiles]:
+@dataclasses.dataclass
+class ReferenceCsvResult:
+    name: str
+    has_bodies: bool = True
+
+
+def get_ref_files(
+    root_path: str, n_bodies: int, results: list[ReferenceCsvResult]
+) -> dict[str, ReferenceCsvFilesNodal]:
+    # Returns a dict of ReferenceCsvFiles for each result_name
     ref_files = {}
-    for result in ["stress", "elastic_strain"]:
+    for result in results:
         per_mat_id_dict = {}
-        for mat in range(1, n_bodies + 1):
-            per_mat_id_dict[str(mat)] = _download_file(
-                root_path, f"{result}_mat_{mat}.txt", True, None, False
-            )
+        if result.has_bodies:
+            for mat in range(1, n_bodies + 1):
+                per_mat_id_dict[str(mat)] = _download_file(
+                    root_path, f"{result.name}_mat_{mat}.txt", True, None, False
+                )
         combined = _download_file(
-            root_path, f"{result}_combined.txt", True, None, False
+            root_path, f"{result.name}_combined.txt", True, None, False
         )
-        ref_files[result] = ReferenceCsvFiles(combined=combined, per_id=per_mat_id_dict)
+        ref_files[result.name] = ReferenceCsvFilesNodal(
+            combined=combined, per_id=per_mat_id_dict
+        )
 
     return ref_files
 
 
 @pytest.fixture()
 def average_per_body_complex_multi_body_ref():
-    return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+    return get_ref_files(
+        "result_files/average_per_body/complex_multi_body",
+        7,
+        results=[ReferenceCsvResult("stress"), ReferenceCsvResult("elastic_strain")],
+    )
+
+
+@pytest.fixture()
+def shell_layer_multi_body_ref():
+    return get_ref_files(
+        "result_files/extract_shell_layer",
+        2,
+        results=[
+            ReferenceCsvResult("stress_top_nodal"),
+            ReferenceCsvResult("stress_bot_nodal"),
+            ReferenceCsvResult("stress_top_elemental", False),
+            ReferenceCsvResult("stress_bot_elemental", False),
+        ],
+    )
 
 
 @pytest.fixture()
 def average_per_body_two_cubes_ref():
-    return get_per_body_ref_files("result_files/average_per_body/two_cubes", 2)
+    return get_ref_files(
+        "result_files/average_per_body/two_cubes",
+        2,
+        results=[ReferenceCsvResult("stress"), ReferenceCsvResult("elastic_strain")],
+    )
 
 
 @pytest.fixture()

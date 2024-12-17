@@ -13,6 +13,7 @@ from ansys.dpf.core import (
     element_types,
     natures,
     operators,
+    shell_layers,
 )
 from ansys.dpf.gate.common import locations
 import numpy as np
@@ -38,7 +39,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
-    ReferenceCsvFiles,
+    ReferenceCsvFilesNodal,
 )
 
 
@@ -447,6 +448,30 @@ def get_expected_nodal_skin_results(
 def static_simulation(static_rst):
     return post.load_simulation(
         data_sources=static_rst,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
+def mixed_shell_solid_simulation(mixed_shell_solid_model):
+    return post.load_simulation(
+        data_sources=mixed_shell_solid_model,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
+def mixed_shell_solid_with_contact_simulation(mixed_shell_solid_with_contact_model):
+    return post.load_simulation(
+        data_sources=mixed_shell_solid_with_contact_model,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+
+@fixture
+def two_cubes_contact_simulation(two_cubes_contact_model):
+    return post.load_simulation(
+        data_sources=two_cubes_contact_model,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
@@ -1170,6 +1195,349 @@ all_configuration_ids = [True] + list(
         ]
     )
 )
+
+
+def compute_number_of_expected_nodes(on_skin: bool, average_per_body: bool):
+    n_nodes_per_side = 4
+    if on_skin:
+        # Take all the surfaces and remove nodes at the edges
+        # and corners that are counted 2 or 3 times.
+        # Remove the edge that touches both bodies. It is counted
+        # 3 times
+        nodes_all_surfaces = n_nodes_per_side**2 * 7
+        duplicate_nodes_on_edges = 11 * (n_nodes_per_side - 2)
+        triplicated_nodes_at_corners = 7
+        expected_number_of_nodes = (
+            nodes_all_surfaces
+            - duplicate_nodes_on_edges
+            - 2 * triplicated_nodes_at_corners
+            - 2 * n_nodes_per_side
+        )
+    else:
+        n_solid_nodes = n_nodes_per_side**3
+        n_shell_nodes_without_touching = (n_nodes_per_side - 1) * n_nodes_per_side
+        expected_number_of_nodes = n_solid_nodes + n_shell_nodes_without_touching
+
+    if average_per_body:
+        # Add boundary nodes again (duplicate nodes at the boundary)
+        expected_number_of_nodes += n_nodes_per_side
+
+    return expected_number_of_nodes
+
+
+def get_shell_scoping(solid_mesh: MeshedRegion):
+    split_scoping = operators.scoping.split_on_property_type()
+    split_scoping.inputs.mesh(solid_mesh)
+    split_scoping.inputs.label1("mat")
+    split_scoping.inputs.requested_location(locations.elemental)
+
+    splitted_scoping = split_scoping.eval()
+
+    return splitted_scoping.get_scoping({"mat": 2})
+
+
+def _check_nodal_across_body_results(
+    fields_container: FieldsContainer,
+    expected_results: dict[int, dict[str, float]],
+    on_skin: bool,
+):
+    number_of_nodes_checked = 0
+    assert len(fields_container) == 1
+    field = fields_container[0]
+    for node_id, expected_result_per_node in expected_results.items():
+        if node_id in field.scoping.ids:
+            number_of_nodes_checked += 1
+            actual_result = field.get_entity_data_by_id(node_id)
+
+            values_for_node = np.array(list(expected_result_per_node.values()))
+            assert values_for_node.size > 0
+            assert values_for_node.size < 3
+            avg_expected_result = np.mean(values_for_node)
+
+            if on_skin and len(values_for_node) > 1:
+                # Skip elements at the edge that connects the body
+                # because the averaging on the skin is different. For instance
+                # 3 skin elements are involved the averaging of the inner elements
+                continue
+            assert np.isclose(
+                actual_result, avg_expected_result, rtol=1e-3
+            ), f"{values_for_node}, {node_id}"
+    return number_of_nodes_checked
+
+
+def _check_nodal_average_per_body_results(
+    fields_container: FieldsContainer,
+    expected_results: dict[int, dict[str, float]],
+):
+    number_of_nodes_checked = 0
+    for node_id, expected_result_per_node in expected_results.items():
+        for material in [1, 2]:
+            field = fields_container.get_field({"mat": material})
+            if node_id in field.scoping.ids:
+                number_of_nodes_checked += 1
+                actual_result = field.get_entity_data_by_id(node_id)
+                expected_result = expected_result_per_node[str(material)]
+                assert np.isclose(actual_result, expected_result, rtol=1e-3)
+    return number_of_nodes_checked
+
+
+def _check_elemental_per_body_results(
+    fields_container: FieldsContainer,
+    expected_results: dict[int, float],
+    shell_elements_scoping: Scoping,
+    element_id_to_skin_ids: dict[int, list[int]],
+):
+    checked_elements = 0
+
+    for element_id, expected_value in expected_results.items():
+        if element_id not in shell_elements_scoping.ids:
+            continue
+        skin_ids = element_id_to_skin_ids[element_id]
+        for skin_id in skin_ids:
+            for material in [1, 2]:
+                field = fields_container.get_field({"mat": material})
+                if skin_id in field.scoping.ids:
+                    assert np.isclose(
+                        field.get_entity_data_by_id(skin_id),
+                        expected_value,
+                        rtol=1e-3,
+                    )
+                    checked_elements += 1
+    return checked_elements
+
+
+def _check_elemental_across_body_results(
+    fields_container: FieldsContainer,
+    expected_results: dict[int, float],
+    shell_elements_scoping: Scoping,
+    element_id_to_skin_ids: dict[int, list[int]],
+):
+    checked_elements = 0
+
+    for element_id, expected_value in expected_results.items():
+        if element_id not in shell_elements_scoping.ids:
+            continue
+        skin_ids = element_id_to_skin_ids[element_id]
+        for skin_id in skin_ids:
+            assert len(fields_container) == 1
+            field = fields_container[0]
+            if skin_id in field.scoping.ids:
+                assert np.isclose(
+                    field.get_entity_data_by_id(skin_id),
+                    expected_value,
+                    rtol=1e-3,
+                )
+                checked_elements += 1
+    return checked_elements
+
+
+def _get_element_id_to_skin_id_map(skin_mesh: MeshedRegion, solid_mesh: MeshedRegion):
+    skin_to_element_indices = skin_mesh.property_field("facets_to_ele")
+
+    element_id_to_skin_ids = {}
+    for skin_id in skin_mesh.elements.scoping.ids:
+        element_idx = skin_to_element_indices.get_entity_data_by_id(skin_id)[0]
+        solid_element_id = solid_mesh.elements.scoping.ids[element_idx]
+        if solid_element_id not in element_id_to_skin_ids:
+            element_id_to_skin_ids[solid_element_id] = []
+        element_id_to_skin_ids[solid_element_id].append(skin_id)
+    return element_id_to_skin_ids
+
+
+@pytest.mark.parametrize("average_per_body", [False, True])
+@pytest.mark.parametrize("on_skin", [True, False])
+# Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
+# for mixed models.
+@pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
+@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
+def test_shell_layer_extraction(
+    mixed_shell_solid_simulation,
+    shell_layer_multi_body_ref,
+    average_per_body,
+    on_skin,
+    shell_layer,
+    location,
+):
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        return
+
+    shell_layer_names = {shell_layers.top: "top", shell_layers.bottom: "bot"}
+
+    if average_per_body:
+        averaging_config = AveragingConfig(
+            body_defining_properties=["mat"], average_per_body=True
+        )
+    else:
+        averaging_config = AveragingConfig(
+            body_defining_properties=None, average_per_body=False
+        )
+
+    res = mixed_shell_solid_simulation._get_result(
+        base_name="S",
+        skin=on_skin,
+        components=["X"],
+        location=location,
+        category=ResultCategory.matrix,
+        shell_layer=shell_layer,
+        averaging_config=averaging_config,
+    )
+
+    if location == locations.nodal:
+        expected_results = get_ref_per_body_results_mechanical(
+            shell_layer_multi_body_ref[
+                f"stress_{shell_layer_names[shell_layer]}_nodal"
+            ],
+            mixed_shell_solid_simulation.mesh._meshed_region,
+        )
+
+        expected_number_of_nodes = compute_number_of_expected_nodes(
+            on_skin, average_per_body
+        )
+
+        if average_per_body:
+            number_of_nodes_checked = _check_nodal_average_per_body_results(
+                fields_container=res._fc,
+                expected_results=expected_results,
+            )
+        else:
+            number_of_nodes_checked = _check_nodal_across_body_results(
+                fields_container=res._fc,
+                expected_results=expected_results,
+                on_skin=on_skin,
+            )
+
+        assert number_of_nodes_checked == expected_number_of_nodes
+
+    else:
+        ref_result = get_ref_result_per_element(
+            shell_layer_multi_body_ref[
+                f"stress_{shell_layer_names[shell_layer]}_elemental"
+            ].combined
+        )
+        checked_elements = 0
+
+        if on_skin:
+            skin_mesh = res._fc[0].meshed_region
+            solid_mesh = mixed_shell_solid_simulation.mesh._meshed_region
+
+            shell_elements_scoping = get_shell_scoping(solid_mesh)
+            element_id_to_skin_ids = _get_element_id_to_skin_id_map(
+                skin_mesh, solid_mesh
+            )
+
+            # Note: In this branch only shell elements are checked,
+            # since only the shell elements are
+            # affected by the shell layer extraction.
+            # The skin of the solid elements is cumbersome to
+            # extract and check and is skipped here.
+            if average_per_body:
+                checked_elements = _check_elemental_per_body_results(
+                    fields_container=res._fc,
+                    expected_results=ref_result,
+                    shell_elements_scoping=shell_elements_scoping,
+                    element_id_to_skin_ids=element_id_to_skin_ids,
+                )
+            else:
+                checked_elements = _check_elemental_across_body_results(
+                    fields_container=res._fc,
+                    expected_results=ref_result,
+                    shell_elements_scoping=shell_elements_scoping,
+                    element_id_to_skin_ids=element_id_to_skin_ids,
+                )
+
+            assert checked_elements == 9
+        else:
+            for element_id, expected_value in ref_result.items():
+                if average_per_body:
+                    for material in [1, 2]:
+                        field = res._fc.get_field({"mat": material})
+                        if element_id in field.scoping.ids:
+                            assert np.isclose(
+                                field.get_entity_data_by_id(element_id),
+                                expected_value,
+                                rtol=1e-3,
+                            ), expected_value
+                            checked_elements += 1
+                else:
+                    assert np.isclose(
+                        res._fc[0].get_entity_data_by_id(element_id),
+                        expected_value,
+                        rtol=1e-3,
+                    ), expected_value
+                    checked_elements += 1
+            assert checked_elements == 36
+
+
+@pytest.mark.parametrize(
+    "average_per_body",
+    [
+        False,
+        pytest.param(
+            True,
+            marks=pytest.mark.xfail(
+                reason="Failing because scopings without results"
+                " are not handled correctly in the current implementation."
+            ),
+        ),
+    ],
+)
+@pytest.mark.parametrize("on_skin", [True, False])
+# Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
+# for mixed models.
+@pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
+@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
+@pytest.mark.parametrize(
+    "simulation_str",
+    [
+        "two_cubes_contact_simulation",
+        pytest.param(
+            "mixed_shell_solid_with_contact_simulation",
+            marks=pytest.mark.xfail(
+                reason="Failing because scopings without results"
+                " are not handled correctly in the current implementation."
+            ),
+        ),
+    ],
+)
+def test_shell_layer_extraction_contacts(
+    simulation_str, average_per_body, on_skin, shell_layer, location, request
+):
+    # Test some models with contacts, because models with contacts
+    # result in fields without results which can cause problems in conjunction
+    # with shell layer extraction.
+    simulation = request.getfixturevalue(simulation_str)
+
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        return
+
+    if average_per_body:
+        averaging_config = AveragingConfig(
+            body_defining_properties=["mat"], average_per_body=True
+        )
+    else:
+        averaging_config = AveragingConfig(
+            body_defining_properties=None, average_per_body=False
+        )
+
+    res = simulation._get_result(
+        base_name="S",
+        skin=on_skin,
+        components=["X"],
+        location=location,
+        category=ResultCategory.equivalent,
+        shell_layer=shell_layer,
+        averaging_config=averaging_config,
+    )
+
+    # Just do a rough comparison.
+    # This test is mainly to check if the
+    # workflow runs without errors because of
+    # empty fields for some materials
+    max_val = res.max().array[0]
+    if simulation_str == "two_cubes_contact_simulation":
+        assert max_val > 1 and max_val < 1.1
+    else:
+        assert max_val > 7.7 and max_val < 7.8
 
 
 @pytest.mark.parametrize("skin", all_configuration_ids)
@@ -3544,7 +3912,7 @@ def get_node_and_data_map(
         return ReferenceDataItem(node_ids, data_rows)
 
 
-def get_ref_data_from_csv(mesh: MeshedRegion, csv_file_name: ReferenceCsvFiles):
+def get_ref_data_from_csv(mesh: MeshedRegion, csv_file_name: ReferenceCsvFilesNodal):
     combined_ref_data = get_node_and_data_map(mesh, csv_file_name.combined)
     per_id_ref_data = {}
     for mat_id, csv_file in csv_file_name.per_id.items():
@@ -3573,8 +3941,25 @@ def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
     return list(set(rescoped_mat_field.data))
 
 
+def get_ref_result_per_element(
+    csv_file_path: pathlib.Path,
+):
+    elemental_data = {}
+
+    with open(csv_file_path) as csv_file:
+        reader = csv.reader(csv_file, delimiter="\t")
+
+        next(reader, None)
+        for idx, row in enumerate(reader):
+            element_id = int(row[0])
+            assert elemental_data.get(element_id) is None
+            elemental_data[element_id] = float(row[1])
+    return elemental_data
+
+
 def get_ref_result_per_node_and_material(
-    mesh: MeshedRegion, reference_csv_files: ReferenceCsvFiles
+    mesh: MeshedRegion,
+    reference_csv_files: ReferenceCsvFilesNodal,
 ):
     # Get the reference data from the csv files.
     # Returns a dictionary with node_id and mat_id as nested keys.
@@ -3627,7 +4012,8 @@ def get_ref_result_per_node_and_material(
 
 
 def get_ref_per_body_results_mechanical(
-    reference_csv_files: ReferenceCsvFiles, mesh: MeshedRegion
+    reference_csv_files: ReferenceCsvFilesNodal,
+    mesh: MeshedRegion,
 ):
     return get_ref_result_per_node_and_material(mesh, reference_csv_files)
 
