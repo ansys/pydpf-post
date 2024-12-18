@@ -78,6 +78,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
             averaging_config=averaging_config,
+            shell_layer=shell_layer,
         )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
@@ -232,6 +233,7 @@ class TransientMechanicalSimulation(MechanicalSimulation):
             selection=selection,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
 
         # Evaluate  the workflow

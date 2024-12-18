@@ -92,7 +92,7 @@ def _connect_workflow_inputs(
     streams_provider: Any,
     data_sources: Any,
     averaging_config: AveragingConfig,
-    shell_layer: Optional[shell_layers] = None,
+    shell_layer: Optional[shell_layers],
 ):
     """Connects the inputs of the initial result workflow.
 
