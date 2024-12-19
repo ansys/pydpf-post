@@ -266,7 +266,7 @@ def _create_sweeping_phase_workflow(
             raise ValueError("Argument sweeping_phase must be a float.")
         sweeping_op = create_operator_callable(name="sweeping_phase_fc")
         sweeping_op.connect(2, sweeping_phase)
-        sweeping_op.connect(3, "degree")
+        sweeping_op.connect(3, "deg")
         sweeping_op.connect(4, False)
         sweeping_phase_workflow.add_operator(operator=sweeping_op)
 

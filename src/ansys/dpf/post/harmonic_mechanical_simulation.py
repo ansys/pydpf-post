@@ -281,6 +281,7 @@ class HarmonicMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
 
         # Evaluate  the workflow

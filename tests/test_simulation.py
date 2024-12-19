@@ -1468,6 +1468,53 @@ def test_shell_layer_extraction(
             assert checked_elements == 36
 
 
+@pytest.mark.parametrize("average_per_body", [False, True])
+@pytest.mark.parametrize("on_skin", [True, False])
+# Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
+# for mixed models.
+@pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
+@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
+@pytest.mark.parametrize(
+    "simulation_str",
+    ["modal_simulation", "transient_simulation", "harmonic_simulation"],
+)
+def test_shell_layer_extraction_all_types_except_static(
+    on_skin, location, shell_layer, average_per_body, simulation_str, request
+):
+    # This test just verifies that the shape of the results is correct for all simulation types,
+    # to ensure the arguments are passed correctly.
+    # The correctness of the results is not checked here, but for StaticMechanicalSimulation, since
+    # the workflow is the same for all simulation types.
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        return
+
+    if average_per_body:
+        averaging_config = AveragingConfig(
+            body_defining_properties=["mat"], average_per_body=True
+        )
+    else:
+        averaging_config = AveragingConfig(
+            body_defining_properties=None, average_per_body=False
+        )
+
+    simulation = request.getfixturevalue(simulation_str)
+
+    res = simulation._get_result(
+        base_name="S",
+        skin=on_skin,
+        components=["X"],
+        location=location,
+        category=ResultCategory.matrix,
+        shell_layer=shell_layer,
+        averaging_config=averaging_config,
+    )
+
+    for field in res._fc:
+        for entity_id in field.scoping.ids:
+            entity_data = field.get_entity_data_by_id(entity_id)
+            assert entity_data.shape == (1,)
+
+
 @pytest.mark.parametrize(
     "average_per_body",
     [
