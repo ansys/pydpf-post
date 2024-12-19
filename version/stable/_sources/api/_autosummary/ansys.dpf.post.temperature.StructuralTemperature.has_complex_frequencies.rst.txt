@@ -1,0 +1,6 @@
+has\_complex\_frequencies
+=========================
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. automethod:: StructuralTemperature.has_complex_frequencies
