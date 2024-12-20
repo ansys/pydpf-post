@@ -180,10 +180,14 @@ def _connect_averaging_eqv_and_principal_workflows(
         _WfNames.skin: _WfNames.skin,
         _WfNames.skin_input_mesh: _WfNames.skin_input_mesh,
     }
-    assert not (
+
+    if (
         result_workflows.equivalent_workflow is not None
         and result_workflows.principal_workflow is not None
-    )
+    ):
+        raise AssertionError(
+            "The equivalent workflow and principal workflow are both not None."
+        )
 
     principal_or_eqv_wf = (
         result_workflows.equivalent_workflow or result_workflows.principal_workflow
@@ -204,7 +208,11 @@ def _connect_averaging_eqv_and_principal_workflows(
             output_wf = result_workflows.averaging_workflow
 
     else:
-        assert principal_or_eqv_wf is not None
+        if principal_or_eqv_wf is None:
+            raise AssertionError(
+                "The equivalent workflow or principal workflow is None."
+            )
+
         principal_or_eqv_wf.connect_with(
             result_workflows.initial_result_workflow,
             output_input_names={_WfNames.output_data: _WfNames.input_data},
