@@ -196,6 +196,13 @@ def average_per_body_complex_multi_body():
     )
 
 
+@pytest.fixture()
+def beam_example():
+    return _download_file(
+        "result_files/beams", "post_beam_result_01.rst", True, None, False
+    )
+
+
 @dataclasses.dataclass
 class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
