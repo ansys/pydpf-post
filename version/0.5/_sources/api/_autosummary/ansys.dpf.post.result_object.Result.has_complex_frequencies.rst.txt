@@ -1,0 +1,6 @@
+has\_complex\_frequencies
+=========================
+
+.. currentmodule:: ansys.dpf.post.result_object
+
+.. automethod:: Result.has_complex_frequencies
