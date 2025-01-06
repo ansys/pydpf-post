@@ -82,9 +82,19 @@ def _append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
     if new_wf is None:
         return last_wf
 
-    assert _WfNames.input_data in new_wf.input_names
-    assert _WfNames.output_data in new_wf.output_names
-    assert _WfNames.output_data in last_wf.output_names
+    if _WfNames.input_data not in new_wf.input_names:
+        raise AssertionError(
+            f"Workflow {new_wf} must have an input pin {_WfNames.input_data}"
+        )
+    if _WfNames.output_data not in new_wf.output_names:
+        raise AssertionError(
+            f"Workflow {new_wf} must have an output pin {_WfNames.output_data}"
+        )
+    if _WfNames.output_data not in last_wf.output_names:
+        raise AssertionError(
+            f"Workflow {last_wf} must have an output pin {_WfNames.output_data}"
+        )
+
     new_wf.connect_with(
         last_wf,
         output_input_names={_WfNames.output_data: _WfNames.input_data},

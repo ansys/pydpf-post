@@ -1,6 +1,12 @@
-from typing import Union
+from typing import Optional, Union
 
-from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
+from ansys.dpf.core import (
+    MeshedRegion,
+    StreamsContainer,
+    Workflow,
+    operators,
+    shell_layers,
+)
 from ansys.dpf.gate.common import locations
 
 from ansys.dpf.post.misc import _connect_any
@@ -165,16 +171,68 @@ def _create_norm_workflow(
 
 
 def _create_initial_result_workflow(
-    name: str, server, create_operator_callable: _CreateOperatorCallable
+    name: str,
+    server,
+    shell_layer: Optional[shell_layers],
+    is_nodal: bool,
+    create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
+
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
     initial_result_workflow.add_operator(initial_result_op)
-    initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
+
+    forward_shell_layer_op = operators.utility.forward()
+    initial_result_workflow.add_operator(forward_shell_layer_op)
+    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
+
+    # The next section is only needed, because the shell_layer selection does not
+    # work for elemental and elemental nodal results.
+    # If elemental results are requested with a chosen shell layer,
+    # the shell layer is not selected and the results are split into solids
+    # and shells. Here, we add an additional shell layer selection and merge_shell_solid
+    # operator to manually merge the results.
+    # Note that we have to skip this step if the location is nodal, because
+    # the resulting location is wrong when the shell layer is selected again manually, after
+    # it was already selected by the initial result operator.
+    if shell_layer is not None and not is_nodal:
+        merge_shell_solid_fields = create_operator_callable(
+            name="merge::solid_shell_fields"
+        )
+        initial_result_workflow.add_operator(merge_shell_solid_fields)
+        shell_layer_op = operators.utility.change_shell_layers()
+        shell_layer_op.inputs.merge(True)
+        initial_result_workflow.add_operator(shell_layer_op)
+
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, merge_shell_solid_fields, 0
+        )
+        shell_layer_op.inputs.fields_container(
+            initial_result_op.outputs.fields_container
+        )
+        _connect_any(
+            shell_layer_op.inputs.e_shell_layer, forward_shell_layer_op.outputs.any
+        )
+
+        merge_shell_solid_fields.inputs.fields_container(
+            shell_layer_op.outputs.fields_container_as_fields_container
+        )
+
+        # End section for elemental results with shell layer selection
+    else:
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, initial_result_op, 0
+        )
+
+    if hasattr(initial_result_op.inputs, "shell_layer"):
+        _connect_any(
+            initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
+        )
+
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
     )
@@ -208,7 +266,7 @@ def _create_sweeping_phase_workflow(
             raise ValueError("Argument sweeping_phase must be a float.")
         sweeping_op = create_operator_callable(name="sweeping_phase_fc")
         sweeping_op.connect(2, sweeping_phase)
-        sweeping_op.connect(3, "degree")
+        sweeping_op.connect(3, "deg")
         sweeping_op.connect(4, False)
         sweeping_phase_workflow.add_operator(operator=sweeping_op)
 

@@ -6,6 +6,8 @@ ModalMechanicalSimulation
 """
 from typing import List, Optional, Union
 
+from ansys.dpf.core import shell_layers
+
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
@@ -45,6 +47,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
+        shell_layer: Optional[shell_layers] = None,
     ) -> (dpf.Workflow, Union[str, list[str], None], str):
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -57,6 +60,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -76,6 +80,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
             averaging_config=averaging_config,
+            shell_layer=shell_layer,
         )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
@@ -116,6 +121,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
         averaging_config: AveragingConfig = AveragingConfig(),
+        shell_layer: Optional[int] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -185,6 +191,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             Per default averaging happens across all bodies. The averaging config
             can define that averaging happens per body and defines the properties that
             are used to define a body.
+        shell_layer:
+            Shell layer to extract results for.
 
         Returns
         -------
@@ -235,6 +243,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
 
         # Evaluate  the workflow

@@ -265,6 +265,7 @@ class FluidSimulation(Simulation):
             streams_provider=self._model.metadata.streams_provider,
             data_sources=self._model.metadata.data_sources,
             averaging_config=AveragingConfig(),
+            shell_layer=None,
         )
 
         query_regions_meshes = False
