@@ -13,13 +13,14 @@ to contribute to PyDPF-Post.
  
 The following contribution information is specific to PyDPF-Post.
 
-Clone the repository
---------------------
+Install in development mode
+---------------------------
 
-To clone and install the latest version of PyDPF-Core in
-development mode, run:
+If you want to edit and potentially contribute to PyDPF-Post,
+clone the repository and install it using ``pip`` with the ``-e``
+development flag:
 
-.. include:: pydpf-post_clone_install.rst
+.. include:: ../pydpf-post_clone_install.rst
 
 
 Post issues

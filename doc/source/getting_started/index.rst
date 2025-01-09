@@ -4,18 +4,16 @@
 Getting started
 ===============
 
-To use the PyDPF-Post API, you must have PyDPF-Core installed. Because you need to
-use a native DPF server, you must also have a local installation of Ansys 2021 R1
-or later or of the standalone DPF Server.
-For more information on getting a licensed copy of Ansys, visit the
-`Ansys website <https://www.ansys.com/>`_.
-For more information on getting the standalone DPF Server, visit the
-`PyDPF-Core documentation <https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html>`_.
-
+This section describes PyDPF-Post and how to install it in user mode so that you can
+quickly begin using it. For information on installing PyDPF-Post in development mode,
+see :ref:`contributing`.
 
 .. toctree::
    :maxdepth: 3
+   :hidden:
 
+   key_features
    compatibility
+   software_requirements
    install
-
+   demo

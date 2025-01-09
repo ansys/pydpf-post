@@ -7,6 +7,7 @@ HDF5
 mecanic
 postprocess
 postprocessing
+PyDPF
 (PyDPF\s|PyDPF-Core|PyDPF-Post)
 Pythonic
 R1
