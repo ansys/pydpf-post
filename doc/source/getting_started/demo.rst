@@ -6,8 +6,8 @@ This brief demo shows how to load an Ansys Mechanical APDL (MAPDL) result file t
 and postprocess results. The code to use depends on which Ansys version you have installed.
 For comprehensive examples of how to use PyDPF-Post, see :ref:`gallery`.
 
-2023 R1 or later
-----------------
+2023 R1 and later
+-----------------
 
 If Ansys 2023 R1 or later is installed, a DPF server automatically starts
 once you start using PyDPF-Post. Use this code to load an MAPDL result file
@@ -44,6 +44,7 @@ to extract and postprocess results:
 
 .. figure:: ./../images/crankshaft_disp.png
     :width: 300pt
+    :align: left
 
 .. code:: python
 
@@ -52,6 +53,7 @@ to extract and postprocess results:
 
 .. figure:: ./../images/crankshaft_stress.png
     :width: 300pt
+    :align: left
 
 2021 R1 through 2022 R2
 -----------------------
@@ -70,4 +72,5 @@ to extract and postprocess results:
 
 .. figure:: ./../images/crankshaft_stress.png
     :width: 300pt
+    :align: left
 

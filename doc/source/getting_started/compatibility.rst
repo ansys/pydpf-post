@@ -8,7 +8,7 @@ Potential crashes can occur when using PyDPF-Post 0.2.2 or earlier with PyDPF-Co
 or later. For a given DPF server version, the following table indicates version compatibilities
 for these two libraries.
 
-.. list-table:: PyDPF compatibility
+.. list-table:: **PyDPF library compatibilities**
    :widths: 20 20 20
    :header-rows: 1
 

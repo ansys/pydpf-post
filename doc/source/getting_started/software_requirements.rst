@@ -15,8 +15,8 @@ Other platforms may be supported by using PyDPF-Post in a
 containerized ecosystem, such as `Docker <https://www.docker.com/>`_ or
 `Kubernetes <https://kubernetes.io/>`_.
 
-PyDPF-Core and a DPF server
----------------------------
+PyDPF-Core and DPF server
+-------------------------
 
 To use PyDPF-Post, you must have `PyDPF-Core <https://github.com/ansys/pydpf-core>`_
 installed. Because you must use a native DPF server, you must also have a local

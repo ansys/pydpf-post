@@ -3,7 +3,7 @@
 ************
 Installation
 ************
-After all :ref:`software_requirements <software requiremetns>` are installed, you can install PyDPF-Post.
+After all :ref:`software requirements <software_requirements>` are installed, you can install PyDPF-Post.
 
 Install using ``pip``
 ---------------------

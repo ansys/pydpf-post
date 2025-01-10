@@ -11,7 +11,7 @@ the contents of a result file.
 On Windows
 ----------
 
-To load a result file on Windows, use this code :
+This code loads a result file on Windows:
 
 .. code:: python
 
@@ -23,7 +23,7 @@ To load a result file on Windows, use this code :
 On Linux
 --------
 
-To load a result file on Linux, use this code:
+This code loads a result file on Linux:
     
 .. code:: python
 

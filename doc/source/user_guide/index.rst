@@ -10,14 +10,14 @@ typical usage.
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card:: Load a result file :material-regular:`progress_activity`
+   .. grid-item-card:: Load a result file :material-regular:`file_open`
       :padding: 2 2 2 2
       :link: post_processing
       :link-type: doc
 
       Load a result file to browse its contents.
 
-   .. grid-item-card:: Browse result file metadata :material-regular:`browse`
+   .. grid-item-card:: Browse result file metadata :material-regular:`quick_reference_all`
       :padding: 2 2 2 2
       :link: accessing_file_metadata
       :link-type: doc
@@ -43,14 +43,14 @@ typical usage.
       :link: server_context
       :link-type: doc
 
-      Change the server context to control Ansys license interactions.
+      Change the server context to control Ansys license interactions for DPF-Core operators.
 
    .. grid-item-card:: Use PyDPF-Core operators :material-regular:`calculate`
       :padding: 2 2 2 2
       :link: extending_to_core
       :link-type: doc
 
-      Use the powerful operators of PyDPF-Core in both PyPDF-Core and PyDPF-Post.
+      Use PyDPF-Core operators in both PyPDF-Core and PyDPF-Post.
 
    .. grid-item-card:: Troubleshoot common issues :material-regular:`troubleshoot`
       :padding: 2 2 2 2

@@ -17,3 +17,5 @@ subresults
 Thermal/electric
 UTF-8
 VTK
+PyDPF-Core
+DPF server

@@ -4,13 +4,13 @@
 Browse result file metadata
 ***************************
 
-After a result file is loaded, you can browse all metadata. You can also browse only mesh metadata.
+After a result file is loaded, you can browse all metadata or only mesh metadata.
 
 Browse all metadata
 -------------------
 
 This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
-browse the metadata for a loaded static mechanical simulation:
+browse all metadata for a loaded simulation:
 
 .. code:: python
 
@@ -78,7 +78,7 @@ Browse only mesh metadata
 -------------------------
 
 This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
-browse only the mesh metadata for the loaded static mechanical simulation:
+browse only the mesh metadata for a loaded simulation:
 
 .. code:: python
 

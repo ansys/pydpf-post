@@ -39,6 +39,7 @@ This code shows how to plot the total deformation (norm of the displacement vect
 
 .. figure:: ./../images/crankshaft_disp.png
     :width: 300pt
+    :align: left
 
 Normal stresses
 ---------------
@@ -66,3 +67,4 @@ This code shows how to plot the nodal xx-component of stress:
 
 .. figure:: ./../images/crankshaft_stress_xx.png
     :width: 300pt
+    :align: left

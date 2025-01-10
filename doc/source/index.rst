@@ -3,8 +3,8 @@ PyDPF-Post documentation |version|
 ==================================
 
 PyDPF-Post, a component of the Ansys Data Processing Framework (DPF), provides a Python
-interface for loading a simulation's result file, extracting simulation metadata and results,
-and then applying postprocessing operations on them.
+interface for loading a simulation result file, extracting metadata and results,
+and then applying postprocessing operations.
 
 .. grid:: 1 2 2 2
 

@@ -7,12 +7,12 @@ Change the server context
 When using a DPF server version later than Ansys 2023 R1, the DPF server context controls Ansys license
 interactions.
 
-- When the **Premium** DPF Server context is active, underlying operations check if a valid
+- When the **Premium** DPF server context is active, underlying operations check if a valid
   Ansys license exists and are allowed to check out this license if needed. This means that all DPF
-  features are available, but a license may be checked-out.
-- When the **Entry** DPF Server context is active, underlying operations check if a valid Ansys
+  features are available, but a license may be checked out.
+- When the **Entry** DPF server context is active, underlying operations check if a valid Ansys
   license exists but are not allowed to check out any license. This means that operations that require
-  the checkout of a license are not available and raise an error.
+  the a license be checked out are not available and raise an error.
 
 By default, using PyDPF-Post starts a DPF server with the **Premium** context active.
 For more information, search the `PyDPF-Core documentation <https://dpf.docs.pyansys.com/dev/user_guide/server_context.html>`_

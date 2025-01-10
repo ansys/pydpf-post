@@ -7,7 +7,7 @@ Access results
 After a result file is loaded, you can access the results themselves. You can query results using dedicated methods.
 
 This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
-get the ``displacement`` result for a loaded static mechanical simulation:
+get the ``displacement`` result for a loaded simulation:
 
 .. code:: python
 

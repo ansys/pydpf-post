@@ -22,7 +22,8 @@ see :ref:`contributing`.
       :link: compatibility
       :link-type: doc
 
-      View PyDPF-Core and PyPDF-Post version compatibilities.
+      View version compatibilities of PyDPF-Core and PyPDF-Post for each
+      DPF server version.
 
    .. grid-item-card:: Software requirements :material-regular:`dvr`
       :padding: 2 2 2 2
