@@ -79,7 +79,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
-    "sphinx_design"
+    "sphinx_design",
 ]
 
 typehints_defaults = "comma"
