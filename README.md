@@ -6,9 +6,9 @@
 
 PyDPF-Post is part of the Ansys Data Processing Framework (DPF), which provides reusable operators
 that let you access and transform simulation data coming from different Ansys and third-party
-results files.
+result files.
 
-PyDPF-Post leverages [PyDPF-Core](https://github.com/ansys/pydpf-core), a package for building more advanced and customized workflows using Ansys DPF. After loading a simulation's results file in PyDPF-Post, you can extract simulation metadata and results and then apply postprocessing operations on them.
+PyDPF-Post leverages [PyDPF-Core](https://github.com/ansys/pydpf-core), a package for building more advanced and customized workflows using Ansys DPF. After loading a simulation's result fiile in PyDPF-Post, you can extract simulation metadata and results and then apply postprocessing operations on them.
 
 ## Documentation and issues
 

@@ -14,12 +14,12 @@ the steps:
 #. Use the plotting methods of the :class:`DataFrame <ansys.dpf.post.dataframe.DataFrame>` object
    to render it.
 
-Subsequent sections provide some plotting examples.
+Some plotting examples follow.
 
 Total deformation 
 -----------------
 
-You can plot the total deformation (norm of the displacement vector field) with:
+This code shows how to plot the total deformation (norm of the displacement vector field):
 
 .. code:: python
 
@@ -43,9 +43,10 @@ You can plot the total deformation (norm of the displacement vector field) with:
 Normal stresses
 ---------------
 
-Plotting of raw data at Gauss points is not available yet.
-You can however plot data averaged at nodes or elements.
-You can plot the nodal xx-component of stress with:
+Plotting of raw data at Gauss points is not available.
+However, you can plot data averaged at nodes or elements.
+
+This code shows how to plot the nodal xx-component of stress:
 
 .. code:: python
 

@@ -2,15 +2,15 @@
 Brief demo
 ==========
 
-This brief demo shows how to load an MAPDL results file to extract and
-postprocess results. The code to use depends on which Ansys version you have installed.
+This brief demo shows how to load an Ansys Mechanical APDL (MAPDL) result file to extract
+and postprocess results. The code to use depends on which Ansys version you have installed.
 For comprehensive examples of how to use PyDPF-Post, see :ref:`gallery`.
 
 2023 R1 or later
 ----------------
 
 If Ansys 2023 R1 or later is installed, a DPF server automatically starts
-once you start using PyDPF-Post. Use this code to load an MAPDL results file
+once you start using PyDPF-Post. Use this code to load an MAPDL result file
 to extract and postprocess results:
 
 .. code:: python
@@ -42,7 +42,7 @@ to extract and postprocess results:
     >>> displacement.plot()
 
 
-.. figure:: ./images/crankshaft_disp.png
+.. figure:: ./../images/crankshaft_disp.png
     :width: 300pt
 
 .. code:: python
@@ -50,14 +50,14 @@ to extract and postprocess results:
     >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
     >>> stress_eqv.plot()
 
-.. figure:: ./images/crankshaft_stress.png
+.. figure:: ./../images/crankshaft_stress.png
     :width: 300pt
 
 2021 R1 through 2022 R2
 -----------------------
 
-If you have an Ansys release of 2021 R1 through 2022 R2 installed, use this code to
-start the legacy PyDPF-Post tools and then load an MAPDL results file
+If an Ansys release of 2021 R1 through 2022 R2 is installed, use this code to
+start the legacy PyDPF-Post tools and then load an MAPDL result file
 to extract and postprocess results:
 
 .. code:: python
@@ -68,6 +68,6 @@ to extract and postprocess results:
     >>> stress = solution.stress()
     >>> stress.eqv.plot_contour(show_edges=False)
 
-.. figure:: ./images/crankshaft_stress.png
+.. figure:: ./../images/crankshaft_stress.png
     :width: 300pt
 

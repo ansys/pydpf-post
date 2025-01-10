@@ -19,10 +19,10 @@ easier. By using operators to compute results, you can build your own custom,
 low-level scripts to enable fast postprocessing of potentially multi-gigabyte models
 with `PyDPF-Core <https://github.com/ansys/pydpf-core>`_.
 
-Ansys solver results files
---------------------------
+Ansys solver result files support
+----------------------------------
 
-DPF supports these Ansys solver results files:
+DPF supports these Ansys solver result files:
 
 - Mechanical APDL (RST, MODE, RFRQ, and RDSP)
 - LS-DYNA (D3PLOT and BINOUT)

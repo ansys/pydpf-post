@@ -13,8 +13,8 @@ for these two libraries.
    :header-rows: 1
 
    * - DPF server version
-     - DPF-Core version
-     - DPF-Post version
+     - PyDPF-Core version
+     - PyDPF-Post version
    * - 8.1 (DPF Server 2024.2.pre1)
      - 0.12.0 or later
      - 0.8.0 or later
