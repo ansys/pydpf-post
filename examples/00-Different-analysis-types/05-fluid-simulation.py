@@ -1,7 +1,7 @@
 """
 .. _ref_fluid_example:
 
-Postprocess a fluid Simulation
+Postprocess a fluid simulation
 ==============================
 This example shows how to load a fluid simulation, explore the model and its available zones,
 species, and phases, and then extract a result.
@@ -29,8 +29,8 @@ print(simulation)
 
 
 ###############################################################################
-# Explore the available metadata
-# ------------------------------
+# Explore available metadata
+# --------------------------
 # Check the available cell and face zones.
 print(simulation.cell_zones)
 print(simulation.face_zones)
@@ -42,21 +42,23 @@ print(simulation.face_zones)
 print(simulation.mesh_info)
 
 ###############################################################################
-# Check the available species.
+# Check available species
+# ~~~~~~~~~~~~~~~~~~~~~~~
 print(simulation.species)
 
 ###############################################################################
-# Check the available phases.
+# Check available phases
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~
 print(simulation.phases)
 
 ###############################################################################
-# Check the metadata on available results.
+# Check metadata on available results
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 print(simulation.result_info)
 
 ###############################################################################
 # Extract a result
 # ----------------
-###############################################################################
 # Print a specific result to get more information on available qualifiers
 # (such as zones and phases).
 print(simulation.result_info["enthalpy"])
@@ -64,16 +66,20 @@ print(simulation.result_info["enthalpy"])
 # print(simulation.result_info[0])
 
 ###############################################################################
-# Extract this result as a dataframe.
+# Extract this result as a dataframe
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 enthalpy = simulation.enthalpy()
 print(enthalpy)
 # Not specifying any qualifier returns a unique column of data
 
 ###############################################################################
-# Plot the dataframe.
+# Plot dataframe
+# ~~~~~~~~~~~~~~
 enthalpy.plot()
 
 ###############################################################################
+# Use qualifiers for result to filter or separate data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # You can use available qualifiers for the result in the extraction request
 # to filter or separate data.
 #

@@ -1,8 +1,8 @@
 """
 .. _ref_result_on_path:
 
-Request result on a specific path of coordinates
-================================================
+Request a result on a specific path of coordinates
+==================================================
 This example shows how to use the legacy PyDPF-Post API to request a result on a
 specific path of coordinates.
 """

@@ -42,13 +42,13 @@ stress = simulation.stress_nodal(all_sets=True)
 print(stress)
 
 ###############################################################################
-# Export to a numpy.ndarray
-# -------------------------
+# Export to NumPy array
+# ---------------------
 
-# To export to a numpy.ndarray, the dataframe must contain data only for a single combination
+# To export to a NumPy array, the dataframe must contain data only for a single combination
 # of values for column labels.
 
-# select one step as the dataframe contains data for several
+# select one step as the dataframe contains data for several steps
 stress_1 = stress.select(set_ids=1)
 print(stress_1)
 

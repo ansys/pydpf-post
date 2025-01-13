@@ -3,7 +3,7 @@
 .. _ref_basic_cyclic:
 
 Get base and duplicate sector results for a modal cyclic symmetry model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=======================================================================
 
 This example shows how to extract real and imaginary results from a modal cyclic symmetry model.
 
@@ -33,8 +33,8 @@ print(simulation)
 
 
 ###############################################################################
-# Get base and duplicate sectors displacement results
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get base and duplicate sector displacement results
+# --------------------------------------------------
 # With ``expand_cyclic=False``, the result providers (such as stress and displacement) return
 # results for base and duplicate sectors for the cyclic symmetry model.
 
@@ -64,7 +64,7 @@ s_cyc.plot(set_ids=7, base_sector=0)
 
 ###############################################################################
 # Get displacement results on first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ------------------------------------------------------------
 # Get displacemetn results with phi set to different values.
 
 # with phi=0°
@@ -85,7 +85,7 @@ u_cyc.plot()
 
 ###############################################################################
 # Get nodal stress results on first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ------------------------------------------------------------
 s_cyc = simulation.stress_eqv_von_mises_nodal(
     all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0
 )
@@ -94,7 +94,7 @@ s_cyc.plot()
 
 ###############################################################################
 # Get elemental nodal stress results on first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ----------------------------------------------------------------------
 # Elemental nodal is the default result location for stress and strain.
 s_cyc = simulation.stress(set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.0)
 print(s_cyc)
@@ -108,7 +108,7 @@ to_elemental.plot()
 
 ###############################################################################
 # Get nodal stress results expanded
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ---------------------------------
 
 s_cyc = simulation.stress_eqv_von_mises_nodal(set_ids=[7])
 s_cyc.plot()

@@ -1,7 +1,7 @@
 """
 .. _ref_modal_sub_results_example:
 
-Extract components of results - modal simulation
+Extract components of results (modal simulation)
 ================================================
 This example processes a modal simulation to extract subcomponents
 of results like displacement and elastic strain.

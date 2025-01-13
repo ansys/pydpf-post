@@ -1,7 +1,7 @@
 """
 .. _ref_invariants_example:
 
-Extract stress and strain invariants - static simulation
+Extract stress and strain invariants (static simulation)
 ========================================================
 This example uses a static simulation to show how to extract a tensor's
 stress and strain invariants.

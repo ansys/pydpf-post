@@ -18,8 +18,8 @@ from ansys.dpf.post import examples
 from ansys.dpf.post.common import elemental_properties
 
 ###############################################################################
-# Load the result file
-# --------------------
+# Load result file
+# ----------------
 # Load the result file in a ``Simulation`` object that allows access to the results.
 # The ``Simulation`` object must be instantiated with the path for the result file.
 # For example, ``"C:/Users/user/my_result.rst"`` on Windows
@@ -29,21 +29,20 @@ example_path = examples.download_harmonic_clamped_pipe()
 simulation = post.HarmonicMechanicalSimulation(example_path)
 
 ###############################################################################
-# Get the mesh
-# ------------
-# Get the mesh and print it.
+# Get mesh and print it
+# ---------------------
 mesh = simulation.mesh
 print(mesh)
 
 ###############################################################################
-# Plot the mesh
+# Plot mesh
 # -------------
 # Plot the mesh to view the bare mesh of the model.
 mesh.plot()
 
 ###############################################################################
-# Query basic information about the mesh
-# --------------------------------------
+# Get basic information about mesh
+# --------------------------------
 # The ``Mesh`` object has several properties allowing access to different information.
 
 ###############################################################################
@@ -71,12 +70,13 @@ print(f"The mesh is in '{mesh.unit}'")
 # --------------------
 # The available named selections are given as a dictionary
 # with the names as keys and the actual ``NamedSelection`` objects as values.
+#
 # Print the dictionary to get the available names.
 named_selections = mesh.named_selections
 print(named_selections)
 
 ###############################################################################
-# To get a specific named selection, use its name as the key.
+# Get a specific named selection by using its name as the key.
 print(named_selections["_FIXEDSU"])
 
 ###############################################################################
@@ -134,7 +134,7 @@ print(mesh.materials)
 ###############################################################################
 # Get elemental connectivity
 # --------------------------
-# The elemental connectivity maps elements to connected nodes, either using IDs or indexes.
+# The elemental connectivity maps elements to connected nodes using either IDs or indexes.
 
 ###############################################################################
 # Access the indexes of the connected nodes using an element's index:
@@ -175,9 +175,7 @@ print(mesh.nodes[0])
 print(mesh.coordinates)
 
 ###############################################################################
-# Get information about one particular node
-# -------------------------------------------
-# Get the coordinates of a node.
+# Get the coordinates of a particular node.
 print(node_1.coordinates)
 
 ###############################################################################
@@ -228,7 +226,7 @@ meshes.plot(text="Mesh split")
 meshes[0].plot(text="First mesh in the split mesh")
 
 ###############################################################################
-# Split the global mesh and select meshes based on specific property values:
+# Split the global mesh and select meshes based on specific property values.
 meshes_filtered = simulation.split_mesh_by_properties(
     properties={
         elemental_properties.material: [2, 3, 4],

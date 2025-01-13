@@ -1,7 +1,7 @@
 """
 .. _ref_data_data_frame_example:
 
-Explore the data of a result with the dataframe - harmonic simulation
+Explore the data of a result with the dataframe (harmonic simulation)
 =====================================================================
 This example uses a harmonic simulation to show how to interact with the DPF-Post
 dataframe, which is the object returned by each result.
@@ -53,8 +53,8 @@ for row in displacement.index:
 
 
 ###############################################################################
-# Make selections in the dataframe
-# ---------------------------------
+# Make selections in dataframe
+# ----------------------------
 # Use the labels and values shown by the preceding code to select subparts of the
 # dataframe.
 
@@ -71,8 +71,8 @@ node_values = displacement.select(node_ids=[3548])
 print(node_values)
 
 ###############################################################################
-# Make selections by index in the dataframe
-# -----------------------------------------
+# Make selections in dataframe by index
+# --------------------------------------
 # To select values by index for each label, use the ``iselect()`` method.
 # The index to ID order follows what is returned by the values on the preceding index method.
 
@@ -83,8 +83,8 @@ node_values = displacement.iselect(node_ids=[0])
 print(node_values)
 
 ###############################################################################
-# Make multiple selections in the dataframe
-# -----------------------------------------
+# Make multiple selections in dataframe
+# -------------------------------------
 
 real_values_for_one_set_onde_node = displacement.select(
     node_ids=[3548], set_ids=1, complex=0
@@ -92,7 +92,7 @@ real_values_for_one_set_onde_node = displacement.select(
 print(real_values_for_one_set_onde_node)
 
 ###############################################################################
-# Make selections to plot the dataframe
-# -------------------------------------
+# Make selections to plot dataframe
+# ---------------------------------
 
 displacement.plot(set_ids=1, complex=0)
