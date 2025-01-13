@@ -42,7 +42,7 @@ to extract and postprocess results:
     >>> displacement.plot()
 
 
-.. figure:: ./../images/crankshaft_disp.png
+.. image:: ./../images/crankshaft_disp.png
     :align: left
     :width: 300pt
 
@@ -52,7 +52,7 @@ to extract and postprocess results:
     >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
     >>> stress_eqv.plot()
 
-.. figure:: ./../images/crankshaft_stress.png
+.. image:: ./../images/crankshaft_stress.png
     :align: left
     :width: 300pt
 
@@ -72,7 +72,7 @@ to extract and postprocess results:
     >>> stress = solution.stress()
     >>> stress.eqv.plot_contour(show_edges=False)
 
-.. figure:: ./../images/crankshaft_stress.png
+.. image:: ./../images/crankshaft_stress.png
     :align: left
     :width: 300pt
 

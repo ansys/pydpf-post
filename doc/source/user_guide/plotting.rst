@@ -37,10 +37,9 @@ This code shows how to plot the total deformation (norm of the displacement vect
 
     >>> displacement_norm.plot(screenshot="crankshaft_disp.png")
 
-.. figure:: ./../images/crankshaft_disp.png
+.. image:: ./../images/crankshaft_disp.png
     :align: left
     :width: 300pt
-
 
 
 Normal stresses
@@ -67,7 +66,7 @@ This code shows how to plot the nodal xx-component of stress:
 
     >>> stress_xx.plot(screenshot="crankshaft_stress_xx.png")
 
-.. figure:: ./../images/crankshaft_stress_xx.png
+.. image:: ./../images/crankshaft_stress_xx.png
     :align: left
     :width: 300pt
 
