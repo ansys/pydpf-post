@@ -2,4 +2,4 @@
 
 PyDPF-Post fluid examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-These examples show how you can use PyDPF-Post features for fluid models.
+These examples show how to use PyDPF-Post features for fluid models.

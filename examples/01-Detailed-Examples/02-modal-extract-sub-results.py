@@ -1,17 +1,17 @@
 """
 .. _ref_modal_sub_results_example:
 
-Extract components of results - Modal Simulation
+Extract components of results - modal simulation
 ================================================
-In this script, a modal simulation is processed to extract sub-components
-of results like elastic strain and displacement.
+This example processes a modal simulation to extract subcomponents
+of results like displacement and elastic strain.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
-# get by importing the DPF ``examples`` package.
+# This example uses a supplied file that you can get by importing the DPF ``examples``
+# package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -37,11 +37,11 @@ print(simulation)
 ###############################################################################
 # Extract X displacement over a list modes
 # ----------------------------------------
-# Printing the time freq support can help pick the right modes
+# To help pick the right modes, printing the time frequency support.
 
 print(simulation.time_freq_support)
 
-# To get X displacements on the first 2 modes
+# To get X displacements on the first two modes
 x_displacement = simulation.displacement(modes=[1, 2], components=["X"])
 # equivalent to
 x_displacement = simulation.displacement(set_ids=[1, 2], components=["X"])
@@ -52,7 +52,7 @@ x_displacement.plot(set_id=1)
 ###############################################################################
 # Extract XX and XY elastic strain over a list modes
 # --------------------------------------------------
-# To get X displacements on the first 2 modes
+# Get X displacements on the first two modes.
 XX_XY_elastic_strain = simulation.elastic_strain_nodal(
     modes=[3], components=["XX", "XY"]
 )

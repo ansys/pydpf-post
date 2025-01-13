@@ -1,16 +1,16 @@
 """
 .. _ref_compute_statistics_example:
 
-Compute minimum and maximum of a DataFrame
-==========================================
-In this example, transient mechanical displacement data is used
-to show how to compute the min or max of a given DataFrame.
+Compute the minimum and maximum of a dataframe
+==============================================
+This example uses transient mechanical displacement data
+to show how to compute the minimum and maximum of a dataframe.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get using the ``examples`` module.
 
 from ansys.dpf import post

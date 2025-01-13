@@ -1,16 +1,17 @@
 """
 .. _ref_complex_results:
 
-Complex results from a modal or harmonic analysis
--------------------------------------------------
-This example shows how you can access complex results from a modal or
-harmonic analysis.
+Access complex results from a modal or harmonic analysis
+--------------------------------------------------------
+This example shows how to use the legacy PyDPF-Post API to access complex results
+from a modal or harmonic analysis.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
+# Perform required imports. This example uses a supplied file that you can
+# get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -18,35 +19,35 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object.
+# Get the ``Solution`` object. This example loads a file with complex results.
 
 solution = post.load_solution(examples.complex_rst)
 solution.has_complex_result()
 
 ###############################################################################
 # Get displacement result
-# ~~~~~~~~~~~~~~~~~~~~~~~
-# Get the displacement ``Result`` object. It contain a field for real values
-# and a field for imaginary values.
+# -----------------------
+# The displacement result contain a field for real values and a field for
+# imaginary values.
 
 disp_result = solution.displacement()
 
 ###############################################################################
-# Check if support has complex frequencies
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Check if the support has complex frequencies.
+# Check for support of complex frequencies
+# ----------------------------------------
 
 disp_result.has_complex_frequencies()
 
 ###############################################################################
-# **Compute the result**
+# Compute result
+# --------------
 disp = disp_result.vector
 disp.num_fields
 
 ###############################################################################
 # Define phase
-# ~~~~~~~~~~~~
-# Define the phase. The phase value must be a float. The phase unit is degrees.
+# ------------
+# The phase value must be a float. The phase unit is degrees.
 
 phase = 39.0
 disp_at_phase = disp_result.vector_at_phase(phase)
@@ -59,8 +60,7 @@ real_field
 
 ###############################################################################
 # Get amplitude
-# ~~~~~~~~~~~~~
-# Get the amplitude.
+# -------------
 
 disp_ampl = disp_result.vector_amplitude
 disp_ampl.num_fields

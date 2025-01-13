@@ -1,16 +1,16 @@
 """
 .. _ref_modal_example:
 
-Modal Simulation
-================
-Simple post processing operations like viewing the different mode shapes is displayed
-in this example.
+Postprocess a modal simulation
+==============================
+This example shows how to postprocess a modal simulation to view different
+mode shapes.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -34,7 +34,7 @@ simulation = post.ModalMechanicalSimulation(example_path)
 ###############################################################################
 # View the frequency domain
 # -------------------------
-# Printing the time freq support can help pick the right modes
+# To help pick the right modes, printing the time frequency support.
 
 print(simulation.time_freq_support)
 
@@ -42,8 +42,9 @@ print(simulation.time_freq_support)
 print(simulation.set_ids)
 
 ###############################################################################
-# Extract all mode shapes and view them one by one
-# ------------------------------------------------
+# Extract and view all mode shapes
+# --------------------------------
+# Extract all mode shapes and view them one by one.
 
 displacement_norm = simulation.displacement(all_sets=True, norm=True)
 print(displacement_norm)
@@ -53,8 +54,9 @@ for set_id in simulation.set_ids:
 
 
 ###############################################################################
-# Extract a selection of mode shapes and view them one by one
-# -----------------------------------------------------------
+# Extract and view a selection of mode shapes
+# -------------------------------------------
+# Extract and view a selection of mode shapes and view them one by one.
 
 modes = [1, 2, 3]
 

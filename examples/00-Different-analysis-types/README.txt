@@ -2,4 +2,4 @@
 
 PyDPF-Post analysis types
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-These examples show how to post-process different simulation types using PyDPF-Post.
+These examples show how to postprocess different simulation types using PyDPF-Post.

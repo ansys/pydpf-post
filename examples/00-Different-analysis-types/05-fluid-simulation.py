@@ -1,13 +1,13 @@
 """
 .. _ref_fluid_example:
 
-Fluid Simulation
-================
+Postprocess a fluid Simulation
+==============================
 This example shows how to load a fluid simulation, explore the model and its available zones,
-species, and phases, as well as how to extract a result.
+species, and phases, and then extract a result.
 
 .. note::
-    This example requires DPF 7.0 (2024.1.pre0) or above.
+    This example requires DPF 7.0 (2024.1.pre0) or later.
     For more information, see :ref:`compatibility`.
 
 """
@@ -31,64 +31,67 @@ print(simulation)
 ###############################################################################
 # Explore the available metadata
 # ------------------------------
-# Check the available cell and face zones
+# Check the available cell and face zones.
 print(simulation.cell_zones)
 print(simulation.face_zones)
 
 ###############################################################################
 # The mesh metadata is available separately from the mesh
 # as accessing the mesh means loading it.
-# Use the mesh_info property to explore the mesh structure to define queries
+# Use the ``mesh_info`` property to explore the mesh structure to define queries.
 print(simulation.mesh_info)
 
 ###############################################################################
-# Check the available species
+# Check the available species.
 print(simulation.species)
 
 ###############################################################################
-# Check the available phases
+# Check the available phases.
 print(simulation.phases)
 
+###############################################################################
+# Check the metadata on available results.
+print(simulation.result_info)
 
 ###############################################################################
 # Extract a result
 # ----------------
 ###############################################################################
-# Check the metadata on available results
-print(simulation.result_info)
-
-###############################################################################
-# Print a specific one to get more information on available qualifiers (zones, phases and so on)
+# Print a specific result to get more information on available qualifiers
+# (such as zones and phases).
 print(simulation.result_info["enthalpy"])
 # Or use an index
 # print(simulation.result_info[0])
 
 ###############################################################################
-# Extract this available result as a Dataframe
+# Extract this result as a dataframe.
 enthalpy = simulation.enthalpy()
 print(enthalpy)
 # Not specifying any qualifier returns a unique column of data
 
 ###############################################################################
-# Plot the Dataframe
+# Plot the dataframe.
 enthalpy.plot()
 
 ###############################################################################
-# Available qualifiers for this result can be used in the extraction request
-# to filter/separate data.
-# Here we want a different column for each available zone for this result
+# You can use available qualifiers for the result in the extraction request
+# to filter or separate data.
+#
+# This code uses a different column for each available zone for the result.
 print(simulation.enthalpy(zone_ids=[13, 28]))
-# Here only the data for the fluid-stator zone is extracted
+#
+# This code extracts only the data for the fluid-stator zone.
 print(simulation.enthalpy(zone_ids=[28]))
-# The same logic can be applied to any available qualifier found in the ``AvailableResult``
+#
+# You can apply the same logic to any available qualifier found in the ``AvailableResult``
 # description under 'Available qualifier labels'.
 
 ###############################################################################
-# The result extraction request can also contain selection arguments
-# The enthalpy result being defined on cells, you can request data for specific
-# cells using their IDs:
+# The result extraction request can also contain selection arguments.
+# Because the enthalpy result is being defined on cells, you can request data
+# for specific cells using their IDs:
 print(simulation.enthalpy(cell_ids=[1, 2]))
 
 ###############################################################################
-# For selection and manipulation of the Dataframe,
-# please refer to example "Create and manipulate a DPF Dataframe"
+# For information on selection and manipulation of the dataframe,
+# see the "Create and manipulate a DPF dataframe" example.

@@ -1,15 +1,16 @@
 """
 .. _ref_basics:
 
-Basic features
-==============
-This example shows you how you can get and use a ``Result`` object.
+Get and use a ``Result`` object
+===============================
+This example shows how to use the legacy PyDPF-Post API to get and use a ``Result`` object.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
+# Perform required imports. This example uses a supplied file that you can
+# get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -30,15 +31,13 @@ solution = post.load_solution(example_path)
 ###############################################################################
 # Get displacement result
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# Get the displacement ``Result`` object.
 
 displacement_result = solution.displacement()
 displacement = displacement_result.vector
 
 ###############################################################################
-# Get information on result
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get information on the displacement result.
+# Get information on displacement result
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 displacement.num_fields
 disp_data = displacement.get_data_at_field(0)
@@ -52,18 +51,17 @@ displacement.get_max_data_at_field(0)
 displacement.min_data
 
 ###############################################################################
-# Get stress result
-# ~~~~~~~~~~~~~~~~~
-# Get the stress ``Result`` object for a tensor. You can get the nodal or
-# elemental location. The default is the nodal location.
+# Get tensor stress result
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# You can get the nodal or elemental location for a tesnsor stress result.
+# The default is the nodal location.
 
 el_stress_result = solution.stress(location=post.locations.elemental)
 nod_stress_result = solution.stress(location=post.locations.nodal)
 
 ###############################################################################
-# Get information on result
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get information on the stress result.
+# Get information on tensor result
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 el_stress = el_stress_result.tensor
 nod_stress = nod_stress_result.tensor

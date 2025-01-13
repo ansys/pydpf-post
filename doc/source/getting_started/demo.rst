@@ -43,8 +43,9 @@ to extract and postprocess results:
 
 
 .. figure:: ./../images/crankshaft_disp.png
-    :width: 300pt
     :align: left
+    :width: 300pt
+
 
 .. code:: python
 
@@ -52,8 +53,9 @@ to extract and postprocess results:
     >>> stress_eqv.plot()
 
 .. figure:: ./../images/crankshaft_stress.png
-    :width: 300pt
     :align: left
+    :width: 300pt
+
 
 2021 R1 through 2022 R2
 -----------------------
@@ -71,6 +73,6 @@ to extract and postprocess results:
     >>> stress.eqv.plot_contour(show_edges=False)
 
 .. figure:: ./../images/crankshaft_stress.png
-    :width: 300pt
     :align: left
+    :width: 300pt
 

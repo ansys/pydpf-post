@@ -1,16 +1,17 @@
 """
 .. _ref_static_example:
 
-Static Simulation
-=================
-In this script static simulation is processed to extract results like stress, displacement.
-Selecting sub parts of the results by scoping on specific nodes or elements is also displayed here.
+Postprocess a static simulation
+===============================
+This example shows how to postprocess a static simulation to extract results like
+displacement and stress. It shows how to selecting subparts of the results by scoping
+on specific nodes or elements.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -39,8 +40,8 @@ print(displacement)
 
 
 ###############################################################################
-# Select sub parts of displacement
-# ---------------------------------
+# Select subparts of displacement
+# -------------------------------
 
 # To get X displacements
 x_displacement = displacement.select(components="X")
@@ -65,7 +66,7 @@ print(nodes_displacement)
 ###############################################################################
 # Compute total displacement (norm)
 # ---------------------------------
-# Compute the norm of displacement on a selection of nodes
+# Compute the norm of the displacement on a selection of nodes.
 
 nodes_displacement = simulation.displacement(
     node_ids=simulation.mesh.node_ids[10:], norm=True
@@ -75,9 +76,10 @@ nodes_displacement.plot()
 
 
 ###############################################################################
-# Extract tensor stress, apply averaging, compute equivalent
-# ----------------------------------------------------------
-# Extract raw elemental nodal stresses from the rst file
+# Extract tensor stresses
+# ------------------------
+# Extract raw elemental nodal stresses from the result file. Then, apply averaging
+# and compute equivalent stresses.
 elem_nodal_stress = simulation.stress()
 print(elem_nodal_stress)
 

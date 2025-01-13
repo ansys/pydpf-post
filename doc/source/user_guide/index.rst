@@ -17,7 +17,7 @@ typical usage.
 
       Load a result file to browse its contents.
 
-   .. grid-item-card:: Browse result file metadata :material-regular:`quick_reference_all`
+   .. grid-item-card:: Browse result file metadata :material-regular:`feature_search`
       :padding: 2 2 2 2
       :link: accessing_file_metadata
       :link-type: doc
