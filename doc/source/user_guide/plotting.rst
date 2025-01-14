@@ -29,7 +29,7 @@ This code shows how to plot the total deformation (norm of the displacement vect
     >>> from ansys.dpf.post import examples
     >>> simulation = post.load_simulation(examples.download_crankshaft())
 
-    Instantiate a DataFrame object containing the displacement norm data
+    Instantiate a dataframe object containing the displacement norm data
 
     >>> displacement_norm = simulation.displacement(norm=True)
 
@@ -38,7 +38,7 @@ This code shows how to plot the total deformation (norm of the displacement vect
     >>> displacement_norm.plot(screenshot="crankshaft_disp.png")
 
 .. image:: ./../images/crankshaft_disp.png
-    :align: left
+    :align: leftcenter
     :width: 300pt
 
 
@@ -67,6 +67,6 @@ This code shows how to plot the nodal xx-component of stress:
     >>> stress_xx.plot(screenshot="crankshaft_stress_xx.png")
 
 .. image:: ./../images/crankshaft_stress_xx.png
-    :align: left
+    :align: center
     :width: 300pt
 
