@@ -99,5 +99,5 @@ print(simulation.enthalpy(zone_ids=[28]))
 print(simulation.enthalpy(cell_ids=[1, 2]))
 
 ###############################################################################
-# For an example whoing how to create and manipulate a DPF dataframe,
+# For an example showing how to create and manipulate a DPF dataframe,
 # see :ref:`ref_dataframe_example`.
