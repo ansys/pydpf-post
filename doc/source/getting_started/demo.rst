@@ -52,9 +52,9 @@ to extract and postprocess results:
     >>> stress_eqv = simulation.stress_eqv_von_mises_nodal()
     >>> stress_eqv.plot()
 
-.. image:: ./../images/crankshaft_stress.png
+.. figure:: ./../images/crankshaft_stress.png
     :align: left
-    :width: 300pt
+    :figwidth: 300pt
 
 
 2021 R1 through 2022 R2
