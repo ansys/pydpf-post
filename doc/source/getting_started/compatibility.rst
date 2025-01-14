@@ -52,4 +52,4 @@ for these two libraries.
      - 0.2.0 to 0.2.x
      - 0.1.0
 
-* Compatibility of DPF 2.0 with PyDPF-Core 0.5.0 to 0.9.0 is assumed but not certified.
+*Compatibility of DPF 2.0 with PyDPF-Core 0.5.0 to 0.9.0 is assumed but not certified.
