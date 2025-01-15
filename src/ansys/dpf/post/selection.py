@@ -420,7 +420,9 @@ class SpatialSelection:
             on the expanded mesh.
         """
         skin_operator = operators.mesh.skin(server=self._server)
-        skin_operator.inputs.add_beam(True)
+        if self._server.meet_version("9.1"):
+            # add_beam argument is not available in versions prior to 9.0
+            skin_operator.inputs.add_beam(True)
         self._selection.add_operator(skin_operator)
 
         initial_mesh_fwd_op = operators.utility.forward(server=self._server)
