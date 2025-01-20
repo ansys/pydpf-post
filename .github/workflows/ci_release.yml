@@ -11,7 +11,7 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: '.pre0'
+        default: ''
 
 #┌───────────── minute (0 - 59)
 #│ ┌───────────── hour (0 - 23)
@@ -88,7 +88,7 @@ jobs:
           # Upload the wheel artifact for only one of the OS as it is OS-agnostic
           wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
           wheelhouse: true
-          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
+          standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@v2.3
@@ -191,7 +191,7 @@ jobs:
     with:
       ANSYS_VERSION: '251'
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
     secrets: inherit
 
   docs:
@@ -199,7 +199,7 @@ jobs:
     with:
       ANSYS_VERSION: '251'
       python_version: "3.10"
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '.pre0' }}
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || '' }}
       event_name: ${{ github.event_name }}
     secrets: inherit
 
