@@ -1,5 +1,6 @@
 import csv
 import dataclasses
+from itertools import groupby
 import os.path
 import pathlib
 from typing import Optional, Union
@@ -4618,3 +4619,33 @@ def test_build_selection(
             assert len(scoping_from_selection.ids) == 36
         else:
             assert set(scoping_from_selection.ids) == set(scoping.ids)
+
+
+def test_beam_results_on_skin(beam_example):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=beam_example,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+        # Add beams on skin not supported before 9.1
+        return
+
+    res = simulation.displacement(skin=True, norm=True)
+
+    element_type_array = res._fc[0].meshed_region.elements.element_types_field.data
+    element_count_dict = {
+        key: sum(1 for _ in value) for key, value in groupby(sorted(element_type_array))
+    }
+
+    unit_converter = dpf.operators.math.unit_convert(
+        unit_name=2,  # NMM unit system
+    )
+
+    unit_converter.inputs.entity_to_convert(res._fc[0])
+    converted_field = unit_converter.eval()
+
+    assert element_types.Line2.value in element_count_dict.keys()
+
+    assert element_count_dict[element_types.Line2.value] == 40
+
+    assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
