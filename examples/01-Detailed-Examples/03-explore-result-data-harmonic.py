@@ -3,7 +3,7 @@
 
 Explore the data of a result with the dataframe (harmonic simulation)
 =====================================================================
-This example uses a harmonic simulation to show how to interact with the DPF-Post
+This example uses a harmonic simulation to show how to interact with the PyDPF-Post
 dataframe, which is the object returned by each result.
 """
 

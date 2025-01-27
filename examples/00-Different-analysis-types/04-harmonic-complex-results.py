@@ -1,9 +1,9 @@
 """
 .. _ref_harmonic_example:
 
-Postprocess a harmonic simulation
-===================
-This example shows how to ostprocess a harmonic simulation and use the complex results.
+Postprocess a harmonic mechanical simulation
+============================================
+This example shows how to postprocess a harmonic mechanical simulation and use the complex results.
 """
 
 ###############################################################################

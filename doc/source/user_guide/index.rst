@@ -50,7 +50,7 @@ typical usage.
       :link: extending_to_core
       :link-type: doc
 
-      Use PyDPF-Core operators in both PyPDF-Core and PyDPF-Post.
+      Use PyDPF-Core operators in both PyDPF-Core and PyDPF-Post.
 
    .. grid-item-card:: Troubleshoot common issues :material-regular:`troubleshoot`
       :padding: 2 2 2 2

@@ -15,6 +15,18 @@ for these two libraries.
    * - DPF server version
      - PyDPF-Core version
      - PyDPF-Post version
+   * - 10.0 (DPF Server 2025.2.pre0)
+     - 0.13.4 or later
+     - 0.9.0 or later
+   * - 9.1 (Ansys 2025 R1)
+     - 0.13.4 or later
+     - 0.9.0 or later
+   * - 9.0 (DPF Server 2025.1.pre0)
+     - 0.13.0 or later
+     - 0.9.0 or later
+   * - 8.2 (Ansys 2024 R2)
+     - 0.12.1 or later
+     - 0.8.0 or later
    * - 8.1 (DPF Server 2024.2.pre1)
      - 0.12.0 or later
      - 0.8.0 or later

@@ -83,7 +83,7 @@ enthalpy.plot()
 # You can use available qualifiers for the result in the extraction request
 # to filter or separate data.
 #
-# This code uses a different column for each available zone for the result.
+# This code outputs a different column for each available zone for the result.
 print(simulation.enthalpy(zone_ids=[13, 28]))
 #
 # This code extracts only the data for the fluid-stator zone.

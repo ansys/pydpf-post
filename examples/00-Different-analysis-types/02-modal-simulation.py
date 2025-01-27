@@ -1,9 +1,9 @@
 """
 .. _ref_modal_example:
 
-Postprocess a modal simulation
-==============================
-This example shows how to postprocess a modal simulation to view different
+Postprocess a modal mechanical simulation
+=========================================
+This example shows how to postprocess a modal mechanical simulation to view different
 mode shapes.
 """
 

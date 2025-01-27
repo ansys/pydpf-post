@@ -1,9 +1,9 @@
 """
 .. _ref_transient_example:
 
-Postprocess a transient simulation with animation
-=================================================
-This example shows how to postprocess a transient simulation with animation
+Postprocess a transient mechanical simulation with animation
+============================================================
+This example shows how to postprocess a transient mechanical simulation with animation
 to extract results like displacement, stress, and strain. It also shows how
 to extract data for chosen time steps and animate the strain equivalence over
 all times.

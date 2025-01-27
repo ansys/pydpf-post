@@ -31,4 +31,4 @@ DPF supports these Ansys solver result files:
 
 For more comprehensive information on file support for Ansys solvers, see the
 `main page <https://dpf.docs.pyansys.com/version/stable/index.html>`_
-in the PDF-Core documentation.
+in the PyDPF-Core documentation.

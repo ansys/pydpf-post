@@ -1,9 +1,9 @@
 """
 .. _ref_static_example:
 
-Postprocess a static simulation
-===============================
-This example shows how to postprocess a static simulation to extract results like
+Postprocess a static mechanical simulation
+==========================================
+This example shows how to postprocess a static mechanical simulation to extract results like
 displacement and stress. It shows how to selecting subparts of the results by scoping
 on specific nodes or elements.
 """
