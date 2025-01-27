@@ -34,6 +34,11 @@ PyDPF-Post supports two types of result files:
 * Structural (RST)
 * Thermal/electric (RTH) (with the legacy ``load_solution()`` method only)
 
+It also supports some LS-DYNA result files and some Fluent and CFX result files as indicated in
+:ref:`solver_result_files_support`.
+
+
+
 You should only request results available in the result file.
 To determine which results are available, see :ref:`user_guide_accessing_file_metadata`.
 
