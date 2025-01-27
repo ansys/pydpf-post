@@ -8,7 +8,17 @@ PyDPF-Post is part of the Ansys Data Processing Framework (DPF), which provides 
 that let you access and transform simulation data coming from different Ansys and third-party
 result files.
 
-PyDPF-Post leverages [PyDPF-Core](https://github.com/ansys/pydpf-core), a package for building more advanced and customized workflows using Ansys DPF. After loading a simulation's result fiile in PyDPF-Post, you can extract simulation metadata and results and then apply postprocessing operations on them.
+PyDPF-Post leverages [PyDPF-Core](https://github.com/ansys/pydpf-core), a package for building more
+advanced and customized workflows using Ansys DPF. After loading a simulation's result file in PyDPF-Post,
+you can extract simulation metadata and results and then apply postprocessing operations on them.
+
+PyDPF-Core is physics-agnostic and operator-oriented. It is a direct exposure of the DPF features and
+objects with a few helpers. It is not restricted to postprocessing.
+
+PyDPF-Post on the other hand provides a high-level, physics-oriented API for postprocessing. It has a
+more Pythonic and user-friendly API dedicated to postprocessing, with new objects meant to provide a specific
+interface for each type of physics and analysis (such as mechanics static versus transient versus fluids).
+Most importantly, there is no need to manipulate operators or workflows.
 
 ## Documentation and issues
 
