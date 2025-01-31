@@ -51,6 +51,13 @@ repos:
   - id: check-merge-conflict
   - id: debug-statements
 
+-   repo: https://github.com/ansys/pre-commit-hooks
+    rev: v0.4.4
+    hooks:
+    -   id: add-license-headers
+        args:
+        -   --start_year=2020
+
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.21.0
