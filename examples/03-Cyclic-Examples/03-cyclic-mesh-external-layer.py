@@ -23,22 +23,23 @@
 """
 .. _ref_cyclic_mesh_external_layer_example:
 
-Reduce Cyclic Model Size by using Mesh External Layer for Result and Mesh extraction
-====================================================================================
-This example displays post-processing on a mesh external layer for a cyclic modal analysis.
+Reduce cyclic model size by using the mesh external layer for result and mesh extraction
+========================================================================================
+This example shows postprocessing on a mesh external layer for a cyclic modal analysis.
 The external layer is the layer of solid elements with at least one facet facing the outside of
 the geometry.
-This feature is available for all types of Mechanical simulation supporting cyclic
-(or cyclic multistage) and allows you to reduce the size
-of the mesh and of the extracted data to improve processing performance.
-Since larger stress and strains are usually located on the skin of a model,
+
+This feature, available for all types of mechanical simulation supporting cyclic
+or cyclic multi-stage models, allows you to reduce the size
+of both the mesh and the extracted data to improve processing performance.
+Because larger stresses and strains are usually located on the skin of a model,
 computing results on the external layer gives equivalent maximum values in most cases.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get using the ``examples`` module.
 
 from ansys.dpf import post
@@ -78,10 +79,10 @@ displacement_ext = simulation.displacement(external_layer=True, expand_cyclic=[1
 displacement_ext.plot()
 
 ###############################################################################
-# Extract stress/strain data
-# --------------------------
-# Extract stress or elastic strain data on the external layer.
-# Averaging, and invariants computation can easily be done on the external layer since the
+# Extract stress and strain data
+# ------------------------------
+# Extract stress and elastic strain data on the external layer.
+# You can easily compute averages and invariants on the external layer because the
 # connectivity of the kept elements remains unchanged.
 
 elemental_stress_ext = simulation.stress_principal_elemental(
@@ -95,8 +96,8 @@ elastic_strain_eqv_ext = simulation.elastic_strain_eqv_von_mises_nodal(
 elastic_strain_eqv_ext.plot()
 
 ##################################################################################
-# Get stress results on the external layer of the first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get stress results on external layer of first sector with a cyclic phase
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 stress_eqv_cyc_phase = simulation.stress_eqv_von_mises_nodal(
     set_ids=[5],

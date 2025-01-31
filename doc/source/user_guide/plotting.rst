@@ -14,12 +14,12 @@ the steps:
 #. Use the plotting methods of the :class:`DataFrame <ansys.dpf.post.dataframe.DataFrame>` object
    to render it.
 
-Subsequent sections provide some plotting examples.
+Some plotting examples follow.
 
 Total deformation 
 -----------------
 
-You can plot the total deformation (norm of the displacement vector field) with:
+This code shows how to plot the total deformation (norm of the displacement vector field):
 
 .. code:: python
 
@@ -29,7 +29,7 @@ You can plot the total deformation (norm of the displacement vector field) with:
     >>> from ansys.dpf.post import examples
     >>> simulation = post.load_simulation(examples.download_crankshaft())
 
-    Instantiate a DataFrame object containing the displacement norm data
+    Instantiate a dataframe object containing the displacement norm data
 
     >>> displacement_norm = simulation.displacement(norm=True)
 
@@ -37,15 +37,18 @@ You can plot the total deformation (norm of the displacement vector field) with:
 
     >>> displacement_norm.plot(screenshot="crankshaft_disp.png")
 
-.. figure:: ./../images/crankshaft_disp.png
+.. image:: ./../images/crankshaft_disp.png
+    :align: leftcenter
     :width: 300pt
+
 
 Normal stresses
 ---------------
 
-Plotting of raw data at Gauss points is not available yet.
-You can however plot data averaged at nodes or elements.
-You can plot the nodal xx-component of stress with:
+Plotting of raw data at Gauss points is not available.
+However, you can plot data averaged at nodes or elements.
+
+This code shows how to plot the nodal xx-component of stress:
 
 .. code:: python
 
@@ -63,5 +66,7 @@ You can plot the nodal xx-component of stress with:
 
     >>> stress_xx.plot(screenshot="crankshaft_stress_xx.png")
 
-.. figure:: ./../images/crankshaft_stress_xx.png
+.. image:: ./../images/crankshaft_stress_xx.png
+    :align: center
     :width: 300pt
+

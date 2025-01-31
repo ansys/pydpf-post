@@ -23,15 +23,15 @@
 """
 .. _ref_harmonic_example:
 
-Harmonic Simulation
-===================
-In this script harmonic simulation is processed and complex results are used.
+Postprocess a harmonic mechanical simulation
+============================================
+This example shows how to postprocess a harmonic mechanical simulation and use the complex results.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -58,9 +58,9 @@ print(simulation)
 
 
 ###############################################################################
-# Extract displacement over a list of frequencies sets
-# ----------------------------------------------------
-# Printing the time freq support can help pick the right frequencies
+# Extract displacement over a list of frequency sets
+# --------------------------------------------------
+# To help pick the right frequencies, print the time frequency support.
 
 print(simulation.time_freq_support)
 
@@ -80,8 +80,8 @@ print(subdisp)
 subdisp.plot(title="U tot real")
 
 ###############################################################################
-# Extract stress eqv over a list of frequencies sets
-# --------------------------------------------------
+# Extract stress equivalent over a list of frequency sets
+# -------------------------------------------------------
 
 stress_eqv = simulation.stress_eqv_von_mises_nodal(set_ids=[1, 2])
 print(stress_eqv)

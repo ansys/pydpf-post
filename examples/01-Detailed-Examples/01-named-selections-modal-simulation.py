@@ -23,16 +23,17 @@
 """
 .. _ref_ns_modal_example:
 
-Extract results on named selections - Modal Simulation
-=======================================================
-In this script static simulation is processed to extract results like stress, displacement.
-Selecting sub parts of the results by scoping on specific nodes, elements is also displayed here.
+Extract results on named selections (modal simulation)
+======================================================
+This example shows how to process a modal simulation to extract results
+like displacement and stress. It selects subparts of the results by scoping
+on specific nodes and also shows elements.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -57,8 +58,8 @@ simulation = post.ModalMechanicalSimulation(example_path)
 print(simulation)
 
 ###############################################################################
-# Get the available named selections
-# ----------------------------------
+# Get available named selections
+# ------------------------------
 
 print(simulation.named_selections)
 

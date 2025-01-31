@@ -23,23 +23,27 @@
 """
 .. _ref_mesh_external_layer_compare_example:
 
-Validate External Layer results with full Mesh
-==============================================
-This example displays post-processing comparisons between:
- - results and mesh extracted only on external layer.
- - results and mesh extracted on the entire mesh.
+Validate external layer results with the full mesh
+==================================================
+This example shows postprocessing comparisons based on how results and
+the mesh are extracted:
+
+- Results and mesh extracted only on the external layer
+- Results and mesh extracted on the entire mesh
+
 The external layer is the layer of solid elements with at least one facet facing the outside of
 the geometry.
-This feature is available for all types of Mechanical simulation, and allows you to reduce the size
-of the mesh and of the extracted data to improve processing performance.
-Since larger stress and strains are usually located on the skin of a model,
+
+This feature, available for all types of mechanical simulation, allows you to reduce the size
+of both the mesh and extracted data to improve processing performance.
+Because larger stresses and strains are usually located on the skin of a model,
 computing the results on the external layer provides equivalent maximum values in most cases.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get using the ``examples`` module.
 
 from ansys.dpf import post
@@ -81,10 +85,10 @@ print(
 )
 
 ###############################################################################
-# Extract stress/strain data
-# --------------------------
-# Extract stress or elastic strain data over the entire mesh and on the external layer.
-# Averaging, and invariants computation can easily be done on the external layer since the
+# Extract stress and strain data
+# -------------------------------
+# Extract stress and elastic strain data over the entire mesh and on the external layer.
+# You can easily compute averages and invariants on the external layer because the
 # connectivity of the kept elements remains unchanged.
 
 elemental_stress_ext = simulation.stress_principal_elemental(

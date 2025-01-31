@@ -25,14 +25,14 @@
 
 Extract multi-stage cyclic results
 ==================================
-In this script, a multi-stage modal analysis with cyclic symmetry is processed to show
+This example uses a multi-stage modal analysis with cyclic symmetry to show
 how to expand the mesh and results.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -53,8 +53,8 @@ simulation = post.ModalMechanicalSimulation(example_path)
 print(simulation)
 
 #############################################################################
-# Extract expanded displacement norm
-# ----------------------------------
+# Extract expanded displacement normal
+# ------------------------------------
 
 displacement_norm = simulation.displacement(
     norm=True,
@@ -74,8 +74,8 @@ print(stress_vm_sector_1_both_stages)
 stress_vm_sector_1_both_stages.plot()
 
 #############################################################################
-# Extract equivalent von Mises nodal stress expanded on the first four sectors of the first stage
-# -----------------------------------------------------------------------------------------------
+# Extract equivalent von Mises nodal stress expanded on first four sectors of first stage
+# ----------------------------------------------------------------------------------------
 
 stress_vm_sectors_1_2_3_4_first_stage = simulation.stress_eqv_von_mises_nodal(
     expand_cyclic=[1, 2, 3, 4],
@@ -84,8 +84,8 @@ print(stress_vm_sectors_1_2_3_4_first_stage)
 stress_vm_sectors_1_2_3_4_first_stage.plot()
 
 #############################################################################
-# Extract equivalent von Mises nodal stress expanded on the first two sectors of both stages
-# ------------------------------------------------------------------------------------------
+# Extract equivalent von Mises nodal stress expanded on first two sectors of both stages
+# --------------------------------------------------------------------------------------
 
 stress_vm_sectors_1_2_both_stages = simulation.stress_eqv_von_mises_nodal(
     expand_cyclic=[[1, 2], [1, 2]],

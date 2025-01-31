@@ -1,14 +1,16 @@
 .. _user_guide_accessing_file_metadata:
 
-**********************
-Browse result metadata
-**********************
+***************************
+Browse result file metadata
+***************************
 
-In addition to the :class:`Simulation <ansys.dpf.post.simulation.Simulation>`
-object being the entry point for browsing the contents of a result file, it provides
-important metadata, such as the analysis type and the available results.
+After a result file is loaded, you can browse all metadata or only mesh metadata.
 
-Here is how you browse result metadata:
+Browse all metadata
+-------------------
+
+This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
+browse all metadata for a loaded simulation:
 
 .. code:: python
 
@@ -70,11 +72,13 @@ PyDPF-Post supports four different analysis types for mechanical results:
 * Harmonic analysis
 * Transient analysis
 
-The legacy Solution object also supports thermal and electrical results.
+The legacy ``Solution`` object also supports thermal and electrical results.
 
-Mesh
-----
-From the ``Simulation`` object, you can also access the mesh:
+Browse only mesh metadata
+-------------------------
+
+This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
+browse only the mesh metadata for a loaded simulation:
 
 .. code:: python
 
@@ -93,4 +97,3 @@ From the ``Simulation`` object, you can also access the mesh:
       4220 elements
       Unit: m
       With solid (3D) elements, shell (2D) elements, shell (3D) elements
-

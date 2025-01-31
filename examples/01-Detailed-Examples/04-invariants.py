@@ -23,16 +23,16 @@
 """
 .. _ref_invariants_example:
 
-Extract stress/strain invariants - Static Simulation
-=====================================================================
-In this script a static simulation is used as an example to show how to
-extract tensor's invariants.
+Extract stress and strain invariants (static simulation)
+========================================================
+This example uses a static simulation to show how to extract a tensor's
+stress and strain invariants.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -83,8 +83,8 @@ nodal_princ_strain_2.plot()
 
 
 ###############################################################################
-# Compute von Mises eqv averaged and unaveraged on stress and strain
-# ------------------------------------------------------------------------
+# Compute von Mises eqvivalent averaged and unaveraged on stress and strain
+# -------------------------------------------------------------------------
 
 stress_eqv = simulation.stress_eqv_von_mises(set_ids=[1])
 print(stress_eqv)

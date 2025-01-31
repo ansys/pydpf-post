@@ -23,15 +23,15 @@
 """
 .. _ref_overview_example:
 
-PyDPF-Post overview
-===================
-This example provides an overview of how you use PyDPF-Post.
+Use basic features
+==================
+This example shows how to use basic features of the legacy PyDPF-Post API.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -40,10 +40,8 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object that allows access to the result. The ``Solution``
-# object must be instantiated with the path for the result file. For example,
-# ``"C:/Users/user/my_result.rst"`` on Windows or ``"/home/user/my_result.rst"``
-# on Linux.
+# Get the ``Solution`` object. This example loads a simple file supplied with
+# PyDPF-Post.
 
 solution = post.load_solution(examples.multishells_rst)
 
@@ -65,7 +63,7 @@ time_freq_support = solution.time_freq_support
 post.print_available_keywords()
 stress = solution.stress(location=post.locations.nodal, time_scoping=[1])
 
-# Both location and ``time_scoping`` are available in the definition of
+# Both ''location'' and ``time_scoping`` are available in the definition of
 # the stress result.
 
 stress.definition.location
@@ -76,11 +74,9 @@ print(stress)
 ###############################################################################
 # Compute data
 # ------------
-# Compute data.
-#
 # **SX subresult**
 #
-# This code gets the subresult ``SX``, which is the stress tensor in the XX direction.
+# This code gets the ``SX`` subresult, which is the stress tensor in the XX direction.
 
 sx = stress.xx
 sx.num_fields

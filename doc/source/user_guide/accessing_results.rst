@@ -4,12 +4,10 @@
 Access results
 **************
 
-In addition to being the entry point for browsing the contents of a
-result file, the :class:`Simulation <ansys.dpf.post.simulation.Simulation>`
-object provides access to the results themselves. You can query results
-using dedicated methods.
+After a result file is loaded, you can access the results themselves. You can query results using dedicated methods.
 
-Here is how you get the ``displacement`` result:
+This code shows how to instantiate the :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object and then
+get the ``displacement`` result for a loaded simulation:
 
 .. code:: python
 
@@ -27,14 +25,19 @@ Here is how you get the ``displacement`` result:
 	See the following list for the results that can be
 	extracted.
 
-You can use *keyword arguments* to further specify other options,
+You can use *keyword arguments* to specify additional options,
 including the components, scope, and time. For detailed examples,
 see :ref:`ref_result_keywords`.
 
 PyDPF-Post supports two types of result files:
 
 * Structural (RST)
-* Thermal/electric (RTH) (with the legacy *load_solution()* method only)
+* Thermal/electric (RTH) (with the legacy ``load_solution()`` method only)
+
+It also supports some LS-DYNA result files and some Fluent and CFX result files as indicated in
+:ref:`solver_result_files_support`.
+
+
 
 You should only request results available in the result file.
 To determine which results are available, see :ref:`user_guide_accessing_file_metadata`.
@@ -42,7 +45,7 @@ To determine which results are available, see :ref:`user_guide_accessing_file_me
 Structural result files
 =======================
 
-This section details how to access structural results using the legacy ``Solution`` object.
+You can use the legacy ``Solution`` object to access structural results.
 
 After loading a ``Solution`` object from a structural analysis result (RST)
 file, you can query these ``Result`` objects:
@@ -58,8 +61,8 @@ Displacement
 Displacement is the DOF solution for a structural analysis. The location argument
 for a DOF solution must be modal.
 
-You can access the :class:`Displacement <ansys.dpf.post.displacement.Displacement>`
-result object with:
+This code shows how to access the :class:`Displacement <ansys.dpf.post.displacement.Displacement>`
+result object:
 
 .. code:: python
 
@@ -74,7 +77,7 @@ result object with:
     >>> displacement = solution.displacement()
 
 The displacement ``Result`` object corresponds to a vector field. To obtain the scalar
-components (y-components) of this field, access the subresult with:
+components (y-components) of this field, access the subresult with this code:
 
 .. code:: python
 
@@ -98,8 +101,8 @@ For more information, see :ref:`ref_api_result_data`.
 
 Stress
 ------
-You can access the :class:`Stress <ansys.dpf.post.stress.Stress>` result
-object with:
+This code shows to access the :class:`Stress <ansys.dpf.post.stress.Stress>` result
+object:
 
 .. code:: python
 
@@ -139,8 +142,8 @@ For more information, see :ref:`ref_api_result_data`.
 
 Elastic and plastic strain
 --------------------------
-You can access the :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
-:class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects with:
+This code shows how to access the :class:`ElasticStrain <ansys.dpf.post.strain.ElasticStrain>` and
+:class:`PlasticStrain <ansys.dpf.post.strain.PlasticStrain>` result objects:
 
 .. code:: python
 
@@ -181,8 +184,8 @@ For more information, see :ref:`ref_api_result_data`.
 
 Structural temperature
 ----------------------
-You can access the :class:`StructuralTemperature <ansys.dpf.post.temperature.StructuralTemperature>`
-result object with:
+This code shows to access the :class:`StructuralTemperature <ansys.dpf.post.temperature.StructuralTemperature>`
+result object:
 
 .. code:: python
 
@@ -196,7 +199,7 @@ result object with:
 
     >>> structural_temperature = solution.structural_temperature()
 
-To access the temperature scalar field, use the following:
+To access the temperature scalar field, use this code:
 
 .. code:: python
 
@@ -219,7 +222,7 @@ To access the temperature scalar field, use the following:
 Miscellaneous results
 ---------------------
 The ``Solution`` object might contain other miscellaneous :class:`ansys.dpf.post.misc_results.MecanicMisc`
-result objects that you can access. For example, you can access the ``nodal_acceleration``
+result objects that you can access. For example, this code shows how to access the ``nodal_acceleration``
 result object:
 
 .. code:: python
@@ -234,10 +237,10 @@ result object:
 
     >>> acceleration = solution.misc.nodal_acceleration()
 
-All keyword arguments are available for miscellaneous results, except location.
+All keyword arguments are available for miscellaneous results, except ``location``.
 For more information, see :ref:`ref_result_keywords`.
 
-Some subresults might may be available as keyword arguments, such as the scalar
+Some subresults might be available as keyword arguments, such as the scalar
 components of nodal acceleration:
 
 .. code:: python
@@ -259,7 +262,7 @@ information, see :ref:`user_guide_accessing_file_metadata`.
 Thermal/electric result files
 =============================
 
-This section details how to access thermal/electric results using the legacy ``Solution`` object.
+You can access thermal/electric results using the legacy ``Solution`` object.
 
 After loading a ``Solution`` object from a thermal/electric analysis
 result file (RTH), you can query these ``Result`` objects:
@@ -273,8 +276,8 @@ Temperature
 -----------
 Temperature is the DOF solution for a thermal analysis.
 
-You can access the :class:`Temperature <ansys.dpf.post.temperature.Temperature>`
-result object with:
+This code shows how to access the :class:`Temperature <ansys.dpf.post.temperature.Temperature>`
+result object:
 
 .. code:: python
 
@@ -288,8 +291,8 @@ result object with:
 
     >>> temperature = solution.temperature()
 
-As inferred above, the location argument for a DOF solution must be nodal.
-You can access the scalar field directly:
+As inferred above, the ``location`` argument for a DOF solution must be nodal.
+This code shows how to access the scalar field directly:
 
 .. code:: python
 
@@ -311,8 +314,8 @@ You can access the scalar field directly:
 
 Heat flux
 ---------
-You can access the :class:`HeatFlux <ansys.dpf.post.temperature.HeatFlux>` result
-object with:
+This code shows how to access the :class:`HeatFlux <ansys.dpf.post.temperature.HeatFlux>` result
+object:
 
 .. code:: python
 
@@ -353,8 +356,8 @@ You can query other components accordingly. For more information, see
 
 Electric field
 --------------
-You can access the :class:`ElectricField <ansys.dpf.post.electric_results.ElectricField>`
-result object with:
+This code shows how to access the :class:`ElectricField <ansys.dpf.post.electric_results.ElectricField>`
+result object:
 
 .. code:: python
 
@@ -368,7 +371,7 @@ result object with:
 
     >>> electric_field = solution.electric_field()
 
-The ```electric_field`` result object corresponds to a vector field. To
+The ``electric_field`` result object corresponds to a vector field. To
 obtain the scalar components of this field, such as the x-components, access
 the subresult:
 
@@ -394,8 +397,8 @@ For more information, see :ref:`ref_api_result_data`.
 
 Electric potential
 ------------------
-You can access the :class:`ElectricPotential <ansys.dpf.post.electric_results.ElectricPotential>`
-result object with:
+This code shows how to access the :class:`ElectricPotential <ansys.dpf.post.electric_results.ElectricPotential>`
+result object:
 
 .. code:: python
 

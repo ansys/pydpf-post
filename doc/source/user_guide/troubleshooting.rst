@@ -1,27 +1,28 @@
 .. _user_guide_troubleshooting:
 
-===============
-Troubleshooting
-===============
-This section explains how to resolve the most common issues encountered with PyDPF-Post.
-It also includes suggestions for improving scripts.
+==========================
+Troubleshoot common issues
+==========================
+
+This page explains how to resolve the most common issues encountered with PyDPF-Post
+and includes suggestions for improving your scripts.
 
 
 Known issues list
 ~~~~~~~~~~~~~~~~~
-Please refer to the :ref:`Known issues page <ref_kil>` for a list of known issues for each version of DPF.
+For a list of known issues for each version of DPF, see the :ref:`Known issues page <ref_kil>` .
 
 
 Installation
 ~~~~~~~~~~~~
-When pip installing older versions of the PyDPF libraries, an error might occur stating:
+When using ``pip`` to install older versions of the PyDPF libraries, an error might occur stating:
 
 .. code-block:: shell-session
 
     'python_requires' must be a string containing valid version specifiers; Invalid specifier: '>=3.7.*'
 
 In this case, modify your Python environment to use a version of the ``setuptools`` library strictly
-older than ``67.0.0`` using the command below:
+earlier than ``67.0.0`` using this command:
 
 .. code::
 
@@ -31,9 +32,9 @@ older than ``67.0.0`` using the command below:
 Auto-completion
 ~~~~~~~~~~~~~~~
 Depending on your scripting environment, auto-completion might not work correctly when using the
-``load_simulation()`` method. This method is intended as a helper which can detect automatically
+``load_simulation()`` method. This method is intended as a helper which can automatically detect
 the physics type and analysis type. To get auto-completion to work in all circumstances, instantiate
-the right :ref:`Simulation <ansys.dpf.post.simulation.Simulation>` sub-class directly using its
+the correct :ref:`Simulation <ansys.dpf.post.simulation.Simulation>` subclass directly using its
 constructor:
 
 .. code-block:: default
@@ -51,7 +52,7 @@ constructor:
 
 Invalid UTF-8 error
 ~~~~~~~~~~~~~~~~~~~
-Assume that you are using this code to load a simulation result:
+Assume that you use this code to load a simulation result:
 
 .. code-block:: default
 
@@ -68,7 +69,7 @@ This error might be raised:
 
 This error prevents the simulation from being accessed. To avoid this error, ensure that you are using
 a PyDPF-Post version later than 0.2.1 and a PyDPF-Core version later than 0.3.2.
-In this case, a warning might still be raised, but it should not prevent the simulation from being accessed.
+While a warning might still be raised, it should not prevent the simulation from being accessed.
 
 For the result file to be read, you must set the ``physics_type`` and ``analysis type`` arguments for the
 ``load_solution()`` method:

@@ -23,14 +23,16 @@
 """
 .. _ref_introduction:
 
-Introduction
-============
-This example shows how to load a solution and access some basic help.
+Load a solution
+===============
+This example shows how to use the legacy PyDPF-Post API to load a solution and
+access some basic information.
 """
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
+# Perform required imports. This example uses a supplied file that you can
+# get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -51,22 +53,19 @@ solution = post.load_solution(simple_bar)
 ###############################################################################
 # Get solution information
 # ~~~~~~~~~~~~~~~~~~~~~~~~
-# Get solution information.
 
 print(solution)
 
 ###############################################################################
-# Get locations information
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get location information. Locations are used to defined where
-# the result must be set.
+# Get location information
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# Locations are used to defined where the result must be set.
 
 help(post.locations)
 
 ###############################################################################
 # Get available keywords
 # ~~~~~~~~~~~~~~~~~~~~~~
-# Get the available keywords. Keywords can be used as attributes of a
-# ``Result`` object.
+# Keywords can be used as attributes of a ``Result`` object.
 
 post.print_available_keywords()

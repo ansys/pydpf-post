@@ -23,16 +23,16 @@
 """
 .. _ref_export_data_example:
 
-Export data contained in a DataFrame to a new format
-====================================================
-In this script a static simulation is used as an example to show how to
-export data from a DataFrame to another format.
+Export data in a dataframe to another format
+============================================
+This example uses a static simulation to show how to export data in a dataframe
+to another format.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -64,13 +64,13 @@ stress = simulation.stress_nodal(all_sets=True)
 print(stress)
 
 ###############################################################################
-# Export to a numpy.ndarray
-# -------------------------
+# Export to NumPy array
+# ---------------------
 
-# To export to a numpy.ndarray, the DataFrame must contain data only for a single combination
+# To export to a NumPy array, the dataframe must contain data only for a single combination
 # of values for column labels.
 
-# select one step as our dataframe contains data for several
+# select one step as the dataframe contains data for several steps
 stress_1 = stress.select(set_ids=1)
 print(stress_1)
 
