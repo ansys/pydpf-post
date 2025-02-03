@@ -62,6 +62,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
     ReferenceCsvFilesNodal,
 )
 
@@ -4648,8 +4649,8 @@ def test_beam_results_on_skin(beam_example):
         data_sources=beam_example,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
-        # Add beams on skin not supported before 9.1
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        # Add beams on skin not activated before 10.0
         return
 
     res = simulation.displacement(skin=True, norm=True)
