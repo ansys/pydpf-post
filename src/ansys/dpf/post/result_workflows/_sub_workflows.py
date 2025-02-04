@@ -208,7 +208,7 @@ def _create_initial_result_workflow(
 
     initial_result_workflow.add_operator(initial_result_op)
 
-    forward_shell_layer_op = operators.utility.forward()
+    forward_shell_layer_op = operators.utility.forward(server=server)
     initial_result_workflow.add_operator(forward_shell_layer_op)
     initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
@@ -226,7 +226,7 @@ def _create_initial_result_workflow(
             name="merge::solid_shell_fields"
         )
         initial_result_workflow.add_operator(merge_shell_solid_fields)
-        shell_layer_op = operators.utility.change_shell_layers()
+        shell_layer_op = operators.utility.change_shell_layers(server=server)
         shell_layer_op.inputs.merge(True)
         initial_result_workflow.add_operator(shell_layer_op)
 
@@ -310,7 +310,9 @@ def _enrich_mesh_with_property_fields(
     property_names: list[str],
     streams_provider: StreamsContainer,
 ):
-    property_operator = operators.metadata.property_field_provider_by_name()
+    property_operator = operators.metadata.property_field_provider_by_name(
+        server=mesh._server
+    )
     property_operator.inputs.streams_container(streams_provider)
 
     for property_name in property_names:
@@ -323,7 +325,9 @@ def _enrich_mesh_with_property_fields(
             # Rescope the property field to the element scoping of the mesh
             # to ensure the split by property operator works correctly
             rescope_op = operators.scoping.rescope_property_field(
-                mesh_scoping=mesh.elements.scoping, fields=property_field
+                mesh_scoping=mesh.elements.scoping,
+                fields=property_field,
+                server=mesh._server,
             )
 
             mesh.set_property_field(
@@ -362,14 +366,14 @@ def _create_rescoping_workflow(server, rescoping: _Rescoping):
 
     rescoping_wf = Workflow(server=server)
 
-    transpose_scoping_op = operators.scoping.transpose()
+    transpose_scoping_op = operators.scoping.transpose(server=server)
     rescoping_wf.add_operator(transpose_scoping_op)
     transpose_scoping_op.inputs.requested_location(rescoping.requested_location)
     rescoping_wf.set_input_name(
         _WfNames.mesh, transpose_scoping_op.inputs.meshed_region
     )
 
-    rescoping_op = operators.scoping.rescope_fc()
+    rescoping_op = operators.scoping.rescope_fc(server=server)
     rescoping_wf.add_operator(rescoping_op)
     rescoping_op.inputs.mesh_scoping(
         transpose_scoping_op.outputs.mesh_scoping_as_scoping
