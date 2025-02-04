@@ -352,6 +352,9 @@ def _create_split_scope_by_body_workflow(server, body_defining_properties: list[
     split_scope_by_body_wf.set_output_name(
         _WfNames.scoping, split_scop_op.outputs.mesh_scoping
     )
+    split_scope_by_body_wf.set_output_name(
+        "ResultScopingInput", split_scop_op.outputs.mesh_scoping
+    )
     return split_scope_by_body_wf
 
 
