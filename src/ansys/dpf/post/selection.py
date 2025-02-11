@@ -59,6 +59,7 @@ class _WfNames:
     scoping = "scoping"
     skin_input_mesh = "skin_input_mesh"
     final_scoping = "final_scoping"
+    result_scoping_by_body = "result_scoping_by_body"
     scoping_a = "scoping_a"
     scoping_b = "scoping_b"
     streams = "streams"
