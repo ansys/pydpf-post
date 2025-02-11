@@ -337,7 +337,7 @@ def _enrich_mesh_with_property_fields(
 
 def _create_split_scope_by_body_workflow(server, body_defining_properties: list[str]):
     split_scope_by_body_wf = Workflow(server=server)
-    split_scop_op = operators.scoping.split_on_property_type()
+    split_scop_op = operators.scoping.split_on_property_type(server=server)
     split_scope_by_body_wf.add_operator(split_scop_op)
     split_scope_by_body_wf.set_input_name(_WfNames.mesh, split_scop_op.inputs.mesh)
     split_scope_by_body_wf.set_input_name(
