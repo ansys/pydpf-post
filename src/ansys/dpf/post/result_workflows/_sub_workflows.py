@@ -262,6 +262,10 @@ def _create_initial_result_workflow(
         "mesh_scoping", initial_result_op.inputs.mesh_scoping
     )
 
+    initial_result_workflow.set_input_name(
+        _WfNames.result_scoping, initial_result_op.inputs.mesh_scoping
+    )
+
     initial_result_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
     initial_result_workflow.set_input_name(
         _WfNames.cyclic_sectors_to_expand, initial_result_op, 18
