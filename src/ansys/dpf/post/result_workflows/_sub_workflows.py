@@ -212,6 +212,9 @@ def _create_initial_result_workflow(
     initial_result_workflow.add_operator(forward_shell_layer_op)
     initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
+    forward_input_mesh_scoping_op = operators.utility.forward(server=server)
+    initial_result_workflow.add_operator(forward_input_mesh_scoping_op)
+
     # The next section is only needed, because the shell_layer selection does not
     # work for elemental and elemental nodal results.
     # If elemental results are requested with a chosen shell layer,
@@ -258,12 +261,16 @@ def _create_initial_result_workflow(
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
     )
-    initial_result_workflow.set_input_name(
-        "mesh_scoping", initial_result_op.inputs.mesh_scoping
-    )
 
     initial_result_workflow.set_input_name(
-        _WfNames.result_scoping, initial_result_op.inputs.mesh_scoping
+        "mesh_scoping", forward_input_mesh_scoping_op
+    )
+    _connect_any(
+        initial_result_op.inputs.mesh_scoping, forward_input_mesh_scoping_op.outputs.any
+    )
+
+    initial_result_workflow.set_output_name(
+        _WfNames.result_scoping, forward_input_mesh_scoping_op.outputs.any
     )
 
     initial_result_workflow.set_input_name(_WfNames.read_cyclic, initial_result_op, 14)
