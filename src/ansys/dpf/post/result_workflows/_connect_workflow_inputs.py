@@ -142,12 +142,12 @@ def _connect_workflow_inputs(
         )
         selection_wf = split_by_body_workflow
 
-    initial_result_workflow.connect_with(
+    initial_result_workflow.safe_connect_with(
         selection_wf,
         output_input_names={"scoping": "mesh_scoping"},
     )
 
-    initial_result_workflow.connect_with(
+    initial_result_workflow.safe_connect_with(
         selection.time_freq_selection._selection,
         output_input_names=("scoping", "time_scoping"),
     )
@@ -216,12 +216,12 @@ def _connect_averaging_eqv_and_principal_workflows(
     )
 
     if not result_workflows.compute_equivalent_before_average:
-        result_workflows.averaging_workflow.connect_with(
+        result_workflows.averaging_workflow.safe_connect_with(
             result_workflows.initial_result_workflow,
             output_input_names=averaging_wf_connections,
         )
         if principal_or_eqv_wf is not None:
-            principal_or_eqv_wf.connect_with(
+            principal_or_eqv_wf.safe_connect_with(
                 result_workflows.averaging_workflow,
                 output_input_names={_WfNames.output_data: _WfNames.input_data},
             )
@@ -235,11 +235,11 @@ def _connect_averaging_eqv_and_principal_workflows(
                 "The equivalent workflow or principal workflow is None."
             )
 
-        principal_or_eqv_wf.connect_with(
+        principal_or_eqv_wf.safe_connect_with(
             result_workflows.initial_result_workflow,
             output_input_names={_WfNames.output_data: _WfNames.input_data},
         )
-        result_workflows.averaging_workflow.connect_with(
+        result_workflows.averaging_workflow.safe_connect_with(
             principal_or_eqv_wf,
             output_input_names=averaging_wf_connections,
         )
