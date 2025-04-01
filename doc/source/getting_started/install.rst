@@ -31,7 +31,7 @@ To install PyDPF-Post with its optional plotting functionalities, use this comma
 
 .. code:: bash
 
-   pip install ansys-dpf-post[plotting]
+   pip install ansys-dpf-post[graphics]
 
 For more information about PyDPF-Post plotting capabilities, see :ref:`user_guide_plotting`.
 
