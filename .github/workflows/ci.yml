@@ -59,7 +59,7 @@ jobs:
     steps:
       - name: PyAnsys Vulnerability check (on main)
         if: github.ref == 'refs/heads/master'
-        uses: ansys/actions/check-vulnerabilities@v8
+        uses: ansys/actions/check-vulnerabilities@v9
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -67,7 +67,7 @@ jobs:
 
       - name: PyAnsys Vulnerability check (on dev mode)
         if: github.ref != 'refs/heads/master'
-        uses: ansys/actions/check-vulnerabilities@v8
+        uses: ansys/actions/check-vulnerabilities@v9
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -230,7 +230,7 @@ jobs:
     needs: [docs]
     steps:
       - name: "Upload development documentation"
-        uses: ansys/actions/doc-deploy-dev@v8
+        uses: ansys/actions/doc-deploy-dev@v9
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
