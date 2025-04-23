@@ -1370,7 +1370,8 @@ def _get_element_id_to_skin_id_map(skin_mesh: MeshedRegion, solid_mesh: MeshedRe
 
 # @pytest.mark.parametrize("average_per_body", [False, True])
 # @pytest.mark.parametrize("on_skin", [True, False])
-# # Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
+# # Note: shell_layer selection with multiple layers (e.g top/bottom)
+# currently not working correctly
 # # for mixed models.
 # @pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
 # @pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
