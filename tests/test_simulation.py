@@ -1266,7 +1266,7 @@ def _check_nodal_across_body_results(
     on_skin: bool,
 ):
     number_of_nodes_checked = 0
-    assert len(fields_container) == 1
+    assert len(fields_container) == 2
     field = fields_container[0]
     for node_id, expected_result_per_node in expected_results.items():
         if node_id in field.scoping.ids:
@@ -1343,7 +1343,7 @@ def _check_elemental_across_body_results(
             continue
         skin_ids = element_id_to_skin_ids[element_id]
         for skin_id in skin_ids:
-            assert len(fields_container) == 1
+            assert len(fields_container) == 2
             field = fields_container[0]
             if skin_id in field.scoping.ids:
                 assert np.isclose(
