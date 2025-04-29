@@ -33,6 +33,12 @@ To install PyDPF-Post with its optional plotting functionalities, use this comma
 
    pip install ansys-dpf-post[graphics]
 
+.. warning::
+
+   ``pip install ansys-dpf-post[plotting]`` is equivalent to the previous command, however, the "plotting" target
+   only remains valid for legacy reasons and will soon be deprecated. Users are encouraged to use the "graphics"
+   target instead.
+
 For more information about PyDPF-Post plotting capabilities, see :ref:`user_guide_plotting`.
 
 

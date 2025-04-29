@@ -45,6 +45,10 @@ graphics = [
     "pyvista>=0.24.0",
 ]
 
+plotting = [
+    "pyvista>=0.24.0",
+]
+
 [tool.pytest.ini_options]
 minversion = "7.1"
 addopts = "-ra --cov=ansys.dpf.post --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv"
