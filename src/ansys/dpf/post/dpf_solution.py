@@ -89,8 +89,8 @@ class DpfSolution:
         Physics Type: ...
         Available results:
              -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force
-             -  stress: ElementalNodal Stress
+             -  reaction_force: Nodal Force   
+             -  stress: ElementalNodal Stress 
              -  elemental_volume: Elemental Volume
              -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
              -  artificial_hourglass_energy: Elemental Hourglass Energy
@@ -99,7 +99,7 @@ class DpfSolution:
              -  co_energy: Elemental co-energy
              -  incremental_energy: Elemental incremental energy
              -  elastic_strain: ElementalNodal Strain
-             -  element_euler_angles: ElementalNodal Element Euler Angles
+             -  element_orientations: ElementalNodal Element Euler Angles
              -  structural_temperature: ElementalNodal Structural temperature
         """
         return self._model.metadata.result_info
