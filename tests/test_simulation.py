@@ -2440,8 +2440,6 @@ class TestModalMechanicalSimulation:
         displacement = simulation.displacement(expand_cyclic=True)
         assert "base_sector" not in displacement.columns.names
         
-        print(displacement.scoping.ids)
-        
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 :
             assert len(displacement.mesh_index) == 304
         else:
