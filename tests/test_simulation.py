@@ -3033,7 +3033,7 @@ class TestModalMechanicalSimulation:
         )
         assert len(result.index.mesh_index) == 2842
         assert len(result.columns.set_ids) == 1
-        assert np.allclose(result.max(axis="element_ids").array, [0.00620539]) 
+        assert np.allclose(result.max(axis="element_ids").array, [0.00620539])
 
     def test_disp_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.displacement(set_ids=[1], skin=True)
