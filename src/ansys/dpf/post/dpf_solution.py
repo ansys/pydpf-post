@@ -89,8 +89,8 @@ class DpfSolution:
         Physics Type: ...
         Available results:
              -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force   
-             -  stress: ElementalNodal Stress 
+             -  reaction_force: Nodal Force
+             -  stress: ElementalNodal Stress
              -  elemental_volume: Elemental Volume
              -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
              -  artificial_hourglass_energy: Elemental Hourglass Energy
