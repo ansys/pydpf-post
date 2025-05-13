@@ -78,7 +78,7 @@ stress._fc[0].plot()
 
 ###############################################################################
 # Get stresses at only five nodes
-# ------------------------------
+# -------------------------------
 # Get stresses at only the first five nodes using their IDs.
 stress_nodes = simulation.stress_nodal(node_ids=range(1, 6))
 

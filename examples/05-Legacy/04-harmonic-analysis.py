@@ -64,7 +64,7 @@ disp = disp_result.vector
 
 ###############################################################################
 # Get number of fields
-# ~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~
 
 disp.num_fields
 
@@ -149,7 +149,7 @@ amplitude.plot_contour()
 
 ###############################################################################
 # Get elastic strain result
-# =========================
+# -------------------------
 # Get an elastic strain result that deals with phase. It contains a field for
 # real values and a field for imaginary values.
 

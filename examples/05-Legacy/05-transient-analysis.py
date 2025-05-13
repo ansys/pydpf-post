@@ -60,7 +60,7 @@ disp = disp_result.vector
 
 ###############################################################################
 # Get number of fields
-# ~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~
 
 disp.num_fields
 
@@ -96,7 +96,7 @@ disp.get_min_data_at_field(0)
 
 ###############################################################################
 # Get stress result for a tensor
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 stress_result = solution.stress()
 stress = stress_result.tensor
