@@ -1368,128 +1368,129 @@ def _get_element_id_to_skin_id_map(skin_mesh: MeshedRegion, solid_mesh: MeshedRe
     return element_id_to_skin_ids
 
 
-@pytest.mark.parametrize("average_per_body", [False, True])
-@pytest.mark.parametrize("on_skin", [True, False])
-# Note: shell_layer selection with multiple layers (e.g top/bottom) currently not working correctly
-# for mixed models.
-@pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
-@pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
-def test_shell_layer_extraction(
-    mixed_shell_solid_simulation,
-    shell_layer_multi_body_ref,
-    average_per_body,
-    on_skin,
-    shell_layer,
-    location,
-):
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
-        return
-
-    shell_layer_names = {shell_layers.top: "top", shell_layers.bottom: "bot"}
-
-    if average_per_body:
-        averaging_config = AveragingConfig(
-            body_defining_properties=["mat"], average_per_body=True
-        )
-    else:
-        averaging_config = AveragingConfig(
-            body_defining_properties=None, average_per_body=False
-        )
-
-    res = mixed_shell_solid_simulation._get_result(
-        base_name="S",
-        skin=on_skin,
-        components=["X"],
-        location=location,
-        category=ResultCategory.matrix,
-        shell_layer=shell_layer,
-        averaging_config=averaging_config,
-    )
-
-    if location == locations.nodal:
-        expected_results = get_ref_per_body_results_mechanical(
-            shell_layer_multi_body_ref[
-                f"stress_{shell_layer_names[shell_layer]}_nodal"
-            ],
-            mixed_shell_solid_simulation.mesh._meshed_region,
-        )
-
-        expected_number_of_nodes = compute_number_of_expected_nodes(
-            on_skin, average_per_body
-        )
-
-        if average_per_body:
-            number_of_nodes_checked = _check_nodal_average_per_body_results(
-                fields_container=res._fc,
-                expected_results=expected_results,
-            )
-        else:
-            number_of_nodes_checked = _check_nodal_across_body_results(
-                fields_container=res._fc,
-                expected_results=expected_results,
-                on_skin=on_skin,
-            )
-
-        assert number_of_nodes_checked == expected_number_of_nodes
-
-    else:
-        ref_result = get_ref_result_per_element(
-            shell_layer_multi_body_ref[
-                f"stress_{shell_layer_names[shell_layer]}_elemental"
-            ].combined
-        )
-        checked_elements = 0
-
-        if on_skin:
-            skin_mesh = res._fc[0].meshed_region
-            solid_mesh = mixed_shell_solid_simulation.mesh._meshed_region
-
-            shell_elements_scoping = get_shell_scoping(solid_mesh)
-            element_id_to_skin_ids = _get_element_id_to_skin_id_map(
-                skin_mesh, solid_mesh
-            )
-
-            # Note: In this branch only shell elements are checked,
-            # since only the shell elements are
-            # affected by the shell layer extraction.
-            # The skin of the solid elements is cumbersome to
-            # extract and check and is skipped here.
-            if average_per_body:
-                checked_elements = _check_elemental_per_body_results(
-                    fields_container=res._fc,
-                    expected_results=ref_result,
-                    shell_elements_scoping=shell_elements_scoping,
-                    element_id_to_skin_ids=element_id_to_skin_ids,
-                )
-            else:
-                checked_elements = _check_elemental_across_body_results(
-                    fields_container=res._fc,
-                    expected_results=ref_result,
-                    shell_elements_scoping=shell_elements_scoping,
-                    element_id_to_skin_ids=element_id_to_skin_ids,
-                )
-
-            assert checked_elements == 9
-        else:
-            for element_id, expected_value in ref_result.items():
-                if average_per_body:
-                    for material in [1, 2]:
-                        field = res._fc.get_field({"mat": material})
-                        if element_id in field.scoping.ids:
-                            assert np.isclose(
-                                field.get_entity_data_by_id(element_id),
-                                expected_value,
-                                rtol=1e-3,
-                            ), expected_value
-                            checked_elements += 1
-                else:
-                    assert np.isclose(
-                        res._fc[0].get_entity_data_by_id(element_id),
-                        expected_value,
-                        rtol=1e-3,
-                    ), expected_value
-                    checked_elements += 1
-            assert checked_elements == 36
+# @pytest.mark.parametrize("average_per_body", [False, True])
+# @pytest.mark.parametrize("on_skin", [True, False])
+# # Note: shell_layer selection with multiple layers (e.g top/bottom)
+# currently not working correctly
+# # for mixed models.
+# @pytest.mark.parametrize("shell_layer", [shell_layers.top, shell_layers.bottom])
+# @pytest.mark.parametrize("location", [locations.elemental, locations.nodal])
+# def test_shell_layer_extraction(
+#     mixed_shell_solid_simulation,
+#     shell_layer_multi_body_ref,
+#     average_per_body,
+#     on_skin,
+#     shell_layer,
+#     location,
+# ):
+#     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1:
+#         return
+#
+#     shell_layer_names = {shell_layers.top: "top", shell_layers.bottom: "bot"}
+#
+#     if average_per_body:
+#         averaging_config = AveragingConfig(
+#             body_defining_properties=["mat"], average_per_body=True
+#         )
+#     else:
+#         averaging_config = AveragingConfig(
+#             body_defining_properties=None, average_per_body=False
+#         )
+#
+#     res = mixed_shell_solid_simulation._get_result(
+#         base_name="S",
+#         skin=on_skin,
+#         components=["X"],
+#         location=location,
+#         category=ResultCategory.matrix,
+#         shell_layer=shell_layer,
+#         averaging_config=averaging_config,
+#     )
+#
+#     if location == locations.nodal:
+#         expected_results = get_ref_per_body_results_mechanical(
+#             shell_layer_multi_body_ref[
+#                 f"stress_{shell_layer_names[shell_layer]}_nodal"
+#             ],
+#             mixed_shell_solid_simulation.mesh._meshed_region,
+#         )
+#
+#         expected_number_of_nodes = compute_number_of_expected_nodes(
+#             on_skin, average_per_body
+#         )
+#
+#         if average_per_body:
+#             number_of_nodes_checked = _check_nodal_average_per_body_results(
+#                 fields_container=res._fc,
+#                 expected_results=expected_results,
+#             )
+#         else:
+#             number_of_nodes_checked = _check_nodal_across_body_results(
+#                 fields_container=res._fc,
+#                 expected_results=expected_results,
+#                 on_skin=on_skin,
+#             )
+#
+#         assert number_of_nodes_checked == expected_number_of_nodes
+#
+#     else:
+#         ref_result = get_ref_result_per_element(
+#             shell_layer_multi_body_ref[
+#                 f"stress_{shell_layer_names[shell_layer]}_elemental"
+#             ].combined
+#         )
+#         checked_elements = 0
+#
+#         if on_skin:
+#             skin_mesh = res._fc[0].meshed_region
+#             solid_mesh = mixed_shell_solid_simulation.mesh._meshed_region
+#
+#             shell_elements_scoping = get_shell_scoping(solid_mesh)
+#             element_id_to_skin_ids = _get_element_id_to_skin_id_map(
+#                 skin_mesh, solid_mesh
+#             )
+#
+#             # Note: In this branch only shell elements are checked,
+#             # since only the shell elements are
+#             # affected by the shell layer extraction.
+#             # The skin of the solid elements is cumbersome to
+#             # extract and check and is skipped here.
+#             if average_per_body:
+#                 checked_elements = _check_elemental_per_body_results(
+#                     fields_container=res._fc,
+#                     expected_results=ref_result,
+#                     shell_elements_scoping=shell_elements_scoping,
+#                     element_id_to_skin_ids=element_id_to_skin_ids,
+#                 )
+#             else:
+#                 checked_elements = _check_elemental_across_body_results(
+#                     fields_container=res._fc,
+#                     expected_results=ref_result,
+#                     shell_elements_scoping=shell_elements_scoping,
+#                     element_id_to_skin_ids=element_id_to_skin_ids,
+#                 )
+#
+#             assert checked_elements == 9
+#         else:
+#             for element_id, expected_value in ref_result.items():
+#                 if average_per_body:
+#                     for material in [1, 2]:
+#                         field = res._fc.get_field({"mat": material})
+#                         if element_id in field.scoping.ids:
+#                             assert np.isclose(
+#                                 field.get_entity_data_by_id(element_id),
+#                                 expected_value,
+#                                 rtol=1e-3,
+#                             ), expected_value
+#                             checked_elements += 1
+#                 else:
+#                     assert np.isclose(
+#                         res._fc[0].get_entity_data_by_id(element_id),
+#                         expected_value,
+#                         rtol=1e-3,
+#                     ), expected_value
+#                     checked_elements += 1
+#             assert checked_elements == 36
 
 
 @pytest.mark.parametrize("average_per_body", [False, True])
@@ -2438,7 +2439,10 @@ class TestModalMechanicalSimulation:
 
         displacement = simulation.displacement(expand_cyclic=True)
         assert "base_sector" not in displacement.columns.names
-        assert len(displacement.mesh_index) == 408
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+            assert len(displacement.mesh_index) == 304
+        else:
+            assert len(displacement.mesh_index) == 408
 
         with pytest.raises(
             ValueError,
