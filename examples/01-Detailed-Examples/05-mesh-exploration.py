@@ -58,7 +58,7 @@ print(mesh)
 
 ###############################################################################
 # Plot mesh
-# -------------
+# ---------
 # Plot the mesh to view the bare mesh of the model.
 mesh.plot()
 
@@ -103,7 +103,7 @@ print(named_selections["_FIXEDSU"])
 
 ###############################################################################
 # Get elements
-# --------
+# ------------
 # Get a list of the elements.
 print(mesh.elements)
 
@@ -244,7 +244,7 @@ print(meshes)
 meshes.plot(text="Mesh split")
 
 ###############################################################################
-# Select a specific ``Mesh``object in the split mesh by index.
+# Select a specific ``Mesh`` object in the split mesh by index.
 meshes[0].plot(text="First mesh in the split mesh")
 
 ###############################################################################
