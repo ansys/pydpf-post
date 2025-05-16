@@ -84,7 +84,7 @@ jobs:
           PACKAGE_NAME: ${{ env.PACKAGE_NAME }}
           MODULE: ${{ env.MODULE }}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
+          install_extras: graphics
           wheelhouse: false
           wheel: false
           standalone_suffix: ${{ inputs.standalone_suffix }}

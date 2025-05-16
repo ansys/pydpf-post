@@ -41,6 +41,10 @@ name = "ansys.dpf.post"
 Source = "https://github.com/ansys/pydpf-post"
 
 [project.optional-dependencies]
+graphics = [
+    "pyvista>=0.24.0",
+]
+
 plotting = [
     "pyvista>=0.24.0",
 ]
