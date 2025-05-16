@@ -41,7 +41,7 @@ jobs:
     needs: get_latest_tag
     steps:
       - name: "Download Release Assets"
-        uses: robinraju/release-downloader@v1.11
+        uses: robinraju/release-downloader@v1.12
         with:
           tag: ${{ github.event.inputs.release_tag || needs.get_latest_tag.outputs.version }}
           fileName: "*.whl"
