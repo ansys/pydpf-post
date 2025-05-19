@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Module containing ``Result` subclasses for vectors."""
+"""Module containing ``Result`` subclasses for vectors."""
 
 from ansys.dpf.core import Operator
 
