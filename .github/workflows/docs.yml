@@ -100,7 +100,7 @@ jobs:
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
+          install_extras: graphics
           wheel: false
           wheelhouse: false
           standalone_suffix: ${{ inputs.standalone_suffix }}
@@ -130,6 +130,7 @@ jobs:
           export TEMP=${{ runner.temp }}
           make clean
           echo "Making html doc..."
+          make html
           make html $DEBUG_HTML >> log.txt 2>&1
 
       - name: "Check for success"
