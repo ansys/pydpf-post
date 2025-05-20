@@ -130,7 +130,6 @@ jobs:
           export TEMP=${{ runner.temp }}
           make clean
           echo "Making html doc..."
-          make html
           make html $DEBUG_HTML >> log.txt 2>&1
 
       - name: "Check for success"
