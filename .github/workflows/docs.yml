@@ -39,7 +39,7 @@ on:
         default: "3.10"
       ANSYS_VERSION:
         description: "ANSYS version"
-        required: true
+        required: false
         type: string
       standalone_suffix:
         description: "Suffix of the branch on standalone"
