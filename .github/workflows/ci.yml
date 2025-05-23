@@ -29,7 +29,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
-  ANSYS_VERSION = ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
+  ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
 
 jobs:
   debug:
