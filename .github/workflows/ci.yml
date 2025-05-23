@@ -30,7 +30,7 @@ env:
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
 
-jobs:      
+jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
