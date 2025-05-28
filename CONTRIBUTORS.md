@@ -25,6 +25,7 @@
 * [Maxime Rey](https://github.com/MaxJPRey)
 * [MichaelNale](https://github.com/MichaelNale)
 * [Mohamed Koubaa](https://github.com/koubaa)
+* [Oscar Moro](https://github.com/oparreno)
 * [Rafael Canton](https://github.com/rafacanton)
 * [Ramdane Lagha](https://github.com/rlagha)
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
