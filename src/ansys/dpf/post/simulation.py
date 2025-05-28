@@ -243,7 +243,7 @@ class Simulation(ABC):
     def active_selection(self) -> Union[Selection, None]:
         """Active selection used by default for result queries.
 
-        Returns a :object:`ansys.dpf.post.selection.Selection` object.
+        Returns a :class:`ansys.dpf.post.selection.Selection` object.
 
         Examples
         --------
