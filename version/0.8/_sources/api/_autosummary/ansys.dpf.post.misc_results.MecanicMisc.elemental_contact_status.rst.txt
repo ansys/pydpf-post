@@ -1,0 +1,6 @@
+elemental\_contact\_status
+==========================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_contact_status
