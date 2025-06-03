@@ -1,0 +1,6 @@
+elemental\_structural\_temperature
+==================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_structural_temperature

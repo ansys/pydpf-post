@@ -1,0 +1,6 @@
+norm
+====
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. autoproperty:: HeatFlux.norm
