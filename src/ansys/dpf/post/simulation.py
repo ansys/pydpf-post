@@ -581,10 +581,7 @@ class MechanicalSimulation(Simulation, ABC):
         """Instantiate a mechanical type simulation."""
         if model is None:
             if result_file is None:
-                raise ValueError(
-                    "You need to provide a result file or a model "
-                    "to instantiate a MechanicalSimulation."
-                )
+                raise ValueError("One of result_file or model argument must be set.")
             model = dpf.Model(result_file, server=server)
 
         data_sources = model.metadata.data_sources
