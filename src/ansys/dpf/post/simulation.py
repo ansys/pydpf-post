@@ -574,13 +574,19 @@ class MechanicalSimulation(Simulation, ABC):
 
     def __init__(
         self,
-        result_file: Union[PathLike, str, DataSources],
+        result_file: Union[PathLike, str, DataSources] = None,
         server: Union[BaseServer, None] = None,
         model: Union[Model, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
         if model is None:
+            if result_file is None:
+                raise ValueError(
+                    "You need to provide a result file or a model "
+                    "to instantiate a MechanicalSimulation."
+                )
             model = dpf.Model(result_file, server=server)
+
         data_sources = model.metadata.data_sources
 
         super().__init__(data_sources=data_sources, model=model)
