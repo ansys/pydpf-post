@@ -576,10 +576,13 @@ class MechanicalSimulation(Simulation, ABC):
         self,
         result_file: Union[PathLike, str, DataSources],
         server: Union[BaseServer, None] = None,
+        model: Union[Model, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
-        model = dpf.Model(result_file, server=server)
+        if model is None:
+            model = dpf.Model(result_file, server=server)
         data_sources = model.metadata.data_sources
+
         super().__init__(data_sources=data_sources, model=model)
 
     def _build_selection(
