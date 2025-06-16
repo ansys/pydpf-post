@@ -254,7 +254,7 @@ def load_simulation(
         getattr(AvailableSimulationTypes, x) for x in vars(AvailableSimulationTypes)
     ]:
         return simulation_type_str_to_class[simulation_type](
-            data_sources, server=_model._server
+            model=_model,
         )
     else:
         raise ValueError(
