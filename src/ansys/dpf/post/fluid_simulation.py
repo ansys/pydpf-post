@@ -51,6 +51,46 @@ from ansys.dpf.post.simulation import Simulation
 from ansys.dpf.post.species import SpeciesDict
 
 
+def _create_dpf_model(
+    result_file: Union[PathLike, str, dpf.DataSources, None] = None,
+    cas: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+    dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+    flprj: Union[PathLike, str, None] = None,
+    server: Union[BaseServer, None] = None,
+):
+    tot = (
+        (result_file is not None)
+        + (cas is not None and dat is not None)
+        + (flprj is not None)
+    )
+    if tot > 1:
+        raise ValueError(
+            "Argument result_file, cas and dat, and flprj are mutually exclusive."
+        )
+    elif tot < 1:
+        raise ValueError(
+            "One of result_file, cas and dat, or flprj argument must be set."
+        )
+    if result_file:
+        ds = result_file
+    else:
+        ds = dpf.DataSources(server=server)
+        if flprj:
+            ds.set_result_file_path(flprj, "flprj")
+        if cas:
+            if not isinstance(cas, list):
+                cas = [cas]
+            for c in cas:
+                ds.set_result_file_path(c, "cas")
+        if dat:
+            if not isinstance(dat, list):
+                dat = [dat]
+            for d in dat:
+                ds.add_file_path(d, "dat")
+
+    return dpf.Model(ds, server=server)
+
+
 class FluidSimulation(Simulation):
     """Base class for fluid type simulations.
 
@@ -166,38 +206,14 @@ class FluidSimulation(Simulation):
         dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         flprj: Union[PathLike, str, None] = None,
         server: Union[BaseServer, None] = None,
+        model: Union[dpf.Model, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
-        tot = (
-            (result_file is not None)
-            + (cas is not None and dat is not None)
-            + (flprj is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Argument result_file, cas and dat, and flprj are mutually exclusive."
+        if model is None:
+            model = _create_dpf_model(
+                result_file=result_file, cas=cas, dat=dat, flprj=flprj, server=server
             )
-        elif tot < 1:
-            raise ValueError(
-                "One of result_file, cas and dat, or flprj argument must be set."
-            )
-        if result_file:
-            ds = result_file
-        else:
-            ds = dpf.DataSources()
-            if flprj:
-                ds.set_result_file_path(flprj, "flprj")
-            if cas:
-                if not isinstance(cas, list):
-                    cas = [cas]
-                for c in cas:
-                    ds.set_result_file_path(c, "cas")
-            if dat:
-                if not isinstance(dat, list):
-                    dat = [dat]
-                for d in dat:
-                    ds.add_file_path(d, "dat")
-        model = dpf.Model(ds, server=server)
+
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
         self._mesh_info = None
