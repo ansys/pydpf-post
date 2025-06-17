@@ -38,7 +38,7 @@ from ansys.dpf.core import (
     operators,
     shell_layers,
 )
-from ansys.dpf.gate.common import locations
+from ansys.dpf.core.common import locations
 import numpy as np
 import pytest
 from pytest import fixture
