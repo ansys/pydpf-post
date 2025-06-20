@@ -83,7 +83,7 @@ jobs:
           ANSYS_VERSION: ${{ matrix.ANSYS_VERSION }}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+          dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           install_extras: graphics
           # Upload the wheel artifact for only one of the OS as it is OS-agnostic
           wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
@@ -152,7 +152,7 @@ jobs:
           ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
+          dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           install_extras: graphics
           wheel: false
           extra-pip-args: ${{ env.extra }}
