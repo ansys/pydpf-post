@@ -3,4 +3,4 @@ pytest-cov==6.2.1
 pytest-rerunfailures==15.1
 pytest==8.4.1
 pyvista==0.45.2
-vtk==9.4.2
+vtk==9.5.0
