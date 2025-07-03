@@ -1,0 +1,6 @@
+von\_mises\_stress
+==================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.von_mises_stress
