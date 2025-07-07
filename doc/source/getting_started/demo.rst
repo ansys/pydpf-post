@@ -54,7 +54,7 @@ to extract and postprocess results:
 
 .. image:: ./../images/crankshaft_stress.png
     :align: center
-    :figwidth: 300pt
+    :width: 300pt
 
 
 2021 R1 through 2022 R2
