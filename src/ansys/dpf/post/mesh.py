@@ -499,7 +499,6 @@ class Mesh:
         >>> simulation = post.StaticMechanicalSimulation(example_path)
         >>> mesh = simulation.mesh
         >>> mesh.plot()
-
         """
         return self._core_object.plot(**kwargs)
 
