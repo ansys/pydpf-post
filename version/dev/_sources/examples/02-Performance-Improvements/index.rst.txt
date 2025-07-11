@@ -1,0 +1,83 @@
+
+
+.. _sphx_glr_examples_02-Performance-Improvements:
+
+.. _ref_perf_examples:
+
+PyDPF-Post performance improvements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to improve computation performance of PyDPF-Post when necessary.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation, allows you to reduce the size of both the mesh and the extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing the results on the external layer provides equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_01-mesh-external-layer_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_01-mesh-external-layer.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce model size by using the mesh external layer for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation, allows you to reduce the size of both the mesh and the extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing results on the skin gives equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_02-mesh-skin_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_02-mesh-skin.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce model size by using the mesh skin for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- Results and mesh extracted only on the external layer - Results and mesh extracted on the entire mesh">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_03-mesh-external-layer-compare_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_03-mesh-external-layer-compare.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Validate external layer results with the full mesh</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/02-Performance-Improvements/01-mesh-external-layer
+   /examples/02-Performance-Improvements/02-mesh-skin
+   /examples/02-Performance-Improvements/03-mesh-external-layer-compare
+
