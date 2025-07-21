@@ -581,7 +581,7 @@ def test_simulation_results(static_simulation):
             "element_orientations",
             "structural_temperature",
         ]
-        assert all(result in available_results_names for result in expected_results)    
+        assert all(result in available_results_names for result in expected_results)
     assert all(
         isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
     )
