@@ -30,4 +30,5 @@
 * [Rafael Canton](https://github.com/rafacanton)
 * [Ramdane Lagha](https://github.com/rlagha)
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
+* [Ricardo Peixoto Coelho](https://github.com/ricardopeixotocoelho)
 * [Roberto Pastor Muela](https://github.com/RobPasMue)
