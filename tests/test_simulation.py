@@ -38,7 +38,7 @@ from ansys.dpf.core import (
     operators,
     shell_layers,
 )
-from ansys.dpf.gate.common import locations
+from ansys.dpf.core.common import locations
 import numpy as np
 import pytest
 from pytest import fixture
@@ -563,7 +563,25 @@ def test_simulation_results(static_simulation):
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
         assert len(results) == 12
     else:
-        assert len(results) == 13
+        available_results_names = []
+        for result in results:
+            available_results_names.append(result.name)
+        expected_results = [
+            "displacement",
+            "reaction_force",
+            "stress",
+            "elemental_volume",
+            "stiffness_matrix_energy",
+            "artificial_hourglass_energy",
+            "thermal_dissipation_energy",
+            "kinetic_energy",
+            "co_energy",
+            "incremental_energy",
+            "elastic_strain",
+            "element_orientations",
+            "structural_temperature",
+        ]
+        assert all(result in available_results_names for result in expected_results)
     assert all(
         isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
     )

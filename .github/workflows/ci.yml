@@ -13,7 +13,11 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: ''
+        default: ''      
+      ansys_version:
+        description: "ANSYS version"
+        required: false
+        type: string
 
 
 concurrency:
@@ -25,7 +29,6 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
-  ANSYS_VERSION: '252'
 
 jobs:
   debug:
@@ -59,7 +62,7 @@ jobs:
     steps:
       - name: PyAnsys Vulnerability check (on main)
         if: github.ref == 'refs/heads/master'
-        uses: ansys/actions/check-vulnerabilities@v9
+        uses: ansys/actions/check-vulnerabilities@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -67,7 +70,7 @@ jobs:
 
       - name: PyAnsys Vulnerability check (on dev mode)
         if: github.ref != 'refs/heads/master'
-        uses: ansys/actions/check-vulnerabilities@v9
+        uses: ansys/actions/check-vulnerabilities@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -87,7 +90,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
-        if: env.ANSYS_VERSION > 231
+        if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -97,11 +100,11 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{env.ANSYS_VERSION}}
+          ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
+          dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
+          install_extras: graphics
           # Upload the wheel artifact for only one of the OS as it is OS-agnostic
           wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
           wheelhouse: true
@@ -152,7 +155,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["251", "242", "241", "232", "231", "222"]
+        ANSYS_VERSION: ["252", "251", "242", "241", "232", "231", "222"]
 
     steps:
       - uses: actions/checkout@v4
@@ -171,8 +174,8 @@ jobs:
           ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
-          dpf-standalone-TOKEN: ${{secrets.DPF_PIPELINE}}
-          install_extras: plotting
+          dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
+          install_extras: graphics
           wheel: false
           standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
 
@@ -209,7 +212,7 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: "252"
+      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_versions: '["3.10"]'
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
     secrets: inherit
@@ -218,7 +221,7 @@ jobs:
     if: startsWith(github.head_ref, 'master') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     uses: ./.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: "252"
+      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_version: "3.10"
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
@@ -230,7 +233,7 @@ jobs:
     needs: [docs]
     steps:
       - name: "Upload development documentation"
-        uses: ansys/actions/doc-deploy-dev@v9
+        uses: ansys/actions/doc-deploy-dev@v10
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

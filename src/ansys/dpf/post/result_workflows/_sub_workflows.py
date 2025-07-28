@@ -29,7 +29,7 @@ from ansys.dpf.core import (
     operators,
     shell_layers,
 )
-from ansys.dpf.gate.common import locations
+from ansys.dpf.core.common import locations
 
 from ansys.dpf.post.misc import _connect_any
 from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable, _Rescoping

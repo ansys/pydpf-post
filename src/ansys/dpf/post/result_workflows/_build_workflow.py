@@ -25,7 +25,7 @@ from typing import Callable, List, Optional, Union
 
 from ansys.dpf.core import Operator, Workflow, shell_layers
 from ansys.dpf.core.available_result import _result_properties
-from ansys.dpf.gate.common import locations
+from ansys.dpf.core.common import locations
 
 from ansys.dpf.post.result_workflows._component_helper import (
     ResultCategory,
