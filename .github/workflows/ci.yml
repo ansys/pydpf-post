@@ -157,7 +157,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
         ANSYS_VERSION: ${{ fromJson(vars.ANSYS_VERSIONS_RETRO) }}
         include:
-          - ANSYS_VERSION: ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED) }}
+          - ANSYS_VERSION: vars.ANSYS_VERSION_LAST_RELEASED
 
     steps:
       - uses: actions/checkout@v4
