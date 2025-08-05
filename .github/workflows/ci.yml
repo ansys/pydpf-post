@@ -155,7 +155,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-latest"]
-        ANSYS_VERSION: ["252", "251", "242", "241", "232", "231", "222"]
+        ANSYS_VERSION: ${{ fromJson(vars.ANSYS_VERSIONS_RETRO) }}
 
     steps:
       - uses: actions/checkout@v4
