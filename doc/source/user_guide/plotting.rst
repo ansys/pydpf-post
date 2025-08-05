@@ -38,7 +38,7 @@ This code shows how to plot the total deformation (norm of the displacement vect
     >>> displacement_norm.plot(screenshot="crankshaft_disp.png")
 
 .. image:: ./../images/crankshaft_disp.png
-    :align: leftcenter
+    :align: center
     :width: 300pt
 
 
