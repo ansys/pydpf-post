@@ -87,20 +87,7 @@ class DpfSolution:
         Static analysis
         Unit system: MKS: m, kg, N, s, V, A, degC
         Physics Type: ...
-        Available results:
-             -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force
-             -  stress: ElementalNodal Stress
-             -  elemental_volume: Elemental Volume
-             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
-             -  artificial_hourglass_energy: Elemental Hourglass Energy
-             -  thermal_dissipation_energy: Elemental thermal dissipation energy
-             -  kinetic_energy: Elemental Kinetic Energy
-             -  co_energy: Elemental co-energy
-             -  incremental_energy: Elemental incremental energy
-             -  elastic_strain: ElementalNodal Strain
-             -  element_orientations: ElementalNodal Element Euler Angles
-             -  structural_temperature: ElementalNodal Structural temperature
+        Available results: ...
         """
         return self._model.metadata.result_info
 

@@ -182,6 +182,7 @@ class Meshes:
         ...    properties=[elemental_properties.material, elemental_properties.element_shape]
         ... )
         >>> meshes.plot()
+        (...)
         """
         from ansys.dpf.core.plotter import DpfPlotter
 

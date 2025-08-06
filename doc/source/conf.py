@@ -226,7 +226,6 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(__version__),
     },
-    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "static_search": {
         "threshold": 0.5,
         "min_chars_for_search": 2,
