@@ -30,7 +30,7 @@ from ansys.dpf import post
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
 )
 
 
@@ -72,7 +72,7 @@ class TestFluidSimulation:
         assert str(fluent_simulation)
         
     @pytest.mark.skipif(
-        (not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0) and (os.name == "posix"),
+        (not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0) and (os.name == "posix"),
         reason="Failing for DPF < 2025 R2 on Linux",
     )
     def test_simulation_flprj(self):
