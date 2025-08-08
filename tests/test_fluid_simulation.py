@@ -20,8 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.dpf.core import examples
 import os
+
+from ansys.dpf.core import examples
 import pytest
 from pytest import fixture
 
@@ -70,7 +71,6 @@ class TestFluidSimulation:
     def test_simulation_str(self, fluent_simulation):
         assert fluent_simulation is not None
         assert str(fluent_simulation)
-        
     @pytest.mark.skipif(
         (not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0) and (os.name == "posix"),
         reason="Failing for DPF < 2025 R2 on Linux",
