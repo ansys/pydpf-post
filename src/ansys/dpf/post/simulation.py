@@ -600,14 +600,14 @@ class MechanicalSimulation(Simulation, ABC):
         ] = None,
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
-        element_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], dpf.Scoping, None] = None,
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         average_per_body: Optional[bool] = False,
-    ) -> (Selection, Optional[_Rescoping]):
+    ) -> Tuple[Selection, Optional[_Rescoping]]:
         tot = (
             (node_ids is not None)
             + (element_ids is not None)
@@ -701,10 +701,7 @@ class MechanicalSimulation(Simulation, ABC):
                 inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
-            if location == locations.nodal:
-                selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
-            else:
-                selection.select_elements(elements=element_ids)
+            selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
                 selection.select_elements_of_nodes(
