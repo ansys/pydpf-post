@@ -1,0 +1,6 @@
+get\_result\_info
+=================
+
+.. currentmodule:: ansys.dpf.post.dpf_solution
+
+.. automethod:: DpfSolution.get_result_info

@@ -1,0 +1,6 @@
+elemental\_elastic\_strain\_energy\_density
+===========================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_elastic_strain_energy_density
