@@ -57,6 +57,7 @@ from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
@@ -4646,24 +4647,15 @@ def test_build_selection(
         set_ids=None,
         times=None,
         all_sets=True,
-        element_ids=scoping.ids,
+        element_ids=scoping,
     )
     selection_wf = selection.spatial_selection._selection
     if selection.spatial_selection.requires_mesh:
         selection_wf.connect(_WfNames.initial_mesh, simulation.mesh._meshed_region)
     scoping_from_selection = selection_wf.get_output(_WfNames.scoping, Scoping)
 
-    if is_skin or average_per_body:
-        # If request is for skin or average per body, the location should be elemental
-        # because force_elemental_nodal is True
-        assert scoping_from_selection.location == locations.elemental
-        assert set(scoping_from_selection.ids) == set(scoping.ids)
-    else:
-        assert scoping_from_selection.location == requested_location
-        if requested_location == locations.nodal:
-            assert len(scoping_from_selection.ids) == 36
-        else:
-            assert set(scoping_from_selection.ids) == set(scoping.ids)
+    assert scoping_from_selection.location == locations.elemental
+    assert set(scoping_from_selection.ids) == set(scoping.ids)
 
 
 def test_beam_results_on_skin(beam_example):
@@ -4694,3 +4686,56 @@ def test_beam_results_on_skin(beam_example):
     assert element_count_dict[element_types.Line2.value] == 40
 
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
+
+
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    reason="The behavior of some operators was different before DPF 5.0.",
+)
+def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
+    # reference results from Mechanical
+    rst_file = pathlib.Path(average_per_body_two_cubes)
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=rst_file,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    element_ids = [7]
+
+    # Test equivalent stress
+    result = simulation.stress_eqv_von_mises_nodal(
+        set_ids=[1], element_ids=element_ids, skin=False
+    )
+    assert len(result._fc) == 1
+    field = result._fc[0]
+
+    assert field.location == locations.nodal
+    assert field.size == 8
+    assert np.allclose(field.min().data[0], 0.7465022)
+    assert np.allclose(field.max().data[0], 1.733499)
+
+    # Test a strain component
+    result = simulation.elastic_strain_nodal(
+        set_ids=[1], element_ids=element_ids, skin=False, components=["YY"]
+    )
+
+    assert len(result._fc) == 1
+    field = result._fc[0]
+
+    assert field.location == locations.nodal
+    assert field.size == 8
+    assert np.allclose(field.min().data[0], -3.629157e-6)
+    assert np.allclose(field.max().data[0], -1.054446e-6)
+
+    # Let's also make sure a nodal quantity like displacement is correct
+    result = simulation.displacement(
+        set_ids=[1], element_ids=element_ids, skin=False, norm=True
+    )
+
+    assert len(result._fc) == 1
+    field = result._fc[0]
+
+    assert field.location == locations.nodal
+    assert field.size == 8
+    assert np.allclose(field.min().data[0], 1.724714e-5)
+    assert np.allclose(field.max().data[0], 6.407787e-5)

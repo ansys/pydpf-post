@@ -34,7 +34,6 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport, errors
-from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
@@ -600,14 +599,14 @@ class MechanicalSimulation(Simulation, ABC):
         ] = None,
         all_sets: bool = False,
         named_selections: Union[List[str], str, None] = None,
-        element_ids: Union[List[int], None] = None,
+        element_ids: Union[List[int], dpf.Scoping, None] = None,
         node_ids: Union[List[int], None] = None,
         location: Union[locations, str] = locations.nodal,
         external_layer: bool = False,
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         average_per_body: Optional[bool] = False,
-    ) -> (Selection, Optional[_Rescoping]):
+    ) -> Tuple[Selection, Optional[_Rescoping]]:
         tot = (
             (node_ids is not None)
             + (element_ids is not None)
@@ -659,6 +658,14 @@ class MechanicalSimulation(Simulation, ABC):
         if requires_manual_averaging and location != locations.elemental_nodal:
             location = locations.elemental_nodal
 
+        available_results = self._model.metadata.result_info.available_results
+        result_info = next(
+            (r for r in available_results if r.operator_name == base_name), None
+        )
+        result_native_location = None
+        if result_info is not None:
+            result_native_location = result_info.native_location
+
         # Create the SpatialSelection
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
@@ -666,19 +673,11 @@ class MechanicalSimulation(Simulation, ABC):
         if (skin is not None and skin is not False) or (
             external_layer is not None and external_layer is not False
         ):
-            res = (
-                _result_properties[base_name]
-                if base_name in _result_properties
-                else None
-            )
-
             if external_layer not in [None, False]:
                 selection.select_external_layer(
                     elements=external_layer if external_layer is not True else None,
                     location=location,
-                    result_native_location=res["location"]
-                    if res is not None
-                    else location,
+                    result_native_location=result_native_location or location,
                     is_model_cyclic=self._model.operator("is_cyclic").eval()
                     if expand_cyclic is not False
                     else "not_cyclic",
@@ -687,9 +686,7 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.select_skin(
                     elements=skin if skin is not True else None,
                     location=location,
-                    result_native_location=res["location"]
-                    if res is not None
-                    else location,
+                    result_native_location=result_native_location or location,
                     is_model_cyclic=self._model.operator("is_cyclic").eval()
                     if expand_cyclic is not False
                     else "not_cyclic",
@@ -701,7 +698,7 @@ class MechanicalSimulation(Simulation, ABC):
                 inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
-            if location == locations.nodal:
+            if result_native_location == locations.nodal:
                 selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
             else:
                 selection.select_elements(elements=element_ids)
