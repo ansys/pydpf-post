@@ -57,6 +57,7 @@ from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
@@ -4687,6 +4688,10 @@ def test_beam_results_on_skin(beam_example):
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
+    reason="The behavior of some operators was different before DPF 5.0.",
+)
 def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
     # reference results from Mechanical
     rst_file = pathlib.Path(average_per_body_two_cubes)
