@@ -34,7 +34,6 @@ import warnings
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core import DataSources, Model, TimeFreqSupport, errors
-from ansys.dpf.core.available_result import _result_properties
 from ansys.dpf.core.common import elemental_properties
 from ansys.dpf.core.plotter import DpfPlotter
 from ansys.dpf.core.server_types import BaseServer
@@ -659,9 +658,13 @@ class MechanicalSimulation(Simulation, ABC):
         if requires_manual_averaging and location != locations.elemental_nodal:
             location = locations.elemental_nodal
 
+        available_results = self._model.metadata.result_info.available_results
+        result_info = next(
+            (r for r in available_results if r.operator_name == base_name), None
+        )
         result_native_location = None
-        if base_name in _result_properties:
-            result_native_location = _result_properties[base_name].get("location")
+        if result_info is not None:
+            result_native_location = result_info.native_location
 
         # Create the SpatialSelection
 
