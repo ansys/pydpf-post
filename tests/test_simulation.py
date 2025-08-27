@@ -4688,6 +4688,7 @@ def test_beam_results_on_skin(beam_example):
 
 
 def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
+    # reference results from Mechanical
     rst_file = pathlib.Path(average_per_body_two_cubes)
     simulation: StaticMechanicalSimulation = post.load_simulation(
         data_sources=rst_file,

@@ -659,6 +659,10 @@ class MechanicalSimulation(Simulation, ABC):
         if requires_manual_averaging and location != locations.elemental_nodal:
             location = locations.elemental_nodal
 
+        result_native_location = None
+        if base_name in _result_properties:
+            result_native_location = _result_properties[base_name].get("location")
+
         # Create the SpatialSelection
 
         # First: the skin and the external layer to be able to have both a mesh scoping and
@@ -666,19 +670,11 @@ class MechanicalSimulation(Simulation, ABC):
         if (skin is not None and skin is not False) or (
             external_layer is not None and external_layer is not False
         ):
-            res = (
-                _result_properties[base_name]
-                if base_name in _result_properties
-                else None
-            )
-
             if external_layer not in [None, False]:
                 selection.select_external_layer(
                     elements=external_layer if external_layer is not True else None,
                     location=location,
-                    result_native_location=res["location"]
-                    if res is not None
-                    else location,
+                    result_native_location=result_native_location or location,
                     is_model_cyclic=self._model.operator("is_cyclic").eval()
                     if expand_cyclic is not False
                     else "not_cyclic",
@@ -687,9 +683,7 @@ class MechanicalSimulation(Simulation, ABC):
                 selection.select_skin(
                     elements=skin if skin is not True else None,
                     location=location,
-                    result_native_location=res["location"]
-                    if res is not None
-                    else location,
+                    result_native_location=result_native_location or location,
                     is_model_cyclic=self._model.operator("is_cyclic").eval()
                     if expand_cyclic is not False
                     else "not_cyclic",
@@ -701,7 +695,10 @@ class MechanicalSimulation(Simulation, ABC):
                 inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
-            selection.select_elements(elements=element_ids)
+            if result_native_location == locations.nodal:
+                selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
+            else:
+                selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
                 selection.select_elements_of_nodes(
