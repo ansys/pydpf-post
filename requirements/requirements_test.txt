@@ -1,4 +1,6 @@
 coverage==7.10.2
+protobuf==6.32.0
+pyparsing==3.2.3
 pytest-cov==6.2.1
 pytest-rerunfailures==15.1
 pytest==8.4.1
