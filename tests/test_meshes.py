@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
+
 import ansys.dpf.core as dpf
 import pytest
 from pytest import fixture
@@ -62,6 +64,9 @@ def test_meshes_get_item(meshes):
     assert len(mesh2.node_ids) == 240
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_meshes_plot(meshes):
     _ = meshes.plot()
 

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
+
 import ansys.dpf.core as core
 import numpy as np
 import pytest
@@ -184,17 +186,20 @@ def test_dataframe_iselect(df):
     # print(df2)
 
 
-# def test_dataframe_plot(df, multi_stage_cyclic):
-#     df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
+def test_dataframe_plot(df, multi_stage_cyclic):
+    df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-#     simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
-#     # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
-#     df2 = simulation.stress_nodal(expand_cyclic=False)
-#     # print(df2)
-#     df2.plot()
-#     df2.plot(stage=0)
-#     with pytest.raises(ValueError, match="must be a single value"):
-#         df2.plot(stage=[0, 1])
+    simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+    # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
+    df2 = simulation.stress_nodal(expand_cyclic=False)
+    # print(df2)
+    df2.plot()
+    df2.plot(stage=0)
+    with pytest.raises(ValueError, match="must be a single value"):
+        df2.plot(stage=[0, 1])
 
 
 def test_dataframe_plot_warn(df):
@@ -203,15 +208,18 @@ def test_dataframe_plot_warn(df):
         assert plt is None
 
 
-# def test_dataframe_animate(transient_rst):
-#     simulation = TransientMechanicalSimulation(transient_rst)
-#     # Animate displacement
-#     df = simulation.displacement(all_sets=True)
-#     df.animate()
-#     df.animate(scale_factor=5.0, deform=True)
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
+def test_dataframe_animate(transient_rst):
+    simulation = TransientMechanicalSimulation(transient_rst)
+    # Animate displacement
+    df = simulation.displacement(all_sets=True)
+    df.animate()
+    df.animate(scale_factor=5.0, deform=True)
 
-#     df = simulation.stress_nodal(all_sets=True)
-#     df.animate(deform=True, scale_factor=5.0)
+    df = simulation.stress_nodal(all_sets=True)
+    df.animate(deform=True, scale_factor=5.0)
 
 
 def test_dataframe_repr(df):
