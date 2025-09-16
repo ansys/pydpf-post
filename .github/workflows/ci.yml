@@ -182,7 +182,7 @@ jobs:
           standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@dependencies/bump_pyvista_setup-headless-display-action_to_v4
         with:
           DEBUG: true
 
