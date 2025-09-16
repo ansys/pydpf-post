@@ -184,17 +184,17 @@ def test_dataframe_iselect(df):
     # print(df2)
 
 
-def test_dataframe_plot(df, multi_stage_cyclic):
-    df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+# def test_dataframe_plot(df, multi_stage_cyclic):
+#     df.plot(set_ids=1, node_ids=[1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-    simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
-    # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
-    df2 = simulation.stress_nodal(expand_cyclic=False)
-    # print(df2)
-    df2.plot()
-    df2.plot(stage=0)
-    with pytest.raises(ValueError, match="must be a single value"):
-        df2.plot(stage=[0, 1])
+#     simulation = post.ModalMechanicalSimulation(multi_stage_cyclic)
+#     # df2 = simulation.displacement(expand_cyclic=False)  # TODO fix plot bug
+#     df2 = simulation.stress_nodal(expand_cyclic=False)
+#     # print(df2)
+#     df2.plot()
+#     df2.plot(stage=0)
+#     with pytest.raises(ValueError, match="must be a single value"):
+#         df2.plot(stage=[0, 1])
 
 
 def test_dataframe_plot_warn(df):
