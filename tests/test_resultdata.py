@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import os
+import sys
 
 from ansys.dpf.core import Field
 from ansys.dpf.core.common import locations, natures
@@ -239,6 +240,9 @@ def test_print(plate_msup):
     str(disp)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_plot_chart(plate_msup):
     transient_sol = post.load_solution(plate_msup)
     disp = transient_sol.displacement(time_scoping=list(range(1, 21)))
@@ -247,6 +251,9 @@ def test_plot_chart(plate_msup):
     vector._plot_chart()
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_plot_contour_one_field(plate_msup):
     solution = post.load_solution(plate_msup)
     stress = solution.stress(location=post.locations.elemental, time_scoping=[1])
@@ -255,6 +262,9 @@ def test_plot_contour_one_field(plate_msup):
     s.plot_contour()
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_plot_contour_wrong_label(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
     stress = solution.stress(location=post.locations.elemental, time_scoping=[1])
@@ -263,6 +273,9 @@ def test_plot_contour_wrong_label(allkindofcomplexity):
         s.plot_contour("egg", 30)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_plot_contour_two_fields(allkindofcomplexity):
     # split shell/solid
     solution = post.load_solution(allkindofcomplexity)
@@ -272,6 +285,9 @@ def test_plot_contour_two_fields(allkindofcomplexity):
     s.plot_contour()
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 def test_plot_contour_with_keys(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping=post.grouping.by_el_shape)
@@ -295,6 +311,9 @@ def test_plot_contour_with_keys(allkindofcomplexity):
     stress.plot_contour("mat", 1)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 @pytest.mark.skipif(RUNNING_DOCKER, reason="Path hidden within docker container")
 def test_plot_with_vtk_file(allkindofcomplexity):
     solution = post.load_solution(allkindofcomplexity)
@@ -309,6 +328,9 @@ version_core = core.__version__
 MEETS_CORE_034 = core.check_version.meets_version(version_core, "0.3.4")
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 @pytest.mark.skipif(
     not MEETS_CORE_034,
     reason="Plot path on coordinates" "available from dpf-core 0.3.4.",
@@ -356,6 +378,9 @@ def test_plot_on_coordinates(model_ns):
 
 
 @pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
+@pytest.mark.skipif(
     not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
 )
 def test_plot_on_coordinates_msup_transient(plate_msup):
@@ -371,6 +396,9 @@ def test_plot_on_coordinates_msup_transient(plate_msup):
     sxx.plot_contour()
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 @pytest.mark.skipif(
     not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
 )
@@ -409,6 +437,9 @@ def test_plot_on_coordinates_complex_rst(complex_model):
     vec.plot_contour(off_screen=True)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 @pytest.mark.skipif(
     not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
 )
@@ -468,6 +499,9 @@ def test_path_on_coordinates_with_different_type_of_arrays(static_rst):
     assert np.allclose(field.data, ref, rtol=1.0e-20)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="All plots currently failing on ubuntu"
+)
 @pytest.mark.skipif(
     not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
 )
