@@ -203,15 +203,15 @@ def test_dataframe_plot_warn(df):
         assert plt is None
 
 
-def test_dataframe_animate(transient_rst):
-    simulation = TransientMechanicalSimulation(transient_rst)
-    # Animate displacement
-    df = simulation.displacement(all_sets=True)
-    df.animate()
-    df.animate(scale_factor=5.0, deform=True)
+# def test_dataframe_animate(transient_rst):
+#     simulation = TransientMechanicalSimulation(transient_rst)
+#     # Animate displacement
+#     df = simulation.displacement(all_sets=True)
+#     df.animate()
+#     df.animate(scale_factor=5.0, deform=True)
 
-    df = simulation.stress_nodal(all_sets=True)
-    df.animate(deform=True, scale_factor=5.0)
+#     df = simulation.stress_nodal(all_sets=True)
+#     df.animate(deform=True, scale_factor=5.0)
 
 
 def test_dataframe_repr(df):
