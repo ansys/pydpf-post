@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.transient_mechanical_simulation
+   :inherited-members:
