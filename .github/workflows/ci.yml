@@ -84,7 +84,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
-        os: ["windows-latest", "ubuntu-latest"]
+        os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
       - uses: actions/checkout@v4
@@ -154,7 +154,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10"]
-        os: ["windows-latest", "ubuntu-latest"]
+        os: ["windows-latest", "ubuntu-22.04"]
         ANSYS_VERSION:
           - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO) }}
           - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED) }}
@@ -182,7 +182,7 @@ jobs:
           standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@dependencies/bump_pyvista_setup-headless-display-action_to_v4
         with:
           DEBUG: true
 
