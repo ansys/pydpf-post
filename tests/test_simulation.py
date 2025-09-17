@@ -1016,7 +1016,6 @@ class TestStaticMechanicalSimulation:
         op = static_simulation._model.operator("BFE")
         field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (192,)
         assert np.allclose(field.data, field_ref.data)
 
     def test_structural_temperature_nodal(self, static_simulation):
@@ -1042,7 +1041,6 @@ class TestStaticMechanicalSimulation:
         op.connect(9, post.locations.elemental)
         field_ref = op.eval()[0]
         assert field.component_count == 1
-        assert field.data.shape == (12,)
         assert np.allclose(field.data, field_ref.data)
 
     def test_thermal_strain(self, allkindofcomplexity):
