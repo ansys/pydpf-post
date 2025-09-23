@@ -1,4 +1,4 @@
-coverage==7.10.2
+coverage==7.10.7
 pytest-cov==6.2.1
 pytest-rerunfailures==16.0.1
 pytest==8.4.1
