@@ -24,6 +24,7 @@ import ansys.dpf.core as core
 import numpy as np
 import pytest
 from pytest import fixture
+from sys import platform
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -38,7 +39,7 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0, SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0
 
 
 @fixture
@@ -147,6 +148,10 @@ def test_dataframe_select_no_set_index():
     assert len(df2.mesh_index.values) == len(df.mesh_index.values)
 
 
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 and platform == "linux",
+    reason="Flprj broken in Linux for 251, 242 and 241.",
+)
 @pytest.mark.skipif(
     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
