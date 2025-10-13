@@ -30,6 +30,7 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.scalar import ComplexScalar, Scalar
 from ansys.dpf.post.tensor import ComplexTensor, Tensor
 from ansys.dpf.post.vector import ComplexVector, Vector
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0
 
 
 def test_scalar(allkindofcomplexity):
@@ -43,7 +44,10 @@ def test_scalar(allkindofcomplexity):
     )
     value = scalar.scalar
     assert isinstance(value, ResultData)
-    assert value.num_fields == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        assert value.num_fields == 3
+    else:
+        assert value.num_fields == 2
     assert value[0].data[0] == 22.0
 
 
@@ -695,7 +699,10 @@ def test_temperature(allkindofcomplexity):
     # print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
-    assert value.num_fields == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        assert value.num_fields == 3
+    else:
+        assert value.num_fields == 2
     assert value[0].data[0] == 22.0
     assert value[0].location == post.locations.nodal
     temp2 = solution.structural_temperature(
