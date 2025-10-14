@@ -131,7 +131,7 @@ def _get_native_location(
     """Get the native location of a result from its base name."""
     res = next((r for r in available_results if r.operator_name == base_name), None)
 
-    # special case for beam results, which are extracted from NMISC
+    # special case for beam results, which are extracted from SMISC
     if res is None and base_name in [
         "B_N",
         "B_M1",
@@ -142,7 +142,7 @@ def _get_native_location(
         "B_T1",
         "B_T2",
     ]:
-        res = next((r for r in available_results if r.operator_name == "NMISC"), None)
+        res = next((r for r in available_results if r.operator_name == "SMISC"), None)
 
     if res is not None:
         return res.native_location
