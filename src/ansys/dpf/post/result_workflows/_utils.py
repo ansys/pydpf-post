@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 import dataclasses
-from typing import Optional, Protocol
+from typing import Optional, Protocol, Union
 
 from ansys.dpf.core import Operator, Workflow
 from ansys.dpf.core.available_result import AvailableResult
@@ -127,7 +127,7 @@ def _append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
 
 def _get_native_location(
     available_results: list[AvailableResult], base_name: str
-) -> str | None:
+) -> Union[str, None]:
     """Get the native location of a result from its base name."""
     res = next((r for r in available_results if r.operator_name == base_name), None)
     native_location = None
