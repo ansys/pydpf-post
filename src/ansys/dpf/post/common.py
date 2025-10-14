@@ -26,6 +26,7 @@ Common
 ------
 
 """
+from ansys.dpf.core.available_result import AvailableResult
 from ansys.dpf.core.common import (  # noqa: F401  # pylint: disable=W0611
     elemental_properties,
 )
@@ -52,6 +53,18 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 #     shell_top = 4
 #     shellmid = 5
 #     shell_bottom = 6
+
+
+def _get_native_location(
+    available_results: list[AvailableResult], base_name: str
+) -> str | None:
+    """Get the native location of a result from its base name."""
+    res = next((r for r in available_results if r.operator_name == base_name), None)
+    native_location = None
+    if res is not None:
+        native_location = res.native_location
+
+    return native_location
 
 
 class Grouping:

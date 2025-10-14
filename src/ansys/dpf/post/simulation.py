@@ -40,6 +40,7 @@ from ansys.dpf.core.server_types import BaseServer
 import numpy as np
 
 from ansys.dpf.post import locations
+from ansys.dpf.post.common import _get_native_location
 from ansys.dpf.post.dataframe import DataFrame
 from ansys.dpf.post.index import (
     CompIndex,
@@ -636,6 +637,7 @@ class MechanicalSimulation(Simulation, ABC):
             has_skin = len(skin) > 0
 
         requires_manual_averaging = _requires_manual_averaging(
+            available_results=self.results,
             base_name=base_name,
             location=location,
             category=category,
@@ -658,13 +660,7 @@ class MechanicalSimulation(Simulation, ABC):
         if requires_manual_averaging and location != locations.elemental_nodal:
             location = locations.elemental_nodal
 
-        available_results = self._model.metadata.result_info.available_results
-        result_info = next(
-            (r for r in available_results if r.operator_name == base_name), None
-        )
-        result_native_location = None
-        if result_info is not None:
-            result_native_location = result_info.native_location
+        result_native_location = _get_native_location(self.results, base_name)
 
         # Create the SpatialSelection
 

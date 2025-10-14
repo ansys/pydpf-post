@@ -26,7 +26,7 @@ ModalMechanicalSimulation
 -------------------------
 
 """
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from ansys.dpf.core import shell_layers
 
@@ -70,9 +70,10 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
         shell_layer: Optional[shell_layers] = None,
-    ) -> (dpf.Workflow, Union[str, list[str], None], str):
+    ) -> Tuple[dpf.Workflow, Union[str, list[str], None], str]:
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
+            available_results=self.results,
             base_name=base_name,
             category=category,
             components=components,

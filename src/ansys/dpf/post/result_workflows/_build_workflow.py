@@ -24,9 +24,10 @@ import dataclasses
 from typing import Callable, List, Optional, Union
 
 from ansys.dpf.core import Operator, Workflow, shell_layers
-from ansys.dpf.core.available_result import _result_properties
+from ansys.dpf.core.available_result import AvailableResult
 from ansys.dpf.core.common import locations
 
+from ansys.dpf.post.common import _get_native_location
 from ansys.dpf.post.result_workflows._component_helper import (
     ResultCategory,
     _create_components,
@@ -120,6 +121,7 @@ class _CreateWorkflowInputs:
 
 
 def _requires_manual_averaging(
+    available_results: list[AvailableResult],
     base_name: str,
     location: str,
     category: ResultCategory,
@@ -128,8 +130,7 @@ def _requires_manual_averaging(
     create_operator_callable: Callable[[str], Operator],
     average_per_body: bool,
 ):
-    res = _result_properties[base_name] if base_name in _result_properties else None
-    native_location = res["location"] if res is not None else None
+    native_location = _get_native_location(available_results, base_name)
 
     if average_per_body and (
         native_location == locations.elemental
@@ -138,7 +139,7 @@ def _requires_manual_averaging(
         return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
-    if res is not None:
+    if native_location is not None:
         is_model_cyclic = create_operator_callable("is_cyclic").eval()
         is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
         if has_external_layer and is_model_cyclic and location != native_location:
@@ -265,6 +266,7 @@ def _create_result_workflows(
 
 
 def _create_result_workflow_inputs(
+    available_results: list[AvailableResult],
     base_name: str,
     category: ResultCategory,
     components: Union[str, List[str], int, List[int], None],
@@ -284,6 +286,7 @@ def _create_result_workflow_inputs(
     )
 
     force_elemental_nodal = _requires_manual_averaging(
+        available_results=available_results,
         base_name=base_name,
         location=location,
         category=category,
