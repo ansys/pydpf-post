@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 import dataclasses
-from typing import Optional, Protocol, Union
+from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
 from ansys.dpf.core.available_result import AvailableResult
@@ -127,11 +127,24 @@ def _append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
 
 def _get_native_location(
     available_results: list[AvailableResult], base_name: str
-) -> Union[str, None]:
+) -> str:
     """Get the native location of a result from its base name."""
     res = next((r for r in available_results if r.operator_name == base_name), None)
-    native_location = None
-    if res is not None:
-        native_location = res.native_location
 
-    return native_location
+    # special case for beam results, which are extracted from NMISC
+    if res is None and base_name in [
+        "B_N",
+        "B_M1",
+        "B_M2",
+        "B_MT",
+        "B_SN",
+        "B_EL",
+        "B_T1",
+        "B_T2",
+    ]:
+        res = next((r for r in available_results if r.operator_name == "NMISC"), None)
+
+    if res is not None:
+        return res.native_location
+
+    raise ValueError(f"Result with base name '{base_name}' not found.")
