@@ -27,7 +27,6 @@ from ansys.dpf.core import Operator, Workflow, shell_layers
 from ansys.dpf.core.available_result import AvailableResult
 from ansys.dpf.core.common import locations
 
-from ansys.dpf.post.common import _get_native_location
 from ansys.dpf.post.result_workflows._component_helper import (
     ResultCategory,
     _create_components,
@@ -46,6 +45,7 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
 from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
+    _get_native_location,
     _Rescoping,
 )
 from ansys.dpf.post.selection import Selection, _WfNames
