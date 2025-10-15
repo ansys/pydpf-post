@@ -2203,36 +2203,10 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_structural_temperature(self, transient_simulation):
-        result = transient_simulation.structural_temperature(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
-
-    def test_structural_temperature_nodal(self, transient_simulation):
-        result = transient_simulation.structural_temperature_nodal(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
-
-    def test_structural_temperature_elemental(self, transient_simulation):
-        result = transient_simulation.structural_temperature_elemental(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
+        # the model does not contain structural temperature results
+        with pytest.raises(ValueError) as excinfo:
+            _ = transient_simulation.structural_temperature(set_ids=[1])
+        assert "not found" in str(excinfo.value)
 
     # @pytest.mark.skipif(
     #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
