@@ -147,7 +147,7 @@ jobs:
         uses: codecov/codecov-action@v5
 
   retro:
-    name: "Retro-compatibility"
+    name: "Test DPF ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} compatibility"
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     runs-on: ${{ matrix.os }}
     strategy:
@@ -156,14 +156,14 @@ jobs:
         python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-22.04"]
         ANSYS_VERSION:
-          - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO) }}
-          - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED) }}
+          - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO_WITH_PATCH) }}
+          - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH) }}
 
     steps:
       - uses: actions/checkout@v4
 
       - name: "Set licensing if necessary"
-        if: matrix.ANSYS_VERSION > 231
+        if: matrix.ANSYS_VERSION.version > 231
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -173,13 +173,13 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
+          ANSYS_VERSION: ${{matrix.ANSYS_VERSION.version}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           install_extras: graphics
           wheel: false
-          standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
+          standalone_suffix: ${{ matrix.ANSYS_VERSION.patch }}
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@dependencies/bump_pyvista_setup-headless-display-action_to_v4
@@ -203,7 +203,7 @@ jobs:
       - name: "Upload Test Results"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION }}
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }}
           path: tests/junit/test-results.xml
         if: always()
 
