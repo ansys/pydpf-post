@@ -128,7 +128,7 @@ jobs:
         uses: codecov/codecov-action@v5
 
   retro:
-    name: "Retro-compatibility"
+    name: "Test DPF ${{ matrix.version.version }}${{ matrix.version.patch }} compatibility"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
