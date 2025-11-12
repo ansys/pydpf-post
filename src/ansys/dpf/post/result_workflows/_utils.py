@@ -144,6 +144,13 @@ def _get_native_location(
     ]:
         res = next((r for r in available_results if r.operator_name == "SMISC"), None)
 
+    # special case for nodal averaged results from MAPDL rst files
+    if res is None and base_name.startswith("mapdl::rst::"):
+        rst_base_name = base_name.replace("mapdl::rst::", "")
+        res = next(
+            (r for r in available_results if r.operator_name == rst_base_name), None
+        )
+
     if res is not None:
         return res.native_location
 
