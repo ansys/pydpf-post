@@ -125,11 +125,20 @@ def _append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
     return new_wf
 
 
+def _find_available_result(
+    available_results: list[AvailableResult], operator_name: str
+) -> Optional[AvailableResult]:
+    """Find an available result by operator name."""
+    return next(
+        (r for r in available_results if r.operator_name == operator_name), None
+    )
+
+
 def _get_native_location(
     available_results: list[AvailableResult], base_name: str
 ) -> str:
     """Get the native location of a result from its base name."""
-    res = next((r for r in available_results if r.operator_name == base_name), None)
+    res = _find_available_result(available_results, base_name)
 
     # special case for beam results, which are extracted from SMISC
     if res is None and base_name in [
@@ -142,7 +151,13 @@ def _get_native_location(
         "B_T1",
         "B_T2",
     ]:
-        res = next((r for r in available_results if r.operator_name == "SMISC"), None)
+        res = _find_available_result(available_results, "SMISC")
+
+    # special case for nodal averaged results from MAPDL rst files
+    if res is None and base_name.startswith("mapdl::rst::"):
+        res = _find_available_result(
+            available_results, base_name.replace("mapdl::rst::", "")
+        )
 
     if res is not None:
         return res.native_location
