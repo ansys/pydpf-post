@@ -225,6 +225,13 @@ def beam_example():
     )
 
 
+@pytest.fixture()
+def nar_example():
+    return _download_file(
+        "result_files/nodal-averaged-results", "static_nar.rst", True, None, False
+    )
+
+
 @dataclasses.dataclass
 class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
