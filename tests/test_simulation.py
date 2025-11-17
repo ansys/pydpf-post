@@ -52,6 +52,8 @@ from ansys.dpf.post.result_workflows._component_helper import ResultCategory
 from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
+    _find_available_result,
+    _get_native_location,
 )
 from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
@@ -2203,36 +2205,10 @@ class TestTransientMechanicalSimulation:
         assert np.allclose(field.data, field_ref.data)
 
     def test_structural_temperature(self, transient_simulation):
-        result = transient_simulation.structural_temperature(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
-
-    def test_structural_temperature_nodal(self, transient_simulation):
-        result = transient_simulation.structural_temperature_nodal(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        op.connect(9, post.locations.nodal)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
-
-    def test_structural_temperature_elemental(self, transient_simulation):
-        result = transient_simulation.structural_temperature_elemental(set_ids=[2])
-        assert len(result._fc) == 1
-        assert result._fc.get_time_scoping().ids == [2]
-        field = result._fc[0]
-        op = transient_simulation._model.operator("BFE")
-        op.connect(9, post.locations.elemental)
-        field_ref = op.eval()[0]
-        assert field.component_count == 1
-        assert np.allclose(field.data, field_ref.data)
+        # the model does not contain structural temperature results
+        with pytest.raises(ValueError) as excinfo:
+            _ = transient_simulation.structural_temperature(set_ids=[1])
+        assert "not found" in str(excinfo.value)
 
     # @pytest.mark.skipif(
     #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
@@ -4737,3 +4713,16 @@ def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
     assert field.size == 8
     assert np.allclose(field.min().data[0], 1.724714e-5)
     assert np.allclose(field.max().data[0], 6.407787e-5)
+
+
+def test_nar_results_location(nar_example):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=nar_example,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    assert _find_available_result(simulation.results, "NS") is not None
+    assert _find_available_result(simulation.results, "mapdl::rst::NS") is None
+
+    assert _get_native_location(simulation.results, "NS") == locations.nodal
+    assert _get_native_location(simulation.results, "mapdl::rst::NS") == locations.nodal

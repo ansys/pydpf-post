@@ -53,7 +53,7 @@ from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.meshes import Meshes
 from ansys.dpf.post.result_workflows._build_workflow import _requires_manual_averaging
 from ansys.dpf.post.result_workflows._component_helper import ResultCategory
-from ansys.dpf.post.result_workflows._utils import _Rescoping
+from ansys.dpf.post.result_workflows._utils import _get_native_location, _Rescoping
 from ansys.dpf.post.selection import Selection
 
 
@@ -636,6 +636,7 @@ class MechanicalSimulation(Simulation, ABC):
             has_skin = len(skin) > 0
 
         requires_manual_averaging = _requires_manual_averaging(
+            available_results=self.results,
             base_name=base_name,
             location=location,
             category=category,
@@ -658,13 +659,7 @@ class MechanicalSimulation(Simulation, ABC):
         if requires_manual_averaging and location != locations.elemental_nodal:
             location = locations.elemental_nodal
 
-        available_results = self._model.metadata.result_info.available_results
-        result_info = next(
-            (r for r in available_results if r.operator_name == base_name), None
-        )
-        result_native_location = None
-        if result_info is not None:
-            result_native_location = result_info.native_location
+        result_native_location = _get_native_location(self.results, base_name)
 
         # Create the SpatialSelection
 
