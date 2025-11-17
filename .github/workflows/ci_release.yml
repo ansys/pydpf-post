@@ -119,7 +119,7 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ github.event.inputs.ansys_version || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).version }}${{ github.event.inputs.standalone_branch_suffix || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).patch }}
           path: tests/junit/test-results.xml
@@ -180,7 +180,7 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }}
           path: tests/junit/test-results.xml
