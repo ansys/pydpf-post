@@ -1696,7 +1696,7 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
 
     scoping = None
     if isinstance(skin, list):
-        scoping = Scoping(ids=element_ids, location="elemental")
+        scoping = Scoping(ids=element_ids, location="Elemental")
 
     fc_elemental_nodal = None
     if supports_elemental:
