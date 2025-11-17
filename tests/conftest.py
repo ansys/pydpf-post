@@ -225,6 +225,13 @@ def beam_example():
     )
 
 
+@pytest.fixture()
+def nar_example():
+    return _download_file(
+        "result_files/nodal-averaged-results", "static_nar.rst", True, None, False
+    )
+
+
 @dataclasses.dataclass
 class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
@@ -367,6 +374,10 @@ def license_context():
     else:
         yield
 
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 = meets_version(
+    get_server_version(core._global_server()), "11.0"
+)
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 = meets_version(
     get_server_version(core._global_server()), "10.0"
