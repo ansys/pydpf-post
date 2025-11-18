@@ -43,10 +43,10 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Setup Python"
-        uses: actions/setup-python@v5.6.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -84,10 +84,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
-        os: ["windows-latest", "ubuntu-latest"]
+        os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
@@ -147,23 +147,23 @@ jobs:
         uses: codecov/codecov-action@v5
 
   retro:
-    name: "Retro-compatibility"
+    name: "Test DPF ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} compatibility"
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.10"]
-        os: ["windows-latest", "ubuntu-latest"]
+        os: ["windows-latest", "ubuntu-22.04"]
         ANSYS_VERSION:
-          - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO) }}
-          - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED) }}
+          - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO_WITH_PATCH) }}
+          - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Set licensing if necessary"
-        if: matrix.ANSYS_VERSION > 231
+        if: matrix.ANSYS_VERSION.version > 231
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -173,16 +173,16 @@ jobs:
         uses: ansys/pydpf-actions/build_package@v2.3
         with:
           python-version: ${{ matrix.python-version }}
-          ANSYS_VERSION: ${{matrix.ANSYS_VERSION}}
+          ANSYS_VERSION: ${{matrix.ANSYS_VERSION.version}}
           PACKAGE_NAME: ${{env.PACKAGE_NAME}}
           MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           install_extras: graphics
           wheel: false
-          standalone_suffix: ${{ matrix.ANSYS_VERSION == '241' && '.sp01' || '' }}
+          standalone_suffix: ${{ matrix.ANSYS_VERSION.patch }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@dependencies/bump_pyvista_setup-headless-display-action_to_v4
         with:
           DEBUG: true
 
@@ -203,7 +203,7 @@ jobs:
       - name: "Upload Test Results"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION }}
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }}
           path: tests/junit/test-results.xml
         if: always()
 
@@ -242,40 +242,4 @@ jobs:
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           doc-artifact-name: HTML-doc-ansys-dpf-post.zip
-          decompress-artifact: true
-
-  sync-main-with-master:
-    name: "Sync main with master"
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Install Git and clone project"
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          token: ${{ secrets.MIGRATION_PAT }}
-          fetch-depth: 0
-
-      - name: "Verify that main is the default branch"
-        shell: bash
-        run: |
-          head_branch=$(git remote show origin | grep "HEAD branch:")
-          main_branch=${head_branch#*: }
-          
-          if [[ $main_branch != "main" ]]; then
-            echo "The default branch is not 'main'. It is set to '$main_branch'."
-            echo "Please set 'main' as the default branch in the repository settings."
-            exit 1
-          fi
-
-      - name: "Configure git username and email"
-        shell: bash
-        run: |
-          git config --global user.name "${{ secrets.PYANSYS_CI_BOT_USERNAME }}"
-          git config --global user.email "${{ secrets.PYANSYS_CI_BOT_EMAIL }}"
-
-      - name: "Sync main to master"
-        shell: bash
-        run: |
-          git checkout master
-          git reset --hard main
-          git push       
+          decompress-artifact: true    
