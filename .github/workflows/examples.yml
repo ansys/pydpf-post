@@ -60,7 +60,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
@@ -70,7 +70,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v5.6.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ matrix.python-version }}
 
