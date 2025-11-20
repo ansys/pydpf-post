@@ -194,7 +194,15 @@ jobs:
         shell: bash
         run: |
           DPF_PATH=`python -c "from ansys.dpf import core as dpf; import os; my_path = os.path.abspath(dpf.__file__); aux = my_path.split('/'); aux2 = aux[:-2]; print(''.join([a + '/' for a in aux2]))"`
-          echo $DPF_PATH
+          
+          echo Before removing gatebin
+          ls -al ${DPF_PATH}
+          
+          echo Removing gatebin
+          rm -r ${DPF_PATH}gatebin
+          
+          echo After removing gatebin
+          ls -al ${DPF_PATH}
 
       - name: "Test API"
         shell: bash
