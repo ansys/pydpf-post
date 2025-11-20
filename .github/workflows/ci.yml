@@ -193,7 +193,7 @@ jobs:
       - name: "Test: Remove gatebin"
         shell: bash
         run: |
-          ls -al
+          python -c "from ansys.dpf import core as dpf; import os; print(os.path.abspath(dpf.__file__))"
 
       - name: "Test API"
         shell: bash
