@@ -196,9 +196,9 @@ jobs:
           if [[ ${{ matrix.os }} == "ubuntu-22.04" ]]; then
             DPF_PATH=`python -c "from ansys.dpf import core as dpf; import os; my_path = os.path.abspath(dpf.__file__); aux = my_path.split('/'); aux2 = aux[:-2]; print(''.join([a + '/' for a in aux2]))"`
           elif [[ ${{ matrix.os }} == "windows-latest" ]]; then
-            DPF_PATH=`python -c "from ansys.dpf import core as dpf; import os; my_path = os.path.abspath(dpf.__file__); aux = my_path.split('\'); aux2 = aux[:-2]; print(''.join([a + '\' for a in aux2]))"`
+            DPF_PATH=`python -c "from ansys.dpf import core as dpf; import os; my_path = os.path.abspath(dpf.__file__); aux = my_path.split('\'); aux2 = aux[:-2]; print(''.join([a + r'\' for a in aux2]))"`
           fi
-          
+
           echo DPF_PATH
           echo ${DPF_PATH}
 
