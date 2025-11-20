@@ -74,7 +74,7 @@ class TestFluidSimulation:
 
     @pytest.mark.skipif(
         (not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0) and (os.name == "posix"),
-        reason="Failing for DPF < 2025 R2 on Linux",
+        reason="Bug due to gatebin incompatibilities for servers <26.1",
     )
     def test_simulation_flprj(self):
         simulation = post.FluidSimulation(
