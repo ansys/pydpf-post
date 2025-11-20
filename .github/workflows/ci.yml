@@ -224,7 +224,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-      python_version: "3.10"
+      python_version: "3.11"
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
     secrets: inherit
