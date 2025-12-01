@@ -69,7 +69,7 @@ jobs:
     name: "Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
@@ -79,7 +79,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v5.6.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -156,7 +156,7 @@ jobs:
           make pdf $DEBUG_PDF
 
       - name: "Upload Documentation Build log"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: doc-${{env.PACKAGE_NAME}}-log
           path: doc/*.txt
@@ -170,7 +170,7 @@ jobs:
         if: always()
 
       - name: "Upload HTML Documentation"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: HTML-doc-${{env.PACKAGE_NAME}}.zip
           path: HTML-doc-${{env.PACKAGE_NAME}}.zip
@@ -195,7 +195,7 @@ jobs:
           dest: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Upload PDF Documentation"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: inputs.generate_pdf == 'true'
         with:
           name: PDF-doc-${{env.PACKAGE_NAME}}
