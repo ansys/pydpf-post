@@ -1,0 +1,6 @@
+elemental\_accu\_eqv\_creep\_strain
+===================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_accu_eqv_creep_strain
