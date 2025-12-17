@@ -599,7 +599,10 @@ class DataFrame:
                 if label_name == ref_labels.set_ids:
                     label_name = ref_labels.time
                 label_space[label_name] = int(value)
-            fields = self._fc.get_fields(label_space=label_space)
+            if isinstance(self._fc, dpf.FieldsContainer):
+                fields = self._fc.get_fields(label_space=label_space)
+            else:
+                fields = self._fc.get_entries(label_space=label_space)
 
             # Start counting values found
             n_values = 0
@@ -833,7 +836,10 @@ class DataFrame:
             fc = merge_stages_op.outputs.fields_container()
             label_space.pop("stage")
 
-        fields = fc.get_fields(label_space=label_space)
+        if isinstance(fc, dpf.FieldsContainer):
+            fields = fc.get_fields(label_space=label_space)
+        else:
+            fields = fc.get_entries(label_space=label_space)
         # for field in fields:
         if len(fields) > 1:
             # try:
