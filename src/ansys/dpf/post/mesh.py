@@ -32,10 +32,8 @@ from typing import List
 
 import ansys.dpf.core as dpf
 from ansys.dpf.core.faces import Face
+from ansys.dpf.core.fields_container import FieldsContainer
 from ansys.dpf.core.nodes import Node
-from ansys.dpf.core.property_fields_container import (
-    _MockPropertyFieldsContainer as PropertyFieldsContainer,
-)
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
@@ -264,7 +262,7 @@ class Mesh:
                  ...          ...
         """
         label = "elem_type_id"
-        fields_container = PropertyFieldsContainer()
+        fields_container = FieldsContainer()
         field = self._meshed_region.elements.element_types_field
         fields_container.add_field(label_space={}, field=field)
 
@@ -303,7 +301,7 @@ class Mesh:
                  ...         ...
         """
         label = "material_id"
-        fields_container = PropertyFieldsContainer()
+        fields_container = FieldsContainer()
         field = self._meshed_region.elements.materials_field
         fields_container.add_field(label_space={}, field=field)
 

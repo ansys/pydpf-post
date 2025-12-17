@@ -36,9 +36,7 @@ import warnings
 import ansys.dpf.core as dpf
 from ansys.dpf.core.dpf_array import DPFArray
 from ansys.dpf.core.plotter import DpfPlotter
-from ansys.dpf.core.property_fields_container import (
-    _MockPropertyFieldsContainer as PropertyFieldsContainer,
-)
+from ansys.dpf.core.property_fields_container import PropertyFieldsContainer
 import ansys.dpf.gate.errors
 import numpy as np
 
@@ -345,7 +343,10 @@ class DataFrame:
                     f"'{mesh_index_name}' is not yet supported"
                 )
             if isinstance(input_fc, PropertyFieldsContainer):
-                fc = input_fc.rescope(mesh_scoping)
+                rescope_fc = dpf.operators.scoping.rescope_property_field(
+                    fields=input_fc, mesh_scoping=mesh_scoping, server=server
+                )
+                fc = rescope_fc.outputs[0].get_data()
             else:
                 rescope_fc = dpf.operators.scoping.rescope_fc(
                     fields_container=input_fc,
