@@ -264,7 +264,7 @@ class Mesh:
         label = "elem_type_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.element_types_field
-        fields_container.add_field(label_space={}, field=field)
+        fields_container.add_entry(label_space={}, entry=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -303,7 +303,7 @@ class Mesh:
         label = "material_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.materials_field
-        fields_container.add_field(label_space={}, field=field)
+        fields_container.add_entry(label_space={}, entry=field)
 
         return post.DataFrame(
             data=fields_container,

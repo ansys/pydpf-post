@@ -28,7 +28,7 @@ from pytest import fixture
 from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
 from ansys.dpf.post.connectivity import ConnectivityListByIndex
 from ansys.dpf.post.faces import Face
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0, SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1
 
 
 @fixture
@@ -165,7 +165,10 @@ def test_mesh_coordinates(mesh):
 """  # noqa
     assert str(coord) == ref
 
-
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
+    reason="PropertyFieldsContainer supported for server versions greater than 8.1",
+)
 def test_mesh_materials(mesh):
     materials = mesh.materials
     ref = """
@@ -188,7 +191,10 @@ def test_mesh_materials(mesh):
 """  # noqa
     assert str(materials_5) == ref
 
-
+@pytest.mark.skipif(
+    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
+    reason="PropertyFieldsContainer supported for server versions greater than 8.1",
+)
 def test_mesh_element_types(mesh):
     element_types = mesh.element_types
     # print(element_types)
