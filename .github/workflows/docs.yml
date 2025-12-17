@@ -54,6 +54,7 @@ on:
 env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
+  DPF_DEFAULT_GRPC_MODE: insecure
 
 jobs:
   doc-style:
