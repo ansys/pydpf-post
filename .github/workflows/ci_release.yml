@@ -32,6 +32,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  DPF_DEFAULT_GRPC_MODE: 'insecure'
 
 jobs:
   debug:
