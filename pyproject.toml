@@ -18,7 +18,7 @@ maintainers = [
     {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"},
 ]
 dependencies = [
-    "ansys-dpf-core@git+https://github.com/ansys/pydpf-core.git@maint/update-operator-class-for-pfc",
+    "ansys-dpf-core@git+https://github.com/ansys/pydpf-core.git",
     "scooby",
 ]
 classifiers = [
