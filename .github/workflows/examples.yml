@@ -37,6 +37,7 @@ on:
 env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
+  DPF_DEFAULT_GRPC_MODE: insecure
 
 jobs:
   setup:
@@ -60,7 +61,7 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}

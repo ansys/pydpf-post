@@ -29,6 +29,7 @@ env:
   MODULE: 'post'
   DOCUMENTATION_CNAME: 'post.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
+  DPF_DEFAULT_GRPC_MODE: insecure
 
 jobs:
   debug:
@@ -43,7 +44,7 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Setup Python"
         uses: actions/setup-python@v6.1.0
@@ -87,7 +88,7 @@ jobs:
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
@@ -138,7 +139,7 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ env.ANSYS_VERSION }}
           path: tests/junit/test-results.xml
@@ -160,7 +161,7 @@ jobs:
           - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH) }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Set licensing if necessary"
         if: matrix.ANSYS_VERSION.version > 231
@@ -201,7 +202,7 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }}
           path: tests/junit/test-results.xml
