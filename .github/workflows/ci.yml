@@ -44,7 +44,7 @@ jobs:
     name: "Style Check"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Setup Python"
         uses: actions/setup-python@v6.1.0
@@ -88,7 +88,7 @@ jobs:
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Set licensing if necessary"
         if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
@@ -161,7 +161,7 @@ jobs:
           - ${{ fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH) }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Set licensing if necessary"
         if: matrix.ANSYS_VERSION.version > 231
