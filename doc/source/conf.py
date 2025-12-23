@@ -216,6 +216,8 @@ html_theme = "ansys_sphinx_theme"
 html_logo = pyansys_logo_black
 html_facivon = ansys_favicon
 html_theme_options = {
+    "announcement": """Starting with PyDPF-Core 0.15 and PyDPF-Post 0.11, gRPC communication with the DPF server defaults to requiring mTLS authentication.
+Refer to <a href='https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html#run-dpf-server-in-secure-mode-with-mtls'>this page</a> for more information.""",
     "github_url": "https://github.com/ansys/pydpf-post",
     "show_prev_next": False,
     "show_breadcrumbs": True,
