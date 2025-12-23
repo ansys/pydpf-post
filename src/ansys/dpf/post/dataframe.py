@@ -343,10 +343,12 @@ class DataFrame:
                     f"'{mesh_index_name}' is not yet supported"
                 )
             if isinstance(input_fc, PropertyFieldsContainer):
-                rescope_fc = dpf.operators.scoping.rescope_property_field(
-                    fields=input_fc, mesh_scoping=mesh_scoping, server=server
-                )
-                fc = rescope_fc.outputs[0].get_data()
+                # PropertyFieldsContainer not yet handled server-side
+                # rescope_fc = dpf.operators.scoping.rescope_property_field(
+                #     fields=input_fc, mesh_scoping=mesh_scoping, server=server
+                # )
+                # fc = rescope_fc.outputs[0].get_data()
+                fc = self._rescope_pfc(input_fc, mesh_scoping)
             else:
                 rescope_fc = dpf.operators.scoping.rescope_fc(
                     fields_container=input_fc,
@@ -410,6 +412,38 @@ class DataFrame:
             columns=column_index,
             index=row_index,
         )
+
+    def _rescope_pfc(
+        self, pfc: PropertyFieldsContainer, mesh_scoping: dpf.Scoping
+    ) -> PropertyFieldsContainer:
+        """Rescope a PropertyFieldsContainer based on a given mesh scoping.
+
+        Temporary fix until DPF handles the PropertyFieldsContainer correctly.
+
+        Parameters
+        ----------
+        pfc:
+            The PropertyFieldsContainer to rescope.
+        mesh_scoping:
+            The mesh scoping to use for rescoping.
+
+        Returns
+        -------
+            The rescoped PropertyFieldsContainer.
+
+        """
+        rescoped_pfc = dpf.PropertyFieldsContainer(server=pfc._server)
+        for label in pfc.labels:
+            rescoped_pfc.add_label(label=label)
+
+        for idx, pf in enumerate(pfc):
+            new_pf = dpf.PropertyField(location=pf.location)
+            new_pf.data = np.ravel(
+                [pf.get_entity_data_by_id(entity_id) for entity_id in mesh_scoping.ids]
+            )
+            new_pf.scoping.ids = mesh_scoping.ids
+            rescoped_pfc.add_entry(pfc.get_label_space(idx), new_pf)
+        return rescoped_pfc
 
     def iselect(self, **kwargs) -> DataFrame:
         """Returns a new DataFrame based on selection criteria (index-based).
