@@ -1,3 +1,25 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from ansys.dpf.core import locations
 import numpy as np
 import pytest
@@ -8,6 +30,7 @@ from ansys.dpf.post.result_data import ResultData
 from ansys.dpf.post.scalar import ComplexScalar, Scalar
 from ansys.dpf.post.tensor import ComplexTensor, Tensor
 from ansys.dpf.post.vector import ComplexVector, Vector
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0
 
 
 def test_scalar(allkindofcomplexity):
@@ -21,7 +44,10 @@ def test_scalar(allkindofcomplexity):
     )
     value = scalar.scalar
     assert isinstance(value, ResultData)
-    assert value.num_fields == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        assert value.num_fields == 3
+    else:
+        assert value.num_fields == 2
     assert value[0].data[0] == 22.0
 
 
@@ -673,7 +699,10 @@ def test_temperature(allkindofcomplexity):
     # print(temp)
     assert temp._operator_name == "BFE"
     value = temp.scalar
-    assert value.num_fields == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        assert value.num_fields == 3
+    else:
+        assert value.num_fields == 2
     assert value[0].data[0] == 22.0
     assert value[0].location == post.locations.nodal
     temp2 = solution.structural_temperature(

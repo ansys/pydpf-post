@@ -1,16 +1,39 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 .. _ref_static_example:
 
-Static Simulation
-=================
-In this script static simulation is processed to extract results like stress, displacement.
-Selecting sub parts of the results by scoping on specific nodes or elements is also displayed here.
+Postprocess a static mechanical simulation
+==========================================
+This example shows how to postprocess a static mechanical simulation to extract results like
+displacement and stress. It shows how to selecting subparts of the results by scoping
+on specific nodes or elements.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -39,8 +62,8 @@ print(displacement)
 
 
 ###############################################################################
-# Select sub parts of displacement
-# ---------------------------------
+# Select subparts of displacement
+# -------------------------------
 
 # To get X displacements
 x_displacement = displacement.select(components="X")
@@ -65,7 +88,7 @@ print(nodes_displacement)
 ###############################################################################
 # Compute total displacement (norm)
 # ---------------------------------
-# Compute the norm of displacement on a selection of nodes
+# Compute the norm of the displacement on a selection of nodes.
 
 nodes_displacement = simulation.displacement(
     node_ids=simulation.mesh.node_ids[10:], norm=True
@@ -75,9 +98,10 @@ nodes_displacement.plot()
 
 
 ###############################################################################
-# Extract tensor stress, apply averaging, compute equivalent
-# ----------------------------------------------------------
-# Extract raw elemental nodal stresses from the rst file
+# Extract tensor stresses
+# ------------------------
+# Extract raw elemental nodal stresses from the result file. Then, apply averaging
+# and compute equivalent stresses.
 elem_nodal_stress = simulation.stress()
 print(elem_nodal_stress)
 

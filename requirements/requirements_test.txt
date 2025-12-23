@@ -1,5 +1,6 @@
-coverage==7.6.7
-pytest-cov==6.0.0
-pytest-rerunfailures==14.0
-pytest==8.3.3
-pyvista==0.44.1
+coverage==7.10.7
+pytest-cov==7.0.0
+pytest-rerunfailures==16.0.1
+pytest==8.4.2
+pyvista==0.46.3
+vtk==9.5.0

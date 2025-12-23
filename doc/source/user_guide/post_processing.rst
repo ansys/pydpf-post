@@ -1,16 +1,17 @@
 .. _user_guide_post_processing:
 
-********************
-Load the result file
-********************
+******************
+Load a result file
+******************
 
 The :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object is
-a central element of PyDPF-Post. This object is the entry point for browsing
+a central element of PyDPF-Post. This object is the entry point for loading
 the contents of a result file.
 
-**On Windows**
+On Windows
+----------
 
-You can load the result file with:
+This code loads a result file on Windows:
 
 .. code:: python
 
@@ -19,8 +20,10 @@ You can load the result file with:
     >>> simulation = post.load_simulation('C:/Users/user/file.rst')
 
 
-**On Linux**
-You can load the result file with:
+On Linux
+--------
+
+This code loads a result file on Linux:
     
 .. code:: python
 

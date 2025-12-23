@@ -1,16 +1,39 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 .. _ref_result_keywords:
 
-Result keywords
-===============
-This example shows how to you can get more precise result with keywords while
-calling a ``Result`` object from a ``Solution`` object.
+Use keywords to get a more precise result
+=========================================
+This example shows how to use the legacy PyDPF-Post API to use keywords to get
+a more precise result when calling a ``Result`` object from a ``Solution`` object.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports.
+# Perform required imports. This example uses a supplied file that you can
+# get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -18,14 +41,14 @@ from ansys.dpf.post import examples
 ###############################################################################
 # Get ``Solution`` object
 # -----------------------
-# Get the ``Solution`` object.
+# Get the ``Solution`` object. This example loads a simple file supplied with
+# PyDPF-Post.
 
 solution = post.load_solution(examples.multishells_rst)
 
 ###############################################################################
 # Get keyword list
-# ~~~~~~~~~~~~~~~~
-# Get the keyword list.
+# ----------------
 
 post.print_available_keywords()
 
@@ -37,8 +60,7 @@ post.print_available_keywords()
 ###############################################################################
 # Get displacement result using scoping
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get the displacement ``Result`` object using scoping. The default location
-# is nodal.
+# The default location is nodal.
 
 displacement_result = solution.displacement(
     location=post.locations.nodal, node_scoping=[1, 2, 3]
@@ -46,9 +68,8 @@ displacement_result = solution.displacement(
 displacement = displacement_result.vector
 
 ###############################################################################
-# Get information on result
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get information on the displacement result.
+# Get information on displacement result
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 displacement.get_data_at_field(0)
 
@@ -60,9 +81,9 @@ stress_with_elem_scop = stress_with_elem_scop_result.tensor
 stress_with_elem_scop.get_data_at_field(0)
 
 ###############################################################################
-# Use named selection on result
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Use a named selection on the displacement result.
+# Use named selection on displacement result
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 stress_on_ns_result = solution.stress(
     location=post.locations.elemental_nodal, named_selection="SELECTION"
 )
@@ -74,7 +95,6 @@ len(stress_on_ns[0])
 ###############################################################################
 # Get a subresult
 # ~~~~~~~~~~~~~~
-# Get a subresult.
 
 disp_x = displacement_result.x
 
@@ -86,7 +106,7 @@ stress_principal_1
 ###############################################################################
 # Filter result
 # ~~~~~~~~~~~~~
-# Filter the result on a time, time scoping, and a set.
+# Filter the result on a time, time scoping, and set.
 
 print(solution.time_freq_support)
 
@@ -103,14 +123,13 @@ elastic_strain_with_time_scoping
 ###############################################################################
 # Make grouping
 # ~~~~~~~~~~~~~
-# Make a grouping.
 
 displacement_result = solution.displacement(grouping=post.grouping.by_el_shape)
 displacement_by_el_shape = displacement_result.vector
 
 ###############################################################################
-# Filter MAPDL elements
-# ~~~~~~~~~~~~~~~~~~~~~
+# Filter for MAPDL elements
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
 # Filter for only MAPDL elements of type solid 186.
 
 stress_result = solution.stress(mapdl_grouping=186)
@@ -120,7 +139,6 @@ stress_on_solid_186
 ###############################################################################
 # Manipulate result and change its definition
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Manipulate the result and change its definition.
 
 print(stress_on_ns_result)
 print(stress_on_ns_result.definition.location)
@@ -134,7 +152,7 @@ print(stress_on_ns_result)
 ###############################################################################
 # Use miscellaneous results
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
-# Use miscellaneous results. You can use the same keywords here. For a complex
+# You can use the same keywords for miscellaneouse results. For a complex
 # result, you can also use the keyword ``phase``, which has a float value.
 
 stress_ratio = solution.misc.elemental_stress_ratio(node_scoping=[1, 32], time=1.0)

@@ -1,18 +1,40 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 # noqa: D400
 """
 .. _ref_basic_cyclic:
 
-Get base and duplicate sectors (real and imaginary) results for modal cyclic symmetry
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Get base and duplicate sector results for a modal cyclic symmetry model
+=======================================================================
 
-This example shows how to extract results from a modal cyclic symmetry model.
+This example shows how to extract real and imaginary results from a modal cyclic symmetry model.
 
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get using the ``examples`` module.
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -33,20 +55,21 @@ print(simulation)
 
 
 ###############################################################################
-# Get base and duplicate sectors displacement results
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# With ``expand_cyclic=False``, the result providers (stress, displacement, and so on) return
-# results for base and duplicate sectors for a cyclic symmetry model.
+# Get base and duplicate sector displacement results
+# --------------------------------------------------
+# With ``expand_cyclic=False``, the result providers (such as stress and displacement) return
+# results for base and duplicate sectors for the cyclic symmetry model.
 
 # Create displacement operator
 u_cyc = simulation.displacement(all_sets=True, expand_cyclic=False)
 
 ###############################################################################
 # The output dataframe print displays the organization of the data.
-# The label "base_sector" gives access to base sectors
-# results with base_sector=True and duplicate sector with base_sector=False for all
-# modes.
-# The print also displays that there are no duplicate sectors for the first 6 modes.
+# The ``base_sector`` label gives access to base sector
+# results with ``base_sector=True`` and duplicate sector results with
+# ``base_sector=False`` for all modes.
+#
+# The print also shows that there are no duplicate sectors for the first six modes.
 # Indeed, modes with harmonic index 0 have 0.0 displacement, stresses... on
 # duplicate sectors.
 
@@ -62,8 +85,10 @@ s_cyc.plot(set_ids=7, base_sector=0)
 
 
 ###############################################################################
-# Get displacement results on the first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get displacement results on first sector with a cyclic phase
+# ------------------------------------------------------------
+# Get displacemetn results with phi set to different values.
+
 # with phi=0°
 u_cyc = simulation.displacement(all_sets=True, expand_cyclic=[1])
 u_cyc.plot()
@@ -81,8 +106,8 @@ u_cyc = simulation.displacement(
 u_cyc.plot()
 
 ###############################################################################
-# Get nodal stress results on the first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get nodal stress results on first sector with a cyclic phase
+# ------------------------------------------------------------
 s_cyc = simulation.stress_eqv_von_mises_nodal(
     all_sets=True, expand_cyclic=[1], phase_angle_cyclic=45.0
 )
@@ -90,8 +115,8 @@ print(s_cyc)
 s_cyc.plot()
 
 ###############################################################################
-# Get elemental_nodal stress results on the first sector with a cyclic phase
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get elemental nodal stress results on first sector with a cyclic phase
+# ----------------------------------------------------------------------
 # Elemental nodal is the default result location for stress and strain.
 s_cyc = simulation.stress(set_ids=[7], expand_cyclic=[1], phase_angle_cyclic=45.0)
 print(s_cyc)
@@ -105,7 +130,7 @@ to_elemental.plot()
 
 ###############################################################################
 # Get nodal stress results expanded
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ---------------------------------
 
 s_cyc = simulation.stress_eqv_von_mises_nodal(set_ids=[7])
 s_cyc.plot()

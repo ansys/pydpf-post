@@ -7,6 +7,7 @@ HDF5
 mecanic
 postprocess
 postprocessing
+PyDPF
 (PyDPF\s|PyDPF-Core|PyDPF-Post)
 Pythonic
 R1
@@ -16,3 +17,5 @@ subresults
 Thermal/electric
 UTF-8
 VTK
+PyDPF-Core
+DPF server

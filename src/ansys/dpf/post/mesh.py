@@ -1,3 +1,25 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Module containing the ``Mesh`` class.
 
 Mesh
@@ -11,9 +33,7 @@ from typing import List
 import ansys.dpf.core as dpf
 from ansys.dpf.core.faces import Face
 from ansys.dpf.core.nodes import Node
-from ansys.dpf.core.property_fields_container import (
-    _MockPropertyFieldsContainer as PropertyFieldsContainer,
-)
+from ansys.dpf.core.property_fields_container import PropertyFieldsContainer
 
 import ansys.dpf.post as post
 from ansys.dpf.post import index, locations
@@ -244,7 +264,7 @@ class Mesh:
         label = "elem_type_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.element_types_field
-        fields_container.add_field(label_space={}, field=field)
+        fields_container.add_entry(label_space={}, entry=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -283,7 +303,7 @@ class Mesh:
         label = "material_id"
         fields_container = PropertyFieldsContainer()
         field = self._meshed_region.elements.materials_field
-        fields_container.add_field(label_space={}, field=field)
+        fields_container.add_entry(label_space={}, entry=field)
 
         return post.DataFrame(
             data=fields_container,
@@ -477,7 +497,7 @@ class Mesh:
         >>> simulation = post.StaticMechanicalSimulation(example_path)
         >>> mesh = simulation.mesh
         >>> mesh.plot()
-
+        (...)
         """
         return self._core_object.plot(**kwargs)
 

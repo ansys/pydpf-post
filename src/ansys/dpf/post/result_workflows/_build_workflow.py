@@ -1,9 +1,31 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import dataclasses
 from typing import Callable, List, Optional, Union
 
-from ansys.dpf.core import Operator, Workflow
-from ansys.dpf.core.available_result import _result_properties
-from ansys.dpf.gate.common import locations
+from ansys.dpf.core import Operator, Workflow, shell_layers
+from ansys.dpf.core.available_result import AvailableResult
+from ansys.dpf.core.common import locations
 
 from ansys.dpf.post.result_workflows._component_helper import (
     ResultCategory,
@@ -23,6 +45,7 @@ from ansys.dpf.post.result_workflows._sub_workflows import (
 from ansys.dpf.post.result_workflows._utils import (
     AveragingConfig,
     _CreateOperatorCallable,
+    _get_native_location,
     _Rescoping,
 )
 from ansys.dpf.post.selection import Selection, _WfNames
@@ -92,11 +115,13 @@ class _CreateWorkflowInputs:
     components_to_extract: list[int]
     should_extract_components: bool
     averaging_config: AveragingConfig
+    shell_layer: Optional[shell_layers]
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
     rescoping_workflow_inputs: Optional[_Rescoping] = None
 
 
 def _requires_manual_averaging(
+    available_results: list[AvailableResult],
     base_name: str,
     location: str,
     category: ResultCategory,
@@ -105,8 +130,7 @@ def _requires_manual_averaging(
     create_operator_callable: Callable[[str], Operator],
     average_per_body: bool,
 ):
-    res = _result_properties[base_name] if base_name in _result_properties else None
-    native_location = res["location"] if res is not None else None
+    native_location = _get_native_location(available_results, base_name)
 
     if average_per_body and (
         native_location == locations.elemental
@@ -115,7 +139,7 @@ def _requires_manual_averaging(
         return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True
-    if res is not None:
+    if native_location is not None:
         is_model_cyclic = create_operator_callable("is_cyclic").eval()
         is_model_cyclic = is_model_cyclic in ["single_stage", "multi_stage"]
         if has_external_layer and is_model_cyclic and location != native_location:
@@ -138,15 +162,23 @@ def _create_result_workflows(
 
     The resulting workflows are stored in a ResultWorkflows object.
     """
-    initial_result_wf = _create_initial_result_workflow(
-        name=create_workflow_inputs.base_name,
-        server=server,
-        create_operator_callable=create_operator_callable,
-    )
-
     force_elemental_nodal = (
         create_workflow_inputs.averaging_workflow_inputs.force_elemental_nodal
     )
+
+    is_nodal = (
+        create_workflow_inputs.averaging_workflow_inputs.location == locations.nodal
+        and not force_elemental_nodal
+    )
+
+    initial_result_wf = _create_initial_result_workflow(
+        name=create_workflow_inputs.base_name,
+        server=server,
+        is_nodal=is_nodal,
+        shell_layer=create_workflow_inputs.shell_layer,
+        create_operator_callable=create_operator_callable,
+    )
+
     average_wf = _create_averaging_workflow(
         location=create_workflow_inputs.averaging_workflow_inputs.location,
         has_skin=create_workflow_inputs.has_skin,
@@ -234,6 +266,7 @@ def _create_result_workflows(
 
 
 def _create_result_workflow_inputs(
+    available_results: list[AvailableResult],
     base_name: str,
     category: ResultCategory,
     components: Union[str, List[str], int, List[int], None],
@@ -242,6 +275,7 @@ def _create_result_workflow_inputs(
     selection: Selection,
     create_operator_callable: Callable[[str], Operator],
     averaging_config: AveragingConfig,
+    shell_layer: Optional[shell_layers],
     rescoping: Optional[_Rescoping] = None,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
@@ -252,6 +286,7 @@ def _create_result_workflow_inputs(
     )
 
     force_elemental_nodal = _requires_manual_averaging(
+        available_results=available_results,
         base_name=base_name,
         location=location,
         category=category,
@@ -293,4 +328,5 @@ def _create_result_workflow_inputs(
         sweeping_phase_workflow_inputs=sweeping_phase_workflow_inputs,
         averaging_config=averaging_config,
         rescoping_workflow_inputs=rescoping,
+        shell_layer=shell_layer,
     )

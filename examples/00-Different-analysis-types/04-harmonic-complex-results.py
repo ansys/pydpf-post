@@ -1,15 +1,37 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 .. _ref_harmonic_example:
 
-Harmonic Simulation
-===================
-In this script harmonic simulation is processed and complex results are used.
+Postprocess a harmonic mechanical simulation
+============================================
+This example shows how to postprocess a harmonic mechanical simulation and use the complex results.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# Perform required imports. # This example uses a supplied file that you can
+# Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
 from ansys.dpf import post
@@ -36,9 +58,9 @@ print(simulation)
 
 
 ###############################################################################
-# Extract displacement over a list of frequencies sets
-# ----------------------------------------------------
-# Printing the time freq support can help pick the right frequencies
+# Extract displacement over a list of frequency sets
+# --------------------------------------------------
+# To help pick the right frequencies, print the time frequency support.
 
 print(simulation.time_freq_support)
 
@@ -58,8 +80,8 @@ print(subdisp)
 subdisp.plot(title="U tot real")
 
 ###############################################################################
-# Extract stress eqv over a list of frequencies sets
-# --------------------------------------------------
+# Extract stress equivalent over a list of frequency sets
+# -------------------------------------------------------
 
 stress_eqv = simulation.stress_eqv_von_mises_nodal(set_ids=[1, 2])
 print(stress_eqv)

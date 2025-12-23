@@ -1,6 +1,34 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from typing import Any, Optional
 
-from ansys.dpf.core import MeshedRegion, Scoping, ScopingsContainer, Workflow
+from ansys.dpf.core import (
+    MeshedRegion,
+    Scoping,
+    ScopingsContainer,
+    Workflow,
+    shell_layers,
+)
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
 from ansys.dpf.post.result_workflows._sub_workflows import (
@@ -86,6 +114,7 @@ def _connect_workflow_inputs(
     streams_provider: Any,
     data_sources: Any,
     averaging_config: AveragingConfig,
+    shell_layer: Optional[shell_layers],
 ):
     """Connects the inputs of the initial result workflow.
 
@@ -147,6 +176,13 @@ def _connect_workflow_inputs(
 
     initial_result_workflow.connect(_WfNames.mesh, mesh)
 
+    if shell_layer is not None:
+        if _WfNames.shell_layer not in initial_result_workflow.input_names:
+            raise RuntimeError(
+                "The shell_layer input is not supported by this workflow."
+            )
+        initial_result_workflow.connect(_WfNames.shell_layer, shell_layer.value)
+
     if rescoping_workflow:
         rescoping_workflow.connect(_WfNames.mesh, mesh)
         if _WfNames.data_sources in rescoping_workflow.input_names:
@@ -166,10 +202,14 @@ def _connect_averaging_eqv_and_principal_workflows(
         _WfNames.skin: _WfNames.skin,
         _WfNames.skin_input_mesh: _WfNames.skin_input_mesh,
     }
-    assert not (
+
+    if (
         result_workflows.equivalent_workflow is not None
         and result_workflows.principal_workflow is not None
-    )
+    ):
+        raise AssertionError(
+            "The equivalent workflow and principal workflow are both not None."
+        )
 
     principal_or_eqv_wf = (
         result_workflows.equivalent_workflow or result_workflows.principal_workflow
@@ -190,7 +230,11 @@ def _connect_averaging_eqv_and_principal_workflows(
             output_wf = result_workflows.averaging_workflow
 
     else:
-        assert principal_or_eqv_wf is not None
+        if principal_or_eqv_wf is None:
+            raise AssertionError(
+                "The equivalent workflow or principal workflow is None."
+            )
+
         principal_or_eqv_wf.connect_with(
             result_workflows.initial_result_workflow,
             output_input_names={_WfNames.output_data: _WfNames.input_data},

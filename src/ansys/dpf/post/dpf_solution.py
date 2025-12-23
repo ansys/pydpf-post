@@ -1,3 +1,25 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Module containing the ``DpfSolution`` class and its children.
 
 Each class highlights an analysis type and provides hard-coded methods to get
@@ -65,20 +87,7 @@ class DpfSolution:
         Static analysis
         Unit system: MKS: m, kg, N, s, V, A, degC
         Physics Type: ...
-        Available results:
-             -  displacement: Nodal Displacement
-             -  reaction_force: Nodal Force
-             -  stress: ElementalNodal Stress
-             -  elemental_volume: Elemental Volume
-             -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
-             -  artificial_hourglass_energy: Elemental Hourglass Energy
-             -  thermal_dissipation_energy: Elemental thermal dissipation energy
-             -  kinetic_energy: Elemental Kinetic Energy
-             -  co_energy: Elemental co-energy
-             -  incremental_energy: Elemental incremental energy
-             -  elastic_strain: ElementalNodal Strain
-             -  element_euler_angles: ElementalNodal Element Euler Angles
-             -  structural_temperature: ElementalNodal Structural temperature
+        Available results: ...
         """
         return self._model.metadata.result_info
 

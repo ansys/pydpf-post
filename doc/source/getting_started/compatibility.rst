@@ -1,27 +1,32 @@
 .. _compatibility:
 
-=============
-Compatibility
-=============
+=============================
+PyDPF library compatibilities
+=============================
 
-PyDPF-Post supports Windows 10 and CentOS 7 and later. For
-more information, see `Ansys Platform Support <https://www.ansys.com/solutions/solutions-by-role/it-professionals/platform-support>`_.
+Potential crashes can occur when using PyDPF-Post 0.2.2 or earlier with PyDPF-Core 0.5.2
+or later. For a given DPF server version, the following table indicates version compatibilities
+for these two libraries.
 
-Other platforms may be supported by using PyDPF-Post in a
-containerized ecosystem, such as `Docker <https://www.docker.com/>`_ or
-`Kubernetes <https://kubernetes.io/>`_.
-
-Due to potential crashes when using PyDPF-Post 0.2.2 or earlier with PyDPF-Core 0.5.2
-or later, you should refer to the following table for compatibility between these two
-libraries.
-
-.. list-table:: PyDPF compatibility
+.. list-table:: **PyDPF library compatibilities**
    :widths: 20 20 20
    :header-rows: 1
 
    * - DPF server version
-     - ansys.dpf.core python module version
-     - ansys.dpf.post python module version
+     - PyDPF-Core version
+     - PyDPF-Post version
+   * - 10.0 (Ansys 2025 R2)
+     - 0.13.4 or later
+     - 0.9.3 or later
+   * - 9.1 (Ansys 2025 R1)
+     - 0.13.4 or later
+     - 0.9.0 or later
+   * - 9.0 (DPF Server 2025.1.pre0)
+     - 0.13.0 or later
+     - 0.9.0 or later
+   * - 8.2 (Ansys 2024 R2)
+     - 0.12.1 or later
+     - 0.8.0 or later
    * - 8.1 (DPF Server 2024.2.pre1)
      - 0.12.0 or later
      - 0.8.0 or later
@@ -53,10 +58,10 @@ libraries.
      - 0.4.0 to 0.9.0
      - 0.1.0 to 0.5.0
    * - 2.0 (Ansys 2021 R2)
-     - 0.3.0 to 0.9.0**
+     - 0.3.0 to 0.9.0*
      - 0.1.0 to 0.5.0
    * - 1.0 (Ansys 2021 R1)
-     - 0.2.*
+     - 0.2.0 to 0.2.x
      - 0.1.0
 
-(** Compatibility of DPF 2.0 with ansys-dpf-core 0.5.0 to 0.9.0 is assumed but not certified.)
+*Compatibility of DPF 2.0 with PyDPF-Core 0.5.0 to 0.9.0 is assumed but not certified.

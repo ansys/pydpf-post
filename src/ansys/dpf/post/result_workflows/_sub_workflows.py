@@ -1,7 +1,35 @@
-from typing import Union
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
-from ansys.dpf.core import MeshedRegion, StreamsContainer, Workflow, operators
-from ansys.dpf.gate.common import locations
+from typing import Optional, Union
+
+from ansys.dpf.core import (
+    MeshedRegion,
+    StreamsContainer,
+    Workflow,
+    operators,
+    shell_layers,
+)
+from ansys.dpf.core.common import locations
 
 from ansys.dpf.post.misc import _connect_any
 from ansys.dpf.post.result_workflows._utils import _CreateOperatorCallable, _Rescoping
@@ -165,16 +193,68 @@ def _create_norm_workflow(
 
 
 def _create_initial_result_workflow(
-    name: str, server, create_operator_callable: _CreateOperatorCallable
+    name: str,
+    server,
+    shell_layer: Optional[shell_layers],
+    is_nodal: bool,
+    create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
+
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
 
     initial_result_workflow.add_operator(initial_result_op)
-    initial_result_workflow.set_output_name(_WfNames.output_data, initial_result_op, 0)
+
+    forward_shell_layer_op = operators.utility.forward(server=server)
+    initial_result_workflow.add_operator(forward_shell_layer_op)
+    initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
+
+    # The next section is only needed, because the shell_layer selection does not
+    # work for elemental and elemental nodal results.
+    # If elemental results are requested with a chosen shell layer,
+    # the shell layer is not selected and the results are split into solids
+    # and shells. Here, we add an additional shell layer selection and merge_shell_solid
+    # operator to manually merge the results.
+    # Note that we have to skip this step if the location is nodal, because
+    # the resulting location is wrong when the shell layer is selected again manually, after
+    # it was already selected by the initial result operator.
+    if shell_layer is not None and not is_nodal:
+        merge_shell_solid_fields = create_operator_callable(
+            name="merge::solid_shell_fields"
+        )
+        initial_result_workflow.add_operator(merge_shell_solid_fields)
+        shell_layer_op = operators.utility.change_shell_layers(server=server)
+        shell_layer_op.inputs.merge(True)
+        initial_result_workflow.add_operator(shell_layer_op)
+
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, merge_shell_solid_fields, 0
+        )
+        shell_layer_op.inputs.fields_container(
+            initial_result_op.outputs.fields_container
+        )
+        _connect_any(
+            shell_layer_op.inputs.e_shell_layer, forward_shell_layer_op.outputs.any
+        )
+
+        merge_shell_solid_fields.inputs.fields_container(
+            shell_layer_op.outputs.fields_container_as_fields_container
+        )
+
+        # End section for elemental results with shell layer selection
+    else:
+        initial_result_workflow.set_output_name(
+            _WfNames.output_data, initial_result_op, 0
+        )
+
+    if hasattr(initial_result_op.inputs, "shell_layer"):
+        _connect_any(
+            initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
+        )
+
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
     )
@@ -208,7 +288,7 @@ def _create_sweeping_phase_workflow(
             raise ValueError("Argument sweeping_phase must be a float.")
         sweeping_op = create_operator_callable(name="sweeping_phase_fc")
         sweeping_op.connect(2, sweeping_phase)
-        sweeping_op.connect(3, "degree")
+        sweeping_op.connect(3, "deg")
         sweeping_op.connect(4, False)
         sweeping_phase_workflow.add_operator(operator=sweeping_op)
 
@@ -230,7 +310,9 @@ def _enrich_mesh_with_property_fields(
     property_names: list[str],
     streams_provider: StreamsContainer,
 ):
-    property_operator = operators.metadata.property_field_provider_by_name()
+    property_operator = operators.metadata.property_field_provider_by_name(
+        server=mesh._server
+    )
     property_operator.inputs.streams_container(streams_provider)
 
     for property_name in property_names:
@@ -243,7 +325,9 @@ def _enrich_mesh_with_property_fields(
             # Rescope the property field to the element scoping of the mesh
             # to ensure the split by property operator works correctly
             rescope_op = operators.scoping.rescope_property_field(
-                mesh_scoping=mesh.elements.scoping, fields=property_field
+                mesh_scoping=mesh.elements.scoping,
+                fields=property_field,
+                server=mesh._server,
             )
 
             mesh.set_property_field(
@@ -253,7 +337,7 @@ def _enrich_mesh_with_property_fields(
 
 def _create_split_scope_by_body_workflow(server, body_defining_properties: list[str]):
     split_scope_by_body_wf = Workflow(server=server)
-    split_scop_op = operators.scoping.split_on_property_type()
+    split_scop_op = operators.scoping.split_on_property_type(server=server)
     split_scope_by_body_wf.add_operator(split_scop_op)
     split_scope_by_body_wf.set_input_name(_WfNames.mesh, split_scop_op.inputs.mesh)
     split_scope_by_body_wf.set_input_name(
@@ -267,6 +351,9 @@ def _create_split_scope_by_body_workflow(server, body_defining_properties: list[
         split_scop_op.connect(13 + idx, property_name)
     split_scope_by_body_wf.set_output_name(
         _WfNames.scoping, split_scop_op.outputs.mesh_scoping
+    )
+    split_scope_by_body_wf.set_output_name(
+        _WfNames.result_scoping_by_body, split_scop_op.outputs.mesh_scoping
     )
     return split_scope_by_body_wf
 
@@ -282,14 +369,14 @@ def _create_rescoping_workflow(server, rescoping: _Rescoping):
 
     rescoping_wf = Workflow(server=server)
 
-    transpose_scoping_op = operators.scoping.transpose()
+    transpose_scoping_op = operators.scoping.transpose(server=server)
     rescoping_wf.add_operator(transpose_scoping_op)
     transpose_scoping_op.inputs.requested_location(rescoping.requested_location)
     rescoping_wf.set_input_name(
         _WfNames.mesh, transpose_scoping_op.inputs.meshed_region
     )
 
-    rescoping_op = operators.scoping.rescope_fc()
+    rescoping_op = operators.scoping.rescope_fc(server=server)
     rescoping_wf.add_operator(rescoping_op)
     rescoping_op.inputs.mesh_scoping(
         transpose_scoping_op.outputs.mesh_scoping_as_scoping

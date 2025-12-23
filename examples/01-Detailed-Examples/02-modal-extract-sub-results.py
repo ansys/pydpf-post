@@ -1,17 +1,39 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 .. _ref_modal_sub_results_example:
 
-Extract components of results - Modal Simulation
+Extract components of results (modal simulation)
 ================================================
-In this script, a modal simulation is processed to extract sub-components
-of results like elastic strain and displacement.
+This example processes a modal simulation to extract subcomponents
+of results like displacement and elastic strain.
 """
 
 ###############################################################################
 # Perform required imports
 # ------------------------
-# This example uses a supplied file that you can
-# get by importing the DPF ``examples`` package.
+# This example uses a supplied file that you can get by importing the DPF ``examples``
+# package.
 
 from ansys.dpf import post
 from ansys.dpf.post import examples
@@ -37,11 +59,11 @@ print(simulation)
 ###############################################################################
 # Extract X displacement over a list modes
 # ----------------------------------------
-# Printing the time freq support can help pick the right modes
+# To help pick the right modes, printing the time frequency support.
 
 print(simulation.time_freq_support)
 
-# To get X displacements on the first 2 modes
+# To get X displacements on the first two modes
 x_displacement = simulation.displacement(modes=[1, 2], components=["X"])
 # equivalent to
 x_displacement = simulation.displacement(set_ids=[1, 2], components=["X"])
@@ -52,7 +74,7 @@ x_displacement.plot(set_id=1)
 ###############################################################################
 # Extract XX and XY elastic strain over a list modes
 # --------------------------------------------------
-# To get X displacements on the first 2 modes
+# Get X displacements on the first two modes.
 XX_XY_elastic_strain = simulation.elastic_strain_nodal(
     modes=[3], components=["XX", "XY"]
 )

@@ -4,18 +4,55 @@
 Getting started
 ===============
 
-To use the PyDPF-Post API, you must have PyDPF-Core installed. Because you need to
-use a native DPF server, you must also have a local installation of Ansys 2021 R1
-or later or of the standalone DPF Server.
-For more information on getting a licensed copy of Ansys, visit the
-`Ansys website <https://www.ansys.com/>`_.
-For more information on getting the standalone DPF Server, visit the
-`PyDPF-Core documentation <https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html>`_.
+This section describes PyDPF-Post and how to install it in user mode so that you can
+quickly begin using it. For information on installing PyDPF-Post in development mode,
+see :ref:`contributing`.
+
+.. grid:: 1 2 2 2
+
+   .. grid-item-card:: PyDPF-Post Key features :material-regular:`description`
+      :padding: 2 2 2 2
+      :link: key_features
+      :link-type: doc
+
+      Understand the key features of PyDPF-Post.
+
+   .. grid-item-card:: PyDPF library compatibilities :material-regular:`apps`
+      :padding: 2 2 2 2
+      :link: compatibility
+      :link-type: doc
+
+      View version compatibilities of PyDPF-Core and PyPDF-Post for each
+      DPF server version.
+
+   .. grid-item-card:: Software requirements :material-regular:`dvr`
+      :padding: 2 2 2 2
+      :link: software_requirements
+      :link-type: doc
+
+      View PyDPF-Post software requirements.
+
+   .. grid-item-card:: Installation :material-regular:`build`
+      :padding: 2 2 2 2
+      :link: install
+      :link-type: doc
+
+      Install PyDPF-Post.
+
+   .. grid-item-card:: Brief demo :material-regular:`code`
+      :padding: 2 2 2 2
+      :link: demo
+      :link-type: doc
+
+      See a brief demo of how to load a result file to extract and postprocess results.
 
 
 .. toctree::
    :maxdepth: 3
+   :hidden:
 
+   key_features
    compatibility
+   software_requirements
    install
-
+   demo

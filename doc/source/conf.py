@@ -79,6 +79,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
+    "sphinx_design",
 ]
 
 typehints_defaults = "comma"
@@ -225,7 +226,6 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(__version__),
     },
-    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "static_search": {
         "threshold": 0.5,
         "min_chars_for_search": 2,
@@ -329,3 +329,6 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
+
+# PyAnsys tags configuration
+html_context = {"pyansys_tags": ["Structures"]}

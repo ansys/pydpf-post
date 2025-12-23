@@ -1,7 +1,30 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import dataclasses
 from typing import Optional, Protocol
 
 from ansys.dpf.core import Operator, Workflow
+from ansys.dpf.core.available_result import AvailableResult
 
 from ansys.dpf.post.selection import _WfNames
 
@@ -82,11 +105,61 @@ def _append_workflow(new_wf: Optional[Workflow], last_wf: Workflow):
     if new_wf is None:
         return last_wf
 
-    assert _WfNames.input_data in new_wf.input_names
-    assert _WfNames.output_data in new_wf.output_names
-    assert _WfNames.output_data in last_wf.output_names
+    if _WfNames.input_data not in new_wf.input_names:
+        raise AssertionError(
+            f"Workflow {new_wf} must have an input pin {_WfNames.input_data}"
+        )
+    if _WfNames.output_data not in new_wf.output_names:
+        raise AssertionError(
+            f"Workflow {new_wf} must have an output pin {_WfNames.output_data}"
+        )
+    if _WfNames.output_data not in last_wf.output_names:
+        raise AssertionError(
+            f"Workflow {last_wf} must have an output pin {_WfNames.output_data}"
+        )
+
     new_wf.connect_with(
         last_wf,
         output_input_names={_WfNames.output_data: _WfNames.input_data},
     )
     return new_wf
+
+
+def _find_available_result(
+    available_results: list[AvailableResult], operator_name: str
+) -> Optional[AvailableResult]:
+    """Find an available result by operator name."""
+    return next(
+        (r for r in available_results if r.operator_name == operator_name), None
+    )
+
+
+def _get_native_location(
+    available_results: list[AvailableResult], base_name: str
+) -> str:
+    """Get the native location of a result from its base name."""
+    res = _find_available_result(available_results, base_name)
+
+    # special case for beam results, which are extracted from SMISC
+    if res is None and base_name in [
+        "B_N",
+        "B_M1",
+        "B_M2",
+        "B_MT",
+        "B_SN",
+        "B_EL",
+        "B_T1",
+        "B_T2",
+    ]:
+        res = _find_available_result(available_results, "SMISC")
+
+    # special case for nodal averaged results from MAPDL rst files
+    if res is None and base_name.startswith("mapdl::rst::"):
+        res = _find_available_result(
+            available_results, base_name.replace("mapdl::rst::", "")
+        )
+
+    if res is not None:
+        return res.native_location
+
+    raise ValueError(f"Result with base name '{base_name}' not found.")

@@ -1,10 +1,34 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Module containing the ``ModalMechanicalSimulation`` class.
 
 ModalMechanicalSimulation
 -------------------------
 
 """
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
+
+from ansys.dpf.core import shell_layers
 
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
@@ -45,9 +69,11 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         phase_angle_cyclic: Union[float, None] = None,
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
-    ) -> (dpf.Workflow, Union[str, list[str], None], str):
+        shell_layer: Optional[shell_layers] = None,
+    ) -> Tuple[dpf.Workflow, Union[str, list[str], None], str]:
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
+            available_results=self.results,
             base_name=base_name,
             category=category,
             components=components,
@@ -57,6 +83,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             create_operator_callable=self._model.operator,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
@@ -76,6 +103,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             location=location,
             force_elemental_nodal=result_workflows.force_elemental_nodal,
             averaging_config=averaging_config,
+            shell_layer=shell_layer,
         )
 
         output_wf = _connect_averaging_eqv_and_principal_workflows(result_workflows)
@@ -116,6 +144,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         external_layer: Union[bool, List[int]] = False,
         skin: Union[bool, List[int]] = False,
         averaging_config: AveragingConfig = AveragingConfig(),
+        shell_layer: Optional[int] = None,
     ) -> DataFrame:
         """Extract results from the simulation.
 
@@ -185,6 +214,8 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             Per default averaging happens across all bodies. The averaging config
             can define that averaging happens per body and defines the properties that
             are used to define a body.
+        shell_layer:
+            Shell layer to extract results for.
 
         Returns
         -------
@@ -235,6 +266,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             phase_angle_cyclic=phase_angle_cyclic,
             averaging_config=averaging_config,
             rescoping=rescoping,
+            shell_layer=shell_layer,
         )
 
         # Evaluate  the workflow

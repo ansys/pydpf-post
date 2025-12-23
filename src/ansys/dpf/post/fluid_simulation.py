@@ -1,3 +1,25 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Module containing the ``FluidSimulation`` class.
 
 FluidSimulation
@@ -28,6 +50,46 @@ from ansys.dpf.post.result_workflows._utils import AveragingConfig, _append_work
 from ansys.dpf.post.selection import Selection, _WfNames
 from ansys.dpf.post.simulation import Simulation
 from ansys.dpf.post.species import SpeciesDict
+
+
+def _create_dpf_model(
+    result_file: Union[PathLike, str, dpf.DataSources, None] = None,
+    cas: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+    dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
+    flprj: Union[PathLike, str, None] = None,
+    server: Union[BaseServer, None] = None,
+):
+    tot = (
+        (result_file is not None)
+        + (cas is not None and dat is not None)
+        + (flprj is not None)
+    )
+    if tot > 1:
+        raise ValueError(
+            "Argument result_file, cas and dat, and flprj are mutually exclusive."
+        )
+    elif tot < 1:
+        raise ValueError(
+            "One of result_file, cas and dat, or flprj argument must be set."
+        )
+    if result_file:
+        ds = result_file
+    else:
+        ds = dpf.DataSources(server=server)
+        if flprj:
+            ds.set_result_file_path(flprj, "flprj")
+        if cas:
+            if not isinstance(cas, list):
+                cas = [cas]
+            for c in cas:
+                ds.set_result_file_path(c, "cas")
+        if dat:
+            if not isinstance(dat, list):
+                dat = [dat]
+            for d in dat:
+                ds.add_file_path(d, "dat")
+
+    return dpf.Model(ds, server=server)
 
 
 class FluidSimulation(Simulation):
@@ -145,38 +207,14 @@ class FluidSimulation(Simulation):
         dat: Union[PathLike, str, List[Union[PathLike, str]], None] = None,
         flprj: Union[PathLike, str, None] = None,
         server: Union[BaseServer, None] = None,
+        model: Union[dpf.Model, None] = None,
     ):
         """Instantiate a mechanical type simulation."""
-        tot = (
-            (result_file is not None)
-            + (cas is not None and dat is not None)
-            + (flprj is not None)
-        )
-        if tot > 1:
-            raise ValueError(
-                "Argument result_file, cas and dat, and flprj are mutually exclusive."
+        if model is None:
+            model = _create_dpf_model(
+                result_file=result_file, cas=cas, dat=dat, flprj=flprj, server=server
             )
-        elif tot < 1:
-            raise ValueError(
-                "One of result_file, cas and dat, or flprj argument must be set."
-            )
-        if result_file:
-            ds = result_file
-        else:
-            ds = dpf.DataSources()
-            if flprj:
-                ds.set_result_file_path(flprj, "flprj")
-            if cas:
-                if not isinstance(cas, list):
-                    cas = [cas]
-                for c in cas:
-                    ds.set_result_file_path(c, "cas")
-            if dat:
-                if not isinstance(dat, list):
-                    dat = [dat]
-                for d in dat:
-                    ds.add_file_path(d, "dat")
-        model = dpf.Model(ds, server=server)
+
         data_sources = model.metadata.data_sources
         super().__init__(data_sources=data_sources, model=model)
         self._mesh_info = None
@@ -288,6 +326,7 @@ class FluidSimulation(Simulation):
             streams_provider=self._model.metadata.streams_provider,
             data_sources=self._model.metadata.data_sources,
             averaging_config=AveragingConfig(),
+            shell_layer=None,
         )
 
         query_regions_meshes = False

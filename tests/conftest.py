@@ -1,3 +1,25 @@
+# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """This runs at the init of the pytest session
 
 Launch or connect to a persistent local DPF service to be shared in
@@ -129,6 +151,34 @@ def static_rst():
 
 
 @pytest.fixture()
+def mixed_shell_solid_model():
+    """Resolve the path of the "mixed_shell_solid" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "mixed_shell_solid.rst", True, None, False
+    )
+
+
+@pytest.fixture()
+def mixed_shell_solid_with_contact_model():
+    """Resolve the path of the "mixed_shell_solid_with_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer",
+        "mixed_shell_solid_with_contact.rst",
+        True,
+        None,
+        False,
+    )
+
+
+@pytest.fixture()
+def two_cubes_contact_model():
+    """Resolve the path of the "two_cubes_contact" result file."""
+    return _download_file(
+        "result_files/extract_shell_layer", "two_cubes_contact.rst", True, None, False
+    )
+
+
+@pytest.fixture()
 def complex_model():
     """Resolve the path of the "msup/plate1.rst" result file."""
     return examples.complex_rst
@@ -168,8 +218,22 @@ def average_per_body_complex_multi_body():
     )
 
 
+@pytest.fixture()
+def beam_example():
+    return _download_file(
+        "result_files/beams", "post_beam_result_01.rst", True, None, False
+    )
+
+
+@pytest.fixture()
+def nar_example():
+    return _download_file(
+        "result_files/nodal-averaged-results", "static_nar.rst", True, None, False
+    )
+
+
 @dataclasses.dataclass
-class ReferenceCsvFiles:
+class ReferenceCsvFilesNodal:
     # reference result with all bodies combined
     # The node ids of nodes at body interfaces are duplicated
     combined: pathlib.Path
@@ -177,32 +241,64 @@ class ReferenceCsvFiles:
     per_id: dict[str, pathlib.Path]
 
 
-def get_per_body_ref_files(
-    root_path: str, n_bodies: int
-) -> dict[str, ReferenceCsvFiles]:
+@dataclasses.dataclass
+class ReferenceCsvResult:
+    name: str
+    has_bodies: bool = True
+
+
+def get_ref_files(
+    root_path: str, n_bodies: int, results: list[ReferenceCsvResult]
+) -> dict[str, ReferenceCsvFilesNodal]:
+    # Returns a dict of ReferenceCsvFiles for each result_name
     ref_files = {}
-    for result in ["stress", "elastic_strain"]:
+    for result in results:
         per_mat_id_dict = {}
-        for mat in range(1, n_bodies + 1):
-            per_mat_id_dict[str(mat)] = _download_file(
-                root_path, f"{result}_mat_{mat}.txt", True, None, False
-            )
+        if result.has_bodies:
+            for mat in range(1, n_bodies + 1):
+                per_mat_id_dict[str(mat)] = _download_file(
+                    root_path, f"{result.name}_mat_{mat}.txt", True, None, False
+                )
         combined = _download_file(
-            root_path, f"{result}_combined.txt", True, None, False
+            root_path, f"{result.name}_combined.txt", True, None, False
         )
-        ref_files[result] = ReferenceCsvFiles(combined=combined, per_id=per_mat_id_dict)
+        ref_files[result.name] = ReferenceCsvFilesNodal(
+            combined=combined, per_id=per_mat_id_dict
+        )
 
     return ref_files
 
 
 @pytest.fixture()
 def average_per_body_complex_multi_body_ref():
-    return get_per_body_ref_files("result_files/average_per_body/complex_multi_body", 7)
+    return get_ref_files(
+        "result_files/average_per_body/complex_multi_body",
+        7,
+        results=[ReferenceCsvResult("stress"), ReferenceCsvResult("elastic_strain")],
+    )
+
+
+@pytest.fixture()
+def shell_layer_multi_body_ref():
+    return get_ref_files(
+        "result_files/extract_shell_layer",
+        2,
+        results=[
+            ReferenceCsvResult("stress_top_nodal"),
+            ReferenceCsvResult("stress_bot_nodal"),
+            ReferenceCsvResult("stress_top_elemental", False),
+            ReferenceCsvResult("stress_bot_elemental", False),
+        ],
+    )
 
 
 @pytest.fixture()
 def average_per_body_two_cubes_ref():
-    return get_per_body_ref_files("result_files/average_per_body/two_cubes", 2)
+    return get_ref_files(
+        "result_files/average_per_body/two_cubes",
+        2,
+        results=[ReferenceCsvResult("stress"), ReferenceCsvResult("elastic_strain")],
+    )
 
 
 @pytest.fixture()
@@ -279,12 +375,24 @@ def license_context():
         yield
 
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 = meets_version(
+    get_server_version(core._global_server()), "11.0"
+)
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 = meets_version(
+    get_server_version(core._global_server()), "10.0"
+)
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1 = meets_version(
     get_server_version(core._global_server()), "9.1"
 )
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
     get_server_version(core._global_server()), "9.0"
+)
+
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1 = meets_version(
+    get_server_version(core._global_server()), "8.1"
 )
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0 = meets_version(
