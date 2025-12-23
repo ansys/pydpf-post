@@ -502,3 +502,32 @@ class TestFluidSimulation:
             qualifiers={"zone": list(fluent_simulation.face_zones.keys())}
         )
         temperature.plot()
+
+    def test_fluid_simulation_zone_mesh(self, fluent_simulation):
+        # Cell zone mesh
+        cell_zone_mesh = fluent_simulation.zone_mesh(zone=13)
+        assert cell_zone_mesh.num_elements == 6080
+        assert cell_zone_mesh.num_nodes == 7293
+        assert cell_zone_mesh.num_faces == 19388
+        # by name
+        cell_zone_mesh = fluent_simulation.zone_mesh(zone="fluid-rotor")
+        assert cell_zone_mesh.num_elements == 6080
+        assert cell_zone_mesh.num_nodes == 7293
+        assert cell_zone_mesh.num_faces == 19388
+
+        # Face zone mesh
+        face_zone_mesh = fluent_simulation.zone_mesh(zone=4)
+        assert face_zone_mesh.num_elements == 0
+        assert face_zone_mesh.num_nodes == 429
+        assert face_zone_mesh.num_faces == 380
+        # by name
+        face_zone_mesh = fluent_simulation.zone_mesh(zone="rotor-shroud")
+        assert face_zone_mesh.num_elements == 0
+        assert face_zone_mesh.num_nodes == 429
+        assert face_zone_mesh.num_faces == 380
+
+        # raise
+        with pytest.raises(ValueError, match="is not a valid zone name"):
+            _ = fluent_simulation.zone_mesh(zone="test")
+        with pytest.raises(ValueError, match="is not a valid zone ID"):
+            _ = fluent_simulation.zone_mesh(zone=999)

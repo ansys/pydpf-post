@@ -35,6 +35,7 @@ from ansys.dpf.core.server_types import BaseServer
 from ansys.dpf import core as dpf
 from ansys.dpf.post import locations
 from ansys.dpf.post.dataframe import DataFrame
+from ansys.dpf.post.mesh import Mesh
 from ansys.dpf.post.mesh_info import FluidMeshInfo
 from ansys.dpf.post.phase import PhasesDict
 from ansys.dpf.post.result_workflows._component_helper import (
@@ -224,6 +225,28 @@ class FluidSimulation(Simulation):
         if not self._mesh_info:
             self._mesh_info = FluidMeshInfo(self._model.metadata.mesh_info)
         return self._mesh_info
+
+    def zone_mesh(self, zone: Union[int, str]) -> Mesh:
+        """Return the mesh of the given zone (ID or name)."""
+        if isinstance(zone, int):
+            if zone not in self.cell_zones.keys():
+                if zone not in self.face_zones.keys():
+                    raise ValueError(f"'{zone}' is not a valid zone ID.")
+        elif isinstance(zone, str):
+            zone_id_found = None
+            for zone_id, zone_name in self.cell_zones.items():
+                if zone == zone_name:
+                    zone_id_found = zone_id
+            if zone_id_found is None:
+                for zone_id, zone_name in self.face_zones.items():
+                    if zone == zone_name:
+                        zone_id_found = zone_id
+                if zone_id_found is None:
+                    raise ValueError(f"'{zone}' is not a valid zone name.")
+            zone = int(zone_id_found)
+        mesh_provider = self._model.metadata.mesh_provider
+        mesh_provider.inputs.region_scoping(zone)
+        return Mesh(mesh_provider.eval())
 
     @property
     def cell_zones(self) -> dict:
