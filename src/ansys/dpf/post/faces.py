@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -83,7 +83,7 @@ class Face:
 
     def __repr__(self) -> str:
         """Returns string representation of a Face."""
-        return f"Face(type={self.type},index={self.index},id={self.id})"
+        return f"Face(type={self.type},index={self.index},id={self.id})"  # noqa: E231
 
     def __str__(self) -> str:
         """Returns string representation of a Face."""

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -165,7 +165,7 @@ class Element:
 
     def __repr__(self) -> str:
         """Returns string representation of an Element."""
-        return f"Element(type={self.type},index={self.index},id={self.id},shape={self.shape})"
+        return f"Element(type={self.type},index={self.index},id={self.id},shape={self.shape})"  # noqa: E231,E501
 
     def __str__(self) -> str:
         """Returns string representation of an Element."""
