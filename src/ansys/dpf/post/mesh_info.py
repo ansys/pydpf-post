@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -78,11 +78,11 @@ class FluidMeshInfo:
         txt += f"Number of nodes: {self.num_nodes}\n"
         txt += f"Number of faces: {self.num_faces}\n"
         txt += f"Number of cells: {self.num_cells}\n"
-        txt += f"Cell zones:\n"
+        txt += f"Cell zones:\n"  # noqa: E231
         txt += f"\t{self.cell_zones}\n"
-        txt += f"Face zones:\n"
+        txt += f"Face zones:\n"  # noqa: E231
         txt += f"\t{self.face_zones}\n"
-        txt += f"Cell to face zones:\n"
+        txt += f"Cell to face zones:\n"  # noqa: E231
         txt += f"\t{self.cell_zones_to_face_zones}\n"
         return txt
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -102,7 +102,7 @@ class Definition:
                         value_temp = value_temp[: len(value_temp) - 1]
                         value_temp += "]"
                         value = value_temp
-                    txt += f" - {attr:10} : " + value + "\n"
+                    txt += f" - {attr:10} : " + value + "\n"  # noqa: E231
         return txt
 
     @property

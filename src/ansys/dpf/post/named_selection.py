@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -73,7 +73,7 @@ class NamedSelections(Mapping):
 
     def __str__(self) -> str:
         """String representation."""
-        txt = f"NamedSelections dictionary with {len(self)} named selections:"
+        txt = f"NamedSelections dictionary with {len(self)} named selections:"  # noqa: E231
         for ns in self:
             txt += f"\n\t- '{ns}'"
         return txt

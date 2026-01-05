@@ -1,4 +1,4 @@
-# Copyright (C) 2020 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2020 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -691,14 +691,14 @@ class DataFrame:
                                 values = [
                                     f"{x}"
                                     if np.issubdtype(type(x), np.integer)
-                                    else f"{x:.4e}"
+                                    else f"{x:.4e}"  # noqa: E231
                                     for x in values
                                 ]
                             else:
                                 values = [
                                     f"{values}"
                                     if np.issubdtype(type(values), np.integer)
-                                    else f"{values:.4e}"
+                                    else f"{values:.4e}"  # noqa: E231
                                 ]
                         else:
                             values = [empty] * max_rows
