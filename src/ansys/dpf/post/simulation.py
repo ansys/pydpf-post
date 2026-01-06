@@ -592,7 +592,7 @@ class MechanicalSimulation(Simulation, ABC):
             if not server.meet_version(required_version="4.0"):
                 raise errors.DpfVersionNotSupported(
                     version=server.version,
-                    msg="The Simulation class requires DPF server version 2022R2 or higher.",
+                    msg="The Simulation class requires DPF server version 3.0 (2022 R1) or higher.",
                 )
             model = dpf.Model(result_file, server=server)
 
