@@ -28,6 +28,11 @@ Extract results on named selections (modal simulation)
 This example shows how to process a modal simulation to extract results
 like displacement and stress. It selects subparts of the results by scoping
 on specific nodes and also shows elements.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

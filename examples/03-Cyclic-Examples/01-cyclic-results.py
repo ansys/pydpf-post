@@ -27,6 +27,11 @@ Extract cyclic results
 ======================
 This example uses a modal analysis with cyclic symmetry to show
 how to expand the mesh and results.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

@@ -27,6 +27,11 @@ Extract stress and strain invariants (static simulation)
 ========================================================
 This example uses a static simulation to show how to extract a tensor's
 stress and strain invariants.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

@@ -38,6 +38,11 @@ This feature, available for all types of mechanical simulation, allows you to re
 of both the mesh and extracted data to improve processing performance.
 Because larger stresses and strains are usually located on the skin of a model,
 computing the results on the external layer provides equivalent maximum values in most cases.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

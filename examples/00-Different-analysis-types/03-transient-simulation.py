@@ -29,6 +29,11 @@ This example shows how to postprocess a transient mechanical simulation with ani
 to extract results like displacement, stress, and strain. It also shows how
 to extract data for chosen time steps and animate the strain equivalence over
 all times.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

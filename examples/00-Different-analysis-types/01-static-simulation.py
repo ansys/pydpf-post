@@ -26,8 +26,13 @@
 Postprocess a static mechanical simulation
 ==========================================
 This example shows how to postprocess a static mechanical simulation to extract results like
-displacement and stress. It shows how to selecting subparts of the results by scoping
+displacement and stress. It shows how to select subparts of the results by scoping
 on specific nodes or elements.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

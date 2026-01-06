@@ -39,6 +39,11 @@ Postprocessing of elemental or elemental nodal results
 requires element solid to skin mapping to get from a solid element result to a facet
 result. Because the connectivity of the new surface elements built on the skin are different from
 the connectivity of the solid elements, small differences can be found after result averaging.
+
+.. note::
+    This example requires DPF 4.0 (2022 R2) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################
