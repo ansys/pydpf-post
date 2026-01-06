@@ -154,7 +154,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ${{ format('[{0}]', env.MAIN_PYTHON_VERSION }}
+        python-version: ["3.10"]
         os: ["windows-latest", "ubuntu-22.04"]
         ANSYS_VERSION:
           - ${{ fromJson(vars.ANSYS_VERSIONS_RETRO_WITH_PATCH) }}
@@ -216,7 +216,7 @@ jobs:
     uses: ./.github/workflows/examples.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-      python_versions: ${{ format('["{0}"]', env.MAIN_PYTHON_VERSION }}
+      python_versions: '["3.10"]'
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
     secrets: inherit
 
@@ -225,7 +225,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-      python_version: ${{ env.MAIN_PYTHON_VERSION }}
+      python_version: "3.10"
       standalone_suffix: ${{ inputs.standalone_suffix || ''}}
       event_name: ${{ github.event_name }}
     secrets: inherit
