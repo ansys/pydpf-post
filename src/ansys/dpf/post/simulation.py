@@ -60,7 +60,7 @@ from ansys.dpf.post.selection import Selection
 class Simulation(ABC):
     """Base class of all PyDPF-Post simulation types.
 
-    .. warning: Requires DPF server version 2022R1 or higher.
+    .. warning: Requires DPF server version 3.0 (2022 R1) or higher.
 
     """
 
@@ -574,7 +574,7 @@ class MechanicalSimulation(Simulation, ABC):
 
     This class provides common methods and properties for all mechanical type simulations.
 
-    .. warning: Requires DPF server version 2022R1 or higher.
+    .. warning: Requires DPF server version 3.0 (2022 R1) or higher.
 
     """
 

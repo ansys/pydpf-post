@@ -57,7 +57,7 @@ from ansys.dpf.post.simulation import MechanicalSimulation
 class TransientMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical transient simulations.
 
-    .. warning: Requires DPF server version 2022R1 or higher.
+    .. warning: Requires DPF server version 3.0 (2022 R1) or higher.
 
     """
 
