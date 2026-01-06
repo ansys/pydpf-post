@@ -29,7 +29,7 @@ This example processes a modal simulation to extract subcomponents
 of results like displacement and elastic strain.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """

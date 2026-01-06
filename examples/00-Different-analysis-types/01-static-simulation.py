@@ -30,7 +30,7 @@ displacement and stress. It shows how to select subparts of the results by scopi
 on specific nodes or elements.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """

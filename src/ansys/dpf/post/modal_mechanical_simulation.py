@@ -57,7 +57,7 @@ from ansys.dpf.post.simulation import MechanicalSimulation
 class ModalMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical modal simulations.
 
-    .. warning: Requires DPF server version 2022R2 or higher.
+    .. warning: Requires DPF server version 2022R1 or higher.
 
     """
 

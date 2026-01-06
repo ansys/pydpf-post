@@ -9,7 +9,7 @@ a central element of PyDPF-Post. This object is the entry point for loading
 the contents of a result file.
 
 .. note::
-    The `Simulation` class requires DPF 4.0 (2022 R2) or above.
+    The `Simulation` class requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
     To work with earlier versions of DPF, see the
     :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>` class

@@ -41,7 +41,7 @@ result. Because the connectivity of the new surface elements built on the skin a
 the connectivity of the solid elements, small differences can be found after result averaging.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """

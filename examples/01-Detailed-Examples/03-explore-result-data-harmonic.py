@@ -29,7 +29,7 @@ This example uses a harmonic simulation to show how to interact with the PyDPF-P
 dataframe, which is the object returned by each result.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """

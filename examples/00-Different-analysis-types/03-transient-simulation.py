@@ -31,7 +31,7 @@ to extract data for chosen time steps and animate the strain equivalence over
 all times.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """

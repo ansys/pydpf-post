@@ -36,7 +36,7 @@ Because larger stresses and strains are usually located on the skin of a model,
 computing results on the external layer gives equivalent maximum values in most cases.
 
 .. note::
-    This example requires DPF 4.0 (2022 R2) or above.
+    This example requires DPF 3.0 (2022 R1) or above.
     For more information, see :ref:`compatibility`.
 
 """
