@@ -17,15 +17,6 @@ with this command:
 
    pip install ansys-dpf-post
 
-Alternatively, you can also clone and install the latest version of PyDPF-Post from its GitHub
-repository with these commands:
-
-.. code:: bash
-
-   git clone https://github.com/ansys/pydpf-post
-   cd pydpf-post
-   pip install . --userpip install ansys-dpf-post
-
 PyDPF-Post plotting capabilities require an installation of `PyVista <https://pyvista.org/>`_.
 To install PyDPF-Post with its optional plotting functionalities, use this command:
 
@@ -40,6 +31,15 @@ To install PyDPF-Post with its optional plotting functionalities, use this comma
    target instead.
 
 For more information about PyDPF-Post plotting capabilities, see :ref:`user_guide_plotting`.
+
+Alternatively, you can also clone and install the latest version of PyDPF-Post from its GitHub
+repository in development mode with these commands:
+
+.. code:: bash
+
+   git clone https://github.com/ansys/pydpf-post
+   cd pydpf-post
+   pip install -e .[graphics]
 
 
 Install without internet
