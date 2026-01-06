@@ -38,7 +38,7 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-    - name: Show the Github context for the triggered event
+    - name: Show the GitHub context for the triggered event
       run: echo "$GITHUB_CONTEXT"
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:

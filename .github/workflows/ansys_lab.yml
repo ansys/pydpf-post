@@ -28,7 +28,7 @@ jobs:
         with:
           ref: ${{ env.DESTINATION_BRANCH_NAME }}
 
-      - name: "Clean-up working directory"
+      - name: "Cleanup working directory"
         shell: python
         run: |
           import glob
