@@ -589,7 +589,7 @@ class MechanicalSimulation(Simulation, ABC):
             if result_file is None:
                 raise ValueError("One of result_file or model argument must be set.")
             server = dpf.server.get_or_create_server(server)
-            if not server.meet_version(required_version="4.0"):  # pragma: no cover 
+            if not server.meet_version(required_version="4.0"):  # pragma: no cover
                 raise errors.DpfVersionNotSupported(
                     version=server.version,
                     msg="The Simulation class requires DPF server version 3.0 (2022 R1) or higher.",
