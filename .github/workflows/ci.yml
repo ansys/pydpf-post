@@ -241,7 +241,7 @@ jobs:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           doc-artifact-name: HTML-doc-ansys-dpf-post.zip
           decompress-artifact: true
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN}}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           maximum-pr-doc-deployments: 10
