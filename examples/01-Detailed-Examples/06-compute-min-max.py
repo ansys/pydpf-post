@@ -27,6 +27,11 @@ Compute the minimum and maximum of a dataframe
 ==============================================
 This example uses transient mechanical displacement data
 to show how to compute the minimum and maximum of a dataframe.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

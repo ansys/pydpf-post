@@ -64,7 +64,11 @@ from ansys.dpf.post.simulation import MechanicalSimulation
 
 
 class HarmonicMechanicalSimulation(MechanicalSimulation):
-    """Provides methods for mechanical harmonic simulations."""
+    """Provides methods for mechanical harmonic simulations.
+
+    .. warning:: Requires DPF server version 3.0 (2022 R1) or higher.
+
+    """
 
     def _get_result_workflow(
         self,

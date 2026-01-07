@@ -34,6 +34,11 @@ or cyclic multi-stage models, allows you to reduce the size
 of both the mesh and the extracted data to improve processing performance.
 Because larger stresses and strains are usually located on the skin of a model,
 computing results on the external layer gives equivalent maximum values in most cases.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

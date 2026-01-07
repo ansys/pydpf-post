@@ -58,7 +58,11 @@ from ansys.dpf.post.selection import Selection
 
 
 class Simulation(ABC):
-    """Base class of all PyDPF-Post simulation types."""
+    """Base class of all PyDPF-Post simulation types.
+
+    .. warning:: Requires DPF server version 3.0 (2022 R1) or higher.
+
+    """
 
     def __init__(self, data_sources: DataSources, model: Model):
         """Initialize the simulation using a ``dpf.core.Model`` object."""
@@ -569,6 +573,9 @@ class MechanicalSimulation(Simulation, ABC):
     """Base class for mechanical type simulations.
 
     This class provides common methods and properties for all mechanical type simulations.
+
+    .. warning:: Requires DPF server version 3.0 (2022 R1) or higher.
+
     """
 
     def __init__(
@@ -581,6 +588,12 @@ class MechanicalSimulation(Simulation, ABC):
         if model is None:
             if result_file is None:
                 raise ValueError("One of result_file or model argument must be set.")
+            server = dpf.server.get_or_create_server(server)
+            if not server.meet_version(required_version="4.0"):  # pragma: no cover
+                raise errors.DpfVersionNotSupported(
+                    version=server.version,
+                    msg="The Simulation class requires DPF server version 3.0 (2022 R1) or higher.",
+                )
             model = dpf.Model(result_file, server=server)
 
         data_sources = model.metadata.data_sources

@@ -23,8 +23,8 @@
 """
 .. _ref_fluid_example_extractions:
 
-Exctarct fluid simulation results
-=================================
+Extract fluid simulation results
+================================
 This example shows how to load a fluid simulation for a heating coil that has been simulated
 with Ansys CFX, explore the metadata available, and use the result extraction capabilities.
 

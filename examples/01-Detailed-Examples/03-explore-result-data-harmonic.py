@@ -27,6 +27,11 @@ Explore the data of a result with the dataframe (harmonic simulation)
 =====================================================================
 This example uses a harmonic simulation to show how to interact with the PyDPF-Post
 dataframe, which is the object returned by each result.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

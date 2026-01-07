@@ -29,6 +29,11 @@ Get base and duplicate sector results for a modal cyclic symmetry model
 
 This example shows how to extract real and imaginary results from a modal cyclic symmetry model.
 
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
+
 """
 
 ###############################################################################

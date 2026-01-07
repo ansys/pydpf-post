@@ -27,6 +27,11 @@ Explore and manipulate the mesh
 ===============================
 This example shows how to explore and manipulate the mesh to query mesh data
 such as connectivity tables, element IDs, and element types.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

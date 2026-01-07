@@ -27,6 +27,11 @@ Create and manipulate a DPF dataframe
 =====================================
 This example shows how to generate a dataframe by extracting a result from a static simulation.
 It also shows different dataframe viewing and manipulation possibilities.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

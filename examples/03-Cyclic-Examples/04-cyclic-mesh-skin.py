@@ -42,6 +42,11 @@ elements built on the skin are different from the connectivity of the solid elem
 differences can be found after result averaging.
 
 To plot cyclic expanded results, the skin mesh is expanded.
+
+.. note::
+    This example requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+
 """
 
 ###############################################################################

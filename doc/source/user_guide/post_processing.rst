@@ -8,6 +8,14 @@ The :class:`Simulation <ansys.dpf.post.simulation.Simulation>` object is
 a central element of PyDPF-Post. This object is the entry point for loading
 the contents of a result file.
 
+.. note::
+    The `Simulation` class requires DPF 3.0 (2022 R1) or above.
+    For more information, see :ref:`compatibility`.
+    To work with earlier versions of DPF, see the
+    :class:`Solution <ansys.dpf.post.dpf_solution.DpfSolution>` class
+    and affiliated :ref:`ref_legacy_examples`.
+
+
 On Windows
 ----------
 
