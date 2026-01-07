@@ -53,7 +53,7 @@ from ansys.dpf.post.simulation import MechanicalSimulation, _Rescoping
 class StaticMechanicalSimulation(MechanicalSimulation):
     """Provides methods for mechanical static simulations.
 
-    .. warning: Requires DPF server version 3.0 (2022 R1) or higher.
+    .. warning:: Requires DPF server version 3.0 (2022 R1) or higher.
 
     """
 
