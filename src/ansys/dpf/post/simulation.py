@@ -713,7 +713,7 @@ class MechanicalSimulation(Simulation, ABC):
         elif node_ids is not None:
             if location != locations.nodal:
                 selection.select_elements_of_nodes(
-                    nodes=node_ids, mesh=self.mesh, inclusive=requires_manual_averaging
+                    nodes=node_ids, mesh=self.mesh, inclusive=True
                 )
             else:
                 selection.select_nodes(nodes=node_ids)
