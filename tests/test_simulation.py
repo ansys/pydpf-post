@@ -4595,7 +4595,11 @@ def test_averaging_per_body_elemental(
 @pytest.mark.parametrize("requested_location", [locations.nodal, locations.elemental])
 @pytest.mark.parametrize("scoping_location", [locations.nodal, locations.elemental])
 def test_build_selection(
-    average_per_body_complex_multi_body, average_per_body, is_skin, requested_location, scoping_location
+    average_per_body_complex_multi_body,
+    average_per_body,
+    is_skin,
+    requested_location,
+    scoping_location,
 ):
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # Logic has changed with server 9.0
@@ -4645,10 +4649,10 @@ def test_build_selection(
 
     assert scoping_from_selection.location == expected_location
 
-    expected_scoping_ids =  scoping.ids
+    expected_scoping_ids = scoping.ids
     if expected_location == locations.elemental and scoping_location == locations.nodal:
         # Selected elements based on node
-        expected_scoping_ids = [1,2,4,5,7,8,10,11]
+        expected_scoping_ids = [1, 2, 4, 5, 7, 8, 10, 11]
 
     assert set(scoping_from_selection.ids) == set(expected_scoping_ids)
 
