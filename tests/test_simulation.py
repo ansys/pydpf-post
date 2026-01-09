@@ -4579,9 +4579,14 @@ def test_averaging_per_body_elemental(
 
 @pytest.mark.parametrize("is_skin", [False, True])
 @pytest.mark.parametrize("average_per_body", [False, True])
-@pytest.mark.parametrize("requested_location", ["Nodal", "Elemental"])
+@pytest.mark.parametrize("requested_location", [locations.nodal, locations.elemental])
+@pytest.mark.parametrize("scoping_location", [locations.nodal, locations.elemental])
 def test_build_selection(
-    average_per_body_complex_multi_body, average_per_body, is_skin, requested_location
+    average_per_body_complex_multi_body,
+    average_per_body,
+    is_skin,
+    requested_location,
+    scoping_location,
 ):
     if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         # Logic has changed with server 9.0
@@ -4593,10 +4598,16 @@ def test_build_selection(
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
 
-    scoping = Scoping(
-        location=locations.elemental,
-        ids=[25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36],
-    )
+    if scoping_location == locations.elemental:
+        scoping = Scoping(
+            location=scoping_location,
+            ids=[25, 26, 32, 31, 27, 28, 33, 34, 29, 30, 35, 36],
+        )
+    else:
+        scoping = Scoping(
+            location=scoping_location,
+            ids=[1],
+        )
 
     selection, rescoping = simulation._build_selection(
         base_name="S",
@@ -4608,15 +4619,29 @@ def test_build_selection(
         set_ids=None,
         times=None,
         all_sets=True,
-        element_ids=scoping,
+        element_ids=scoping if scoping_location == locations.elemental else None,
+        node_ids=scoping if scoping_location == locations.nodal else None,
     )
     selection_wf = selection.spatial_selection._selection
     if selection.spatial_selection.requires_mesh:
         selection_wf.connect(_WfNames.initial_mesh, simulation.mesh._meshed_region)
     scoping_from_selection = selection_wf.get_output(_WfNames.scoping, Scoping)
 
-    assert scoping_from_selection.location == locations.elemental
-    assert set(scoping_from_selection.ids) == set(scoping.ids)
+    expected_location = scoping_location
+    if average_per_body or is_skin:
+        expected_location = locations.elemental
+
+    elif scoping_location == locations.nodal:
+        expected_location = requested_location
+
+    assert scoping_from_selection.location == expected_location
+
+    expected_scoping_ids = scoping.ids
+    if expected_location == locations.elemental and scoping_location == locations.nodal:
+        # Selected elements based on node
+        expected_scoping_ids = [1, 2, 4, 5, 7, 8, 10, 11]
+
+    assert set(scoping_from_selection.ids) == set(expected_scoping_ids)
 
 
 def test_beam_results_on_skin(beam_example):
