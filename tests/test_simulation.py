@@ -58,7 +58,6 @@ from ansys.dpf.post.result_workflows._utils import (
 from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
@@ -543,10 +542,6 @@ def test_simulation_init(static_rst):
     assert simulation is not None
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-    reason="Available starting DPF 4.0",
-)
 def test_simulation_init_with_server(static_rst, grpc_server):
     simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
     assert simulation is not None
@@ -687,10 +682,6 @@ class TestStaticMechanicalSimulation:
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-        reason="Available starting DPF 4.0",
-    )
     def test_with_grpc_server(self, static_rst, grpc_server):
         simulation = post.StaticMechanicalSimulation(static_rst, server=grpc_server)
         assert simulation._model._server != dpf.SERVER
@@ -3215,10 +3206,6 @@ class TestHarmonicMechanicalSimulation:
         assert "base_sector" not in result.columns.names
         assert "stage" not in result.columns.names
 
-    @pytest.mark.skipif(
-        not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_4_0,
-        reason="Available starting DPF 4.0",
-    )
     def test_with_grpc_server(self, complex_model, grpc_server):
         simulation = post.HarmonicMechanicalSimulation(
             complex_model, server=grpc_server
