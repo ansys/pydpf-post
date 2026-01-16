@@ -31,7 +31,7 @@ from ansys.dpf.post.faces import Face
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0,
 )
 
 
@@ -236,7 +236,7 @@ def test_mesh_faces(fluent_mesh):
     assert first_face.index == 0
     assert first_face.id == fluent_mesh.face_ids[0]
     assert isinstance(fluent_mesh.face_to_node_connectivity, ConnectivityListByIndex)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
         assert fluent_mesh.face_to_node_connectivity[0] == [2921, 25, 20]
     else:
         assert fluent_mesh.face_to_node_connectivity[0] == [20, 25, 2921]
