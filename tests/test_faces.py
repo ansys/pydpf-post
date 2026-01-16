@@ -28,7 +28,10 @@ from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post.faces import Face, FaceListById, FaceListByIndex
 from ansys.dpf.post.nodes import NodeListByIndex
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+)
 
 
 @pytest.mark.skipif(
@@ -73,7 +76,10 @@ class TestFaces:
             assert isinstance(face, Face)
         assert faces_by_id[faces[0].id].id == faces[0].id
         face = faces[0]
-        assert face.node_ids == [11291, 11416, 11455, 11325]
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            assert face.node_ids == [11325, 11455, 11416, 11291]
+        else:
+            assert face.node_ids == [11291, 11416, 11455, 11325]
         assert face.id == 1003
         assert face.index == 0
         assert isinstance(face.nodes, NodeListByIndex)
