@@ -32,6 +32,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
@@ -383,7 +384,22 @@ class TestFluidSimulation:
             face_ids=fluent_simulation.mesh.face_ids
         )
         assert result.index.mesh_index.location == post.locations.nodal
-        ref = """
+
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            ref = """
+  results RHO (kg*m^-3)
+  set_ids             1
+ node_ids              
+    11325    1.3470e+00
+    11455    1.3104e+00
+    11416    1.3262e+00
+    11291    1.3590e+00
+    11388    1.2771e+00
+    11348    1.2896e+00
+      ...           ...
+"""  # noqa: W291, E501
+        else:
+            ref = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
