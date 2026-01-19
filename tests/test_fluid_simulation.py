@@ -32,7 +32,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
@@ -385,7 +385,7 @@ class TestFluidSimulation:
         )
         assert result.index.mesh_index.location == post.locations.nodal
 
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
             ref = """
   results RHO (kg*m^-3)
   set_ids             1

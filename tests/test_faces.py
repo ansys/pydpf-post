@@ -30,7 +30,7 @@ from ansys.dpf.post.faces import Face, FaceListById, FaceListByIndex
 from ansys.dpf.post.nodes import NodeListByIndex
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
@@ -76,7 +76,7 @@ class TestFaces:
             assert isinstance(face, Face)
         assert faces_by_id[faces[0].id].id == faces[0].id
         face = faces[0]
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
             assert face.node_ids == [11325, 11455, 11416, 11291]
         else:
             assert face.node_ids == [11291, 11416, 11455, 11325]
@@ -93,7 +93,7 @@ class TestFaces:
 \tType:       element_types.Quad4
 """
         assert str(face) == ref
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
             assert face.to_node_connectivity == [11324, 11454, 11415, 11290]
         else:
             assert face.to_node_connectivity == [11290, 11415, 11454, 11324]
