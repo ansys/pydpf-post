@@ -42,6 +42,7 @@ def _create_averaging_workflow(
     force_elemental_nodal: bool,
     create_operator_callable: _CreateOperatorCallable,
     server,
+    shell_layer: Optional[shell_layers],
 ):
     average_wf = Workflow(server=server)
 
@@ -102,6 +103,9 @@ def _create_averaging_workflow(
         else:
             operator_name = "to_elemental_fc"
         mesh_average_op = create_operator_callable(name=operator_name)
+        if server.meet_version("10.0") and shell_layer is not None:
+            mesh_average_op.connect(26, True)
+            mesh_average_op.connect(27, shell_layer.value)
         average_wf.add_operator(mesh_average_op)
         mesh_average_op.connect(0, mesh_averaging_input_fwd, 0)
         averaged_data_fwd.connect(0, mesh_average_op, 0)
@@ -251,6 +255,8 @@ def _create_initial_result_workflow(
         )
 
     if hasattr(initial_result_op.inputs, "shell_layer"):
+        if server.meet_version("10.0") and shell_layer is not None:
+            initial_result_op.connect(26, False)
         _connect_any(
             initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
         )
