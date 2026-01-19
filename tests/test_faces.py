@@ -93,4 +93,7 @@ class TestFaces:
 \tType:       element_types.Quad4
 """
         assert str(face) == ref
-        assert face.to_node_connectivity == [11290, 11415, 11454, 11324]
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
+            assert face.to_node_connectivity == [11324, 11454, 11415, 11290]
+        else:
+            assert face.to_node_connectivity == [11290, 11415, 11454, 11324]
