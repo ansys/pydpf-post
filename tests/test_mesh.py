@@ -238,9 +238,10 @@ def test_mesh_faces(fluent_mesh):
     assert isinstance(fluent_mesh.face_to_node_connectivity, ConnectivityListByIndex)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
         assert fluent_mesh.face_to_node_connectivity[0] == [2921, 25, 20]
+        assert fluent_mesh.face_to_node_ids_connectivity[1] == [23, 2922, 21]
     else:
         assert fluent_mesh.face_to_node_connectivity[0] == [20, 25, 2921]
+        assert fluent_mesh.face_to_node_ids_connectivity[1] == [21, 2922, 23]
     assert isinstance(
         fluent_mesh.face_to_node_ids_connectivity, ConnectivityListByIndex
     )
-    assert fluent_mesh.face_to_node_ids_connectivity[1] == [21, 2922, 23]
