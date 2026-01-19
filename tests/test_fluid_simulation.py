@@ -386,7 +386,7 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == post.locations.nodal
 
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
-            ref = """
+            ref1 = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
@@ -398,8 +398,9 @@ class TestFluidSimulation:
     11388    1.2771e+00
       ...           ...
 """  # noqa: W291, E501
+            assert str(result) == ref1
         else:
-            ref = """
+            ref2 = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
@@ -411,7 +412,7 @@ class TestFluidSimulation:
     11348    1.2896e+00
       ...           ...
 """  # noqa: W291, E501
-        assert str(result) == ref
+            assert str(result) == ref2
 
     def test_results_fluent_cross_locations_on_faces(self, fluent_simulation):
         # TODO investigate wrong plot, wrong mesh index for dataframes
