@@ -256,7 +256,7 @@ def _create_initial_result_workflow(
 
     if hasattr(initial_result_op.inputs, "shell_layer"):
         if server.meet_version("10.0") and shell_layer is not None:
-            initial_result_op.connect(26, False)
+            initial_result_op.connect(26, False) # do not split (=merge) solid and shell fields
         _connect_any(
             initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
         )
