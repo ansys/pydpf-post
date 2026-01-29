@@ -1,0 +1,98 @@
+
+
+.. _sphx_glr_examples_01-Different-analysis-types:
+
+.. _ref_different_analysis:
+
+DPF-Post analysis types
+~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use DFP-Post analysis types.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Static analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_01-static-analysis_thumb.png
+    :alt: Static analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_01-static-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Static analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Modal analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_02-modal-analysis_thumb.png
+    :alt: Modal analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_02-modal-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modal analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_03-harmonic-analysis_thumb.png
+    :alt: Harmonic analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_03-harmonic-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Transient analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_04-transient-analysis_thumb.png
+    :alt: Transient analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_04-transient-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transient analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/01-Different-analysis-types/01-static-analysis
+   /examples/01-Different-analysis-types/02-modal-analysis
+   /examples/01-Different-analysis-types/03-harmonic-analysis
+   /examples/01-Different-analysis-types/04-transient-analysis
+

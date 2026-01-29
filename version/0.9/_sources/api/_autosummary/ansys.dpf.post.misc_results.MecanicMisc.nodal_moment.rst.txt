@@ -1,0 +1,6 @@
+nodal\_moment
+=============
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.nodal_moment

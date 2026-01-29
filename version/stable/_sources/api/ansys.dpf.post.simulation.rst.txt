@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.simulation
+   :inherited-members:

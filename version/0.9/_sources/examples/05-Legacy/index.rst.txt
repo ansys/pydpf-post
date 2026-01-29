@@ -1,0 +1,227 @@
+
+
+.. _sphx_glr_examples_05-Legacy:
+
+.. _ref_legacy_examples:
+
+PyDPF-Post legacy examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use the legacy PyDPF-Post API.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyDPF-Post overview">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_00-overview_example_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_00-overview_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">PyDPF-Post overview</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Get data from static simulation">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_01-get_data_from_static_simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_01-get_data_from_static_simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Get data from static simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Introduction">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_01-introduction_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_01-introduction.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Introduction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Static analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_02-static-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_02-static-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Static analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Modal analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_03-modal-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_03-modal-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modal analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_04-harmonic-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_04-harmonic-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Transient analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_05-transient-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_05-transient-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transient analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Complex results from a modal or harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_06-complex_results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_06-complex_results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Complex results from a modal or harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Result keywords">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_07-result_keywords_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_07-result_keywords.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Result keywords</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Request result on a specific path">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_08-result_on_path_of_coordinates_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_08-result_on_path_of_coordinates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Request result on a specific path</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Basic features">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_09-basics_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_09-basics.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Basic features</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/05-Legacy/00-overview_example
+   /examples/05-Legacy/01-get_data_from_static_simulation
+   /examples/05-Legacy/01-introduction
+   /examples/05-Legacy/02-static-analysis
+   /examples/05-Legacy/03-modal-analysis
+   /examples/05-Legacy/04-harmonic-analysis
+   /examples/05-Legacy/05-transient-analysis
+   /examples/05-Legacy/06-complex_results
+   /examples/05-Legacy/07-result_keywords
+   /examples/05-Legacy/08-result_on_path_of_coordinates
+   /examples/05-Legacy/09-basics
+

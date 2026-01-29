@@ -1,0 +1,986 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Postprocess a fluid simulation &#8212; PyDPF-Post</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=2aefe4cf"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=040b0d01"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/00-Different-analysis-types/05-fluid-simulation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PyDPF-Post features" href="../01-Detailed-Examples/index.html" />
+    <link rel="prev" title="Postprocess a harmonic mechanical simulation" href="04-harmonic-complex-results.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.1.dev0" />
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/examples/00-Different-analysis-types/05-fluid-simulation.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Starting with PyDPF-Core 0.15 and PyDPF-Post 0.11, gRPC communication with the DPF server defaults to requiring mTLS authentication.
+Refer to <a href='https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html#run-dpf-server-in-secure-mode-with-mtls'>this page</a> for more information.</div>
+</aside>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyDPF-Post - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyDPF-Post analysis types</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-static-simulation.html">Postprocess a static mechanical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-modal-simulation.html">Postprocess a modal mechanical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-transient-simulation.html">Postprocess a transient mechanical simulation with animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-harmonic-complex-results.html">Postprocess a harmonic mechanical simulation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Postprocess a fluid simulation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../01-Detailed-Examples/index.html">PyDPF-Post features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02-Performance-Improvements/index.html">PyDPF-Post performance improvements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03-Cyclic-Examples/index.html">PyDPF-Post cyclic symmetry examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04-Fluid-Examples/index.html">PyDPF-Post fluid examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05-Legacy/index.html">PyDPF-Post legacy examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PyDPF-Post analysis types</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Postprocess a fluid simulation</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-00-different-analysis-types-05-fluid-simulation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="postprocess-a-fluid-simulation">
+<span id="ref-fluid-example"></span><span id="sphx-glr-examples-00-different-analysis-types-05-fluid-simulation-py"></span><h1>Postprocess a fluid simulation<a class="headerlink" href="#postprocess-a-fluid-simulation" title="Link to this heading">#</a></h1>
+<p>This example shows how to load a fluid simulation, explore the model and its available zones,
+species, and phases, and then extract a result.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example requires DPF 7.0 (2024.1.pre0) or later.
+For more information, see <a class="reference internal" href="../../getting_started/compatibility.html#compatibility"><span class="std std-ref">PyDPF library compatibilities</span></a>.</p>
+</div>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="load-the-fluid-analysis-result">
+<h2>Load the fluid analysis result<a class="headerlink" href="#load-the-fluid-analysis-result" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fluid_example_files</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_fluent_axial_comp</span><span class="p">()</span>
+<span class="n">simulation</span> <span class="o">=</span> <a href="https://docs.python.org/dev/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">post</span><span class="o">.</span><span class="n">FluidSimulation</span></a><span class="p">(</span>
+    <span class="n">cas</span><span class="o">=</span><a href="https://docs.python.org/dev/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fluid_example_files</span></a><span class="p">[</span><span class="s2">&quot;cas&quot;</span><span class="p">],</span> <span class="n">dat</span><span class="o">=</span><a href="https://docs.python.org/dev/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fluid_example_files</span></a><span class="p">[</span><span class="s2">&quot;dat&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># Printing the simulation will show most of the available metadata</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fluid Simulation.
+
+
+Data Sources
+------------------------------
+DPF  DataSources:
+  Result files:
+     result key: cas and path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01438.cas.h5
+     result key: cas and path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01439.cas.h5
+     result key: cas and path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01440.cas.h5
+  Secondary files:
+     path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01438.dat.h5
+     path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01439.dat.h5
+     path: /opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/fluent-axial_comp/axial_comp-1-01440.dat.h5
+
+
+DPF Model
+------------------------------
+Static analysis
+Unit system: Custom: m, kg, N, s, V, A, K
+Physics Type: Fluid
+Available results:
+     -  enthalpy: Elemental Enthalpy
+     -  mass_flow_rate: Faces Mass Flow Rate
+     -  static_pressure: ElementalAndFaces Static Pressure
+     -  mean_static_pressure: Elemental Mean Static Pressure
+     -  rms_static_pressure: Elemental Rms Static Pressure
+     -  surface_heat_rate: Faces Surface Heat Rate
+     -  density: ElementalAndFaces Density
+     -  face_artificial_wall_flag: Faces Face Artificial Wall Flag
+     -  body_force: Elemental Body Force
+     -  density_t_1: Elemental Density T 1
+     -  pressure_discontinuity_sensor: Elemental Pressure Discontinuity Sensor
+     -  dpm_partition: Elemental Dpm Partition
+     -  nucleation_rate_of_water_droplet: Faces Nucleation Rate Of Water Droplet
+     -  energy_m1: Elemental Energy M1
+     -  mass_flux_m1: Faces Mass Flux M1
+     -  pressure_m1: Elemental Pressure M1
+     -  radiation_heat_flow_rate: Faces Radiation Heat Flow Rate
+     -  temperature_m1: ElementalAndFaces Temperature M1
+     -  temperature_m2: Faces Temperature M2
+     -  x_velocity_m1: ElementalAndFaces X Velocity M1
+     -  y_velocity_m1: ElementalAndFaces Y Velocity M1
+     -  wall_velocity: Faces Wall Velocity
+     -  original_wall_velocity: Faces Original Wall Velocity
+     -  z_velocity_m1: ElementalAndFaces Z Velocity M1
+     -  wall_shear_stress: Faces Wall Shear Stress
+     -  temperature: ElementalAndFaces Temperature
+     -  mean_temperature: ElementalAndFaces Mean Temperature
+     -  rms_temperature: Elemental Rms Temperature
+     -  velocity: ElementalAndFaces Velocity
+     -  mean_velocity: Elemental Mean Velocity
+     -  rms_velocity: Elemental Rms Velocity
+Available qualifier labels:
+     - phase: phase-1 (1)
+     - zone: default-interior:0 (2), rotor-hub (3), rotor-shroud (4), rotor-inlet (5), rotor-interface (6), rotor-blade-1 (7), rotor-blade-2 (8), rotor-per-1-shadow (9), rotor-per-1 (10), rotor-per-2-shadow (11), rotor-per-2 (12), fluid-rotor (13), default-interior (15), stator-hub (16), stator-shroud (17), stator-interface (18), stator-outlet (19), stator-blade-1 (20), stator-blade-2 (21), stator-blade-3 (22), stator-blade-4 (23), stator-per-2 (24), stator-per-2-shadow (25), stator-per-1 (26), stator-per-1-shadow (27), fluid-stator (28)
+------------------------------
+DPF  Meshed Region:
+  16660 nodes
+  13856 elements
+  44242 faces
+  Unit: m
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support:
+  Number of sets: 1
+Cumulative     Frequency ()   LoadStep       Substep
+1              0.000000       1              1
+</pre></div>
+</div>
+</section>
+<section id="explore-available-metadata">
+<h2>Explore available metadata<a class="headerlink" href="#explore-available-metadata" title="Link to this heading">#</a></h2>
+<p>Check the available cell and face zones.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">cell_zones</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">face_zones</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{13: &#39;fluid-rotor&#39;, 28: &#39;fluid-stator&#39;}
+{2: &#39;default-interior:0&#39;, 3: &#39;rotor-hub&#39;, 4: &#39;rotor-shroud&#39;, 5: &#39;rotor-inlet&#39;, 6: &#39;rotor-interface&#39;, 7: &#39;rotor-blade-1&#39;, 8: &#39;rotor-blade-2&#39;, 9: &#39;rotor-per-1-shadow&#39;, 10: &#39;rotor-per-1&#39;, 11: &#39;rotor-per-2-shadow&#39;, 12: &#39;rotor-per-2&#39;, 15: &#39;default-interior&#39;, 16: &#39;stator-hub&#39;, 17: &#39;stator-shroud&#39;, 18: &#39;stator-interface&#39;, 19: &#39;stator-outlet&#39;, 20: &#39;stator-blade-1&#39;, 21: &#39;stator-blade-2&#39;, 22: &#39;stator-blade-3&#39;, 23: &#39;stator-blade-4&#39;, 24: &#39;stator-per-2&#39;, 25: &#39;stator-per-2-shadow&#39;, 26: &#39;stator-per-1&#39;, 27: &#39;stator-per-1-shadow&#39;}
+</pre></div>
+</div>
+<p>The mesh metadata is available separately from the mesh
+as accessing the mesh means loading it.
+Use the <code class="docutils literal notranslate"><span class="pre">mesh_info</span></code> property to explore the mesh structure to define queries.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fluid mesh metadata
+-------------------
+Number of nodes: 16660
+Number of faces: 45391
+Number of cells: 13856
+Cell zones:
+        {13: &#39;fluid-rotor&#39;, 28: &#39;fluid-stator&#39;}
+Face zones:
+        {2: &#39;default-interior:0&#39;, 3: &#39;rotor-hub&#39;, 4: &#39;rotor-shroud&#39;, 5: &#39;rotor-inlet&#39;, 6: &#39;rotor-interface&#39;, 7: &#39;rotor-blade-1&#39;, 8: &#39;rotor-blade-2&#39;, 9: &#39;rotor-per-1-shadow&#39;, 10: &#39;rotor-per-1&#39;, 11: &#39;rotor-per-2-shadow&#39;, 12: &#39;rotor-per-2&#39;, 15: &#39;default-interior&#39;, 16: &#39;stator-hub&#39;, 17: &#39;stator-shroud&#39;, 18: &#39;stator-interface&#39;, 19: &#39;stator-outlet&#39;, 20: &#39;stator-blade-1&#39;, 21: &#39;stator-blade-2&#39;, 22: &#39;stator-blade-3&#39;, 23: &#39;stator-blade-4&#39;, 24: &#39;stator-per-2&#39;, 25: &#39;stator-per-2-shadow&#39;, 26: &#39;stator-per-1&#39;, 27: &#39;stator-per-1-shadow&#39;}
+Cell to face zones:
+        {13: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 28: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]}
+</pre></div>
+</div>
+<section id="check-available-species">
+<h3>Check available species<a class="headerlink" href="#check-available-species" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>0 species available
+{}
+</pre></div>
+</div>
+</section>
+<section id="check-available-phases">
+<h3>Check available phases<a class="headerlink" href="#check-available-phases" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">phases</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>1 phases available
+{Phase&lt;name: &#39;phase-1&#39;, id=1&gt;, }
+</pre></div>
+</div>
+</section>
+<section id="check-metadata-on-available-results">
+<h3>Check metadata on available results<a class="headerlink" href="#check-metadata-on-available-results" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">result_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Static analysis
+Unit system: Custom: m, kg, N, s, V, A, K
+Physics Type: Fluid
+Available results:
+     -  enthalpy: Elemental Enthalpy
+     -  mass_flow_rate: Faces Mass Flow Rate
+     -  static_pressure: ElementalAndFaces Static Pressure
+     -  mean_static_pressure: Elemental Mean Static Pressure
+     -  rms_static_pressure: Elemental Rms Static Pressure
+     -  surface_heat_rate: Faces Surface Heat Rate
+     -  density: ElementalAndFaces Density
+     -  face_artificial_wall_flag: Faces Face Artificial Wall Flag
+     -  body_force: Elemental Body Force
+     -  density_t_1: Elemental Density T 1
+     -  pressure_discontinuity_sensor: Elemental Pressure Discontinuity Sensor
+     -  dpm_partition: Elemental Dpm Partition
+     -  nucleation_rate_of_water_droplet: Faces Nucleation Rate Of Water Droplet
+     -  energy_m1: Elemental Energy M1
+     -  mass_flux_m1: Faces Mass Flux M1
+     -  pressure_m1: Elemental Pressure M1
+     -  radiation_heat_flow_rate: Faces Radiation Heat Flow Rate
+     -  temperature_m1: ElementalAndFaces Temperature M1
+     -  temperature_m2: Faces Temperature M2
+     -  x_velocity_m1: ElementalAndFaces X Velocity M1
+     -  y_velocity_m1: ElementalAndFaces Y Velocity M1
+     -  wall_velocity: Faces Wall Velocity
+     -  original_wall_velocity: Faces Original Wall Velocity
+     -  z_velocity_m1: ElementalAndFaces Z Velocity M1
+     -  wall_shear_stress: Faces Wall Shear Stress
+     -  temperature: ElementalAndFaces Temperature
+     -  mean_temperature: ElementalAndFaces Mean Temperature
+     -  rms_temperature: Elemental Rms Temperature
+     -  velocity: ElementalAndFaces Velocity
+     -  mean_velocity: Elemental Mean Velocity
+     -  rms_velocity: Elemental Rms Velocity
+Available qualifier labels:
+     - phase: phase-1 (1)
+     - zone: default-interior:0 (2), rotor-hub (3), rotor-shroud (4), rotor-inlet (5), rotor-interface (6), rotor-blade-1 (7), rotor-blade-2 (8), rotor-per-1-shadow (9), rotor-per-1 (10), rotor-per-2-shadow (11), rotor-per-2 (12), fluid-rotor (13), default-interior (15), stator-hub (16), stator-shroud (17), stator-interface (18), stator-outlet (19), stator-blade-1 (20), stator-blade-2 (21), stator-blade-3 (22), stator-blade-4 (23), stator-per-2 (24), stator-per-2-shadow (25), stator-per-1 (26), stator-per-1-shadow (27), fluid-stator (28)
+</pre></div>
+</div>
+</section>
+</section>
+<section id="extract-a-result">
+<h2>Extract a result<a class="headerlink" href="#extract-a-result" title="Link to this heading">#</a></h2>
+<p>Print a specific result to get more information on available qualifiers
+(such as zones and phases).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">result_info</span><span class="p">[</span><span class="s2">&quot;enthalpy&quot;</span><span class="p">])</span>
+<span class="c1"># Or use an index</span>
+<span class="c1"># print(simulation.result_info[0])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPF Result
+----------
+enthalpy
+Operator name: &quot;H_S&quot;
+Number of components: 1
+Dimensionality: scalar
+Homogeneity: specific_energy
+Units: J/kg
+Location: Elemental
+Available qualifier labels:
+  - zone: fluid-rotor (13), fluid-stator (28)
+  - phase: phase-1 (1)
+Available qualifier combinations:
+  {&#39;zone&#39;: 13, &#39;phase&#39;: 1}
+  {&#39;zone&#39;: 28, &#39;phase&#39;: 1}
+</pre></div>
+</div>
+<section id="extract-this-result-as-a-dataframe">
+<h3>Extract this result as a dataframe<a class="headerlink" href="#extract-this-result-as-a-dataframe" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">enthalpy</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">enthalpy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">enthalpy</span><span class="p">)</span>
+<span class="c1"># Not specifying any qualifier returns a unique column of data</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> results H_S (J/kg)
+ set_ids          1
+cell_ids
+       1 2.7790e+05
+       2 2.7781e+05
+       3 2.7795e+05
+       4 2.7712e+05
+       5 2.7720e+05
+       6 2.7769e+05
+     ...        ...
+</pre></div>
+</div>
+</section>
+<section id="plot-dataframe">
+<h3>Plot dataframe<a class="headerlink" href="#plot-dataframe" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">enthalpy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-fluid-simulation_001.png" srcset="../../_images/sphx_glr_05-fluid-simulation_001.png" alt="05 fluid simulation" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbd1f471840&gt;)
+</pre></div>
+</div>
+</section>
+<section id="use-qualifiers-for-result-to-filter-or-separate-data">
+<h3>Use qualifiers for result to filter or separate data<a class="headerlink" href="#use-qualifiers-for-result-to-filter-or-separate-data" title="Link to this heading">#</a></h3>
+<p>You can use available qualifiers for the result in the extraction request
+to filter or separate data.</p>
+<p>This code outputs a different column for each available zone for the result.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">enthalpy</span><span class="p">(</span><span class="n">zone_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">28</span><span class="p">]))</span>
+<span class="c1">#</span>
+<span class="c1"># This code extracts only the data for the fluid-stator zone.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">enthalpy</span><span class="p">(</span><span class="n">zone_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">28</span><span class="p">]))</span>
+<span class="c1">#</span>
+<span class="c1"># You can apply the same logic to any available qualifier found in the ``AvailableResult``</span>
+<span class="c1"># description under &#39;Available qualifier labels&#39;.</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> results       H_S (J/kg)
+ set_ids                1
+    zone fluid-rotor (13) fluid-stator (28)
+cell_ids
+       1       2.7790e+05
+       2       2.7781e+05
+       3       2.7795e+05
+       4       2.7712e+05
+       5       2.7720e+05
+       6       2.7769e+05
+     ...              ...               ...
+
+
+ results        H_S (J/kg)
+ set_ids                 1
+    zone fluid-stator (28)
+cell_ids
+    6081        3.0593e+05
+    6082        3.0567e+05
+    6083        3.0510e+05
+    6084        3.0407e+05
+    6085        3.0543e+05
+    6086        3.0252e+05
+     ...               ...
+</pre></div>
+</div>
+<p>The result extraction request can also contain selection arguments.
+Because the enthalpy result is being defined on cells, you can request data
+for specific cells using their IDs:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">enthalpy</span><span class="p">(</span><span class="n">cell_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> results H_S (J/kg)
+ set_ids          1
+cell_ids
+       1 2.7790e+05
+       2 2.7781e+05
+</pre></div>
+</div>
+<p>For an example showing how to create and manipulate a DPF dataframe,
+see <a class="reference internal" href="../01-Detailed-Examples/00-dataframe-manipulation.html#ref-dataframe-example"><span class="std std-ref">Create and manipulate a DPF dataframe</span></a>.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.785 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-00-different-analysis-types-05-fluid-simulation-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/afd7b4eca88e9c5dc530b3543b2eb22a/05-fluid-simulation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">05-fluid-simulation.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/170aa2257a3fde48c7e45dd518dc3d23/05-fluid-simulation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">05-fluid-simulation.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/59be8f95edbe2775ca1accaea69d1fac/05-fluid-simulation.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">05-fluid-simulation.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-fluid-analysis-result">Load the fluid analysis result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explore-available-metadata">Explore available metadata</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-available-species">Check available species</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-available-phases">Check available phases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-metadata-on-available-results">Check metadata on available results</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-a-result">Extract a result</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-this-result-as-a-dataframe">Extract this result as a dataframe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-dataframe">Plot dataframe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-qualifiers-for-result-to-filter-or-separate-data">Use qualifiers for result to filter or separate data</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/00-Different-analysis-types/05-fluid-simulation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text"], "limit": 10, "min_chars_for_search": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.4.1. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+nodal\_reaction\_force
+======================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.nodal_reaction_force

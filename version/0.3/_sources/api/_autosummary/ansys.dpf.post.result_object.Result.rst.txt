@@ -1,0 +1,25 @@
+﻿Result
+======
+
+.. currentmodule:: ansys.dpf.post.result_object
+
+.. autoclass:: Result
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      Result.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   

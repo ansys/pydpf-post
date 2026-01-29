@@ -1,0 +1,1100 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Explore and manipulate the mesh &#8212; PyDPF-Post</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=2aefe4cf"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=040b0d01"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/01-Detailed-Examples/05-mesh-exploration';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Compute the minimum and maximum of a dataframe" href="06-compute-min-max.html" />
+    <link rel="prev" title="Export data in a dataframe to another format" href="05-export_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.1.dev0" />
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/examples/01-Detailed-Examples/05-mesh-exploration.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Starting with PyDPF-Core 0.15 and PyDPF-Post 0.11, gRPC communication with the DPF server defaults to requiring mTLS authentication.
+Refer to <a href='https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html#run-dpf-server-in-secure-mode-with-mtls'>this page</a> for more information.</div>
+</aside>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyDPF-Post - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00-Different-analysis-types/index.html">PyDPF-Post analysis types</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyDPF-Post features</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00-dataframe-manipulation.html">Create and manipulate a DPF dataframe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-named-selections-modal-simulation.html">Extract results on named selections (modal simulation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-modal-extract-sub-results.html">Extract components of results (modal simulation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-explore-result-data-harmonic.html">Explore the data of a result with the dataframe (harmonic simulation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-invariants.html">Extract stress and strain invariants (static simulation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-export_data.html">Export data in a dataframe to another format</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Explore and manipulate the mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-compute-min-max.html">Compute the minimum and maximum of a dataframe</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../02-Performance-Improvements/index.html">PyDPF-Post performance improvements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03-Cyclic-Examples/index.html">PyDPF-Post cyclic symmetry examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04-Fluid-Examples/index.html">PyDPF-Post fluid examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05-Legacy/index.html">PyDPF-Post legacy examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PyDPF-Post features</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Explore and manipulate the mesh</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-01-detailed-examples-05-mesh-exploration-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="explore-and-manipulate-the-mesh">
+<span id="ref-mesh-exploration-example"></span><span id="sphx-glr-examples-01-detailed-examples-05-mesh-exploration-py"></span><h1>Explore and manipulate the mesh<a class="headerlink" href="#explore-and-manipulate-the-mesh" title="Link to this heading">#</a></h1>
+<p>This example shows how to explore and manipulate the mesh to query mesh data
+such as connectivity tables, element IDs, and element types.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example requires DPF 3.0 (2022 R1) or above.
+For more information, see <a class="reference internal" href="../../getting_started/compatibility.html#compatibility"><span class="std std-ref">PyDPF library compatibilities</span></a>.</p>
+</div>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform required imports. This example uses a supplied file that you can
+get by importing the DPF <code class="docutils literal notranslate"><span class="pre">examples</span></code> package.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">elemental_properties</span>
+</pre></div>
+</div>
+</section>
+<section id="load-result-file">
+<h2>Load result file<a class="headerlink" href="#load-result-file" title="Link to this heading">#</a></h2>
+<p>Load the result file in a <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object that allows access to the results.
+The <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object must be instantiated with the path for the result file.
+For example, <code class="docutils literal notranslate"><span class="pre">&quot;C:/Users/user/my_result.rst&quot;</span></code> on Windows
+or <code class="docutils literal notranslate"><span class="pre">&quot;/home/user/my_result.rst&quot;</span></code> on Linux.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_harmonic_clamped_pipe</span><span class="p">()</span>
+<span class="n">simulation</span> <span class="o">=</span> <a href="https://docs.python.org/dev/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">post</span><span class="o">.</span><span class="n">HarmonicMechanicalSimulation</span></a><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="get-mesh-and-print-it">
+<h2>Get mesh and print it<a class="headerlink" href="#get-mesh-and-print-it" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPF  Mesh:
+  9943 nodes
+  5732 elements
+  Unit: mm
+  With solid (3D) elements, shell (2D) elements, shell (3D) elements
+</pre></div>
+</div>
+</section>
+<section id="plot-mesh">
+<h2>Plot mesh<a class="headerlink" href="#plot-mesh" title="Link to this heading">#</a></h2>
+<p>Plot the mesh to view the bare mesh of the model.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-mesh-exploration_001.png" srcset="../../_images/sphx_glr_05-mesh-exploration_001.png" alt="05 mesh exploration" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbd14a7b250&gt;)
+</pre></div>
+</div>
+</section>
+<section id="get-basic-information-about-mesh">
+<h2>Get basic information about mesh<a class="headerlink" href="#get-basic-information-about-mesh" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> object has several properties allowing access to different information.</p>
+<p>Get the number of nodes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This mesh contains </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">num_nodes</span><span class="si">}</span><span class="s2"> nodes&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>This mesh contains 9943 nodes
+</pre></div>
+</div>
+<p>Get the list of node IDs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;with IDs: </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">node_ids</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>with IDs: [   1    2    3 ... 9941 9942 9943]
+</pre></div>
+</div>
+<p>Get the number of elements.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This mesh contains </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">num_elements</span><span class="si">}</span><span class="s2"> elements&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>This mesh contains 5732 elements
+</pre></div>
+</div>
+<p>Get the list of element IDs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;with IDs </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_ids</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>with IDs [3487 3960 1449 ... 8438 8437 8540]
+</pre></div>
+</div>
+<p>Get the unit of the mesh.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The mesh is in &#39;</span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The mesh is in &#39;mm&#39;
+</pre></div>
+</div>
+</section>
+<section id="get-named-selections">
+<h2>Get named selections<a class="headerlink" href="#get-named-selections" title="Link to this heading">#</a></h2>
+<p>The available named selections are given as a dictionary
+with the names as keys and the actual <code class="docutils literal notranslate"><span class="pre">NamedSelection</span></code> objects as values.</p>
+<p>Print the dictionary to get the available names.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">named_selections</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">named_selections</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">named_selections</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>NamedSelections dictionary with 4 named selections:
+        - &#39;CLAMP&#39;
+        - &#39;PIPE&#39;
+        - &#39;SCREW&#39;
+        - &#39;_FIXEDSU&#39;
+</pre></div>
+</div>
+<p>Get a specific named selection by using its name as the key.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">named_selections</span><span class="p">[</span><span class="s2">&quot;_FIXEDSU&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>NamedSelection &#39;_FIXEDSU&#39;
+ with DPF  Scoping:
+  with Nodal location and 161 entities
+</pre></div>
+</div>
+</section>
+<section id="get-elements">
+<h2>Get elements<a class="headerlink" href="#get-elements" title="Link to this heading">#</a></h2>
+<p>Get a list of the elements.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[tet10, ..., point1]
+</pre></div>
+</div>
+<p>Get a specific element by its ID.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPF Element 1
+        Index:         4239
+        Nodes:           20
+        Type:         Hex20
+        Shape:        Solid
+</pre></div>
+</div>
+<p>Get a specific element by its index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">element_0</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPF Element 3487
+        Index:            0
+        Nodes:           10
+        Type:         Tet10
+        Shape:        Solid
+</pre></div>
+</div>
+</section>
+<section id="get-information-about-a-particular-element">
+<h2>Get information about a particular element<a class="headerlink" href="#get-information-about-a-particular-element" title="Link to this heading">#</a></h2>
+<p>You can request the IDs of the nodes attached to an element.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">node_ids</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[3548, 3656, 4099, 3760, 6082, 6650, 6086, 6085, 6647, 7147]
+</pre></div>
+</div>
+<p>Get the list of the element’s nodes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;ansys.dpf.core.nodes.Node object at 0x7fbd14a790f0&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd14a7bf10&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd14a78e20&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd14a78730&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd14a7b850&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd1f544250&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd1f544880&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd1f5453c0&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd1f545180&gt;, &lt;ansys.dpf.core.nodes.Node object at 0x7fbd1f544a00&gt;]
+</pre></div>
+</div>
+<p>Get the number of nodes attached to the element.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>10
+</pre></div>
+</div>
+<p>Get the type of the element.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">type_info</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Element Type
+------------
+Enum id (dpf.element_types): element_types.Tet10
+Element description: Quadratic 10-nodes Tetrahedron
+Element name (short): tet10
+Element shape: solid
+Number of corner nodes: 4
+Number of mid-side nodes: 6
+Total number of nodes: 10
+Quadratic element: True
+element_types.Tet10
+</pre></div>
+</div>
+<p>Get the shape of the element.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">element_0</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>solid
+</pre></div>
+</div>
+</section>
+<section id="get-element-types-and-materials">
+<h2>Get element types and materials<a class="headerlink" href="#get-element-types-and-materials" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> object provides access to properties defined on all elements,
+such as their types or associated materials.</p>
+<p>Get the type of all elements.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_types</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>    results elem_type_id
+element_ids
+       3487            0
+       3960            0
+       1449            0
+       3131            0
+       3124            0
+       3126            0
+        ...          ...
+</pre></div>
+</div>
+<p>Get the materials of all elements.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">materials</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>    results material_id
+element_ids
+       3487           1
+       3960           1
+       1449           1
+       3131           1
+       3124           1
+       3126           1
+        ...         ...
+</pre></div>
+</div>
+</section>
+<section id="get-elemental-connectivity">
+<h2>Get elemental connectivity<a class="headerlink" href="#get-elemental-connectivity" title="Link to this heading">#</a></h2>
+<p>The elemental connectivity maps elements to connected nodes using either IDs or indexes.</p>
+<p>Access the indexes of the connected nodes using an element’s index:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">element_to_node_connectivity</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_connectivity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[3547, 3655, 4098, 3759, 6081, 6649, 6085, 6084, 6646, 7146]
+</pre></div>
+</div>
+<p>Access the IDs of the connected nodes using an element’s index:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">element_to_node_ids_connectivity</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_ids_connectivity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_ids_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[3548, 3656, 4099, 3760, 6082, 6650, 6086, 6085, 6647, 7147]
+</pre></div>
+</div>
+<p>Each connectivity object has a <code class="docutils literal notranslate"><span class="pre">by_id</span></code> property that changes the input from index to ID.</p>
+<p>Access the indexes of the connected nodes using an element’s ID.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">element_to_node_connectivity_by_id</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_connectivity_by_id</span><span class="p">[</span><span class="mi">3487</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[3547, 3655, 4098, 3759, 6081, 6649, 6085, 6084, 6646, 7146]
+</pre></div>
+</div>
+<p>Access the IDs of the connected nodes using an element’s ID:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">element_to_node_ids_connectivity_by_id</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_ids_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_ids_connectivity_by_id</span><span class="p">[</span><span class="mi">3487</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[3548, 3656, 4099, 3760, 6082, 6650, 6086, 6085, 6647, 7147]
+</pre></div>
+</div>
+</section>
+<section id="get-a-node-or-node-information">
+<h2>Get a node or node information<a class="headerlink" href="#get-a-node-or-node-information" title="Link to this heading">#</a></h2>
+<p>Get a node by its ID.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">node_1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Node(id=1, coordinates=[44.90718016, 12.57776697, 53.33333333])
+</pre></div>
+</div>
+<p>Get a node by its index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Node(id=1, coordinates=[44.90718016, 12.57776697, 53.33333333])
+</pre></div>
+</div>
+<p>Get the coordinates of all nodes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results  coord (m)
+node_ids components
+       1          X 4.4907e+01
+                  Y 1.2578e+01
+                  Z 5.3333e+01
+       2          X 4.4907e+01
+                  Y 1.2578e+01
+                  Z 5.1667e+01
+     ...        ...        ...
+</pre></div>
+</div>
+<p>Get the coordinates of a particular node.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">node_1</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[44.90718016, 12.57776697, 53.33333333]
+</pre></div>
+</div>
+</section>
+<section id="get-nodal-connectivity">
+<h2>Get nodal connectivity<a class="headerlink" href="#get-nodal-connectivity" title="Link to this heading">#</a></h2>
+<p>The nodal connectivity maps nodes to connected elements, either using IDs or indexes.</p>
+<p>Access the indexes of the connected elements using a node’s index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">node_to_element_connectivity</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_connectivity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[4216, 4218, 4219, 4242, 4244, 4245]
+</pre></div>
+</div>
+<p>Access the IDs of the connected elements using a node’s index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">node_to_element_ids_connectivity</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_ids_connectivity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_ids_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[11, 8, 14, 10, 7, 13]
+</pre></div>
+</div>
+<p>Each connectivity object has a <code class="docutils literal notranslate"><span class="pre">by_id</span></code> property that changes the input from index to ID.</p>
+<p>Access the indexes of the connected elements using a node’s ID.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">node_to_element_connectivity_by_id</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_connectivity_by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[4216, 4218, 4219, 4242, 4244, 4245]
+</pre></div>
+</div>
+<p>Access the IDs of the connected elements using a node’s ID.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">node_to_element_ids_connectivity_by_id</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_ids_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_ids_connectivity_by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[11, 8, 14, 10, 7, 13]
+</pre></div>
+</div>
+</section>
+<section id="split-global-mesh-into-mesh-parts">
+<h2>Split global mesh into mesh parts<a class="headerlink" href="#split-global-mesh-into-mesh-parts" title="Link to this heading">#</a></h2>
+<p>You can split the global mesh according to mesh properties to work on specific parts of the mesh.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">meshes</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">split_mesh_by_properties</span><span class="p">(</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">elemental_properties</span><span class="o">.</span><span class="n">material</span></a><span class="p">,</span> <a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">elemental_properties</span><span class="o">.</span><span class="n">element_shape</span></a><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">Meshes</span></code> object obtained.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">meshes</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DPF  Meshes Container
+  with 14 mesh(es)
+  defined on labels: elshape mat
+
+  with:
+  - mesh 0 {mat:  1, elshape:  1, } with 6673 nodes and 3517 elements.
+  - mesh 1 {mat:  9, elshape:  0, } with 189 nodes and 55 elements.
+  - mesh 2 {mat:  10, elshape:  0, } with 189 nodes and 55 elements.
+  - mesh 3 {mat:  5, elshape:  0, } with 842 nodes and 319 elements.
+  - mesh 4 {mat:  6, elshape:  0, } with 842 nodes and 319 elements.
+  - mesh 5 {mat:  7, elshape:  0, } with 676 nodes and 306 elements.
+  - mesh 6 {mat:  4, elshape:  1, } with 503 nodes and 72 elements.
+  - mesh 7 {mat:  8, elshape:  0, } with 676 nodes and 306 elements.
+  - mesh 8 {mat:  2, elshape:  1, } with 2107 nodes and 345 elements.
+  - mesh 9 {mat:  3, elshape:  1, } with 658 nodes and 302 elements.
+  - mesh 10 {mat:  11, elshape:  0, } with 176 nodes and 56 elements.
+  - mesh 11 {mat:  16, elshape:  0, } with 97 nodes and 23 elements.
+  - mesh 12 {mat:  12, elshape:  0, } with 176 nodes and 56 elements.
+  - mesh 13 {mat:  16, elshape:  3, } with 1 nodes and 1 elements.
+</pre></div>
+</div>
+<p>Plot a <code class="docutils literal notranslate"><span class="pre">Meshes</span></code> object to plot a combination of all <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> objects within the split mesh.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">meshes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mesh split&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-mesh-exploration_002.png" srcset="../../_images/sphx_glr_05-mesh-exploration_002.png" alt="05 mesh exploration" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbd1f5459c0&gt;)
+</pre></div>
+</div>
+<p>Select a specific <a href="#id1"><span class="problematic" id="id2">``</span></a>Mesh``object in the split mesh by index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;First mesh in the split mesh&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-mesh-exploration_003.png" srcset="../../_images/sphx_glr_05-mesh-exploration_003.png" alt="05 mesh exploration" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbcf495e380&gt;)
+</pre></div>
+</div>
+<p>Split the global mesh and select meshes based on specific property values.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">meshes_filtered</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">split_mesh_by_properties</span><span class="p">(</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+        <a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">elemental_properties</span><span class="o">.</span><span class="n">material</span></a><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">elemental_properties</span><span class="o">.</span><span class="n">element_shape</span></a><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">meshes_filtered</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mesh split and filtered&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-mesh-exploration_004.png" srcset="../../_images/sphx_glr_05-mesh-exploration_004.png" alt="05 mesh exploration" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbd1f544bb0&gt;)
+</pre></div>
+</div>
+<p>Select a <code class="docutils literal notranslate"><span class="pre">mesh</span></code> object with a unique combination of property values.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">meshes</span><span class="p">[{</span><span class="s2">&quot;mat&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;elshape&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mesh for mat=5 and elshape=0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_05-mesh-exploration_005.png" srcset="../../_images/sphx_glr_05-mesh-exploration_005.png" alt="05 mesh exploration" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7fbcf495d0f0&gt;)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 49.345 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-01-detailed-examples-05-mesh-exploration-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/d2b113c7766f9acf97e1284ec9784992/05-mesh-exploration.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">05-mesh-exploration.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/562a59cef6b6a4536a80f2c643adbe59/05-mesh-exploration.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">05-mesh-exploration.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ee09652b9a384e670fc4029ea053d8e3/05-mesh-exploration.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">05-mesh-exploration.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-result-file">Load result file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-mesh-and-print-it">Get mesh and print it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-mesh">Plot mesh</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-basic-information-about-mesh">Get basic information about mesh</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-named-selections">Get named selections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-elements">Get elements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-information-about-a-particular-element">Get information about a particular element</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-element-types-and-materials">Get element types and materials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-elemental-connectivity">Get elemental connectivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-a-node-or-node-information">Get a node or node information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-nodal-connectivity">Get nodal connectivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#split-global-mesh-into-mesh-parts">Split global mesh into mesh parts</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/01-Detailed-Examples/05-mesh-exploration.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text"], "limit": 10, "min_chars_for_search": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.4.1. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
