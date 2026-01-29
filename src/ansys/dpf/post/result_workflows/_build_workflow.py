@@ -185,6 +185,7 @@ def _create_result_workflows(
         force_elemental_nodal=force_elemental_nodal,
         create_operator_callable=create_operator_callable,
         server=server,
+        shell_layer=create_workflow_inputs.shell_layer,
     )
 
     result_workflows: ResultWorkflows = ResultWorkflows(
