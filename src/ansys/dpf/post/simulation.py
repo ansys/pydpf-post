@@ -706,10 +706,10 @@ class MechanicalSimulation(Simulation, ABC):
                 inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
-            if result_native_location == locations.nodal:
-                selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
-            else:
-                selection.select_elements(elements=element_ids)
+            # if result_native_location == locations.nodal:
+            #    selection.select_nodes_of_elements(elements=element_ids, mesh=self.mesh)
+            # else:
+            selection.select_elements(elements=element_ids)
         elif node_ids is not None:
             if location != locations.nodal:
                 selection.select_elements_of_nodes(

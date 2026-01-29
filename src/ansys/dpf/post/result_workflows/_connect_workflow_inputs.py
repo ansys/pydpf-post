@@ -27,6 +27,7 @@ from ansys.dpf.core import (
     Scoping,
     ScopingsContainer,
     Workflow,
+    locations,
     shell_layers,
 )
 
@@ -133,10 +134,8 @@ def _connect_workflow_inputs(
 
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
-        if force_elemental_nodal:
-            split_by_body_workflow.connect(_WfNames.scoping_location, "ElementalNodal")
-        else:
-            split_by_body_workflow.connect(_WfNames.scoping_location, location)
+        split_by_body_workflow.connect(_WfNames.scoping_location, locations.elemental)
+
         split_by_body_workflow.connect_with(
             selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
         )
