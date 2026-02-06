@@ -148,7 +148,7 @@ jobs:
         uses: codecov/codecov-action@v5
 
   retro:
-    name: "Test DPF ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} compatibility"
+    name: "Test ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} on ${{ matrix.os }}"
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     runs-on: ${{ matrix.os }}
     strategy:
