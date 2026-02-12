@@ -32,6 +32,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
@@ -293,7 +294,7 @@ class TestFluidSimulation:
         #         assert result.index.mesh_index.location == post.locations.faces
         #         assert result._fc[0].location == post.locations.faces
         #         ref = """
-        #   results     RHO (kg*m^-3)
+        #   results     RHO (kg/m^3)
         #   set_ids                 1
         #     phase Water at 25 C (2) Copper (3)
         #  face_ids
@@ -345,11 +346,60 @@ class TestFluidSimulation:
         assert str(result) == ref
 
     def test_results_fluent_cross_locations_on_nodes(self, fluent_simulation):
-        result = fluent_simulation.density_on_nodes(
+        result_1 = fluent_simulation.density_on_nodes(
             node_ids=fluent_simulation.mesh.node_ids
         )
-        assert result.index.mesh_index.location == post.locations.nodal
-        ref = """
+        assert result_1.index.mesh_index.location == post.locations.nodal
+
+        result_2 = fluent_simulation.density_on_nodes(
+            cell_ids=fluent_simulation.mesh.element_ids
+        )
+        assert result_2.index.mesh_index.location == post.locations.nodal
+
+        result_3 = fluent_simulation.density_on_nodes(
+            face_ids=fluent_simulation.mesh.face_ids
+        )
+        assert result_3.index.mesh_index.location == post.locations.nodal
+
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            ref_1 = """
+  results RHO (kg/m^3)
+  set_ids            1
+ node_ids             
+        1   1.0742e+00
+        2   1.0436e+00
+        3   1.0131e+00
+        4   1.0327e+00
+        5   1.0247e+00
+        6   1.0445e+00
+      ...          ...
+"""  # noqa: W291, E501
+            ref_2 = """
+  results RHO (kg/m^3)
+  set_ids            1
+ node_ids             
+      996   1.1041e+00
+      894   1.1035e+00
+      795   1.0982e+00
+      903   1.0985e+00
+      997   1.1097e+00
+      895   1.1091e+00
+      ...          ...
+"""  # noqa: W291, E501
+            ref_3 = """
+  results RHO (kg/m^3)
+  set_ids            1
+ node_ids             
+    11325   1.3470e+00
+    11455   1.3104e+00
+    11416   1.3262e+00
+    11291   1.3590e+00
+    11388   1.2771e+00
+    11348   1.2896e+00
+      ...          ...
+"""  # noqa: W291, E501
+        else:
+            ref_1 = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
@@ -361,12 +411,7 @@ class TestFluidSimulation:
         6    1.0445e+00
       ...           ...
 """  # noqa: W291, E501
-        assert str(result) == ref
-        result = fluent_simulation.density_on_nodes(
-            cell_ids=fluent_simulation.mesh.element_ids
-        )
-        assert result.index.mesh_index.location == post.locations.nodal
-        ref = """
+            ref_2 = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
@@ -378,12 +423,7 @@ class TestFluidSimulation:
       895    1.1091e+00
       ...           ...
 """  # noqa: W291, E501
-        assert str(result) == ref
-        result = fluent_simulation.density_on_nodes(
-            face_ids=fluent_simulation.mesh.face_ids
-        )
-        assert result.index.mesh_index.location == post.locations.nodal
-        ref = """
+            ref_3 = """
   results RHO (kg*m^-3)
   set_ids             1
  node_ids              
@@ -395,7 +435,10 @@ class TestFluidSimulation:
     11388    1.2771e+00
       ...           ...
 """  # noqa: W291, E501
-        assert str(result) == ref
+
+        assert str(result_1) == ref_1
+        assert str(result_2) == ref_2
+        assert str(result_3) == ref_3
 
     def test_results_fluent_cross_locations_on_faces(self, fluent_simulation):
         # TODO investigate wrong plot, wrong mesh index for dataframes
@@ -412,7 +455,7 @@ class TestFluidSimulation:
         #         assert result.index.mesh_index.location == post.locations.faces
         #         # assert len(result.index.mesh_index.values) == fluent_simulation.mesh.num_faces
         #         ref = """
-        #   results RHO (kg*m^-3)
+        #   results RHO (kg/m^3)
         #   set_ids             1
         #  face_ids
         #         1    1.1095e+00
@@ -443,7 +486,21 @@ class TestFluidSimulation:
             # assert (
             #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
             # )  # TODO: why does this fail? Is the result not defined everywhere?
-            ref = """
+            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+                ref = """
+  results RHO (kg/m^3)
+  set_ids            1
+ face_ids             
+    39897   1.1077e+00
+    39898   1.0892e+00
+    39899   1.0821e+00
+    39900   1.0761e+00
+    39901   1.0721e+00
+    39902   1.0724e+00
+      ...          ...
+"""  # noqa: W291, E501
+            else:
+                ref = """
   results RHO (kg*m^-3)
   set_ids             1
  face_ids              
@@ -457,8 +514,6 @@ class TestFluidSimulation:
 """  # noqa: W291, E501
             assert str(result) == ref
 
-    #         result.plot()
-
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
         result = fluent_simulation.density_on_cells(
             cell_ids=fluent_simulation.mesh.element_ids
@@ -467,7 +522,22 @@ class TestFluidSimulation:
         assert (
             len(result.index.mesh_index.values) == fluent_simulation.mesh.num_elements
         )
-        ref = """
+
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            ref = """
+  results RHO (kg/m^3)
+  set_ids            1
+ cell_ids             
+        1   1.1095e+00
+        2   1.1087e+00
+        3   1.1098e+00
+        4   1.0977e+00
+        5   1.0949e+00
+        6   1.1077e+00
+      ...          ...
+"""  # noqa: W291, E501
+        else:
+            ref = """
   results RHO (kg*m^-3)
   set_ids             1
  cell_ids              
