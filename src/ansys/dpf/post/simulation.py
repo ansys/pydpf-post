@@ -706,8 +706,9 @@ class MechanicalSimulation(Simulation, ABC):
                 inclusive=requires_manual_averaging,
             )
         elif element_ids is not None:
-            if result_native_location == locations.nodal and not server.meet_version(
-                "6.2"
+            if (
+                result_native_location == locations.nodal
+                and not self._model._server.meet_version("6.2")
             ):
                 # For older versions convert to to nodal selection, because otherwise the
                 # result operator will not return correct results.
