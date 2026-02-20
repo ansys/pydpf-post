@@ -29,6 +29,7 @@ from ansys.dpf.core import (
     Workflow,
     locations,
     shell_layers,
+    types,
 )
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
