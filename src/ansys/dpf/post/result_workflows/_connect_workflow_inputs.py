@@ -132,9 +132,13 @@ def _connect_workflow_inputs(
             mesh, averaging_config.body_defining_properties, streams_provider
         )
 
+    scoping_location = locations.elemental
+    if "scoping" in selection_wf.output_names:
+        scoping_location = selection_wf.get_output("scoping", types.scoping).location
+
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
-        split_by_body_workflow.connect(_WfNames.scoping_location, locations.elemental)
+        split_by_body_workflow.connect(_WfNames.scoping_location, scoping_location)
 
         split_by_body_workflow.connect_with(
             selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
