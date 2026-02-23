@@ -4319,6 +4319,9 @@ def get_custom_scope(selection_name: str, mesh: MeshedRegion):
 
 
 def test_evaluate_per_body_native_nodal(average_per_body_two_cubes):
+    if not average_per_body_two_cubes._model._server.meet_version("9.0"):
+        # Not supported before 2024R2
+        return
     simulation: StaticMechanicalSimulation = post.load_simulation(
         data_sources=average_per_body_two_cubes,
         simulation_type=AvailableSimulationTypes.static_mechanical,
@@ -4350,6 +4353,10 @@ def test_evaluate_per_body_native_elemental(average_per_body_two_cubes):
         data_sources=average_per_body_two_cubes,
         simulation_type=AvailableSimulationTypes.static_mechanical,
     )
+    if not average_per_body_two_cubes._model._server.meet_version("9.0"):
+        # Not supported before 2024R2
+        return
+
     result = simulation._get_result(
         base_name="ENG_SE",
         location=locations.elemental,
