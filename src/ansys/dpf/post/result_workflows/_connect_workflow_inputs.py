@@ -145,6 +145,7 @@ def _connect_workflow_inputs(
         _connect_data_sources_and_streams_provider(
             selection_wf, data_sources, streams_provider
         )
+        selection_wf.progress_bar = False
         scoping_location = selection_wf.get_output("scoping", types.scoping).location
 
     if split_by_body_workflow is not None:

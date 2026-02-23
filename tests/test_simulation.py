@@ -4318,6 +4318,60 @@ def get_custom_scope(selection_name: str, mesh: MeshedRegion):
         return custom_scoping, expected_nodal_scope
 
 
+def test_evaluate_per_body_native_nodal(average_per_body_two_cubes):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=average_per_body_two_cubes,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+    result = simulation._get_result(
+        base_name=operator_map["displacement"],
+        location=locations.nodal,
+        category=ResultCategory.vector,
+        averaging_config=AveragingConfig(
+            body_defining_properties=["mat"],
+            average_per_body=True,
+        ),
+    )
+
+    expected_max = {1: 5.930437683351532e-05, 2: 0.004870886034030272}
+
+    fc = result._fc
+    assert len(fc) == 2
+    fc.labels = ["mat", "time"]
+    for mat in [1, 2]:
+        mat_field = fc.get_field({"mat": mat})
+        assert mat_field.location == locations.nodal
+        assert mat_field.size == 81
+        assert mat_field.max().data[0] == expected_max[mat]
+
+
+def test_evaluate_per_body_native_elemental(average_per_body_two_cubes):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=average_per_body_two_cubes,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+    result = simulation._get_result(
+        base_name="ENG_SE",
+        location=locations.elemental,
+        category=ResultCategory.vector,
+        averaging_config=AveragingConfig(
+            body_defining_properties=["mat"],
+            average_per_body=True,
+        ),
+    )
+
+    expected_max = {1: 0.00044161113328300416, 2: 0.03241598606109619}
+
+    fc = result._fc
+    assert len(fc) == 2
+    fc.labels = ["mat", "time"]
+    for mat in [1, 2]:
+        mat_field = fc.get_field({"mat": mat})
+        assert mat_field.location == locations.elemental
+        assert mat_field.size == 8
+        assert mat_field.max().data[0] == expected_max[mat]
+
+
 @pytest.mark.parametrize("is_skin", [False, True])
 # Note: Selections are only tested on the more complex model (average_per_body_complex_multi_body)
 @pytest.mark.parametrize(
