@@ -718,7 +718,12 @@ class MechanicalSimulation(Simulation, ABC):
             else:
                 selection.select_elements(elements=element_ids)
         elif node_ids is not None:
-            selection.select_nodes(nodes=node_ids)
+            if location != locations.nodal:
+                selection.select_elements_of_nodes(
+                    nodes=node_ids, mesh=self.mesh, inclusive=True
+                )
+            else:
+                selection.select_nodes(nodes=node_ids)
 
         # Create the TimeFreqSelection
         if all_sets:
