@@ -132,10 +132,7 @@ def _requires_manual_averaging(
 ):
     native_location = _get_native_location(available_results, base_name)
 
-    if average_per_body and (
-        native_location == locations.elemental
-        or native_location == locations.elemental_nodal
-    ):
+    if average_per_body and native_location == locations.elemental_nodal:
         return True
     if category == ResultCategory.equivalent and base_name[0] == "E":  # strain eqv
         return True

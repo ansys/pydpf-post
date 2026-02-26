@@ -27,7 +27,9 @@ from ansys.dpf.core import (
     Scoping,
     ScopingsContainer,
     Workflow,
+    locations,
     shell_layers,
+    types,
 )
 
 from ansys.dpf.post.result_workflows._build_workflow import ResultWorkflows
@@ -101,6 +103,13 @@ def _connect_cyclic_inputs(expand_cyclic, phase_angle_cyclic, result_wf: Workflo
         result_wf.connect(_WfNames.cyclic_phase, phase_angle_cyclic)
 
 
+def _connect_data_sources_and_streams_provider(wf, data_sources, streams_provider):
+    if "streams" in wf.input_names and streams_provider is not None:
+        wf.connect("streams", streams_provider)
+    if "data_sources" in wf.input_names:
+        wf.connect("data_sources", data_sources)
+
+
 def _connect_workflow_inputs(
     initial_result_workflow: Workflow,
     split_by_body_workflow: Optional[Workflow],
@@ -131,12 +140,18 @@ def _connect_workflow_inputs(
             mesh, averaging_config.body_defining_properties, streams_provider
         )
 
+    scoping_location = locations.elemental
+    if "scoping" in selection_wf.output_names:
+        _connect_data_sources_and_streams_provider(
+            selection_wf, data_sources, streams_provider
+        )
+        selection_wf.progress_bar = False
+        scoping_location = selection_wf.get_output("scoping", types.scoping).location
+
     if split_by_body_workflow is not None:
         split_by_body_workflow.connect(_WfNames.mesh, mesh)
-        if force_elemental_nodal:
-            split_by_body_workflow.connect(_WfNames.scoping_location, "ElementalNodal")
-        else:
-            split_by_body_workflow.connect(_WfNames.scoping_location, location)
+        split_by_body_workflow.connect(_WfNames.scoping_location, scoping_location)
+
         split_by_body_workflow.connect_with(
             selection_wf, output_input_names={_WfNames.scoping: _WfNames.scoping}
         )
@@ -155,13 +170,9 @@ def _connect_workflow_inputs(
     # Connect data_sources and streams_container inputs of selection if necessary
     # Note: streams and data_sources inputs are inherited from the selection_workflow
     # connected above
-    if (
-        "streams" in initial_result_workflow.input_names
-        and streams_provider is not None
-    ):
-        initial_result_workflow.connect("streams", streams_provider)
-    if "data_sources" in initial_result_workflow.input_names:
-        initial_result_workflow.connect("data_sources", data_sources)
+    _connect_data_sources_and_streams_provider(
+        initial_result_workflow, data_sources, streams_provider
+    )
 
     _connect_cyclic_inputs(
         expand_cyclic=expand_cyclic,
