@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
@@ -194,7 +194,7 @@ jobs:
     uses: ./.github/workflows/examples.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.version }}
-      python_versions: '["3.10"]'
+      python_versions: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
       standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.patch }}
     secrets: inherit
 
