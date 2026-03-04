@@ -1,0 +1,721 @@
+:orphan:
+
+.. _gallery:
+
+========
+Examples
+========
+
+End-to-end examples show how to use PyDPF-Post. If PyDPF-Post is installed
+on your machine, you can download these examples as Jupyter notebooks, Python files,
+or ZIP files and run them locally.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post analysis types
+~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to postprocess different simulation types using PyDPF-Post.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a static mechanical simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_01-static-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_01-static-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a static mechanical simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a modal mechanical simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_02-modal-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_02-modal-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a modal mechanical simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a transient mechanical simulation with animation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_03-transient-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_03-transient-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a transient mechanical simulation with animation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a harmonic mechanical simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_04-harmonic-complex-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_04-harmonic-complex-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a harmonic mechanical simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a fluid simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_05-fluid-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_05-fluid-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a fluid simulation</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post features 
+~~~~~~~~~~~~~~~~~~~
+These examples show how to use PyDPF-Post features.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Create and manipulate a DPF dataframe">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_00-dataframe-manipulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_00-dataframe-manipulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create and manipulate a DPF dataframe</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract results on named selections (modal simulation)">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_01-named-selections-modal-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_01-named-selections-modal-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract results on named selections (modal simulation)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract components of results (modal simulation)">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_02-modal-extract-sub-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_02-modal-extract-sub-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract components of results (modal simulation)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the data of a result with the dataframe (harmonic simulation)">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_03-explore-result-data-harmonic_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_03-explore-result-data-harmonic.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore the data of a result with the dataframe (harmonic simulation)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract stress and strain invariants (static simulation)">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_04-invariants_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_04-invariants.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract stress and strain invariants (static simulation)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Export data in a dataframe to another format">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_05-export_data_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_05-export_data.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Export data in a dataframe to another format</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore and manipulate the mesh">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_05-mesh-exploration_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_05-mesh-exploration.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore and manipulate the mesh</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compute the minimum and maximum of a dataframe">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_06-compute-min-max_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_06-compute-min-max.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compute the minimum and maximum of a dataframe</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post performance improvements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to improve computation performance of PyDPF-Post when necessary.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation, allows you to reduce the size of both the mesh and the extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing the results on the external layer provides equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_01-mesh-external-layer_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_01-mesh-external-layer.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce model size by using the mesh external layer for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation, allows you to reduce the size of both the mesh and the extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing results on the skin gives equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_02-mesh-skin_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_02-mesh-skin.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce model size by using the mesh skin for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- Results and mesh extracted only on the external layer - Results and mesh extracted on the entire mesh">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_03-mesh-external-layer-compare_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_03-mesh-external-layer-compare.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Validate external layer results with the full mesh</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post cyclic symmetry examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to use PyDPF-Post features for cyclic symmetry models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract cyclic results">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_01-cyclic-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_01-cyclic-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract cyclic results</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract multi-stage cyclic results">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_02-multi-stage-cyclic-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_02-multi-stage-cyclic-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract multi-stage cyclic results</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation supporting cyclic or cyclic multi-stage models, allows you to reduce the size of both the mesh and the extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing results on the external layer gives equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_03-cyclic-mesh-external-layer_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_03-cyclic-mesh-external-layer.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce cyclic model size by using the mesh external layer for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This feature, available for all types of mechanical simulation supporting cyclic or cyclic multi-stage models, allows you to reduce the size of both the mesh and extracted data to improve processing performance. Because larger stresses and strains are usually located on the skin of a model, computing results on the skin gives equivalent maximum values in most cases.">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_04-cyclic-mesh-skin_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_04-cyclic-mesh-skin.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce cyclic model size by using the mesh skin for result and mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to extract real and imaginary results from a modal cyclic symmetry model.">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_05-modal_cyclic_no_expansion_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_05-modal_cyclic_no_expansion.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Get base and duplicate sector results for a modal cyclic symmetry model</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post fluid examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to use PyDPF-Post features for fluid models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract fluid simulation results">
+
+.. only:: html
+
+  .. image:: /examples/04-Fluid-Examples/images/thumb/sphx_glr_00-explore-fluid-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_04-Fluid-Examples_00-explore-fluid-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract fluid simulation results</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+PyDPF-Post legacy examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use the legacy PyDPF-Post API.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Use basic features">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_00-overview_example_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_00-overview_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Use basic features</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Get data from a static simulation">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_01-get_data_from_static_simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_01-get_data_from_static_simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Get data from a static simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Load a solution">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_01-introduction_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_01-introduction.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Load a solution</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a result file for a static analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_02-static-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_02-static-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a result file for a static analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess the result file for a modal analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_03-modal-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_03-modal-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess the result file for a modal analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess the result file for a harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_04-harmonic-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_04-harmonic-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess the result file for a harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Postprocess a result file for a transient analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_05-transient-analysis_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_05-transient-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Postprocess a result file for a transient analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Access complex results from a modal or harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_06-complex_results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_06-complex_results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Access complex results from a modal or harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Use keywords to get a more precise result">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_07-result_keywords_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_07-result_keywords.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Use keywords to get a more precise result</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Request a result on a specific path of coordinates">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_08-result_on_path_of_coordinates_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_08-result_on_path_of_coordinates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Request a result on a specific path of coordinates</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Get and use a Result object">
+
+.. only:: html
+
+  .. image:: /examples/05-Legacy/images/thumb/sphx_glr_09-basics_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_05-Legacy_09-basics.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Get and use a Result object</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+
+   /examples/00-Different-analysis-types/index.rst
+   /examples/01-Detailed-Examples/index.rst
+   /examples/02-Performance-Improvements/index.rst
+   /examples/03-Cyclic-Examples/index.rst
+   /examples/04-Fluid-Examples/index.rst
+   /examples/05-Legacy/index.rst
+
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_
