@@ -29,7 +29,7 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0, SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
@@ -280,16 +280,25 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
 def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping=post.grouping.by_el_shape)
-    assert disp.num_fields == 4
-    assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert disp.num_fields == 5
+    else:
+        assert disp.num_fields == 4
+    assert disp.result_fields_container.get_label_space(2) == {"elshape": 0, "time": 1}
     assert len(disp.get_data_at_field(0)) == 14826
     assert len(disp.get_data_at_field(1)) == 1486
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-        assert len(disp.get_data_at_field(2)) == 21
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            assert len(disp.get_data_at_field(2)) == 807
+        else:
+            assert len(disp.get_data_at_field(2)) == 21
     else:
         assert len(disp.get_data_at_field(2)) == 19
-    assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert len(disp.get_data_at_field(3)) == 17
+    else:
+        assert len(disp.get_data_at_field(3)) == 4
+    assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
 
@@ -297,16 +306,25 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping=post.grouping.by_el_shape)
     disp = d.vector
-    assert disp.num_fields == 4
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert disp.num_fields == 5
+    else:
+        assert disp.num_fields == 4
     assert disp.result_fields_container.get_label_space(3) == {"elshape": 3, "time": 1}
     assert len(disp.get_data_at_field(0)) == 14826
     assert len(disp.get_data_at_field(1)) == 1486
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-        assert len(disp.get_data_at_field(2)) == 21
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            assert len(disp.get_data_at_field(2)) == 807
+        else:
+            assert len(disp.get_data_at_field(2)) == 21
     else:
         assert len(disp.get_data_at_field(2)) == 19
-    assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert len(disp.get_data_at_field(3)) == 17
+    else:
+        assert len(disp.get_data_at_field(3)) == 4
+    assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
     # with dpf.core operator
@@ -337,9 +355,12 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
 def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_stress(grouping=post.grouping.by_el_shape)
-    assert stress.num_fields == 4
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert stress.num_fields == 5
+    else:
+        assert stress.num_fields == 4
     assert stress.result_fields_container.get_label_space(3) == {
-        "elshape": 3,
+        "elshape": 0,
         "time": 1,
     }
     assert len(stress.get_data_at_field(0)) == 609
@@ -356,9 +377,12 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
         grouping=post.grouping.by_el_shape, location=post.locations.elemental
     )
     stress = s.tensor
-    assert stress.num_fields == 4
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert stress.num_fields == 5
+    else:
+        assert stress.num_fields == 4
     assert stress.result_fields_container.get_label_space(3) == {
-        "elshape": 3,
+        "elshape": 0,
         "time": 1,
     }
     assert len(stress.get_data_at_field(0)) == 609

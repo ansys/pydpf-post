@@ -27,7 +27,9 @@ from pytest import fixture
 from ansys.dpf import post
 from ansys.dpf.post.common import elemental_properties as elt_prop
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
-
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+)
 
 @fixture
 def meshes(allkindofcomplexity):
@@ -57,7 +59,10 @@ def test_meshes_get_item(meshes):
     mesh1 = meshes[1]
     assert isinstance(mesh1, post.Mesh)
     assert len(mesh1.node_ids) == 240
-    mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 0}]
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 1}]
+    else:
+        mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 0}]
     assert isinstance(mesh2, post.Mesh)
     assert len(mesh2.node_ids) == 240
 
@@ -67,7 +72,10 @@ def test_meshes_plot(meshes):
 
 
 def test_meshes_select(meshes):
-    mesh = meshes.select(mat=1, elshape=0)
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        mesh = meshes.select(mat=1, elshape=1)
+    else:
+        mesh = meshes.select(mat=1, elshape=0)
     assert isinstance(mesh, post.Mesh)
     assert len(mesh.node_ids) == 240
     mesh_none = meshes.select(mat=22, elshape=42)
