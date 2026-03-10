@@ -27,9 +27,8 @@ from pytest import fixture
 from ansys.dpf import post
 from ansys.dpf.post.common import elemental_properties as elt_prop
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
-from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
-)
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
+
 
 @fixture
 def meshes(allkindofcomplexity):

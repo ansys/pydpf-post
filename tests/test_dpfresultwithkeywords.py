@@ -29,7 +29,10 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0, SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
+from conftest import (
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+)
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
@@ -282,9 +285,17 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     disp = result.misc.nodal_displacement(grouping=post.grouping.by_el_shape)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert disp.num_fields == 5
+        assert disp.result_fields_container.get_label_space(2) == {
+            "elshape": 0,
+            "time": 1,
+        }
+
     else:
         assert disp.num_fields == 4
-    assert disp.result_fields_container.get_label_space(2) == {"elshape": 0, "time": 1}
+        assert disp.result_fields_container.get_label_space(3) == {
+            "elshape": 3,
+            "time": 1,
+        }
     assert len(disp.get_data_at_field(0)) == 14826
     assert len(disp.get_data_at_field(1)) == 1486
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
@@ -296,9 +307,10 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
         assert len(disp.get_data_at_field(2)) == 19
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert len(disp.get_data_at_field(3)) == 17
+        assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
     else:
         assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
+        assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
 
@@ -322,9 +334,10 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
         assert len(disp.get_data_at_field(2)) == 19
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert len(disp.get_data_at_field(3)) == 17
+        assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
     else:
         assert len(disp.get_data_at_field(3)) == 4
-    assert np.isclose(disp.get_data_at_field(3)[0][0], 5.523488975819807e-20)
+        assert np.isclose(disp.get_data_at_field(2)[0][0], 5.523488975819807e-20)
     assert disp[0].location == locations.nodal
 
     # with dpf.core operator
@@ -357,12 +370,16 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     stress = result.misc.elemental_stress(grouping=post.grouping.by_el_shape)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 0,
+            "time": 1,
+        }
     else:
         assert stress.num_fields == 4
-    assert stress.result_fields_container.get_label_space(3) == {
-        "elshape": 0,
-        "time": 1,
-    }
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 3,
+            "time": 1,
+        }
     assert len(stress.get_data_at_field(0)) == 609
     assert len(stress.get_data_at_field(1)) == 9052
     assert len(stress.get_data_at_field(2)) == 0
@@ -379,12 +396,16 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     stress = s.tensor
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 0,
+            "time": 1,
+        }
     else:
         assert stress.num_fields == 4
-    assert stress.result_fields_container.get_label_space(3) == {
-        "elshape": 0,
-        "time": 1,
-    }
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 3,
+            "time": 1,
+        }
     assert len(stress.get_data_at_field(0)) == 609
     assert len(stress.get_data_at_field(1)) == 9052
     assert len(stress.get_data_at_field(2)) == 0
