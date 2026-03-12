@@ -26,8 +26,6 @@ Common
 ------
 
 """
-from enum import Enum
-
 from ansys.dpf.core.common import (  # noqa: F401  # pylint: disable=W0611
     elemental_properties,
 )
