@@ -55,8 +55,8 @@ class Meshes:
     ... )
     >>> # Select the second mesh by its index (0-based)
     >>> mesh_1 = meshes_split[1]
-    >>> # Select the mesh for material=1 and elshape=0
-    >>> mesh_2 = meshes_split[{elt_prop.material: 1, elt_prop.element_shape: 0}]
+    >>> # Select the mesh for material=1 and elshape=2
+    >>> mesh_2 = meshes_split[{elt_prop.material: 1, elt_prop.element_shape: 2}]
     """
 
     def __init__(self, meshes_container: MeshesContainer):
@@ -181,7 +181,7 @@ class Meshes:
         >>> meshes = simulation.split_mesh_by_properties(
         ...    properties=[elemental_properties.material, elemental_properties.element_shape]
         ... )
-        >>> meshes.plot()
+        >>> meshes.plot() # doctest: +ELLIPSIS
         (...)
         """
         from ansys.dpf.core.plotter import DpfPlotter
