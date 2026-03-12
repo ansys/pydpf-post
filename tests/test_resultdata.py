@@ -22,14 +22,13 @@
 
 import os
 
-from ansys.dpf.core import Field
+from ansys.dpf.core import Field, elements
 from ansys.dpf.core.common import locations, natures
 import numpy as np
 import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.common import _ElementShapes, _ElementShapesLegacy
 import ansys.dpf.post.errors
 from ansys.dpf.post.result_data import ResultData
 from tests.conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
@@ -279,9 +278,9 @@ def test_plot_contour_with_keys(allkindofcomplexity):
     d = result.displacement(grouping=post.grouping.by_el_shape)
     disp = d.vector
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        disp.plot_contour("elshape", _ElementShapes.SOLID.value)
+        disp.plot_contour("elshape", elements._element_shapes.SOLID.value)
     else:
-        disp.plot_contour("elshape", _ElementShapesLegacy.SOLID.value)
+        disp.plot_contour("elshape", elements._element_shapes_legacy.SOLID.value)
     d = result.displacement(grouping=post.grouping.by_material)
     disp = d.vector
     disp.plot_contour("mat", 1)
@@ -291,9 +290,9 @@ def test_plot_contour_with_keys(allkindofcomplexity):
     )
     stress = s.tensor
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        stress.plot_contour("elshape", _ElementShapes.SOLID.value)
+        stress.plot_contour("elshape", elements._element_shapes.SOLID.value)
     else:
-        stress.plot_contour("elshape", _ElementShapesLegacy.SOLID.value)
+        stress.plot_contour("elshape", elements._element_shapes_legacy.SOLID.value)
     s = result.stress(
         grouping=post.grouping.by_material, location=post.locations.elemental
     )

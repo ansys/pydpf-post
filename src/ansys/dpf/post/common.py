@@ -55,21 +55,6 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 #     shellmid = 5
 #     shell_bottom = 6
 
-
-class _ElementShapesLegacy(Enum):
-    SHELL = 0
-    SOLID = 1
-    BEAM = 2
-    UNKNOWN_SHAPE = 3
-
-
-class _ElementShapes(Enum):
-    UNKNOWN_SHAPE = 0
-    SHELL = 1
-    SOLID = 2
-    BEAM = 3
-
-
 class Grouping:
     """Provides Enum inheritance.
 

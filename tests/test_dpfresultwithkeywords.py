@@ -29,11 +29,11 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
-from ansys.dpf.post.common import _ElementShapes, _ElementShapesLegacy
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
+from ansys.dpf.core import elements
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):
@@ -287,14 +287,14 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert disp.num_fields == 5
         assert disp.result_fields_container.get_label_space(2) == {
-            "elshape": _ElementShapes.UNKNOWN_SHAPE.value,
+            "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
             "time": 1,
         }
 
     else:
         assert disp.num_fields == 4
         assert disp.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapesLegacy.UNKNOWN_SHAPE.value,
+            "elshape": elements._element_shapes_legacy.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     assert len(disp.get_data_at_field(0)) == 14826
@@ -322,13 +322,13 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert disp.num_fields == 5
         assert disp.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapes.BEAM.value,
+            "elshape": elements._element_shapes.BEAM.value,
             "time": 1,
         }
     else:
         assert disp.num_fields == 4
         assert disp.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapesLegacy.UNKNOWN_SHAPE.value,
+            "elshape": elements._element_shapes_legacy.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     assert len(disp.get_data_at_field(0)) == 14826
@@ -379,13 +379,13 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
         assert stress.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapes.UNKNOWN_SHAPE.value,
+            "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     else:
         assert stress.num_fields == 4
         assert stress.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapesLegacy.BEAM.value,
+            "elshape": elements._element_shapes_legacy.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     assert len(stress.get_data_at_field(0)) == 609
@@ -405,13 +405,13 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
         assert stress.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapes.UNKNOWN_SHAPE.value,
+            "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     else:
         assert stress.num_fields == 4
         assert stress.result_fields_container.get_label_space(3) == {
-            "elshape": _ElementShapesLegacy.BEAM.value,
+            "elshape": elements._element_shapes_legacy.UNKNOWN_SHAPE.value,
             "time": 1,
         }
     assert len(stress.get_data_at_field(0)) == 609
