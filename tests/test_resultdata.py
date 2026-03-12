@@ -29,8 +29,8 @@ import pytest
 
 from ansys import dpf
 from ansys.dpf import post
+from ansys.dpf.post.common import _ElementShapes, _ElementShapesLegacy
 import ansys.dpf.post.errors
-from ansys.dpf.post.common import _ElementShapesLegacy, _ElementShapes
 from ansys.dpf.post.result_data import ResultData
 from tests.conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
 

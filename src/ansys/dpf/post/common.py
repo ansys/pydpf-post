@@ -26,6 +26,8 @@ Common
 ------
 
 """
+from enum import Enum
+
 from ansys.dpf.core.common import (  # noqa: F401  # pylint: disable=W0611
     elemental_properties,
 )
@@ -35,7 +37,6 @@ from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimu
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
-from enum import Enum
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
@@ -54,6 +55,7 @@ from enum import Enum
 #     shellmid = 5
 #     shell_bottom = 6
 
+
 class _ElementShapesLegacy(Enum):
     SHELL = 0
     SOLID = 1
@@ -66,6 +68,7 @@ class _ElementShapes(Enum):
     SHELL = 1
     SOLID = 2
     BEAM = 3
+
 
 class Grouping:
     """Provides Enum inheritance.

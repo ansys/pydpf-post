@@ -637,7 +637,10 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
     )
     assert isinstance(meshes, Meshes)
 
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 and not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if (
+        SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
+        and not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
+    ):
         expected_len = 18
     else:
         expected_len = 16

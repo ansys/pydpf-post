@@ -40,11 +40,11 @@ such as connectivity tables, element IDs, and element types.
 # Perform required imports. This example uses a supplied file that you can
 # get by importing the DPF ``examples`` package.
 
-from ansys.dpf import post
-from ansys.dpf import core
+from ansys.dpf.core.check_version import get_server_version, meets_version
+
+from ansys.dpf import core, post
 from ansys.dpf.post import examples
 from ansys.dpf.post.common import elemental_properties
-from ansys.dpf.core.check_version import get_server_version, meets_version
 
 ###############################################################################
 # Load result file
@@ -256,9 +256,7 @@ meshes[0].plot(text="First mesh in the split mesh")
 
 ###############################################################################
 # Split the global mesh and select meshes based on specific property values.
-if meets_version(
-    get_server_version(core._global_server()), "12.0"
-):
+if meets_version(get_server_version(core._global_server()), "12.0"):
     meshes_filtered = simulation.split_mesh_by_properties(
         properties={
             elemental_properties.material: [2, 3, 4],
@@ -276,9 +274,7 @@ meshes_filtered.plot(text="Mesh split and filtered")
 
 ###############################################################################
 # Select a ``mesh`` object with a unique combination of property values.
-if meets_version(
-    get_server_version(core._global_server()), "12.0"
-):
+if meets_version(get_server_version(core._global_server()), "12.0"):
     meshes[{"mat": 5, "elshape": 1}].plot(text="Mesh for mat=5 and elshape=0")
 else:
     meshes[{"mat": 5, "elshape": 0}].plot(text="Mesh for mat=5 and elshape=0")
