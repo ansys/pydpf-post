@@ -23,6 +23,7 @@
 import unittest
 import weakref
 
+from ansys.dpf.core import elements
 from ansys.dpf.core.common import locations
 import numpy as np
 import pytest
@@ -33,7 +34,6 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
-from ansys.dpf.core import elements
 
 
 def test_displacement_with_scoping_verbose_api(allkindofcomplexity):

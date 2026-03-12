@@ -55,6 +55,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 #     shellmid = 5
 #     shell_bottom = 6
 
+
 class Grouping:
     """Provides Enum inheritance.
 
