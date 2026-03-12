@@ -35,11 +35,12 @@ from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimu
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
+from enum import Enum
 
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
 #     describe the element shape when the API allows it.
-
+#
 #     Example
 #     -----
 #     from ansys.dpf import post
@@ -53,6 +54,18 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 #     shellmid = 5
 #     shell_bottom = 6
 
+class _ElementShapesLegacy(Enum):
+    SHELL = 0
+    SOLID = 1
+    BEAM = 2
+    UNKNOWN_SHAPE = 3
+
+
+class _ElementShapes(Enum):
+    UNKNOWN_SHAPE = 0
+    SHELL = 1
+    SOLID = 2
+    BEAM = 3
 
 class Grouping:
     """Provides Enum inheritance.

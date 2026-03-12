@@ -30,7 +30,9 @@ import pytest
 from ansys import dpf
 from ansys.dpf import post
 import ansys.dpf.post.errors
+from ansys.dpf.post.common import _ElementShapesLegacy, _ElementShapes
 from ansys.dpf.post.result_data import ResultData
+from tests.conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
 
 # currently running dpf on docker.  Used for testing on CI
 RUNNING_DOCKER = os.environ.get("DPF_DOCKER", False)
@@ -276,8 +278,10 @@ def test_plot_contour_with_keys(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping=post.grouping.by_el_shape)
     disp = d.vector
-    disp.plot_contour("elshape", 1)
-
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        disp.plot_contour("elshape", _ElementShapes.SOLID.value)
+    else:
+        disp.plot_contour("elshape", _ElementShapesLegacy.SOLID.value)
     d = result.displacement(grouping=post.grouping.by_material)
     disp = d.vector
     disp.plot_contour("mat", 1)
@@ -286,8 +290,10 @@ def test_plot_contour_with_keys(allkindofcomplexity):
         grouping=post.grouping.by_el_shape, location=post.locations.elemental
     )
     stress = s.tensor
-    stress.plot_contour("elshape", 1)
-
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        stress.plot_contour("elshape", _ElementShapes.SOLID.value)
+    else:
+        stress.plot_contour("elshape", _ElementShapesLegacy.SOLID.value)
     s = result.stress(
         grouping=post.grouping.by_material, location=post.locations.elemental
     )
