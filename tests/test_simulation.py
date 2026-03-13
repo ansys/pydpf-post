@@ -65,6 +65,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
     ReferenceCsvFilesNodal,
 )
 
@@ -626,6 +627,8 @@ def test_simulation_plot(static_simulation):
 
 def test_simulation_split_mesh_by_properties(allkindofcomplexity):
     simulation = post.StaticMechanicalSimulation(allkindofcomplexity)
+
+    # Test split by property list
     meshes = simulation.split_mesh_by_properties(
         properties=[
             elemental_properties.material,
@@ -633,25 +636,38 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
         ]
     )
     assert isinstance(meshes, Meshes)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
-        assert len(meshes) == 18
+
+    if (
+        SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
+        and not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
+    ):
+        expected_len = 18
     else:
-        assert len(meshes) == 16
+        expected_len = 16
+    assert len(meshes) == expected_len
+
+    # Version-dependent element shape values
+    shape_pair = [1, 2] if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0 else [0, 1]
+    shape_single = [1, 3] if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0 else [0, 2]
+
+    # Test split by property dict — expect 2 meshes
     meshes = simulation.split_mesh_by_properties(
         properties={
             elemental_properties.material: 1,
-            elemental_properties.element_shape: [0, 1],
+            elemental_properties.element_shape: shape_pair,
         }
     )
     assert isinstance(meshes, Meshes)
     assert len(meshes) == 2
+
     meshes = simulation.split_mesh_by_properties(
         properties={
             elemental_properties.material: 1,
-            elemental_properties.element_shape: [0, 2],
+            elemental_properties.element_shape: shape_single,
         }
     )
     assert isinstance(meshes, post.Mesh)
+
     meshes = simulation.split_mesh_by_properties(
         properties={
             elemental_properties.material: 22,

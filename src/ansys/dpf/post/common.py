@@ -39,7 +39,7 @@ from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSi
 # class ElShapes(Enum):
 #     """Class with Enum inheritance. This class must be used to
 #     describe the element shape when the API allows it.
-
+#
 #     Example
 #     -----
 #     from ansys.dpf import post
