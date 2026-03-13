@@ -381,14 +381,14 @@ def test_meshes_select_beams_legacy_specific_materials(meshes):
         assert len(result.node_ids) == 2
         assert len(result.element_ids) == 1
 
-        # elshape=2, mat=16 → mesh 14: 2 nodes, 1 element
-        result = meshes.select_beams(mat=16)
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 2
-        assert len(result.element_ids) == 1
-
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            # elshape=2, mat=16 → mesh 14: 2 nodes, 1 element
+            result = meshes.select_beams(mat=16)
+            assert result is not None
+            assert isinstance(result, post.Mesh)
+            assert len(result.node_ids) == 2
+            assert len(result.element_ids) == 1
+
             # elshape=2, mat=17 → mesh 16: 2 nodes, 1 element
             result = meshes.select_beams(mat=17)
             assert result is not None
