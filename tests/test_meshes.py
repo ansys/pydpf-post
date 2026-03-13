@@ -71,6 +71,7 @@ def test_meshes_plot(meshes):
 
 
 def test_meshes_select(meshes):
+    print(meshes)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         mesh = meshes.select(mat=1, elshape=1)
     else:
