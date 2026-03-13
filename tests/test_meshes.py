@@ -27,7 +27,7 @@ from pytest import fixture
 from ansys.dpf import post
 from ansys.dpf.post.common import elemental_properties as elt_prop
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0, SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
 
 
 @fixture
@@ -282,7 +282,6 @@ def test_meshes_select_shells_specific_node_and_element_counts(meshes):
 
 
 def test_meshes_select_beams_all(meshes):
-    print(meshes._core_object._server)
     """Test select_beams with no additional filters returns all beam meshes."""
     result = meshes.select_beams()
     assert result is not None
@@ -292,9 +291,13 @@ def test_meshes_select_beams_all(meshes):
         assert len(result.node_ids) == 17
         assert len(result.element_ids) == 16
     else:
-        # elshape=2 (BEAM): meshes 5,10,12,14,16 → 5 meshes
-        assert isinstance(result, post.Meshes)
-        assert len(result) == 5
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            # elshape=2 (BEAM): meshes 5,10,12,14,16 → 5 meshes
+            assert isinstance(result, post.Meshes)
+            assert len(result) == 5
+        else:
+            assert isinstance(result, post.Meshes)
+            assert len(result) == 5
 
 
 def test_meshes_select_beams_with_material_filter_single(meshes):
@@ -382,12 +385,13 @@ def test_meshes_select_beams_legacy_specific_materials(meshes):
         assert len(result.node_ids) == 2
         assert len(result.element_ids) == 1
 
-        # elshape=2, mat=17 → mesh 16: 2 nodes, 1 element
-        result = meshes.select_beams(mat=17)
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 2
-        assert len(result.element_ids) == 1
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            # elshape=2, mat=17 → mesh 16: 2 nodes, 1 element
+            result = meshes.select_beams(mat=17)
+            assert result is not None
+            assert isinstance(result, post.Mesh)
+            assert len(result.node_ids) == 2
+            assert len(result.element_ids) == 1
 
 
 def test_meshes_select_solids_disjoint_from_shells_and_beams(meshes):
@@ -415,7 +419,10 @@ def test_meshes_select_solids_disjoint_from_shells_and_beams(meshes):
         # shells=7, solids=2, beams=5 → 14 out of 18 total
         assert solid_count == 2
         assert shell_count == 7
-        assert beam_count == 5
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+            assert beam_count == 5
+        else:
+            assert beam_count == 3
 
     # The sum of shape-specific meshes should not exceed total meshes
     assert solid_count + shell_count + beam_count <= len(meshes)
