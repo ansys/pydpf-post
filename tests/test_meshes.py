@@ -436,9 +436,7 @@ def test_meshes_select_solids_consistency_with_select(meshes):
     from ansys.dpf.core import elements
     from ansys.dpf.core.check_version import get_server_version, meets_version
 
-    from ansys.dpf import core
-
-    if meets_version(get_server_version(core._global_server()), "12.0"):
+    if meets_version(get_server_version(dpf._global_server()), "12.0"):
         solid_value = elements._element_shapes.SOLID.value
     else:
         solid_value = elements._element_shapes_legacy.SOLID.value
@@ -461,9 +459,7 @@ def test_meshes_select_shells_consistency_with_select(meshes):
     from ansys.dpf.core import elements
     from ansys.dpf.core.check_version import get_server_version, meets_version
 
-    from ansys.dpf import core
-
-    if meets_version(get_server_version(core._global_server()), "12.0"):
+    if meets_version(get_server_version(dpf._global_server()), "12.0"):
         shell_value = elements._element_shapes.SHELL.value
     else:
         shell_value = elements._element_shapes_legacy.SHELL.value
@@ -486,9 +482,7 @@ def test_meshes_select_beams_consistency_with_select(meshes):
     from ansys.dpf.core import elements
     from ansys.dpf.core.check_version import get_server_version, meets_version
 
-    from ansys.dpf import core
-
-    if meets_version(get_server_version(core._global_server()), "12.0"):
+    if meets_version(get_server_version(dpf._global_server()), "12.0"):
         beam_value = elements._element_shapes.BEAM.value
     else:
         beam_value = elements._element_shapes_legacy.BEAM.value
