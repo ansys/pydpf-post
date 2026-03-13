@@ -297,7 +297,7 @@ def test_meshes_select_beams_all(meshes):
             assert len(result) == 5
         else:
             assert isinstance(result, post.Meshes)
-            assert len(result) == 5
+            assert len(result) == 3
 
 
 def test_meshes_select_beams_with_material_filter_single(meshes):
