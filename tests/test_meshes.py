@@ -88,9 +88,6 @@ def test_meshes_select(meshes):
     assert len(meshes_mat) == 2
 
 
-# ...existing code...
-
-
 def test_meshes_select_solids_all(meshes):
     """Test select_solids with no additional filters returns all solid meshes."""
     result = meshes.select_solids()
