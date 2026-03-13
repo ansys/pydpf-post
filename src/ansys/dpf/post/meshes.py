@@ -190,3 +190,285 @@ class Meshes:
         for mesh in self._core_object:
             plt.add_mesh(meshed_region=mesh, **kwargs)
         return plt.show_figure(**kwargs)
+
+    def select_solids(self, **kwargs) -> Union[Mesh, Meshes, None]:
+        """Select meshes with solid element shapes, based on property values.
+
+        Parameters
+        ----------
+        **kwargs:
+            Property names with associated values to select.
+            If not defined, all available values are selected.
+
+        Returns
+        -------
+        A Mesh when the selection results in a unique mesh,
+        or a Meshes when several are selected,
+        or None when the criteria result in no mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> meshes = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
+        >>> # Select all solid meshes
+        >>> solid_meshes = meshes.select_solids()
+        >>> # Select solid meshes for a specific material
+        >>> solid_mat1 = meshes.select_solids(mat=1)
+        """
+        from ansys.dpf.core import elements
+        from ansys.dpf.core.check_version import get_server_version, meets_version
+
+        from ansys.dpf import core
+
+        initial_labels = self._core_object.labels
+        label_space = {}
+        for key in kwargs:
+            if key in initial_labels:
+                label_space[key] = kwargs[key]
+
+        # Always filter for solid elements
+        if "elshape" in initial_labels:
+            if meets_version(get_server_version(core._global_server()), "12.0"):
+                solid_value = elements._element_shapes.SOLID.value
+            else:
+                solid_value = elements._element_shapes_legacy.SOLID.value
+            label_space["elshape"] = solid_value
+
+        label_values_to_select = {}
+        for label in initial_labels:
+            if label in label_space:
+                values = label_space[label]
+                if not isinstance(values, list):
+                    values = [values]
+                label_values_to_select[label] = values
+            else:
+                label_values_to_select[
+                    label
+                ] = self._core_object.get_available_ids_for_label(label)
+
+        import itertools
+
+        combinations = itertools.product(
+            *[values for values in label_values_to_select.values()]
+        )
+        selected_meshes = []
+        label_spaces_to_select = [dict(zip(initial_labels, p)) for p in combinations]
+        selected_meshes_label_spaces = []
+        for p in label_spaces_to_select:
+            m = self._core_object.get_mesh(p)
+            if m is None:
+                continue
+            selected_meshes.append(m)
+            selected_meshes_label_spaces.append(p)
+
+        if len(selected_meshes) == 1:
+            return Mesh(meshed_region=selected_meshes[0])
+        elif len(selected_meshes) == 0:
+            return None
+        else:
+            from ansys.dpf.core import MeshesContainer
+
+            meshes_container = MeshesContainer()
+            for label in initial_labels:
+                meshes_container.add_label(label=label)
+            for i, selected in enumerate(selected_meshes):
+                meshes_container.add_mesh(
+                    label_space=selected_meshes_label_spaces[i],
+                    mesh=selected,
+                )
+            return Meshes(meshes_container=meshes_container)
+
+    def select_shells(self, **kwargs) -> Union[Mesh, Meshes, None]:
+        """Select meshes with shell element shapes, based on property values.
+
+        Parameters
+        ----------
+        **kwargs:
+            Property names with associated values to select.
+            If not defined, all available values are selected.
+
+        Returns
+        -------
+        A Mesh when the selection results in a unique mesh,
+        or a Meshes when several are selected,
+        or None when the criteria result in no mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> meshes = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
+        >>> # Select all shell meshes
+        >>> shell_meshes = meshes.select_shells()
+        >>> # Select shell meshes for a specific material
+        >>> shell_mat1 = meshes.select_shells(mat=1)
+        """
+        from ansys.dpf.core import elements
+        from ansys.dpf.core.check_version import get_server_version, meets_version
+
+        from ansys.dpf import core
+
+        initial_labels = self._core_object.labels
+        label_space = {}
+        for key in kwargs:
+            if key in initial_labels:
+                label_space[key] = kwargs[key]
+
+        # Always filter for shell elements
+        if "elshape" in initial_labels:
+            if meets_version(get_server_version(core._global_server()), "12.0"):
+                shell_value = elements._element_shapes.SHELL.value
+            else:
+                shell_value = elements._element_shapes_legacy.SHELL.value
+            label_space["elshape"] = shell_value
+
+        label_values_to_select = {}
+        for label in initial_labels:
+            if label in label_space:
+                values = label_space[label]
+                if not isinstance(values, list):
+                    values = [values]
+                label_values_to_select[label] = values
+            else:
+                label_values_to_select[
+                    label
+                ] = self._core_object.get_available_ids_for_label(label)
+
+        import itertools
+
+        combinations = itertools.product(
+            *[values for values in label_values_to_select.values()]
+        )
+        selected_meshes = []
+        label_spaces_to_select = [dict(zip(initial_labels, p)) for p in combinations]
+        selected_meshes_label_spaces = []
+        for p in label_spaces_to_select:
+            m = self._core_object.get_mesh(p)
+            if m is None:
+                continue
+            selected_meshes.append(m)
+            selected_meshes_label_spaces.append(p)
+
+        if len(selected_meshes) == 1:
+            return Mesh(meshed_region=selected_meshes[0])
+        elif len(selected_meshes) == 0:
+            return None
+        else:
+            from ansys.dpf.core import MeshesContainer
+
+            meshes_container = MeshesContainer()
+            for label in initial_labels:
+                meshes_container.add_label(label=label)
+            for i, selected in enumerate(selected_meshes):
+                meshes_container.add_mesh(
+                    label_space=selected_meshes_label_spaces[i],
+                    mesh=selected,
+                )
+            return Meshes(meshes_container=meshes_container)
+
+    def select_beams(self, **kwargs) -> Union[Mesh, Meshes, None]:
+        """Select meshes with beam element shapes, based on property values.
+
+        Parameters
+        ----------
+        **kwargs:
+            Property names with associated values to select.
+            If not defined, all available values are selected.
+
+        Returns
+        -------
+        A Mesh when the selection results in a unique mesh,
+        or a Meshes when several are selected,
+        or None when the criteria result in no mesh.
+
+        Examples
+        --------
+        >>> from ansys.dpf import post
+        >>> from ansys.dpf.post import examples
+        >>> from ansys.dpf.post.common import elemental_properties
+        >>> example_path = examples.download_all_kinds_of_complexity()
+        >>> simulation = post.StaticMechanicalSimulation(example_path)
+        >>> meshes = simulation.split_mesh_by_properties(
+        ...     properties=[elemental_properties.material,
+        ...                 elemental_properties.element_shape]
+        ... )
+        >>> # Select all beam meshes
+        >>> beam_meshes = meshes.select_beams()
+        >>> # Select beam meshes for a specific material
+        >>> beam_mat1 = meshes.select_beams(mat=1)
+        """
+        from ansys.dpf.core import elements
+        from ansys.dpf.core.check_version import get_server_version, meets_version
+
+        from ansys.dpf import core
+
+        initial_labels = self._core_object.labels
+        label_space = {}
+        for key in kwargs:
+            if key in initial_labels:
+                label_space[key] = kwargs[key]
+
+        # Always filter for beam elements
+        if "elshape" in initial_labels:
+            if meets_version(get_server_version(core._global_server()), "12.0"):
+                beam_value = elements._element_shapes.BEAM.value
+            else:
+                beam_value = elements._element_shapes_legacy.BEAM.value
+            label_space["elshape"] = beam_value
+
+        label_values_to_select = {}
+        for label in initial_labels:
+            if label in label_space:
+                values = label_space[label]
+                if not isinstance(values, list):
+                    values = [values]
+                label_values_to_select[label] = values
+            else:
+                label_values_to_select[
+                    label
+                ] = self._core_object.get_available_ids_for_label(label)
+
+        import itertools
+
+        combinations = itertools.product(
+            *[values for values in label_values_to_select.values()]
+        )
+        selected_meshes = []
+        label_spaces_to_select = [dict(zip(initial_labels, p)) for p in combinations]
+        selected_meshes_label_spaces = []
+        for p in label_spaces_to_select:
+            m = self._core_object.get_mesh(p)
+            if m is None:
+                continue
+            selected_meshes.append(m)
+            selected_meshes_label_spaces.append(p)
+
+        if len(selected_meshes) == 1:
+            return Mesh(meshed_region=selected_meshes[0])
+        elif len(selected_meshes) == 0:
+            return None
+        else:
+            from ansys.dpf.core import MeshesContainer
+
+            meshes_container = MeshesContainer()
+            for label in initial_labels:
+                meshes_container.add_label(label=label)
+            for i, selected in enumerate(selected_meshes):
+                meshes_container.add_mesh(
+                    label_space=selected_meshes_label_spaces[i],
+                    mesh=selected,
+                )
+            return Meshes(meshes_container=meshes_container)
