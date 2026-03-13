@@ -282,6 +282,7 @@ def test_meshes_select_shells_specific_node_and_element_counts(meshes):
 
 
 def test_meshes_select_beams_all(meshes):
+    print(meshes._core_object._server)
     """Test select_beams with no additional filters returns all beam meshes."""
     result = meshes.select_beams()
     assert result is not None
