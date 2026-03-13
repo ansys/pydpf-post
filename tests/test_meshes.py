@@ -71,7 +71,6 @@ def test_meshes_plot(meshes):
 
 
 def test_meshes_select(meshes):
-    print(meshes)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         mesh = meshes.select(mat=1, elshape=1)
     else:
@@ -95,44 +94,50 @@ def test_meshes_select_solids_all(meshes):
     assert result is not None
     assert isinstance(result, post.Meshes)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # elshape=2 (SOLID): meshes 2 and 6 → 2 meshes
+        # elshape=2 (SOLID): meshes 2 (mat=1) and 6 (mat=2) → 2 meshes
         assert len(result) == 2
     else:
-        # elshape=1 (SOLID): meshes 0,1,3,5,13 → 5 meshes
-        assert len(result) == 5
+        # elshape=1 (SOLID): meshes 2 (mat=1) and 8 (mat=2) → 2 meshes
+        assert len(result) == 2
 
 
 def test_meshes_select_solids_with_material_filter_single(meshes):
     """Test select_solids filtered by mat=1 returns a single solid mesh."""
     result = meshes.select_solids(mat=1)
+    assert result is not None
+    assert isinstance(result, post.Mesh)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         # elshape=2, mat=1 → mesh 2: 1856 nodes, 343 elements
-        assert result is not None
-        assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 1856
         assert len(result.element_ids) == 343
     else:
-        # elshape=1, mat=1 → mesh 1: 240 nodes, 203 elements
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 240
-        assert len(result.element_ids) == 203
+        # elshape=1, mat=1 → mesh 2: 1856 nodes, 343 elements
+        assert len(result.node_ids) == 1856
+        assert len(result.element_ids) == 343
+
+
+def test_meshes_select_solids_with_material_filter_mat2(meshes):
+    """Test select_solids filtered by mat=2 returns a single solid mesh."""
+    result = meshes.select_solids(mat=2)
+    assert result is not None
+    assert isinstance(result, post.Mesh)
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        # elshape=2, mat=2 → mesh 6: 12970 nodes, 8709 elements
+        assert len(result.node_ids) == 12970
+        assert len(result.element_ids) == 8709
+    else:
+        # elshape=1, mat=2 → mesh 8: 12970 nodes, 8709 elements
+        assert len(result.node_ids) == 12970
+        assert len(result.element_ids) == 8709
 
 
 def test_meshes_select_solids_with_material_filter_multiple(meshes):
     """Test select_solids filtered by a list of materials."""
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # elshape=2, mat=[1,2] → mesh 2 (mat=1) and mesh 6 (mat=2) → 2 meshes
-        result = meshes.select_solids(mat=[1, 2])
-        assert result is not None
-        assert isinstance(result, post.Meshes)
-        assert len(result) == 2
-    else:
-        # elshape=1, mat=[1,5] → mesh 1 (mat=1) and mesh 0 (mat=5) → 2 meshes
-        result = meshes.select_solids(mat=[1, 5])
-        assert result is not None
-        assert isinstance(result, post.Meshes)
-        assert len(result) == 2
+    # Both mat=1 and mat=2 have solids in both server versions
+    result = meshes.select_solids(mat=[1, 2])
+    assert result is not None
+    assert isinstance(result, post.Meshes)
+    assert len(result) == 2
 
 
 def test_meshes_select_solids_nonexistent_material(meshes):
@@ -152,34 +157,23 @@ def test_meshes_select_solids_ignores_unknown_kwargs(meshes):
 
 def test_meshes_select_solids_with_list_material_partial_match(meshes):
     """Test select_solids with a list of materials where only some match."""
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # elshape=2: mat=1 exists, mat=9999 does not → 1 mesh
-        result = meshes.select_solids(mat=[1, 9999])
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 1856
-    else:
-        # elshape=1: mat=1 exists, mat=9999 does not → 1 mesh
-        result = meshes.select_solids(mat=[1, 9999])
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 240
+    # mat=1 has solids, mat=9999 does not → 1 mesh
+    result = meshes.select_solids(mat=[1, 9999])
+    assert result is not None
+    assert isinstance(result, post.Mesh)
+    assert len(result.node_ids) == 1856
 
 
-def test_meshes_select_solids_specific_node_and_element_counts(meshes):
-    """Test that select_solids returns meshes with expected node/element counts."""
+def test_meshes_select_solids_no_match_for_material_without_solids(meshes):
+    """Test select_solids with a material that exists but has no solid elements."""
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # mat=2, elshape=2 → mesh 6: 12970 nodes, 8709 elements
-        result = meshes.select_solids(mat=2)
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 12970
-        assert len(result.element_ids) == 8709
-    else:
-        # mat=5, elshape=1 → mesh 0: 248 nodes, 105 elements
+        # mat=5 has elshape=1 (SHELL), no elshape=2 (SOLID)
         result = meshes.select_solids(mat=5)
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 248
-        assert len(result.element_ids) == 105
+        assert result is None
+    else:
+        # mat=5 has elshape=0 (SHELL), no elshape=1 (SOLID)
+        result = meshes.select_solids(mat=5)
+        assert result is None
 
 
 def test_meshes_select_shells_all(meshes):
@@ -191,8 +185,8 @@ def test_meshes_select_shells_all(meshes):
         # elshape=1 (SHELL): meshes 0,1,3,5,13 → 5 meshes
         assert len(result) == 5
     else:
-        # elshape=0 (SHELL): meshes 7,8,9,10,11,15 → 6 meshes
-        assert len(result) == 6
+        # elshape=0 (SHELL): meshes 0,1,3,6,9,15,17 → 7 meshes
+        assert len(result) == 7
 
 
 def test_meshes_select_shells_with_material_filter_single(meshes):
@@ -205,12 +199,27 @@ def test_meshes_select_shells_with_material_filter_single(meshes):
         assert len(result.node_ids) == 248
         assert len(result.element_ids) == 105
     else:
-        # elshape=0, mat=6 → mesh 7: 248 nodes, 105 elements
-        result = meshes.select_shells(mat=6)
+        # elshape=0, mat=5 → mesh 0: 248 nodes, 105 elements
+        result = meshes.select_shells(mat=5)
         assert result is not None
         assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 248
         assert len(result.element_ids) == 105
+
+
+def test_meshes_select_shells_with_material_filter_mat1(meshes):
+    """Test select_shells filtered by mat=1."""
+    result = meshes.select_shells(mat=1)
+    assert result is not None
+    assert isinstance(result, post.Mesh)
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        # elshape=1, mat=1 → mesh 1: 240 nodes, 203 elements
+        assert len(result.node_ids) == 240
+        assert len(result.element_ids) == 203
+    else:
+        # elshape=0, mat=1 → mesh 1: 240 nodes, 203 elements
+        assert len(result.node_ids) == 240
+        assert len(result.element_ids) == 203
 
 
 def test_meshes_select_shells_with_material_filter_multiple(meshes):
@@ -222,8 +231,8 @@ def test_meshes_select_shells_with_material_filter_multiple(meshes):
         assert isinstance(result, post.Meshes)
         assert len(result) == 2
     else:
-        # elshape=0, mat=[6,12] → mesh 7 (mat=6) and mesh 8 (mat=12) → 2 meshes
-        result = meshes.select_shells(mat=[6, 12])
+        # elshape=0, mat=[6,8] → mesh 9 (mat=6) and mesh 17 (mat=8) → 2 meshes
+        result = meshes.select_shells(mat=[6, 8])
         assert result is not None
         assert isinstance(result, post.Meshes)
         assert len(result) == 2
@@ -244,6 +253,18 @@ def test_meshes_select_shells_ignores_unknown_kwargs(meshes):
     assert len(result_with_unknown) == len(result_all)
 
 
+def test_meshes_select_shells_no_match_for_material_without_shells(meshes):
+    """Test select_shells with a material that exists but has no shell elements."""
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        # mat=2 has elshape=2 (SOLID), no elshape=1 (SHELL)
+        result = meshes.select_shells(mat=2)
+        assert result is None
+    else:
+        # mat=2 has elshape=1 (SOLID), no elshape=0 (SHELL)
+        result = meshes.select_shells(mat=2)
+        assert result is None
+
+
 def test_meshes_select_shells_specific_node_and_element_counts(meshes):
     """Test that select_shells returns meshes with expected node/element counts."""
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
@@ -253,8 +274,8 @@ def test_meshes_select_shells_specific_node_and_element_counts(meshes):
         assert len(result.node_ids) == 553
         assert len(result.element_ids) == 276
     else:
-        # mat=8, elshape=0 → mesh 15: 553 nodes, 276 elements
-        result = meshes.select_shells(mat=8)
+        # mat=7, elshape=0 → mesh 15: 553 nodes, 276 elements
+        result = meshes.select_shells(mat=7)
         assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 553
         assert len(result.element_ids) == 276
@@ -263,35 +284,31 @@ def test_meshes_select_shells_specific_node_and_element_counts(meshes):
 def test_meshes_select_beams_all(meshes):
     """Test select_beams with no additional filters returns all beam meshes."""
     result = meshes.select_beams()
+    assert result is not None
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # elshape=3 (BEAM): mesh 4 → 1 mesh (single Mesh)
-        assert result is not None
+        # elshape=3 (BEAM): mesh 4 (mat=4) → 1 mesh (single Mesh)
         assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 17
         assert len(result.element_ids) == 16
     else:
-        # elshape=2 (BEAM): meshes 2,6 → 2 meshes
-        assert result is not None
+        # elshape=2 (BEAM): meshes 5,10,12,14,16 → 5 meshes
         assert isinstance(result, post.Meshes)
-        assert len(result) == 2
+        assert len(result) == 5
 
 
 def test_meshes_select_beams_with_material_filter_single(meshes):
     """Test select_beams filtered by a specific material returns a single mesh."""
+    result = meshes.select_beams(mat=4)
+    assert result is not None
+    assert isinstance(result, post.Mesh)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         # elshape=3, mat=4 → mesh 4: 17 nodes, 16 elements
-        result = meshes.select_beams(mat=4)
-        assert result is not None
-        assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 17
         assert len(result.element_ids) == 16
     else:
-        # elshape=2, mat=1 → mesh 2: 1856 nodes, 343 elements
-        result = meshes.select_beams(mat=1)
-        assert result is not None
-        assert isinstance(result, post.Mesh)
-        assert len(result.node_ids) == 1856
-        assert len(result.element_ids) == 343
+        # elshape=2, mat=4 → mesh 5: 17 nodes, 16 elements
+        assert len(result.node_ids) == 17
+        assert len(result.element_ids) == 16
 
 
 def test_meshes_select_beams_nonexistent_material(meshes):
@@ -312,15 +329,15 @@ def test_meshes_select_beams_ignores_unknown_kwargs(meshes):
         assert len(result_with_unknown) == len(result_all)
 
 
-def test_meshes_select_beams_no_match_for_wrong_material(meshes):
+def test_meshes_select_beams_no_match_for_material_without_beams(meshes):
     """Test select_beams with a material that exists but has no beam elements."""
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # mat=1 has elshape=1 and elshape=2, but no elshape=3 (BEAM)
+        # mat=1 has elshape=1 (SHELL) and elshape=2 (SOLID), no elshape=3 (BEAM)
         result = meshes.select_beams(mat=1)
         assert result is None
     else:
-        # mat=5 has elshape=1, but no elshape=2 (BEAM)
-        result = meshes.select_beams(mat=5)
+        # mat=1 has elshape=0 (SHELL) and elshape=1 (SOLID), no elshape=2 (BEAM)
+        result = meshes.select_beams(mat=1)
         assert result is None
 
 
@@ -333,11 +350,43 @@ def test_meshes_select_beams_with_list_material(meshes):
         assert isinstance(result, post.Mesh)
         assert len(result.node_ids) == 17
     else:
-        # elshape=2: mat=1 and mat=2 → 2 meshes
-        result = meshes.select_beams(mat=[1, 2])
+        # elshape=2: mat=4 and mat=12 → 2 meshes
+        result = meshes.select_beams(mat=[4, 12])
         assert result is not None
         assert isinstance(result, post.Meshes)
         assert len(result) == 2
+
+
+def test_meshes_select_beams_legacy_specific_materials(meshes):
+    """Test select_beams with specific legacy materials that have beam elements."""
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        # elshape=2, mat=12 → mesh 10: 2 nodes, 1 element
+        result = meshes.select_beams(mat=12)
+        assert result is not None
+        assert isinstance(result, post.Mesh)
+        assert len(result.node_ids) == 2
+        assert len(result.element_ids) == 1
+
+        # elshape=2, mat=15 → mesh 12: 2 nodes, 1 element
+        result = meshes.select_beams(mat=15)
+        assert result is not None
+        assert isinstance(result, post.Mesh)
+        assert len(result.node_ids) == 2
+        assert len(result.element_ids) == 1
+
+        # elshape=2, mat=16 → mesh 14: 2 nodes, 1 element
+        result = meshes.select_beams(mat=16)
+        assert result is not None
+        assert isinstance(result, post.Mesh)
+        assert len(result.node_ids) == 2
+        assert len(result.element_ids) == 1
+
+        # elshape=2, mat=17 → mesh 16: 2 nodes, 1 element
+        result = meshes.select_beams(mat=17)
+        assert result is not None
+        assert isinstance(result, post.Mesh)
+        assert len(result.node_ids) == 2
+        assert len(result.element_ids) == 1
 
 
 def test_meshes_select_solids_disjoint_from_shells_and_beams(meshes):
@@ -362,10 +411,10 @@ def test_meshes_select_solids_disjoint_from_shells_and_beams(meshes):
         assert shell_count == 5
         assert beam_count == 1
     else:
-        # shells=6, solids=5, beams=2 → 13 out of 16 total
-        assert solid_count == 5
-        assert shell_count == 6
-        assert beam_count == 2
+        # shells=7, solids=2, beams=5 → 14 out of 18 total
+        assert solid_count == 2
+        assert shell_count == 7
+        assert beam_count == 5
 
     # The sum of shape-specific meshes should not exceed total meshes
     assert solid_count + shell_count + beam_count <= len(meshes)
