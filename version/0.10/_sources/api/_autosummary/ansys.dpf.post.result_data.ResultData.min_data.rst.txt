@@ -1,0 +1,6 @@
+min\_data
+=========
+
+.. currentmodule:: ansys.dpf.post.result_data
+
+.. autoproperty:: ResultData.min_data
