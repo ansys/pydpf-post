@@ -254,14 +254,9 @@ meshes[0].plot(text="First mesh in the split mesh")
 
 ###############################################################################
 # Split the global mesh and select meshes based on specific property values.
-meshes_filtered = simulation.split_mesh_by_properties(
-    properties={
-        elemental_properties.material: [2, 3, 4],
-        elemental_properties.element_shape: 1,
-    }
-)
+meshes_filtered = meshes.select_solids(mat=[2, 3, 4])
 meshes_filtered.plot(text="Mesh split and filtered")
 
 ###############################################################################
 # Select a ``mesh`` object with a unique combination of property values.
-meshes[{"mat": 5, "elshape": 0}].plot(text="Mesh for mat=5 and elshape=0")
+meshes_filtered = meshes.select_shells(mat=5).plot()
