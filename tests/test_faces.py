@@ -21,23 +21,15 @@
 # SOFTWARE.
 
 from ansys.dpf.core import examples
-import pytest
 from pytest import fixture
 
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post.faces import Face, FaceListById, FaceListByIndex
 from ansys.dpf.post.nodes import NodeListByIndex
-from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
-)
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Faces added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestFaces:
     @fixture
     def fluent_simulation(self):

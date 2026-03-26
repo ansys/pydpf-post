@@ -29,7 +29,6 @@ from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
 from ansys.dpf.post.connectivity import ConnectivityListByIndex
 from ansys.dpf.post.faces import Face
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
@@ -158,7 +157,7 @@ def test_mesh_coordinates(mesh):
     # print(coord)
     ref = """
              results  coord (m)
- node_ids components           
+ node_ids components
         1          X 1.5000e-02
                    Y 4.5000e-02
                    Z 1.5000e-02
@@ -178,7 +177,7 @@ def test_mesh_materials(mesh):
     materials = mesh.materials
     ref = """
      results material_id
- element_ids            
+ element_ids
            5           1
            6           1
            1           1
@@ -191,7 +190,7 @@ def test_mesh_materials(mesh):
     materials_5 = materials.select(element_ids=[5])
     ref = """
      results material_id
- element_ids            
+ element_ids
            5           1
 """  # noqa
     assert str(materials_5) == ref
@@ -206,7 +205,7 @@ def test_mesh_element_types(mesh):
     # print(element_types)
     ref = """
      results elem_type_id
- element_ids             
+ element_ids
            5            1
            6            1
            1            1
@@ -222,10 +221,6 @@ def test_mesh_plot(mesh):
     mesh.plot()
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Available starting DPF 7.0",
-)
 def test_mesh_faces(fluent_mesh):
     assert fluent_mesh.num_faces == 94288
     assert len(fluent_mesh.face_ids) == 94288

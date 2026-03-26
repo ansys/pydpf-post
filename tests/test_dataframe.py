@@ -38,7 +38,6 @@ from ansys.dpf.post.index import (
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
 @fixture
@@ -147,20 +146,12 @@ def test_dataframe_select_no_set_index():
     assert len(df2.mesh_index.values) == len(df.mesh_index.values)
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 def test_dataframe_select_cells():
     simulation = post.FluidSimulation(examples.fluid_axial_model())
     df = simulation.enthalpy()
     df.select(cell_ids=[1])
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 def test_dataframe_select_with_labels():
     fluid_file = examples.download_cfx_mixing_elbow()
     simulation = post.FluidSimulation(fluid_file)
@@ -170,7 +161,7 @@ def test_dataframe_select_with_labels():
   results        H_S (J/kg)
   set_ids                 1
     phase Water at 25 C (2)
- node_ids                  
+ node_ids
         1       -1.5921e+07
 """  # noqa: W291, E501
     assert str(df2) == ref
@@ -335,7 +326,7 @@ def test_dataframe_str(transient_rst, modal_frame):
               results       U (m)
               set_ids           1
           base_sector           1
- node_ids  components            
+ node_ids  components
         1           X  4.9812e-13
                     Y  2.4100e+02
                     Z  8.9709e-12

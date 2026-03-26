@@ -29,17 +29,11 @@ from pytest import fixture
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestFluidSimulation:
     @fixture
     def fluent_simulation(self):
@@ -202,31 +196,13 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.nodal
 
         # Request on faces (requires filter-out of cell zones)
-        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.static_pressure(location=post.locations.faces)
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.static_pressure_on_faces()
-        else:
-            result = fluent_simulation.static_pressure(location=post.locations.faces)
-            # print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            assert result._core_object[0].location == post.locations.faces
-            # result._fc[0].plot()
+        result = fluent_simulation.static_pressure(location=post.locations.faces)
+        assert result.index.mesh_index.location == post.locations.faces
+        assert result._core_object[0].location == post.locations.faces
 
-            result = fluent_simulation.static_pressure_on_faces()
-            # print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            assert result._core_object[0].location == post.locations.faces
-            # result.plot()
+        result = fluent_simulation.static_pressure_on_faces()
+        assert result.index.mesh_index.location == post.locations.faces
+        assert result._core_object[0].location == post.locations.faces
 
         # Request on cells (requires filter-out of face zones)
         result = fluent_simulation.static_pressure(location=post.locations.elemental)
@@ -243,16 +219,16 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == post.locations.nodal
         assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_nodes
         ref = """
-  results          TEMP (K)           
-  set_ids                 1           
+  results          TEMP (K)
+  set_ids                 1
     phase Water at 25 C (2) Copper (3)
- node_ids                             
-        1        3.0533e+02           
-        2        3.0389e+02           
-        3        3.0155e+02           
-        4        3.0201e+02           
-        5        3.0340e+02           
-        6        3.0487e+02           
+ node_ids
+        1        3.0533e+02
+        2        3.0389e+02
+        3        3.0155e+02
+        4        3.0201e+02
+        5        3.0340e+02
+        6        3.0487e+02
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -262,16 +238,16 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == post.locations.nodal
         assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_nodes
         ref = """
-  results          TEMP (K)           
-  set_ids                 1           
+  results          TEMP (K)
+  set_ids                 1
     phase Water at 25 C (2) Copper (3)
- node_ids                             
-     3149        3.0188e+02           
-     4143        3.0039e+02           
-     3140        3.0099e+02           
-     3158        3.0127e+02           
-     3154        3.0498e+02           
-     4146        3.0049e+02           
+ node_ids
+     3149        3.0188e+02
+     4143        3.0039e+02
+     3140        3.0099e+02
+     3158        3.0127e+02
+     3154        3.0498e+02
+     4146        3.0049e+02
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -280,10 +256,10 @@ class TestFluidSimulation:
         )
         assert result.index.mesh_index.location == post.locations.nodal
         ref = """
-  results          TEMP (K)           
-  set_ids                 1           
+  results          TEMP (K)
+  set_ids                 1
     phase Water at 25 C (2) Copper (3)
- node_ids                             
+ node_ids
 """  # noqa: W291, E501
         assert str(result) == ref
 
@@ -313,10 +289,10 @@ class TestFluidSimulation:
         )
         assert result.index.mesh_index.location == post.locations.faces
         ref = """
-  results          TEMP (K)           
-  set_ids                 1           
+  results          TEMP (K)
+  set_ids                 1
     phase Water at 25 C (2) Copper (3)
- face_ids                             
+ face_ids
 """  # noqa: W291, E501
         assert str(result) == ref
         with pytest.raises(
@@ -331,16 +307,16 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == "cells"
         assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_cells
         ref = """
-  results          TEMP (K)           
-  set_ids                 1           
+  results          TEMP (K)
+  set_ids                 1
     phase Water at 25 C (2) Copper (3)
- cell_ids                             
-        1        3.0113e+02           
-        2        3.0206e+02           
-        3        3.0182e+02           
-        4        3.0093e+02           
-        5        3.0291e+02           
-        6        3.0055e+02           
+ cell_ids
+        1        3.0113e+02
+        2        3.0206e+02
+        3        3.0182e+02
+        4        3.0093e+02
+        5        3.0291e+02
+        6        3.0055e+02
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -365,7 +341,7 @@ class TestFluidSimulation:
             ref_1 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids             
+ node_ids
         1   1.0742e+00
         2   1.0436e+00
         3   1.0131e+00
@@ -377,7 +353,7 @@ class TestFluidSimulation:
             ref_2 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids             
+ node_ids
       996   1.1041e+00
       894   1.1035e+00
       795   1.0982e+00
@@ -389,7 +365,7 @@ class TestFluidSimulation:
             ref_3 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids             
+ node_ids
     11325   1.3470e+00
     11455   1.3104e+00
     11416   1.3262e+00
@@ -402,7 +378,7 @@ class TestFluidSimulation:
             ref_1 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids              
+ node_ids
         1    1.0742e+00
         2    1.0436e+00
         3    1.0131e+00
@@ -414,7 +390,7 @@ class TestFluidSimulation:
             ref_2 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids              
+ node_ids
       996    1.1041e+00
       894    1.1035e+00
       795    1.0982e+00
@@ -426,7 +402,7 @@ class TestFluidSimulation:
             ref_3 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids              
+ node_ids
     11291    1.3590e+00
     11416    1.3262e+00
     11455    1.3104e+00
@@ -468,29 +444,18 @@ class TestFluidSimulation:
         # """  # noqa: W291, E501
         #         assert str(result) == ref
         #         result.plot()
-        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.density_on_faces(
-                    face_ids=fluent_simulation.mesh.face_ids
-                )
-        else:
-            result = fluent_simulation.density_on_faces(
-                face_ids=fluent_simulation.mesh.face_ids
-            )
-            print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            # assert (
-            #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
-            # )  # TODO: why does this fail? Is the result not defined everywhere?
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-                ref = """
+        result = fluent_simulation.density_on_faces(
+            face_ids=fluent_simulation.mesh.face_ids
+        )
+        assert result.index.mesh_index.location == post.locations.faces
+        # assert (
+        #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
+        # )  # TODO: why does this fail? Is the result not defined everywhere?
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            ref = """
   results RHO (kg/m^3)
   set_ids            1
- face_ids             
+ face_ids
     39897   1.1077e+00
     39898   1.0892e+00
     39899   1.0821e+00
@@ -499,11 +464,11 @@ class TestFluidSimulation:
     39902   1.0724e+00
       ...          ...
 """  # noqa: W291, E501
-            else:
-                ref = """
+        else:
+            ref = """
   results RHO (kg*m^-3)
   set_ids             1
- face_ids              
+ face_ids
     39897    1.1077e+00
     39898    1.0892e+00
     39899    1.0821e+00
@@ -512,7 +477,7 @@ class TestFluidSimulation:
     39902    1.0724e+00
       ...           ...
 """  # noqa: W291, E501
-            assert str(result) == ref
+        assert str(result) == ref
 
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
         result = fluent_simulation.density_on_cells(
@@ -527,7 +492,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg/m^3)
   set_ids            1
- cell_ids             
+ cell_ids
         1   1.1095e+00
         2   1.1087e+00
         3   1.1098e+00
@@ -540,7 +505,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg*m^-3)
   set_ids             1
- cell_ids              
+ cell_ids
         1    1.1095e+00
         2    1.1087e+00
         3    1.1098e+00
