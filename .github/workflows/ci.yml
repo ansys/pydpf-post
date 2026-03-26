@@ -13,7 +13,7 @@ on:
       standalone_branch_suffix:
         description: 'Suffix of the branch on standalone'
         required: false
-        default: ''      
+        default: ''
       ansys_version:
         description: "ANSYS version"
         required: false
@@ -90,8 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: "Set licensing if necessary"
-        if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
+      - name: "Set licensing"
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -163,8 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: "Set licensing if necessary"
-        if: matrix.ANSYS_VERSION.version > 231
+      - name: "Set licensing"
         shell: bash
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
@@ -259,4 +257,4 @@ jobs:
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           doc-artifact-name: HTML-doc-ansys-dpf-post.zip
-          decompress-artifact: true    
+          decompress-artifact: true
