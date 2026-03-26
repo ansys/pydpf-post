@@ -157,7 +157,7 @@ def test_mesh_coordinates(mesh):
     # print(coord)
     ref = """
              results  coord (m)
- node_ids components
+ node_ids components           
         1          X 1.5000e-02
                    Y 4.5000e-02
                    Z 1.5000e-02
@@ -177,7 +177,7 @@ def test_mesh_materials(mesh):
     materials = mesh.materials
     ref = """
      results material_id
- element_ids
+ element_ids            
            5           1
            6           1
            1           1
@@ -190,7 +190,7 @@ def test_mesh_materials(mesh):
     materials_5 = materials.select(element_ids=[5])
     ref = """
      results material_id
- element_ids
+ element_ids            
            5           1
 """  # noqa
     assert str(materials_5) == ref
@@ -205,7 +205,7 @@ def test_mesh_element_types(mesh):
     # print(element_types)
     ref = """
      results elem_type_id
- element_ids
+ element_ids             
            5            1
            6            1
            1            1

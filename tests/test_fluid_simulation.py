@@ -341,7 +341,7 @@ class TestFluidSimulation:
             ref_1 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids
+ node_ids             
         1   1.0742e+00
         2   1.0436e+00
         3   1.0131e+00
@@ -353,7 +353,7 @@ class TestFluidSimulation:
             ref_2 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids
+ node_ids             
       996   1.1041e+00
       894   1.1035e+00
       795   1.0982e+00
@@ -365,7 +365,7 @@ class TestFluidSimulation:
             ref_3 = """
   results RHO (kg/m^3)
   set_ids            1
- node_ids
+ node_ids             
     11325   1.3470e+00
     11455   1.3104e+00
     11416   1.3262e+00
@@ -378,7 +378,7 @@ class TestFluidSimulation:
             ref_1 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids
+ node_ids              
         1    1.0742e+00
         2    1.0436e+00
         3    1.0131e+00
@@ -390,7 +390,7 @@ class TestFluidSimulation:
             ref_2 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids
+ node_ids              
       996    1.1041e+00
       894    1.1035e+00
       795    1.0982e+00
@@ -402,7 +402,7 @@ class TestFluidSimulation:
             ref_3 = """
   results RHO (kg*m^-3)
   set_ids             1
- node_ids
+ node_ids              
     11291    1.3590e+00
     11416    1.3262e+00
     11455    1.3104e+00
@@ -455,7 +455,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg/m^3)
   set_ids            1
- face_ids
+ face_ids             
     39897   1.1077e+00
     39898   1.0892e+00
     39899   1.0821e+00
@@ -468,7 +468,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg*m^-3)
   set_ids             1
- face_ids
+ face_ids              
     39897    1.1077e+00
     39898    1.0892e+00
     39899    1.0821e+00
@@ -492,7 +492,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg/m^3)
   set_ids            1
- cell_ids
+ cell_ids              
         1   1.1095e+00
         2   1.1087e+00
         3   1.1098e+00
@@ -505,7 +505,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg*m^-3)
   set_ids             1
- cell_ids
+ cell_ids              
         1    1.1095e+00
         2    1.1087e+00
         3    1.1098e+00

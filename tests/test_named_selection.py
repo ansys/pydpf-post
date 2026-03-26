@@ -57,7 +57,7 @@ def test_named_selection():
     assert ns.location == dpf.locations.nodal
     assert ns.size == 3
     ref = """NamedSelection 'test'
- with DPF  Scoping:
+ with DPF  Scoping: 
   with Nodal location and 3 entities
 """  # noqa
     assert repr(ns) == ref

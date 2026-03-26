@@ -161,7 +161,7 @@ def test_dataframe_select_with_labels():
   results        H_S (J/kg)
   set_ids                 1
     phase Water at 25 C (2)
- node_ids
+ node_ids                  
         1       -1.5921e+07
 """  # noqa: W291, E501
     assert str(df2) == ref
@@ -326,7 +326,7 @@ def test_dataframe_str(transient_rst, modal_frame):
               results       U (m)
               set_ids           1
           base_sector           1
- node_ids  components
+ node_ids  components            
         1           X  4.9812e-13
                     Y  2.4100e+02
                     Z  8.9709e-12
