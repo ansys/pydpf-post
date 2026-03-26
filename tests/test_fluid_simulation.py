@@ -238,16 +238,16 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == post.locations.nodal
         assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_nodes
         ref = """
-  results          TEMP (K)
-  set_ids                 1
+  results          TEMP (K)           
+  set_ids                 1           
     phase Water at 25 C (2) Copper (3)
- node_ids
-     3149        3.0188e+02
-     4143        3.0039e+02
-     3140        3.0099e+02
-     3158        3.0127e+02
-     3154        3.0498e+02
-     4146        3.0049e+02
+ node_ids                             
+     3149        3.0188e+02           
+     4143        3.0039e+02           
+     3140        3.0099e+02           
+     3158        3.0127e+02           
+     3154        3.0498e+02           
+     4146        3.0049e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -256,10 +256,10 @@ class TestFluidSimulation:
         )
         assert result.index.mesh_index.location == post.locations.nodal
         ref = """
-  results          TEMP (K)
-  set_ids                 1
+  results          TEMP (K)           
+  set_ids                 1           
     phase Water at 25 C (2) Copper (3)
- node_ids
+ node_ids                             
 """  # noqa: W291, E501
         assert str(result) == ref
 
@@ -289,10 +289,10 @@ class TestFluidSimulation:
         )
         assert result.index.mesh_index.location == post.locations.faces
         ref = """
-  results          TEMP (K)
-  set_ids                 1
+  results          TEMP (K)           
+  set_ids                 1           
     phase Water at 25 C (2) Copper (3)
- face_ids
+ face_ids                             
 """  # noqa: W291, E501
         assert str(result) == ref
         with pytest.raises(
