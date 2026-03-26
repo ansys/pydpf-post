@@ -307,16 +307,16 @@ class TestFluidSimulation:
         assert result.index.mesh_index.location == "cells"
         assert len(result.index.mesh_index) == cfx_simulation.mesh_info.num_cells
         ref = """
-  results          TEMP (K)
-  set_ids                 1
+  results          TEMP (K)           
+  set_ids                 1           
     phase Water at 25 C (2) Copper (3)
- cell_ids
-        1        3.0113e+02
-        2        3.0206e+02
-        3        3.0182e+02
-        4        3.0093e+02
-        5        3.0291e+02
-        6        3.0055e+02
+ cell_ids                             
+        1        3.0113e+02           
+        2        3.0206e+02           
+        3        3.0182e+02           
+        4        3.0093e+02           
+        5        3.0291e+02           
+        6        3.0055e+02           
       ...               ...        ...
 """  # noqa: W291, E501
         assert str(result) == ref
@@ -492,7 +492,7 @@ class TestFluidSimulation:
             ref = """
   results RHO (kg/m^3)
   set_ids            1
- cell_ids              
+ cell_ids             
         1   1.1095e+00
         2   1.1087e+00
         3   1.1098e+00
