@@ -308,16 +308,6 @@ def test_plot_with_vtk_file(allkindofcomplexity):
     s._plot_contour_with_vtk_file()
 
 
-from ansys.dpf import core
-
-version_core = core.__version__
-MEETS_CORE_034 = core.check_version.meets_version(version_core, "0.3.4")
-
-
-@pytest.mark.skipif(
-    not MEETS_CORE_034,
-    reason="Plot path on coordinates" "available from dpf-core 0.3.4.",
-)
 def test_plot_on_coordinates(model_ns):
     coordinates = [[-0.0195, 0.006, -0.0025]]
     for i in range(1, 101):
@@ -360,9 +350,6 @@ def test_plot_on_coordinates(model_ns):
     displacement.vector.plot_contour()
 
 
-@pytest.mark.skipif(
-    not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
-)
 def test_plot_on_coordinates_msup_transient(plate_msup):
     coordinates = [[0.075, 0.005, 0.975]]
     for i in range(1, 20):
@@ -376,9 +363,6 @@ def test_plot_on_coordinates_msup_transient(plate_msup):
     sxx.plot_contour()
 
 
-@pytest.mark.skipif(
-    not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
-)
 def test_plot_on_coordinates_complex_rst(complex_model):
     coordinates = [[-0.00499615, 0.000196299, 0.0001]]
     for i in range(1, 20):
@@ -414,9 +398,6 @@ def test_plot_on_coordinates_complex_rst(complex_model):
     vec.plot_contour(off_screen=True)
 
 
-@pytest.mark.skipif(
-    not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
-)
 def test_path_on_coordinates_with_different_type_of_arrays(static_rst):
     # reference
     ref = [
@@ -473,9 +454,6 @@ def test_path_on_coordinates_with_different_type_of_arrays(static_rst):
     assert np.allclose(field.data, ref, rtol=1.0e-20)
 
 
-@pytest.mark.skipif(
-    not MEETS_CORE_034, reason="Path on coordinates" "available from dpf-core 0.3.4."
-)
 def test_path_on_coordinates_with_field(static_rst):
     # reference
     ref = [

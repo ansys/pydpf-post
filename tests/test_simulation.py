@@ -2982,14 +2982,9 @@ class TestModalMechanicalSimulation:
         )
 
     def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        if frame_modal_simulation._model._server.meet_version("7.1"):
-            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
-            assert len(result.index.mesh_index) == 2048
-            assert len(result.columns.set_ids) == 6
-        elif frame_modal_simulation._model._server.meet_version("6.2"):
-            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
-            assert len(result.index.mesh_index) == 11146
-            assert len(result.columns.set_ids) == 6
+        result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+        assert len(result.index.mesh_index) == 2048
+        assert len(result.columns.set_ids) == 6
         result = frame_modal_simulation.stress_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
