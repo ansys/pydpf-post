@@ -1,0 +1,32 @@
+﻿StructuralTemperature
+=====================
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. autoclass:: StructuralTemperature
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      StructuralTemperature.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      StructuralTemperature.scalar
+   
+   
