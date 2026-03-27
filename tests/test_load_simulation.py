@@ -30,7 +30,6 @@ from ansys.dpf.post.harmonic_mechanical_simulation import HarmonicMechanicalSimu
 from ansys.dpf.post.modal_mechanical_simulation import ModalMechanicalSimulation
 from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulation
 from ansys.dpf.post.transient_mechanical_simulation import TransientMechanicalSimulation
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
 def test_load_simulation_static_mechanical(simple_bar, complex_model):
@@ -73,10 +72,6 @@ def test_load_simulation_harmonic_mechanical(complex_model, simple_bar):
     assert isinstance(simulation, HarmonicMechanicalSimulation)
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 def test_load_simulation_static_fluid(fluid_fluent_elbow_steady_state, simple_bar):
     ds = dpf.DataSources()
     ds.set_result_file_path(fluid_fluent_elbow_steady_state["cas"][0], key="cas")
@@ -93,10 +88,6 @@ def test_load_simulation_static_fluid(fluid_fluent_elbow_steady_state, simple_ba
     assert isinstance(simulation, FluidSimulation)
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 def test_load_simulation_transient_fluid(fluid_fluent_elbow_transient, simple_bar):
     ds = dpf.DataSources()
     ds.set_result_file_path(fluid_fluent_elbow_transient["cas"][0], key="cas")

@@ -25,16 +25,9 @@ import pytest
 from ansys.dpf import post
 from ansys.dpf.post import examples
 from ansys.dpf.post.helpers import streamlines
-from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
-)
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestStreamlines:
     @pytest.fixture
     def simulation(self) -> post.FluidSimulation:
