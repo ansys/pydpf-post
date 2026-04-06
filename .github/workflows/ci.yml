@@ -144,7 +144,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
 
   retro:
     name: "Test ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} on ${{ matrix.os }}"
@@ -207,7 +207,7 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
 
   examples:
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
