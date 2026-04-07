@@ -17,6 +17,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "ansys/actions/*"
     labels:
       - "maintenance"
       - "CI/CD"
