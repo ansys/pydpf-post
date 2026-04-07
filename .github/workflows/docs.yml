@@ -89,6 +89,10 @@ jobs:
           sudo apt update
           sudo apt install pandoc texlive-latex-extra latexmk
 
+      - name: "Install CI requirements (pydpf-core from main)"
+        shell: bash
+        run: pip install -r requirements/requirements_ci.txt
+
       - name: "Build Package"
         id: build-package
         uses: ansys/pydpf-actions/build_package@v2.3
