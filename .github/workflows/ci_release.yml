@@ -29,6 +29,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PACKAGE_NAME: 'ansys-dpf-post'
   MODULE: 'post'
@@ -38,6 +42,7 @@ env:
 
 jobs:
   debug:
+    name: "Github context info"
     runs-on: ubuntu-latest
     steps:
     - name: Show the GitHub context for the triggered event
@@ -113,7 +118,7 @@ jobs:
         shell: bash
         working-directory: tests
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
         uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
@@ -179,7 +184,7 @@ jobs:
         shell: bash
         working-directory: tests
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
         uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3

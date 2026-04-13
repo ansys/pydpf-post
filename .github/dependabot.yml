@@ -11,7 +11,7 @@ updates:
         - "ansys-sphinx-theme"
         - "ansys-tools-common"
     directory: "/" # Location of package manifests
-    insecure-external-code-execution: allow
+    insecure-external-code-execution: deny
     schedule:
       interval: "daily"
     labels:

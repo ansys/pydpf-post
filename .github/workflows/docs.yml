@@ -136,15 +136,19 @@ jobs:
 
       - name: "Build sphinx doc"
         shell: bash
+        env:
+          BUILD_EXTRAS: ${{ inputs.build_extras }}
         run: |
           export SPHINX_APIDOC_OPTIONS=inherited-members
-          sphinx-apidoc -o doc/source/api src/ansys ${{inputs.build_extras}} -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
+          sphinx-apidoc -o doc/source/api src/ansys ${BUILD_EXTRAS} -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
 
       - name: "Build HTML Documentation"
         shell: bash
         working-directory: doc
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
         run: |
-          export TEMP=${{ runner.temp }}
+          export TEMP=${RUNNER_TEMP}
           make clean
           echo "Making html doc..."
           make html $DEBUG_HTML >> log.txt 2>&1
@@ -169,8 +173,10 @@ jobs:
         shell: bash
         working-directory: doc
         if: ${{ inputs.generate_pdf == 'true' }}
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
         run: |
-          export TEMP=${{ runner.temp }}
+          export TEMP=${RUNNER_TEMP}
           echo "Making pdf doc..."
           make pdf $DEBUG_PDF
 
@@ -182,7 +188,7 @@ jobs:
         if: always()
 
       - name: "Zip HTML Documentation"
-        uses: vimtor/action-zip@v1.2
+        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
         with:
           files: doc/build/html/
           dest: HTML-doc-${{env.PACKAGE_NAME}}.zip

@@ -34,6 +34,7 @@ env:
 
 jobs:
   debug:
+    name: "Github context info"
     runs-on: ubuntu-latest
     steps:
     - name: Show the GitHub context for the triggered event
@@ -139,7 +140,7 @@ jobs:
         shell: bash
         working-directory: tests
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
         uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
@@ -171,6 +172,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: "Set licensing"
         shell: bash
@@ -214,7 +217,7 @@ jobs:
         shell: bash
         working-directory: tests
         run: |
-          pytest $DEBUG --cov=ansys.dpf.${{env.MODULE}} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
+          pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
         uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
