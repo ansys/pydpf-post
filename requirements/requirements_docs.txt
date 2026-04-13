@@ -12,5 +12,5 @@ sphinx-gallery==0.20.0
 ansys_sphinx_theme==1.7.0
 sphinx-autodoc-typehints==3.0.1
 pyvista==0.47.1
-vtk==9.6.0
+vtk==9.6.1
 sphinx-design===0.6.1
