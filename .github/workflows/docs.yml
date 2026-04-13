@@ -1,4 +1,4 @@
-name: docs
+name: docs # zizmor: ignore[concurrency-limits] , this is a reusable workflow
 
 on:
 # Can be called by the CI
@@ -29,6 +29,11 @@ on:
         description: "Debug verbose mode"
         type: string
         default: 'True'
+    secrets:
+      LICENSE_SERVER:
+        required: true
+      PYANSYS_CI_BOT_TOKEN:
+        required: true
 # Can be called manually
   workflow_dispatch:
     inputs:
@@ -56,13 +61,18 @@ env:
   MODULE: post
   DPF_DEFAULT_GRPC_MODE: insecure
 
+permissions: {}
+
 jobs:
   doc-style:
     name: "Check doc style"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required for doc-style action to post comments
     steps:
         - name: "Running documentation style checks"
-          uses: ansys/actions/doc-style@v10
+          uses: ansys/actions/doc-style@7d55ff0b9f67c77dae50a286d711ee1ae27b0a25 # v10.2.12
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,16 +80,21 @@ jobs:
     name: "Documentation"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: "Set licensing"
         shell: bash
+        env:
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
-          echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
+          echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
+          echo "DPF_DEFAULT_GRPC_MODE=insecure" >> $GITHUB_ENV
 
-      - name: Setup Python
-        uses: actions/setup-python@v6.2.0
+      - name: "Setup Python"
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -95,7 +110,7 @@ jobs:
 
       - name: "Build Package"
         id: build-package
-        uses: ansys/pydpf-actions/build_package@v2.3
+        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
         with:
           python-version: ${{ inputs.python_version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
@@ -108,7 +123,7 @@ jobs:
           standalone_suffix: ${{ inputs.standalone_suffix }}
 
       - name: "Setup headless display"
-        uses: pyvista/setup-headless-display-action@v4
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: "Install documentation requirements"
         shell: bash
@@ -121,15 +136,19 @@ jobs:
 
       - name: "Build sphinx doc"
         shell: bash
+        env:
+          BUILD_EXTRAS: ${{ inputs.build_extras }}
         run: |
           export SPHINX_APIDOC_OPTIONS=inherited-members
-          sphinx-apidoc -o doc/source/api src/ansys ${{inputs.build_extras}} -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
+          sphinx-apidoc -o doc/source/api src/ansys ${BUILD_EXTRAS} -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
 
       - name: "Build HTML Documentation"
         shell: bash
         working-directory: doc
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
         run: |
-          export TEMP=${{ runner.temp }}
+          export TEMP=${RUNNER_TEMP}
           make clean
           echo "Making html doc..."
           make html $DEBUG_HTML >> log.txt 2>&1
@@ -154,27 +173,29 @@ jobs:
         shell: bash
         working-directory: doc
         if: ${{ inputs.generate_pdf == 'true' }}
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
         run: |
-          export TEMP=${{ runner.temp }}
+          export TEMP=${RUNNER_TEMP}
           echo "Making pdf doc..."
           make pdf $DEBUG_PDF
 
       - name: "Upload Documentation Build log"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: doc-${{env.PACKAGE_NAME}}-log
           path: doc/*.txt
         if: always()
 
       - name: "Zip HTML Documentation"
-        uses: vimtor/action-zip@v1.2
+        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
         with:
           files: doc/build/html/
           dest: HTML-doc-${{env.PACKAGE_NAME}}.zip
         if: always()
 
       - name: "Upload HTML Documentation"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: HTML-doc-${{env.PACKAGE_NAME}}.zip
           path: HTML-doc-${{env.PACKAGE_NAME}}.zip
@@ -192,19 +213,19 @@ jobs:
           echo "Found PDF doc: ${files[0]}"
 
       - name: "Zip PDF Documentation"
-        uses: vimtor/action-zip@v1.2
+        uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         if: ${{ inputs.generate_pdf == 'true' }}
         with:
           files: doc/build/latex/${{ steps.pdf.outputs.PDF_file }}
           dest: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Upload PDF Documentation"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: inputs.generate_pdf == 'true'
         with:
           name: PDF-doc-${{env.PACKAGE_NAME}}
           path: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
         if: always()

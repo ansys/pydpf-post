@@ -2,9 +2,16 @@ version: 2
 updates:
   - package-ecosystem: "pip" # See documentation for possible values
     cooldown:
-      default-days: 10 # Fallback cooldown if no specific rule applies
+      default-days: 5 # Fallback cooldown if no specific rule applies
+      semver-major-days: 30 # Cooldown for major version updates
+      semver-minor-days: 7 # Cooldown for minor version updates
+      semver-patch-days: 3 # Cooldown for patch updates
+      exclude:
+        - "ansys-platform-instancemanagement"
+        - "ansys-sphinx-theme"
+        - "ansys-tools-common"
     directory: "/" # Location of package manifests
-    insecure-external-code-execution: allow
+    insecure-external-code-execution: deny
     schedule:
       interval: "daily"
     labels:
@@ -12,11 +19,19 @@ updates:
       - "dependencies"
 
   - package-ecosystem: "github-actions"
-    cooldown:
-      default-days: 10 # Fallback cooldown if no specific rule applies
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "ansys/actions/*"
     labels:
       - "maintenance"
       - "CI/CD"
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns:
+          - "*"
