@@ -21,17 +21,13 @@
 # SOFTWARE.
 
 import numpy as np
-import pytest
 from pytest import fixture
 
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
 from ansys.dpf.post.selection import SpatialSelection
-from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
-)
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1
 
 
 def test_spatial_selection_select_nodes(allkindofcomplexity):
@@ -75,10 +71,6 @@ def test_spatial_selection_select_named_selection(allkindofcomplexity):
     assert 14826 in ids
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Faces added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestSpatialSelectionFaces:
     @fixture
     def fluent_simulation(self):

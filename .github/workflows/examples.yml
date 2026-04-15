@@ -1,4 +1,4 @@
-name: examples
+name: examples # zizmor: ignore[concurrency-limits] , this is a reusable workflow
 
 on:
 # Can be called by the CI
@@ -16,6 +16,11 @@ on:
         required: false
         type: string
         default: ''
+    secrets:
+      LICENSE_SERVER:
+        required: true
+      PYANSYS_CI_BOT_TOKEN:
+        required: true
 # Can be called manually
   workflow_dispatch:
     inputs:
@@ -39,21 +44,29 @@ env:
   MODULE: post
   DPF_DEFAULT_GRPC_MODE: insecure
 
+permissions: {}
+
 jobs:
   setup:
     name: "Setup"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       python_versions: ${{ steps.set_array.outputs.python_versions }}
     steps:
       - id: set_array
+        env:
+          PYTHON_VERSIONS: ${{ inputs.python_versions }}
         run: |
-          echo "python_versions=${{ toJSON(inputs.python_versions) }}" >> $GITHUB_OUTPUT
+          echo "python_versions=${PYTHON_VERSIONS}" >> $GITHUB_OUTPUT
 
   examples:
     name: "Run Examples"
     needs: setup
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -61,22 +74,30 @@ jobs:
         os: ["windows-latest", "ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
-      - name: "Set licensing if necessary"
-        if: ${{ (github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT) > '231' }}
+      - name: "Set licensing"
         shell: bash
+        env:
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
         run: |
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
-          echo "ANSYSLMD_LICENSE_FILE=1055@${{ secrets.LICENSE_SERVER }}" >> $GITHUB_ENV
+          echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
+          echo "DPF_DEFAULT_GRPC_MODE=insecure" >> $GITHUB_ENV
 
-      - name: Setup Python
-        uses: actions/setup-python@v6.2.0
+      - name: "Setup Python"
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: "Install CI requirements (pydpf-core from main)"
+        shell: bash
+        run: pip install -r requirements/requirements_ci.txt
+
       - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@v2.3
+        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
@@ -89,7 +110,7 @@ jobs:
           standalone_suffix: ${{ inputs.standalone_suffix }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@v2.3
+        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
         with:
           DEBUG: true
 
@@ -105,5 +126,5 @@ jobs:
           python run_examples.py
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
         if: always()

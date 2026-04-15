@@ -29,17 +29,11 @@ from pytest import fixture
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestFluidSimulation:
     @fixture
     def fluent_simulation(self):
@@ -202,31 +196,13 @@ class TestFluidSimulation:
         assert result._core_object[0].location == post.locations.nodal
 
         # Request on faces (requires filter-out of cell zones)
-        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.static_pressure(location=post.locations.faces)
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.static_pressure_on_faces()
-        else:
-            result = fluent_simulation.static_pressure(location=post.locations.faces)
-            # print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            assert result._core_object[0].location == post.locations.faces
-            # result._fc[0].plot()
+        result = fluent_simulation.static_pressure(location=post.locations.faces)
+        assert result.index.mesh_index.location == post.locations.faces
+        assert result._core_object[0].location == post.locations.faces
 
-            result = fluent_simulation.static_pressure_on_faces()
-            # print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            assert result._core_object[0].location == post.locations.faces
-            # result.plot()
+        result = fluent_simulation.static_pressure_on_faces()
+        assert result.index.mesh_index.location == post.locations.faces
+        assert result._core_object[0].location == post.locations.faces
 
         # Request on cells (requires filter-out of face zones)
         result = fluent_simulation.static_pressure(location=post.locations.elemental)
@@ -468,26 +444,15 @@ class TestFluidSimulation:
         # """  # noqa: W291, E501
         #         assert str(result) == ref
         #         result.plot()
-        if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            with pytest.raises(
-                ValueError,
-                match="Querying an ElementalAndFaces result on "
-                "faces currently requires the use of face zone ids",
-            ):
-                _ = fluent_simulation.density_on_faces(
-                    face_ids=fluent_simulation.mesh.face_ids
-                )
-        else:
-            result = fluent_simulation.density_on_faces(
-                face_ids=fluent_simulation.mesh.face_ids
-            )
-            print(result)
-            assert result.index.mesh_index.location == post.locations.faces
-            # assert (
-            #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
-            # )  # TODO: why does this fail? Is the result not defined everywhere?
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-                ref = """
+        result = fluent_simulation.density_on_faces(
+            face_ids=fluent_simulation.mesh.face_ids
+        )
+        assert result.index.mesh_index.location == post.locations.faces
+        # assert (
+        #     len(result.index.mesh_index.values) == len(fluent_simulation.mesh.face_ids)
+        # )  # TODO: why does this fail? Is the result not defined everywhere?
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+            ref = """
   results RHO (kg/m^3)
   set_ids            1
  face_ids             
@@ -499,8 +464,8 @@ class TestFluidSimulation:
     39902   1.0724e+00
       ...          ...
 """  # noqa: W291, E501
-            else:
-                ref = """
+        else:
+            ref = """
   results RHO (kg*m^-3)
   set_ids             1
  face_ids              
@@ -512,7 +477,7 @@ class TestFluidSimulation:
     39902    1.0724e+00
       ...           ...
 """  # noqa: W291, E501
-            assert str(result) == ref
+        assert str(result) == ref
 
     def test_results_fluent_cross_locations_on_cells(self, fluent_simulation):
         result = fluent_simulation.density_on_cells(

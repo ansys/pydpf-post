@@ -20,19 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import pytest
 from pytest import fixture
 
 from ansys.dpf import core as dpf
 from ansys.dpf import post
 from ansys.dpf.post import examples
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="FluidMeshInfo added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestFluidMeshInfo:
     @fixture
     def fluent_simulation(self):

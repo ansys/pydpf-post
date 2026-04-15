@@ -29,7 +29,6 @@ from ansys.dpf.post import FluidSimulation, Mesh, StaticMechanicalSimulation
 from ansys.dpf.post.connectivity import ConnectivityListByIndex
 from ansys.dpf.post.faces import Face
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
 )
@@ -222,10 +221,6 @@ def test_mesh_plot(mesh):
     mesh.plot()
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Available starting DPF 7.0",
-)
 def test_mesh_faces(fluent_mesh):
     assert fluent_mesh.num_faces == 94288
     assert len(fluent_mesh.face_ids) == 94288

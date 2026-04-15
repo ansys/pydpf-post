@@ -58,9 +58,6 @@ from ansys.dpf.post.result_workflows._utils import (
 from ansys.dpf.post.selection import _WfNames
 from ansys.dpf.post.simulation import MechanicalSimulation, Simulation
 from conftest import (
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
@@ -559,28 +556,25 @@ def test_simulation_units(static_simulation):
 
 def test_simulation_results(static_simulation):
     results = static_simulation.results
-    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-        assert len(results) == 12
-    else:
-        available_results_names = []
-        for result in results:
-            available_results_names.append(result.name)
-        expected_results = [
-            "displacement",
-            "reaction_force",
-            "stress",
-            "elemental_volume",
-            "stiffness_matrix_energy",
-            "artificial_hourglass_energy",
-            "thermal_dissipation_energy",
-            "kinetic_energy",
-            "co_energy",
-            "incremental_energy",
-            "elastic_strain",
-            "element_orientations",
-            "structural_temperature",
-        ]
-        assert all(result in available_results_names for result in expected_results)
+    available_results_names = []
+    for result in results:
+        available_results_names.append(result.name)
+    expected_results = [
+        "displacement",
+        "reaction_force",
+        "stress",
+        "elemental_volume",
+        "stiffness_matrix_energy",
+        "artificial_hourglass_energy",
+        "thermal_dissipation_energy",
+        "kinetic_energy",
+        "co_energy",
+        "incremental_energy",
+        "elastic_strain",
+        "element_orientations",
+        "structural_temperature",
+    ]
+    assert all(result in available_results_names for result in expected_results)
     assert all(
         isinstance(x, dpf.result_info.available_result.AvailableResult) for x in results
     )
@@ -955,10 +949,7 @@ class TestStaticMechanicalSimulation:
         op = static_simulation._model.operator("RF")
         field_ref = op.eval()[0]
         assert field.component_count == 3
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-            assert field.data.shape == (21, 3)
-        else:
-            assert field.data.shape == (81, 3)
+        assert field.data.shape == (21, 3)
         assert np.allclose(field.data, field_ref.data)
 
     def test_elemental_volume(self, static_simulation):
@@ -1189,10 +1180,7 @@ class TestStaticMechanicalSimulation:
         result = static_simulation.elastic_strain_eqv_von_mises_elemental(
             skin=[1, 2, 3]
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 14
-        else:
-            assert len(result.index.mesh_index) == 18
+        assert len(result.index.mesh_index) == 14
 
     def test_skin_layer4(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.stress_principal_nodal(skin=[1, 2, 3])
@@ -1204,10 +1192,7 @@ class TestStaticMechanicalSimulation:
 
     def test_skin_layer6(self, static_simulation: post.StaticMechanicalSimulation):
         result = static_simulation.stress_principal_elemental(skin=[1, 2, 3])
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 14
-        else:
-            assert len(result.index.mesh_index) == 18
+        assert len(result.index.mesh_index) == 14
 
 
 # List of element configurations for each simulation type
@@ -2204,10 +2189,6 @@ class TestTransientMechanicalSimulation:
             _ = transient_simulation.structural_temperature(set_ids=[1])
         assert "not found" in str(excinfo.value)
 
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces(self, allkindofcomplexity):
     #     transient_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -2223,10 +2204,6 @@ class TestTransientMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
     #     transient_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -2243,10 +2220,6 @@ class TestTransientMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
     #     transient_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -2352,10 +2325,7 @@ class TestTransientMechanicalSimulation:
     def test_skin_layer(self, transient_simulation: post.TransientMechanicalSimulation):
         result = transient_simulation.displacement(all_sets=True, skin=True)
         assert len(result.columns.set_ids) == 20
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 374
-        else:
-            assert len(result.index.mesh_index) == 393
+        assert len(result.index.mesh_index) == 374
         assert np.allclose(
             result.select(set_ids=[2]).max(axis="node_ids").array,
             [5.14806800e-07, 1.63151192e-03, 9.78100326e-06],
@@ -2373,10 +2343,7 @@ class TestTransientMechanicalSimulation:
         result = transient_simulation.stress_principal_elemental(
             skin=list(range(1, 100))
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 124
-        else:
-            assert len(result.index.mesh_index) == 240
+        assert len(result.index.mesh_index) == 124
 
     def test_skin_layer4(
         self, transient_simulation: post.TransientMechanicalSimulation
@@ -2384,19 +2351,13 @@ class TestTransientMechanicalSimulation:
         result = transient_simulation.elastic_strain_eqv_von_mises_elemental(
             skin=list(range(1, 100))
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 124
-        else:
-            assert len(result.index.mesh_index) == 240
+        assert len(result.index.mesh_index) == 124
 
     def test_skin_layer5(
         self, transient_simulation: post.TransientMechanicalSimulation
     ):
         result = transient_simulation.stress_principal_nodal(skin=list(range(1, 100)))
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 374
-        else:
-            assert len(result.index.mesh_index) == 393
+        assert len(result.index.mesh_index) == 374
 
     def test_skin_layer6(
         self, transient_simulation: post.TransientMechanicalSimulation
@@ -2404,10 +2365,7 @@ class TestTransientMechanicalSimulation:
         result = transient_simulation.elastic_strain_eqv_von_mises_nodal(
             skin=list(range(1, 100))
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 374
-        else:
-            assert len(result.index.mesh_index) == 393
+        assert len(result.index.mesh_index) == 374
 
 
 class TestModalMechanicalSimulation:
@@ -2536,10 +2494,6 @@ class TestModalMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces(self, allkindofcomplexity):
     #     modal_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -2555,10 +2509,6 @@ class TestModalMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
     #     modal_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -2575,10 +2525,6 @@ class TestModalMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
     #     modal_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -3025,10 +2971,7 @@ class TestModalMechanicalSimulation:
     def test_disp_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.displacement(set_ids=[1], skin=True)
         result_all = frame_modal_simulation.displacement(set_ids=[1], skin=False)
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-        else:
-            assert len(result.index.mesh_index) == 5828
+        assert len(result.index.mesh_index) == 4068
         assert np.allclose(
             result.max(axis="node_ids").array, [0.05656421, 9.59989137, 1.08656671]
         )
@@ -3039,14 +2982,9 @@ class TestModalMechanicalSimulation:
         )
 
     def test_stress_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        if frame_modal_simulation._model._server.meet_version("7.1"):
-            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
-            assert len(result.index.mesh_index) == 2048
-            assert len(result.columns.set_ids) == 6
-        elif frame_modal_simulation._model._server.meet_version("6.2"):
-            result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
-            assert len(result.index.mesh_index) == 11146
-            assert len(result.columns.set_ids) == 6
+        result = frame_modal_simulation.stress_elemental(all_sets=True, skin=True)
+        assert len(result.index.mesh_index) == 2048
+        assert len(result.columns.set_ids) == 6
         result = frame_modal_simulation.stress_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
@@ -3066,7 +3004,7 @@ class TestModalMechanicalSimulation:
                     ]
                 ],
             )
-        elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
+        else:
             assert len(result.index.mesh_index) == 36
             assert np.allclose(
                 result.max(axis="element_ids").array,
@@ -3081,110 +3019,62 @@ class TestModalMechanicalSimulation:
                     ]
                 ],
             )
-        else:
-            assert len(result.index.mesh_index) == 110
-            assert np.allclose(
-                result.max(axis="element_ids").array,
-                [
-                    [
-                        36.52192259,
-                        58.73246002,
-                        371.72294617,
-                        25.97949378,
-                        139.83338165,
-                        69.25232569,
-                    ]
-                ],
-            )
 
     def test_stress_skin2(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.stress_eqv_von_mises_nodal(
             set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-            assert np.allclose(result.max(axis="node_ids").array, [1295.83764693])
-        else:
-            assert len(result.index.mesh_index) == 5828
-            assert np.allclose(result.max(axis="node_ids").array, [1285.17926915])
+        assert len(result.index.mesh_index) == 4068
+        assert np.allclose(result.max(axis="node_ids").array, [1295.83764693])
         assert len(result.columns.set_ids) == 1
         result = frame_modal_simulation.stress_eqv_von_mises_nodal(
             set_ids=[1], skin=True
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-        else:
-            assert len(result.index.mesh_index) == 5828
+        assert len(result.index.mesh_index) == 4068
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, frame_modal_simulation: post.ModalMechanicalSimulation):
-        if frame_modal_simulation._model._server.meet_version("7.1"):
-            result = frame_modal_simulation.stress_principal_elemental(
-                all_sets=True, skin=True
-            )
-            assert len(result.index.mesh_index) == 2048
-            assert len(result.columns.set_ids) == 6
-            assert np.allclose(
-                result.select(set_ids=[1]).max(axis="element_ids").array,
-                [1339.75343629],
-            )
-        elif frame_modal_simulation._model._server.meet_version("6.2"):
-            result = frame_modal_simulation.stress_principal_elemental(
-                all_sets=True, skin=True
-            )
-            assert len(result.index.mesh_index) == 11146
-            assert len(result.columns.set_ids) == 6
-            assert np.allclose(
-                result.select(set_ids=[1]).max(axis="element_ids").array,
-                [1602.16293782],
-            )
+        result = frame_modal_simulation.stress_principal_elemental(
+            all_sets=True, skin=True
+        )
+        assert len(result.index.mesh_index) == 2048
+        assert len(result.columns.set_ids) == 6
+        assert np.allclose(
+            result.select(set_ids=[1]).max(axis="element_ids").array,
+            [1339.75343629],
+        )
         result = frame_modal_simulation.stress_principal_elemental(
             set_ids=[1], skin=list(range(1, 100))
         )
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
             assert len(result.index.mesh_index) == 132
-        elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 36
         else:
-            assert len(result.index.mesh_index) == 110
+            assert len(result.index.mesh_index) == 36
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin2(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
             set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-            assert np.allclose(result.max(axis="node_ids").array, [0.00695066])
-        else:
-            assert len(result.index.mesh_index) == 5828
-            assert np.allclose(result.max(axis="node_ids").array, [0.00684776])
+        assert len(result.index.mesh_index) == 4068
+        assert np.allclose(result.max(axis="node_ids").array, [0.00695066])
         assert len(result.columns.set_ids) == 1
 
     def test_strain_skin3(self, frame_modal_simulation: post.ModalMechanicalSimulation):
         result = frame_modal_simulation.elastic_strain_eqv_von_mises_nodal(
             set_ids=[1], skin=True
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-        else:
-            assert len(result.index.mesh_index) == 5828
+        assert len(result.index.mesh_index) == 4068
         assert len(result.columns.set_ids) == 1
         result = frame_modal_simulation.elastic_strain_principal_nodal(
             set_ids=[1], skin=frame_modal_simulation.mesh.element_ids
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 4068
-        else:
-            assert len(result.index.mesh_index) == 5828
+        assert len(result.index.mesh_index) == 4068
         assert len(result.columns.set_ids) == 1
         result = frame_modal_simulation.elastic_strain_eqv_von_mises_elemental(
             set_ids=[1], skin=True
         )
-        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-            assert len(result.index.mesh_index) == 2048
-        else:
-            assert len(result.index.mesh_index) == 11146
+        assert len(result.index.mesh_index) == 2048
         assert len(result.columns.set_ids) == 1
 
 
@@ -3319,10 +3209,6 @@ class TestHarmonicMechanicalSimulation:
         assert field.component_count == 3
         assert np.allclose(field.data, field_ref.data)
 
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces(self, allkindofcomplexity):
     #     harmonic_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -3338,10 +3224,6 @@ class TestHarmonicMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_nodal(self, allkindofcomplexity):
     #     harmonic_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -3358,10 +3240,6 @@ class TestHarmonicMechanicalSimulation:
     #     assert field.component_count == 3
     #     assert np.allclose(field.data, field_ref.data)
     #
-    # @pytest.mark.skipif(
-    #     not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    #     reason="Available starting DPF 5.0",
-    # )
     # def test_element_nodal_forces_elemental(self, allkindofcomplexity):
     #     harmonic_simulation = post.load_simulation(
     #         data_sources=allkindofcomplexity,
@@ -3782,128 +3660,95 @@ class TestHarmonicMechanicalSimulation:
         assert len(result.columns.set_ids) == 1
 
     def test_disp_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        if harmonic_simulation._model._server.meet_version("6.2"):
-            result = harmonic_simulation.displacement(set_ids=[1], skin=True)
-            result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 4184
-            else:
-                assert len(result.index.mesh_index) == 4802
-            assert np.allclose(
-                result.select(complex=0).max(axis="node_ids").array,
-                [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
-            )
-            result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
-            assert len(result.index.mesh_index) == 44
+        result = harmonic_simulation.displacement(set_ids=[1], skin=True)
+        result_all = harmonic_simulation.displacement(set_ids=[1], skin=False)
+        assert len(result.index.mesh_index) == 4184
+        assert np.allclose(
+            result.select(complex=0).max(axis="node_ids").array,
+            [2.76941713e-09, 2.76940199e-09, 4.10914311e-10],
+        )
+        result = harmonic_simulation.displacement(set_ids=[1], skin=[1, 2, 3])
+        assert len(result.index.mesh_index) == 44
 
     def test_stress_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        if harmonic_simulation._model._server.meet_version("6.2"):
-            result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 1394
-            else:
-                assert len(result.index.mesh_index) == 3942
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.stress_elemental(
-                set_ids=[1], skin=list(range(1, 100))
-            )
+        result = harmonic_simulation.stress_elemental(all_sets=True, skin=True)
+        assert len(result.index.mesh_index) == 1394
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert len(result.index.mesh_index) == 360
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
-            else:
-                assert len(result.index.mesh_index) == 192
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.stress_eqv_von_mises_nodal(
-                set_ids=[1], skin=list(range(1, 100))
-            )
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert len(result.index.mesh_index) == 360
+        else:
+            assert len(result.index.mesh_index) == 122
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
-            else:
-                assert len(result.index.mesh_index) == 530
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.stress_eqv_von_mises_nodal(
-                set_ids=[1], skin=True
-            )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 4184
-            else:
-                assert len(result.index.mesh_index) == 4802
-            assert len(result.columns.set_ids) == 1
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert len(result.index.mesh_index) == 1080
+        else:
+            assert len(result.index.mesh_index) == 520
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_eqv_von_mises_nodal(set_ids=[1], skin=True)
+        assert len(result.index.mesh_index) == 4184
+        assert len(result.columns.set_ids) == 1
 
     def test_strain_skin(self, harmonic_simulation: post.HarmonicMechanicalSimulation):
-        if harmonic_simulation._model._server.meet_version("6.2"):
-            result = harmonic_simulation.stress_principal_elemental(
-                all_sets=True, skin=True
-            )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 1394
-            else:
-                assert len(result.index.mesh_index) == 3942
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.stress_principal_elemental(
-                set_ids=[1], skin=list(range(1, 100))
-            )
+        result = harmonic_simulation.stress_principal_elemental(
+            all_sets=True, skin=True
+        )
+        assert len(result.index.mesh_index) == 1394
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.stress_principal_elemental(
+            set_ids=[1], skin=list(range(1, 100))
+        )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert len(result.index.mesh_index) == 360
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 122
-            else:
-                assert len(result.index.mesh_index) == 192
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                set_ids=[1], skin=list(range(1, 100))
-            )
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert len(result.index.mesh_index) == 360
+        else:
+            assert len(result.index.mesh_index) == 122
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
 
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
-            else:
-                assert len(result.index.mesh_index) == 530
-            assert len(result.columns.set_ids) == 1
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert np.allclose(
-                    result.select(complex=0).max(axis="node_ids").array,
-                    [1.37163319e-06],
-                )
-            else:
-                assert np.allclose(
-                    result.select(complex=0).max(axis="node_ids").array,
-                    [1.34699501e-06],
-                )
-            result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
-                set_ids=[1], skin=True
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert len(result.index.mesh_index) == 1080
+        else:
+            assert len(result.index.mesh_index) == 520
+        assert len(result.columns.set_ids) == 1
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array,
+                [1.37163319e-06],
             )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 4184
-            else:
-                assert len(result.index.mesh_index) == 4802
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.elastic_strain_principal_nodal(
-                set_ids=[1], skin=list(range(1, 100))
+        else:
+            assert np.allclose(
+                result.select(complex=0).max(axis="node_ids").array,
+                [1.34699501e-06],
             )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
-                assert len(result.index.mesh_index) == 1080
-            elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 520
-            else:
-                assert len(result.index.mesh_index) == 530
-            assert len(result.columns.set_ids) == 1
-            result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
-                set_ids=[1],
-                skin=True,
-            )
-            if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1:
-                assert len(result.index.mesh_index) == 1394
-            else:
-                assert len(result.index.mesh_index) == 3942
-            assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_nodal(
+            set_ids=[1], skin=True
+        )
+        assert len(result.index.mesh_index) == 4184
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.elastic_strain_principal_nodal(
+            set_ids=[1], skin=list(range(1, 100))
+        )
+        if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0:
+            assert len(result.index.mesh_index) == 1080
+        else:
+            assert len(result.index.mesh_index) == 520
+        assert len(result.columns.set_ids) == 1
+        result = harmonic_simulation.elastic_strain_eqv_von_mises_elemental(
+            set_ids=[1],
+            skin=True,
+        )
+        assert len(result.index.mesh_index) == 1394
+        assert len(result.columns.set_ids) == 1
 
 
 def test_elemental_ns_on_nodal_result(modal_frame):
@@ -4738,10 +4583,6 @@ def test_beam_results_on_skin(beam_example):
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0,
-    reason="The behavior of some operators was different before DPF 5.0.",
-)
 def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
     # reference results from Mechanical
     rst_file = pathlib.Path(average_per_body_two_cubes)

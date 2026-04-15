@@ -366,59 +366,40 @@ def grpc_server():
 
 @pytest.fixture(scope="session", autouse=True)
 def license_context():
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2:
-        with core.LicenseContextManager(
-            increment_name="preppost", license_timeout_in_seconds=1.0
-        ):
-            yield
-    else:
+    with core.LicenseContextManager(
+        increment_name="preppost", license_timeout_in_seconds=1.0
+    ):
         yield
 
 
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_13_0 = meets_version(
+    get_server_version(core._global_server()), "13.0"
+)  # 2027.1.pre0
+
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0 = meets_version(
     get_server_version(core._global_server()), "12.0"
-)
+)  # 2026.1
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 = meets_version(
     get_server_version(core._global_server()), "11.0"
-)
+)  # 2026.1.pre0
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 = meets_version(
     get_server_version(core._global_server()), "10.0"
-)
+)  # 2025.2
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1 = meets_version(
     get_server_version(core._global_server()), "9.1"
-)
+)  # 2025.1
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0 = meets_version(
     get_server_version(core._global_server()), "9.0"
-)
+)  # 2025.1.pre0
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1 = meets_version(
     get_server_version(core._global_server()), "8.1"
-)
+)  # 2024.2.pre1
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_0 = meets_version(
     get_server_version(core._global_server()), "8.0"
-)
-
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_1 = meets_version(
-    get_server_version(core._global_server()), "7.1"
-)
-
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0 = meets_version(
-    get_server_version(core._global_server()), "7.0"
-)
-
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_2 = meets_version(
-    get_server_version(core._global_server()), "6.2"
-)
-
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_6_0 = meets_version(
-    get_server_version(core._global_server()), "6.0"
-)
-
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_5_0 = meets_version(
-    get_server_version(core._global_server()), "5.0"
-)
+)  # 2024.2.pre0
