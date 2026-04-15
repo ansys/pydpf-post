@@ -25,13 +25,8 @@ from pytest import fixture
 
 from ansys.dpf import core as dpf
 from ansys.dpf import post
-from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0
 
 
-@pytest.mark.skipif(
-    not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_7_0,
-    reason="Fluid capabilities added with ansys-dpf-server 2024.1.pre0.",
-)
 class TestSpecies:
     @fixture
     def fluid_simulation(self, fluid_fluent_multi_species):

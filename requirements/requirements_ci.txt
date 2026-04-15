@@ -1,0 +1,11 @@
+# This file is used by CI (and the dev main branch) to ensure the latest
+# pydpf-core main branch is installed *before* `pip install -e .` for pydpf-post.
+#
+# Install order in CI / tox:
+#   pip install -r requirements/requirements_ci.txt
+#   pip install -e .
+#
+# This approach avoids the "conflicting URLs" error that would arise if the URL
+# were hardcoded in pyproject.toml's [project.dependencies], which makes it
+# impossible to also install ansys-dpf-core as an editable local checkout.
+ansys-dpf-core @ git+https://github.com/ansys/pydpf-core.git

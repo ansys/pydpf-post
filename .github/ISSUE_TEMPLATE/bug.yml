@@ -54,13 +54,14 @@ body:
        - 'Linux'
     validations:
       required: true
-   
+
   - type: dropdown
     id: dpf-server-version
     attributes:
       label: Which DPF/Ansys version are you using?
       multiple: true
       options:
+       - 'DPF Server 2027.1.pre0'
        - 'Ansys 2026 R1'
        - 'Ansys 2025 R2'
        - 'Ansys 2025 R1'
@@ -69,15 +70,6 @@ body:
        - 'DPF Server 2024.2.pre1'
        - 'DPF Server 2024.2.pre0'
        - 'Ansys 2024 R1'
-       - 'DPF Server 2024.1.pre0'
-       - 'Ansys 2023 R2'
-       - 'DPF Server 2023.2.pre1'
-       - 'DPF Server 2023.2.pre0'
-       - 'Ansys 2023 R1'
-       - 'Ansys 2022 R2'
-       - 'Ansys 2022 R1'
-       - 'Ansys 2021 R2'
-       - 'Ansys 2021 R1'
     validations:
       required: true
 
@@ -88,13 +80,11 @@ body:
       description: Run `python --version` to verify your Python version
       multiple: true
       options:
+       - '3.14'
        - '3.13'
        - '3.12'
        - '3.11'
        - '3.10'
-       - '3.9'
-       - '3.8'
-       - '3.7'
     validations:
       required: true
 
