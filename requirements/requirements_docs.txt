@@ -1,4 +1,4 @@
-pypandoc==1.16.2
+pypandoc==1.17
 imageio==2.37.2
 numpydoc==1.10.0
 imageio-ffmpeg==0.6.0
@@ -11,6 +11,6 @@ sphinx-copybutton==0.5.0
 sphinx-gallery==0.20.0
 ansys_sphinx_theme==1.7.2
 sphinx-autodoc-typehints==3.0.1
-pyvista==0.47.1
+pyvista==0.47.3
 vtk==9.6.0
 sphinx-design===0.6.1
