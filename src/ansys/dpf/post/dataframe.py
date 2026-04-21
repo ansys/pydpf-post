@@ -105,6 +105,7 @@ class DataFrame:
                     self.columns.indexes.append(ElementNodeIndex())
 
         self._disp_wf = None
+        self._wf = None
 
         self._str = None
         self._display_max_columns = default_display_max_columns
@@ -407,11 +408,13 @@ class DataFrame:
         column_indexes.extend(label_indexes)
         column_index = MultiIndex(indexes=column_indexes)
 
-        return DataFrame(
+        result_df = DataFrame(
             data=fc,
             columns=column_index,
             index=row_index,
         )
+        result_df._wf = wf
+        return result_df
 
     def _rescope_pfc(
         self, pfc: PropertyFieldsContainer, mesh_scoping: dpf.Scoping
