@@ -1,0 +1,17 @@
+
+:orphan:
+
+.. _sphx_glr_examples_02-Performance-Improvements_sg_execution_times:
+
+
+Computation times
+=================
+**00:34.518** total execution time for **examples_02-Performance-Improvements** files:
+
++--------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_02-Performance-Improvements_01-mesh-external-layer.py` (``01-mesh-external-layer.py``)                 | 00:15.259 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_02-Performance-Improvements_03-mesh-external-layer-compare.py` (``03-mesh-external-layer-compare.py``) | 00:10.624 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_02-Performance-Improvements_02-mesh-skin.py` (``02-mesh-skin.py``)                                     | 00:08.636 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
