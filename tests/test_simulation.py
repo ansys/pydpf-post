@@ -4576,9 +4576,12 @@ def test_beam_results_on_skin(beam_example):
     unit_converter.inputs.entity_to_convert(res._fc[0])
     converted_field = unit_converter.eval()
 
-    assert element_types.Line2.value in element_count_dict.keys()
-
-    assert element_count_dict[element_types.Line2.value] == 40
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert element_types.Beam3.value in element_count_dict.keys()
+        assert element_count_dict[element_types.Beam3.value] == 40
+    else:
+        assert element_types.Line2.value in element_count_dict.keys()
+        assert element_count_dict[element_types.Line2.value] == 40
 
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
 
