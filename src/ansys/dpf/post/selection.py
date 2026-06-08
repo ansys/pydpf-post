@@ -528,38 +528,38 @@ class SpatialSelection:
         else:
             _connect_any(skin_fwd_op.inputs.any, skin_operator.outputs.mesh)
 
-        self._selection.set_output_name(_WfNames.skin, skin_fwd_op.outputs.any)
         scoping_fwd_op = operators.utility.forward(server=self._server)
+
+        self._selection.set_output_name(_WfNames.skin, skin_fwd_op.outputs.any)
         self._selection.add_operator(scoping_fwd_op)
+
         if skin_cache is not None:
             _connect_any(scoping_fwd_op.inputs.any, skin_cache.nodes_scoping)
         else:
-            if (
-                location == locations.nodal
-                and result_native_location == locations.nodal
-            ):
-                _connect_any(
-                    scoping_fwd_op.inputs.any, skin_operator.outputs.nodes_mesh_scoping
-                )
+            _connect_any(
+                scoping_fwd_op.inputs.any, skin_operator.outputs.nodes_mesh_scoping
+            )
+        if location == locations.nodal and result_native_location == locations.nodal:
+            self._selection.set_output_name(
+                _WfNames.scoping, scoping_fwd_op.outputs.any
+            )
 
-            elif not _is_model_cyclic(is_model_cyclic) and (
-                result_native_location == locations.elemental
-                or result_native_location == locations.elemental_nodal
-            ):
-                transpose_op = operators.scoping.transpose(
-                    mesh_scoping=skin_operator.outputs.nodes_mesh_scoping,
-                    server=self._server,
-                )
-                self._selection.add_operator(transpose_op)
-                _connect_any(
-                    transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
-                )
-                _connect_any(
-                    scoping_fwd_op.inputs.any,
-                    transpose_op.outputs.mesh_scoping_as_scoping,
-                )
+        elif not _is_model_cyclic(is_model_cyclic) and (
+            result_native_location == locations.elemental
+            or result_native_location == locations.elemental_nodal
+        ):
+            transpose_op = operators.scoping.transpose(
+                server=self._server,
+            )
+            _connect_any(transpose_op.inputs.mesh_scoping, scoping_fwd_op.outputs.any)
+            self._selection.add_operator(transpose_op)
+            _connect_any(
+                transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
+            )
 
-        self._selection.set_output_name(_WfNames.scoping, scoping_fwd_op.outputs.any)
+            self._selection.set_output_name(
+                _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
+            )
 
         _connect_any(
             skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any
