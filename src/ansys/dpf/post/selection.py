@@ -28,6 +28,7 @@ Selection
 """
 from __future__ import annotations
 
+import dataclasses
 from typing import TYPE_CHECKING, List
 
 from ansys.dpf.post.misc import _connect_any
@@ -227,6 +228,14 @@ class TimeFreqSelection:
         return scoping.ids
 
 
+@dataclasses.dataclass
+class SkinCache:
+    """Wrapper for skin cache."""
+
+    mesh: MeshedRegion
+    nodes_scoping: Scoping
+
+
 class SpatialSelection:
     """Define a spatial selection.
 
@@ -417,6 +426,7 @@ class SpatialSelection:
         result_native_location: Union[str, locations, None] = None,
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
+        skin_cache: SkinCache = None,
     ) -> None:
         """Select the skin of the mesh.
 
@@ -461,6 +471,8 @@ class SpatialSelection:
         self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
         if _is_model_cyclic(is_model_cyclic):
+            if skin_cache is not None:
+                raise RuntimeError("Skin cache not supported for cyclic models")
             mesh_provider_cyc = operators.mesh.mesh_provider()
             self._selection.add_operator(mesh_provider_cyc)
             self._selection.set_input_name(_WfNames.read_cyclic, mesh_provider_cyc, 14)
@@ -495,6 +507,8 @@ class SpatialSelection:
             mesh_provider_cyc.connect(100, initial_mesh_fwd_op.outputs.any)
 
         elif elements is not None:
+            if skin_cache is not None:
+                raise RuntimeError("Skin cache not supported for Element selection")
             if not isinstance(elements, Scoping):
                 elements = Scoping(
                     server=self._server, ids=elements, location=locations.elemental
@@ -506,34 +520,46 @@ class SpatialSelection:
             skin_operator_input_mesh_fwd_op.inputs.any(mesh_by_scop_op.outputs.mesh)
             _connect_any(mesh_by_scop_op.inputs.mesh, initial_mesh_fwd_op.outputs.any)
 
-        if not _is_model_cyclic(is_model_cyclic):
-            if location == result_native_location:
-                self._selection.set_output_name(
-                    _WfNames.mesh, skin_operator.outputs.mesh
+        skin_fwd_op = operators.utility.forward(server=self._server)
+        self._selection.add_operator(skin_fwd_op)
+
+        if skin_cache is not None:
+            _connect_any(skin_fwd_op.inputs.any, skin_cache.mesh)
+        else:
+            _connect_any(skin_fwd_op.inputs.any, skin_operator.outputs.mesh)
+
+        self._selection.set_output_name(_WfNames.skin, skin_fwd_op.outputs.any)
+        scoping_fwd_op = operators.utility.forward(server=self._server)
+        self._selection.add_operator(scoping_fwd_op)
+        if skin_cache is not None:
+            _connect_any(scoping_fwd_op.inputs.any, skin_cache.nodes_scoping)
+        else:
+            if (
+                location == locations.nodal
+                and result_native_location == locations.nodal
+            ):
+                _connect_any(
+                    scoping_fwd_op.inputs.any, skin_operator.outputs.nodes_mesh_scoping
                 )
 
-        self._selection.set_output_name(_WfNames.skin, skin_operator.outputs.mesh)
-        if location == locations.nodal and result_native_location == locations.nodal:
-            self._selection.set_output_name(
-                _WfNames.scoping, skin_operator.outputs.nodes_mesh_scoping
-            )
+            elif not _is_model_cyclic(is_model_cyclic) and (
+                result_native_location == locations.elemental
+                or result_native_location == locations.elemental_nodal
+            ):
+                transpose_op = operators.scoping.transpose(
+                    mesh_scoping=skin_operator.outputs.nodes_mesh_scoping,
+                    server=self._server,
+                )
+                self._selection.add_operator(transpose_op)
+                _connect_any(
+                    transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
+                )
+                _connect_any(
+                    scoping_fwd_op.inputs.any,
+                    transpose_op.outputs.mesh_scoping_as_scoping,
+                )
 
-        elif not _is_model_cyclic(is_model_cyclic) and (
-            result_native_location == locations.elemental
-            or result_native_location == locations.elemental_nodal
-        ):
-            transpose_op = operators.scoping.transpose(
-                mesh_scoping=skin_operator.outputs.nodes_mesh_scoping,
-                server=self._server,
-            )
-            self._selection.add_operator(transpose_op)
-            _connect_any(
-                transpose_op.inputs.meshed_region, initial_mesh_fwd_op.outputs.any
-            )
-
-            self._selection.set_output_name(
-                _WfNames.scoping, transpose_op.outputs.mesh_scoping_as_scoping
-            )
+        self._selection.set_output_name(_WfNames.scoping, scoping_fwd_op.outputs.any)
 
         _connect_any(
             skin_operator.inputs.mesh, skin_operator_input_mesh_fwd_op.outputs.any
@@ -1086,6 +1112,7 @@ class Selection:
         result_native_location: Union[str, locations, None] = None,
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
+        skin_cache: SkinCache = None,
     ) -> None:
         """Select the skin of the mesh.
 
@@ -1117,6 +1144,7 @@ class Selection:
             result_native_location=result_native_location,
             location=location,
             is_model_cyclic=is_model_cyclic,
+            skin_cache=skin_cache,
         )
 
     @property
