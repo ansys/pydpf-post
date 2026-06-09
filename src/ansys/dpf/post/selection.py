@@ -41,6 +41,7 @@ from typing import Union
 
 from ansys.dpf.core import (
     Field,
+    MeshedRegion,
     Scoping,
     Workflow,
     locations,
@@ -226,14 +227,6 @@ class TimeFreqSelection:
         """
         scoping = self._evaluate_on(simulation=simulation)
         return scoping.ids
-
-
-@dataclasses.dataclass
-class SkinCache:
-    """Wrapper for skin cache."""
-
-    mesh: MeshedRegion
-    nodes_scoping: Scoping
 
 
 class SpatialSelection:
@@ -426,7 +419,7 @@ class SpatialSelection:
         result_native_location: Union[str, locations, None] = None,
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
-        skin_cache: SkinCache = None,
+        cached_skin_mesh: MeshedRegion = None,
     ) -> None:
         """Select the skin of the mesh.
 
@@ -523,8 +516,8 @@ class SpatialSelection:
         skin_fwd_op = operators.utility.forward(server=self._server)
         self._selection.add_operator(skin_fwd_op)
 
-        if skin_cache is not None:
-            _connect_any(skin_fwd_op.inputs.any, skin_cache.mesh)
+        if cached_skin_mesh is not None:
+            _connect_any(skin_fwd_op.inputs.any, cached_skin_mesh)
         else:
             _connect_any(skin_fwd_op.inputs.any, skin_operator.outputs.mesh)
 
@@ -533,8 +526,8 @@ class SpatialSelection:
         self._selection.set_output_name(_WfNames.skin, skin_fwd_op.outputs.any)
         self._selection.add_operator(scoping_fwd_op)
 
-        if skin_cache is not None:
-            _connect_any(scoping_fwd_op.inputs.any, skin_cache.nodes_scoping)
+        if cached_skin_mesh is not None:
+            _connect_any(scoping_fwd_op.inputs.any, cached_skin_mesh.nodes.scoping)
         else:
             _connect_any(
                 scoping_fwd_op.inputs.any, skin_operator.outputs.nodes_mesh_scoping
@@ -1112,7 +1105,7 @@ class Selection:
         result_native_location: Union[str, locations, None] = None,
         elements: Union[List[int], Scoping, None] = None,
         is_model_cyclic: str = "not_cyclic",
-        skin_cache: SkinCache = None,
+        cached_skin_mesh: MeshedRegion = None,
     ) -> None:
         """Select the skin of the mesh.
 
@@ -1144,7 +1137,7 @@ class Selection:
             result_native_location=result_native_location,
             location=location,
             is_model_cyclic=is_model_cyclic,
-            skin_cache=skin_cache,
+            cached_skin_mesh=cached_skin_mesh,
         )
 
     @property
