@@ -1787,8 +1787,8 @@ def test_cached_skin(static_simulation: post.StaticMechanicalSimulation):
     assert np.all(cached_skin.nodes.scoping.ids == skin_mesh.nodes.scoping.ids)
     assert np.all(cached_scoping.ids == scoping.ids)
 
-    # Note: Instance comparison of skin mesh is not possble, because dpf
-    # objects get new _internalIds when passed through the forward operator.
+    # Note: Instance comparison of skin mesh is not possible, because dpf
+    # objects get new _internal_objs when passed through the forward operator.
 
 
 class TestTransientMechanicalSimulation:
