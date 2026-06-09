@@ -216,6 +216,9 @@ def _create_initial_result_workflow(
     initial_result_workflow.add_operator(forward_shell_layer_op)
     initial_result_workflow.set_input_name(_WfNames.shell_layer, forward_shell_layer_op)
 
+    output_fwd_operator = create_operator_callable("forward")
+    initial_result_workflow.add_operator(output_fwd_operator)
+
     # The next section is only needed, because the shell_layer selection does not
     # work for elemental and elemental nodal results.
     # If elemental results are requested with a chosen shell layer,
@@ -237,6 +240,10 @@ def _create_initial_result_workflow(
         initial_result_workflow.set_output_name(
             _WfNames.output_data, merge_shell_solid_fields, 0
         )
+        _connect_any(
+            output_fwd_operator.inputs.any1,
+            merge_shell_solid_fields.outputs.fields_container,
+        )
         shell_layer_op.inputs.fields_container(
             initial_result_op.outputs.fields_container
         )
@@ -250,9 +257,28 @@ def _create_initial_result_workflow(
 
         # End section for elemental results with shell layer selection
     else:
-        initial_result_workflow.set_output_name(
-            _WfNames.output_data, initial_result_op, 0
+        _connect_any(
+            output_fwd_operator.inputs.any1, initial_result_op.outputs.fields_container
         )
+
+    after_filter_fwd_op = create_operator_callable("forward")
+    initial_result_workflow.add_operator(after_filter_fwd_op)
+    if name.startswith("mapdl::rst::N"):
+        filter_huge_values_op = create_operator_callable("core::field::band_pass_fc")
+        initial_result_workflow.add_operator(filter_huge_values_op)
+        filter_huge_values_op.inputs.fields_container(output_fwd_operator.outputs.any)
+        filter_huge_values_op.input.min_threshold = -pow(2.0, 100.0)
+        filter_huge_values_op.input.max_threshold = pow(2.0, 100.0)
+        _connect_any(
+            after_filter_fwd_op.inputs.any1,
+            filter_huge_values_op.outputs.fields_container,
+        )
+    else:
+        _connect_any(after_filter_fwd_op.inputs.any1, output_fwd_operator.outputs.any)
+
+    initial_result_workflow.set_output_name(
+        _WfNames.output_data, after_filter_fwd_op, 0
+    )
 
     if hasattr(initial_result_op.inputs, "shell_layer"):
         if server.meet_version("10.0") and shell_layer is not None:
