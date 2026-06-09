@@ -263,7 +263,7 @@ def _create_initial_result_workflow(
     if name.startswith("mapdl::rst::N"):
         filter_huge_values_op = create_operator_callable("core::field::band_pass_fc")
         initial_result_workflow.add_operator(filter_huge_values_op)
-        filter_huge_values_op.inputs.fields_container(output_fwd_operator.outputs.any)
+        filter_huge_values_op.connect(0, output_fwd_operator)
         filter_huge_values_op.input.min_threshold = -pow(2.0, 100.0)
         filter_huge_values_op.input.max_threshold = pow(2.0, 100.0)
 
