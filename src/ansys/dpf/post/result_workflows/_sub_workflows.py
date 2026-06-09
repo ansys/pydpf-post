@@ -240,10 +240,8 @@ def _create_initial_result_workflow(
         initial_result_workflow.set_output_name(
             _WfNames.output_data, merge_shell_solid_fields, 0
         )
-        _connect_any(
-            output_fwd_operator.inputs.any1,
-            merge_shell_solid_fields.outputs.fields_container,
-        )
+        output_fwd_operator.connect(0, merge_shell_solid_fields)
+
         shell_layer_op.inputs.fields_container(
             initial_result_op.outputs.fields_container
         )
@@ -257,9 +255,8 @@ def _create_initial_result_workflow(
 
         # End section for elemental results with shell layer selection
     else:
-        _connect_any(
-            output_fwd_operator.inputs.any1, initial_result_op.outputs.fields_container
-        )
+        output_fwd_operator.connect(0, initial_result_op)
+
 
     after_filter_fwd_op = create_operator_callable("forward")
     initial_result_workflow.add_operator(after_filter_fwd_op)
@@ -269,12 +266,11 @@ def _create_initial_result_workflow(
         filter_huge_values_op.inputs.fields_container(output_fwd_operator.outputs.any)
         filter_huge_values_op.input.min_threshold = -pow(2.0, 100.0)
         filter_huge_values_op.input.max_threshold = pow(2.0, 100.0)
-        _connect_any(
-            after_filter_fwd_op.inputs.any1,
-            filter_huge_values_op.outputs.fields_container,
-        )
+
+        after_filter_fwd_op.connect(0, filter_huge_values_op)
+
     else:
-        _connect_any(after_filter_fwd_op.inputs.any1, output_fwd_operator.outputs.any)
+        after_filter_fwd_op.connect(0, output_fwd_operator)
 
     initial_result_workflow.set_output_name(
         _WfNames.output_data, after_filter_fwd_op, 0
