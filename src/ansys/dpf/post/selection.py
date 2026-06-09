@@ -523,9 +523,9 @@ class SpatialSelection:
         else:
             _connect_any(skin_fwd_op.inputs.any, skin_operator.outputs.mesh)
 
-        scoping_fwd_op = operators.utility.forward(server=self._server)
-
         self._selection.set_output_name(_WfNames.skin, skin_fwd_op.outputs.any)
+
+        scoping_fwd_op = operators.utility.forward(server=self._server)
         self._selection.add_operator(scoping_fwd_op)
 
         if cached_skin_mesh is not None:
