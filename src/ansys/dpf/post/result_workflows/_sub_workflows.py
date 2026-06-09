@@ -257,17 +257,21 @@ def _create_initial_result_workflow(
     else:
         output_fwd_operator.connect(0, initial_result_op)
 
-
     after_filter_fwd_op = create_operator_callable("forward")
     initial_result_workflow.add_operator(after_filter_fwd_op)
     if name.startswith("mapdl::rst::N"):
+        initial_result_op.connect(28, False)
         filter_huge_values_op = create_operator_callable("core::field::band_pass_fc")
         initial_result_workflow.add_operator(filter_huge_values_op)
         filter_huge_values_op.connect(0, output_fwd_operator)
-        filter_huge_values_op.input.min_threshold = -pow(2.0, 100.0)
-        filter_huge_values_op.input.max_threshold = pow(2.0, 100.0)
+        filter_huge_values_op.inputs.min_threshold(-pow(2.0, 100.0))
+        filter_huge_values_op.inputs.max_threshold(pow(2.0, 100.0))
 
-        after_filter_fwd_op.connect(0, filter_huge_values_op)
+        extend_to_midside_nodes = create_operator_callable("extend_to_mid_nodes_fc")
+        initial_result_workflow.add_operator(extend_to_midside_nodes)
+        extend_to_midside_nodes.connect(0, filter_huge_values_op)
+
+        after_filter_fwd_op.connect(0, extend_to_midside_nodes)
 
     else:
         after_filter_fwd_op.connect(0, output_fwd_operator)
