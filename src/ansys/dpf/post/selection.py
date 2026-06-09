@@ -464,7 +464,7 @@ class SpatialSelection:
         self._selection.add_operator(skin_operator_input_mesh_fwd_op)
 
         if _is_model_cyclic(is_model_cyclic):
-            if skin_cache is not None:
+            if cached_skin_mesh is not None:
                 raise RuntimeError("Skin cache not supported for cyclic models")
             mesh_provider_cyc = operators.mesh.mesh_provider()
             self._selection.add_operator(mesh_provider_cyc)
@@ -500,7 +500,7 @@ class SpatialSelection:
             mesh_provider_cyc.connect(100, initial_mesh_fwd_op.outputs.any)
 
         elif elements is not None:
-            if skin_cache is not None:
+            if cached_skin_mesh is not None:
                 raise RuntimeError("Skin cache not supported for Element selection")
             if not isinstance(elements, Scoping):
                 elements = Scoping(
