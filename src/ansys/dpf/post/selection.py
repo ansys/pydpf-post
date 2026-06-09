@@ -28,7 +28,6 @@ Selection
 """
 from __future__ import annotations
 
-import dataclasses
 from typing import TYPE_CHECKING, List
 
 from ansys.dpf.post.misc import _connect_any
@@ -445,6 +444,9 @@ class SpatialSelection:
             Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
+        cached_skin_mesh:
+            Use cached skin mesh instead of reevaluating the skin operator. Only supported
+            for non-cyclic meshes without an elemental selection.
         """
         skin_operator = operators.mesh.skin(server=self._server)
         if self._server.meet_version("10.0"):
@@ -1131,6 +1133,9 @@ class Selection:
             Cyclic type: ``not_cyclic``, ``single_stage``, or ``multi_stage``. This value can
             be returned by the Operator ``operators.metadata.is_cyclic``. Used to get the skin
             on the expanded mesh.
+        cached_skin_mesh:
+            Use cached skin mesh instead of reevaluating the skin operator. Only supported
+            for non-cyclic meshes without an elemental selection.
         """
         self._spatial_selection.select_skin(
             elements=elements,
