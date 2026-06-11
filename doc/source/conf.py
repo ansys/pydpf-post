@@ -46,11 +46,11 @@ server_instance = server.start_local_server(
 )
 server_version = server_instance.version
 server.shutdown_all_session_servers()
-print("".rjust(40, '*'))
+print("".rjust(40, "*"))
 print(
     f"Doc built for DPF server version {server_version} at:\n{server_instance.ansys_path}"
 )
-print("".rjust(40, '*'))
+print("".rjust(40, "*"))
 
 # Build ignore pattern
 ignored_pattern = r"(ignore"
