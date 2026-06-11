@@ -619,6 +619,7 @@ class MechanicalSimulation(Simulation, ABC):
         skin: Union[bool, List[int]] = False,
         expand_cyclic: Union[bool, List[Union[int, List[int]]]] = True,
         average_per_body: Optional[bool] = False,
+        cached_skin_mesh: dpf.MeshedRegion = None,
     ) -> Tuple[Selection, Optional[_Rescoping]]:
         tot = (
             (node_ids is not None)
@@ -698,6 +699,7 @@ class MechanicalSimulation(Simulation, ABC):
                     is_model_cyclic=self._model.operator("is_cyclic").eval()
                     if expand_cyclic is not False
                     else "not_cyclic",
+                    cached_skin_mesh=cached_skin_mesh,
                 )
         if named_selections:
             selection.select_named_selection(

@@ -1743,6 +1743,54 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     # result_skin_scoped_elemental_nodal
 
 
+def test_cached_skin(static_simulation: post.StaticMechanicalSimulation):
+    selection = static_simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        selection=None,
+        set_ids=None,
+        times=None,
+    )[0]
+
+    selection.select_skin(
+        result_native_location=dpf.locations.elemental_nodal
+    )  # use elemental nodal to test scpoing output of skin operator
+    selection.spatial_selection._selection.connect(
+        "initial_mesh", static_simulation.mesh._meshed_region
+    )
+    skin_mesh = selection.spatial_selection._selection.get_output(
+        "skin", dpf.MeshedRegion
+    )
+    scoping = selection.spatial_selection._selection.get_output("scoping", dpf.Scoping)
+
+    cache_selection = static_simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        selection=None,
+        set_ids=None,
+        times=None,
+    )[0]
+
+    cache_selection.select_skin(
+        result_native_location=dpf.locations.elemental_nodal, cached_skin_mesh=skin_mesh
+    )  # use elemental nodal to test scpoing output of skin operator
+    selection.spatial_selection._selection.connect(
+        "initial_mesh", static_simulation.mesh._meshed_region
+    )
+    cached_skin = selection.spatial_selection._selection.get_output(
+        "skin", dpf.MeshedRegion
+    )
+    cached_scoping = selection.spatial_selection._selection.get_output(
+        "scoping", dpf.Scoping
+    )
+
+    assert np.all(cached_skin.nodes.scoping.ids == skin_mesh.nodes.scoping.ids)
+    assert np.all(cached_scoping.ids == scoping.ids)
+
+    # Note: Instance comparison of skin mesh is not possible, because dpf
+    # objects get new _internal_objs when passed through the forward operator.
+
+
 class TestTransientMechanicalSimulation:
     def test_times_argument(self, transient_simulation, static_simulation):
         with pytest.raises(
