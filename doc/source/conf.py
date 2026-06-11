@@ -2,11 +2,11 @@
 from datetime import datetime
 from glob import glob
 import os
-from packaging.version import Version as PkgVersion
 
 from ansys.dpf.core import server, server_factory
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import numpy as np
+from packaging.version import Version as PkgVersion
 import pyvista
 
 from ansys.dpf.post import __version__
@@ -47,7 +47,9 @@ server_instance = server.start_local_server(
 server_version = server_instance.version
 server.shutdown_all_session_servers()
 print("".rjust(40, '*'))
-print(f"Doc built for DPF server version {server_version} at:\n{server_instance.ansys_path}")
+print(
+    f"Doc built for DPF server version {server_version} at:\n{server_instance.ansys_path}"
+)
 print("".rjust(40, '*'))
 
 # Build ignore pattern
