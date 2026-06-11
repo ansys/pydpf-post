@@ -2,6 +2,7 @@
 from datetime import datetime
 from glob import glob
 import os
+from packaging.version import Version as PkgVersion
 
 from ansys.dpf.core import server, server_factory
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
@@ -45,13 +46,15 @@ server_instance = server.start_local_server(
 )
 server_version = server_instance.version
 server.shutdown_all_session_servers()
-print(f"DPF version: {server_version}")
+print("".rjust(40, '*'))
+print(f"Doc built for DPF server version {server_version} at:\n{server_instance.ansys_path}")
+print("".rjust(40, '*'))
 
 # Build ignore pattern
 ignored_pattern = r"(ignore"
 for example in glob(r"../../examples/**/*.py"):
     minimum_version_str = get_example_required_minimum_dpf_version(example)
-    if float(server_version) - float(minimum_version_str) < -0.05:
+    if PkgVersion(server_version) < PkgVersion(minimum_version_str):
         example_name = example.split(os.path.sep)[-1]
         print(
             f"Example {example_name} skipped as it requires DPF {minimum_version_str}."
