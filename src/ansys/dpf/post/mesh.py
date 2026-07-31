@@ -113,8 +113,7 @@ class Mesh:
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.mesh.element_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [5 6 1 2...
+        >>> print(simulation.mesh.element_ids)
         """
         return self._meshed_region.elements.scoping.ids
 

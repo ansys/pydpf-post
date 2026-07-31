@@ -194,8 +194,8 @@ def test_mesh_materials(mesh):
     materials = mesh.materials
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
         ref = """
-    results material_id
-element_ids            
+     results material_id
+ element_ids            
            5           1
            6           1
            1           1
