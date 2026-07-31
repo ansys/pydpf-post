@@ -110,12 +110,14 @@ def test_elements_elements_list_by_idx():
     assert elements_list_by_index[1].id == 6
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
         assert len(elements_list_by_index) == 12
+        ref_1 = "ElementListByIndex([hex20, ..., surface8], __len__=12)"
+        ref_2 = "[hex20, ..., surface8]"
     else:
         assert len(elements_list_by_index) == 8
-    ref = "ElementListByIndex([hex20, ..., hex20], __len__=8)"
-    assert repr(elements_list_by_index) == ref
-    ref = "[hex20, ..., hex20]"
-    assert str(elements_list_by_index) == ref
+        ref_1 = "ElementListByIndex([hex20, ..., hex20], __len__=8)"
+        ref_2 = "[hex20, ..., hex20]"
+    assert repr(elements_list_by_index) == ref_1
+    assert str(elements_list_by_index) == ref_2
     assert elements_list_by_index[0] in elements_list_by_index
     elements_list_by_id = elements_list_by_index.by_id
     assert isinstance(elements_list_by_id, ElementListById)

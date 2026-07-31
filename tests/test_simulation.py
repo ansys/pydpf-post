@@ -63,6 +63,7 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
     ReferenceCsvFilesNodal,
 )
 
@@ -631,7 +632,9 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
     )
     assert isinstance(meshes, Meshes)
 
-    if (
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        expected_len = 17
+    elif (
         SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
         and not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
     ):

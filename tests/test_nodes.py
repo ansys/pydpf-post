@@ -25,6 +25,7 @@ import pytest
 from ansys.dpf import core as dpf
 from ansys.dpf.post import examples
 from ansys.dpf.post.nodes import Node, NodeListById, NodeListByIndex
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
 
 
 def test_node():
@@ -35,7 +36,10 @@ def test_node():
     assert node.coordinates == ref
     assert node.id == 1
     assert node.index == 0
-    ref = [0, 1, 2, 3, 4, 5, 6, 7]
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        ref = [0, 1, 2, 3, 6, 7, 8, 9]
+    else:
+        ref = [0, 1, 2, 3, 4, 5, 6, 7]
     assert list(node.to_element_connectivity) == ref
     ref = "Node(id=1, coordinates=[0.015, 0.045, 0.015])"
     assert str(node) == ref
