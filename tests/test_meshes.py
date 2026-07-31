@@ -30,7 +30,7 @@ from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulati
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
-    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
 )
 
 
