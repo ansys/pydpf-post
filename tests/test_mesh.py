@@ -159,7 +159,8 @@ def test_mesh_str(mesh):
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
         assert (
             txt
-            == "DPF  Mesh: \n  81 nodes \n  12 elements \n  Unit: m \n  With solid (3D) elements, shell (2D) elements, shell (3D) elements"
+            == "DPF  Mesh: \n  81 nodes \n  12 elements \n  Unit: m \n  "
+            + "With solid (3D) elements, shell (2D) elements, shell (3D) elements"
         )
     else:
         assert (
