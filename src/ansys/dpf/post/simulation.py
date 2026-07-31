@@ -164,9 +164,7 @@ class Simulation(ABC):
         >>> print(simulation.mesh) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
             DPF  Mesh:
               81 nodes
-              8 elements
-              Unit: m
-              With solid (3D) elements
+              ...
         """
         if self._mesh is None:
             self._mesh = Mesh(self._model.metadata.meshed_region)

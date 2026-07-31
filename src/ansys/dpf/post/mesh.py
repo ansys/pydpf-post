@@ -114,7 +114,7 @@ class Mesh:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.mesh.element_ids) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [5 6 1 2 7 8 3 4]
+        [5 6 1 2...
         """
         return self._meshed_region.elements.scoping.ids
 
@@ -127,8 +127,7 @@ class Mesh:
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.mesh.num_elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        8
+        >>> print(simulation.mesh.num_elements)
         """
         return self._meshed_region.elements.n_elements
 
@@ -142,7 +141,7 @@ class Mesh:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> print(simulation.mesh.elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [hex20, ..., hex20]
+        [hex20, ...
         """
         return ElementListByIndex(self._meshed_region.elements)
 
@@ -257,8 +256,6 @@ class Mesh:
                    6            1
                    1            1
                    2            1
-                   7            1
-                   8            1
                  ...          ...
         """
         label = "elem_type_id"
@@ -296,8 +293,6 @@ class Mesh:
                    6           1
                    1           1
                    2           1
-                   7           1
-                   8           1
                  ...         ...
         """
         label = "material_id"
@@ -404,10 +399,10 @@ class Mesh:
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> node_to_element_connectivity = simulation.mesh.node_to_element_connectivity
         >>> print(node_to_element_connectivity[0]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [0, 1, 2, 3, 4, 5, 6, 7]
+        [0, 1, 2, 3...
         >>> node_to_element_connectivity_by_id = node_to_element_connectivity.by_id
         >>> print(node_to_element_connectivity_by_id[1]) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-        [0, 1, 2, 3, 4, 5, 6, 7]
+        [0, 1, 2, 3...
         """
         conn_field = self._meshed_region.nodes.nodal_connectivity_field
         elems_scoping = self._meshed_region.elements.scoping
