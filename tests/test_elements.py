@@ -31,6 +31,7 @@ from ansys.dpf.post.elements import (
     ElementListByIndex,
     ElementType,
 )
+from conftest import SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
 
 
 def test_element_type():
@@ -107,7 +108,10 @@ def test_elements_elements_list_by_idx():
     for i in elements_list_by_index:
         assert isinstance(i, Element)
     assert elements_list_by_index[1].id == 6
-    assert len(elements_list_by_index) == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(elements_list_by_index) == 12
+    else:
+        assert len(elements_list_by_index) == 8
     ref = "ElementListByIndex([hex20, ..., hex20], __len__=8)"
     assert repr(elements_list_by_index) == ref
     ref = "[hex20, ..., hex20]"

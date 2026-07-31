@@ -31,6 +31,7 @@ from ansys.dpf.post.faces import Face
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
 )
 
 
@@ -70,13 +71,19 @@ def test_mesh_node_ids(mesh):
 
 def test_mesh_element_ids(mesh):
     e_ids = mesh.element_ids
-    assert len(e_ids) == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(e_ids) == 12
+    else:
+        assert len(e_ids) == 8
     assert all([isinstance(i, (int, np.integer)) for i in e_ids])
 
 
 def test_mesh_num(mesh):
     assert mesh.num_nodes == 81
-    assert mesh.num_elements == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert mesh.num_elements == 12
+    else:
+        assert mesh.num_elements == 8
 
 
 def test_mesh_named_selections(mesh):
