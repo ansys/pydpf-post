@@ -1677,8 +1677,8 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     if isinstance(skin, list):
         element_ids = skin
     else:
-        # The modal result contains different element types. Here
-        # we just extract the solid elements
+        # Here we just extract the solid elements to avoid trying to
+        # get results on SURF elements
         solid_elements_mesh = simulation.split_mesh_by_properties(
             {elemental_properties.element_type: element_types.Hex20.value}
         )
