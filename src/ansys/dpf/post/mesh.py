@@ -127,7 +127,7 @@ class Mesh:
         >>> from ansys.dpf import post
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
-        >>> print(simulation.mesh.num_elements) # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+        >>> num_elem = simulation.mesh.num_elements
         ...
         """
         return self._meshed_region.elements.n_elements
