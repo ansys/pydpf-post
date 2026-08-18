@@ -84,6 +84,14 @@ def mode_suffix(mode: Optional[str]) -> str:
     return ""
 
 
+SURFACE_ELTYPES = [
+    dpf.element_types.Surface3.value,
+    dpf.element_types.Surface4.value,
+    dpf.element_types.Surface6.value,
+    dpf.element_types.Surface8.value,
+]
+
+
 def get_expected_elemental_average_skin_value(
     element_id: int,
     solid_mesh: MeshedRegion,
@@ -118,7 +126,14 @@ def get_expected_elemental_average_skin_value(
                 connected_node_id
             )
         )
-        skin_element_ids.update(skin_mesh.elements.scoping.ids[skin_element_index])
+        # Filter surface elements, as results are not found on them
+        if skin_element_index.size > 0:
+            for index in skin_element_index:
+                eltype = skin_mesh.elements.element_types_field.get_entity_data(index)[
+                    0
+                ]
+                if not eltype in SURFACE_ELTYPES:
+                    skin_element_ids.add(skin_mesh.elements.scoping.ids[index])
 
     expected_average_skin_values = {}
     for skin_element_id in skin_element_ids:
@@ -1657,19 +1672,17 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     if isinstance(skin, list):
         element_ids = skin
     else:
-        if isinstance(simulation, post.ModalMechanicalSimulation):
-            # The modal result contains different element types. Here
-            # we just extract the solid elements
-            solid_elements_mesh = simulation.split_mesh_by_properties(
-                {elemental_properties.element_type: element_types.Hex20.value}
-            )
-            if isinstance(solid_elements_mesh, Meshes):
-                element_ids = solid_elements_mesh[0].element_ids
-            else:
-                element_ids = solid_elements_mesh.element_ids
-            skin = element_ids
+        # The modal result contains different element types. Here
+        # we just extract the solid elements
+        solid_elements_mesh = simulation.split_mesh_by_properties(
+            {elemental_properties.element_type: element_types.Hex20.value}
+        )
+        if isinstance(solid_elements_mesh, Meshes):
+            element_ids = solid_elements_mesh[0].element_ids
         else:
-            element_ids = simulation.mesh.element_ids
+            element_ids = solid_elements_mesh.element_ids
+        if isinstance(simulation, post.ModalMechanicalSimulation):
+            skin = element_ids
 
     scoping = None
     if isinstance(skin, list):
