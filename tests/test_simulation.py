@@ -3902,10 +3902,21 @@ def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
         fields=mat_field,
         mesh_scoping=elemental_scoping,
     )
-
     rescoped_mat_field = rescoped_mat_field_op.outputs.fields_as_property_field()
 
-    return list(set(rescoped_mat_field.data))
+    ety_field = meshed_region.property_field("eltype")
+    rescoped_ety_field_op = dpf.operators.scoping.rescope_property_field(
+        fields=ety_field,
+        mesh_scoping=elemental_scoping,
+    )
+    rescoped_ety_field = rescoped_ety_field_op.outputs.fields_as_property_field()
+
+    mat_set = set()
+    for mat_value, ety_value in zip(rescoped_mat_field.data, rescoped_ety_field.data):
+        if not ety_value in SURFACE_ELTYPES:
+            mat_set.add(mat_value)
+
+    return list(mat_set)
 
 
 def get_ref_result_per_element(
@@ -4264,7 +4275,10 @@ def test_evaluate_per_body_native_nodal(average_per_body_two_cubes):
     expected_max = {1: 5.930437683351532e-05, 2: 0.004870886034030272}
 
     fc = result._fc
-    assert len(fc) == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(fc) == 3
+    else:
+        assert len(fc) == 2
     fc.labels = ["mat", "time"]
     for mat in [1, 2]:
         mat_field = fc.get_field({"mat": mat})
@@ -4295,7 +4309,10 @@ def test_evaluate_per_body_native_elemental(average_per_body_two_cubes):
     expected_max = {1: 0.00044161113328300416, 2: 0.03241598606109619}
 
     fc = result._fc
-    assert len(fc) == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(fc) == 3
+    else:
+        assert len(fc) == 2
     fc.labels = ["mat", "time"]
     for mat in [1, 2]:
         mat_field = fc.get_field({"mat": mat})
@@ -4392,7 +4409,12 @@ def test_averaging_per_body_nodal(
     additional_scoping = None
     if selection_name is None:
         mat_field = mesh.property_field("mat")
-        bodies_in_selection = list(set(mat_field.data))
+        ety_field = mesh.property_field("eltype")
+        mat_set = set()
+        for mat_value, ety_value in zip(mat_field.data, ety_field.data):
+            if not ety_value in SURFACE_ELTYPES:
+                mat_set.add(mat_value)
+        bodies_in_selection = list(mat_set)
 
     else:
         if not is_named_selection:
@@ -4451,17 +4473,16 @@ def test_averaging_per_body_nodal(
         }
 
     label_spaces_by_mat_id = {}
-    for idx in range(len(bodies_in_selection)):
+    for idx in range(len(res._fc)):
         label_space = res._fc.get_label_space(idx)
-        label_spaces_by_mat_id[label_space["mat"]] = label_space
+        if label_space["mat"] in bodies_in_selection:
+            label_spaces_by_mat_id[label_space["mat"]] = label_space
 
     assert len(label_spaces_by_mat_id) == len(bodies_in_selection)
     for mat_id in bodies_in_selection:
         assert label_spaces_by_mat_id[mat_id] == get_expected_label_space_by_mat_id(
             mat_id
         )
-
-    assert res._fc.get_label_space(len(bodies_in_selection)) == {}
 
     for node_id in ref_data:
         for mat_id in ref_data[node_id]:
