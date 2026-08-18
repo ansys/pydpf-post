@@ -31,6 +31,7 @@ from ansys.dpf.post.faces import Face
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_8_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
 )
 
 
@@ -70,13 +71,19 @@ def test_mesh_node_ids(mesh):
 
 def test_mesh_element_ids(mesh):
     e_ids = mesh.element_ids
-    assert len(e_ids) == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(e_ids) == 12
+    else:
+        assert len(e_ids) == 8
     assert all([isinstance(i, (int, np.integer)) for i in e_ids])
 
 
 def test_mesh_num(mesh):
     assert mesh.num_nodes == 81
-    assert mesh.num_elements == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert mesh.num_elements == 12
+    else:
+        assert mesh.num_elements == 8
 
 
 def test_mesh_named_selections(mesh):
@@ -109,7 +116,10 @@ def test_mesh_elements(mesh):
     elem_idx_0 = mesh.elements[0]
     elem_id_8 = mesh.elements.by_id[8]
 
-    assert len(mesh.elements) == 8
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(mesh.elements) == 12
+    else:
+        assert len(mesh.elements) == 8
     assert elem_idx_0.index == 0
     assert elem_id_8.id == 8
     assert elem_idx_0.num_nodes == 20
@@ -146,10 +156,17 @@ def test_mesh_elemental_connectivity(mesh):
 
 def test_mesh_str(mesh):
     txt = str(mesh)
-    assert (
-        txt
-        == "DPF  Mesh: \n  81 nodes \n  8 elements \n  Unit: m \n  With solid (3D) elements"
-    )
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert (
+            txt
+            == "DPF  Mesh: \n  81 nodes \n  12 elements \n  Unit: m \n  "
+            + "With solid (3D) elements, shell (2D) elements, shell (3D) elements"
+        )
+    else:
+        assert (
+            txt
+            == "DPF  Mesh: \n  81 nodes \n  8 elements \n  Unit: m \n  With solid (3D) elements"
+        )
 
 
 def test_mesh_coordinates(mesh):
@@ -175,7 +192,20 @@ def test_mesh_coordinates(mesh):
 )
 def test_mesh_materials(mesh):
     materials = mesh.materials
-    ref = """
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        ref = """
+     results material_id
+ element_ids            
+           5           1
+           6           1
+           1           1
+           2           1
+          33           2
+          35           2
+         ...         ...
+"""  # noqa
+    else:
+        ref = """
      results material_id
  element_ids            
            5           1
@@ -202,8 +232,20 @@ def test_mesh_materials(mesh):
 )
 def test_mesh_element_types(mesh):
     element_types = mesh.element_types
-    # print(element_types)
-    ref = """
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        ref = """
+     results elem_type_id
+ element_ids             
+           5            1
+           6            1
+           1            1
+           2            1
+          33           27
+          35           27
+         ...          ...
+"""  # noqa
+    else:
+        ref = """
      results elem_type_id
  element_ids             
            5            1

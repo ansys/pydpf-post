@@ -30,6 +30,7 @@ from ansys.dpf.post.static_mechanical_simulation import StaticMechanicalSimulati
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
 )
 
 
@@ -60,7 +61,10 @@ def test_meshes_get_item(meshes):
         _ = meshes["test"]
     mesh1 = meshes[1]
     assert isinstance(mesh1, post.Mesh)
-    assert len(mesh1.node_ids) == 240
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(mesh1.node_ids) == 248
+    else:
+        assert len(mesh1.node_ids) == 240
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 1}]
     else:
@@ -184,11 +188,11 @@ def test_meshes_select_shells_all(meshes):
     result = meshes.select_shells()
     assert result is not None
     assert isinstance(result, post.Meshes)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # elshape=1 (SHELL): meshes 0,1,3,5,13 → 5 meshes
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(result) == 6
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert len(result) == 5
     else:
-        # elshape=0 (SHELL): meshes 0,1,3,6,9,15,17 → 7 meshes
         assert len(result) == 7
 
 
@@ -413,13 +417,15 @@ def test_meshes_select_solids_disjoint_from_shells_and_beams(meshes):
         0 if beams is None else (1 if isinstance(beams, post.Mesh) else len(beams))
     )
 
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
-        # shells=5, solids=2, beams=1 → 8 out of 16 total
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert solid_count == 2
+        assert shell_count == 6
+        assert beam_count == 1
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert solid_count == 2
         assert shell_count == 5
         assert beam_count == 1
     else:
-        # shells=7, solids=2, beams=5 → 14 out of 18 total
         assert solid_count == 2
         assert shell_count == 7
         if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:

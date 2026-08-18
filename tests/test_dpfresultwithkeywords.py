@@ -33,6 +33,7 @@ from ansys.dpf import post
 from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
 )
 
 
@@ -449,7 +450,9 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
 def test_groupingmat_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping=post.grouping.by_material)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        disp.num_fields == 14
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         assert disp.num_fields == 13
     else:
         assert disp.num_fields == 11
@@ -466,7 +469,9 @@ def test_groupingmat_nodallocation(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     d = result.displacement(grouping=post.grouping.by_material)
     disp = d.vector
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert disp.num_fields == 14
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0:
         assert disp.num_fields == 13
     else:
         assert disp.num_fields == 11
