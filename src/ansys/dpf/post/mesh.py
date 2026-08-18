@@ -128,7 +128,6 @@ class Mesh:
         >>> from ansys.dpf.post import examples
         >>> simulation = post.load_simulation(examples.static_rst)
         >>> num_elem = simulation.mesh.num_elements
-        ...
         """
         return self._meshed_region.elements.n_elements
 
