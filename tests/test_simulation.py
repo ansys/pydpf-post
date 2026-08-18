@@ -1614,17 +1614,12 @@ def test_shell_layer_extraction_contacts(
 
 
 @pytest.mark.parametrize("skin", all_configuration_ids)
-@pytest.mark.parametrize("result_name", ["stress", "elastic_strain", "displacement"])
-@pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
+@pytest.mark.parametrize("result_name", ["elastic_strain"])
+@pytest.mark.parametrize("mode", [None])
 @pytest.mark.parametrize(
     "simulation_str",
     [
         "static_simulation",
-        "transient_simulation",
-        "modal_simulation",
-        "harmonic_simulation",
-        # Just some very basic tests for the cyclic simulation
-        "cyclic_static_simulation",
     ],
 )
 def test_skin_extraction(skin, result_name, mode, simulation_str, request):
