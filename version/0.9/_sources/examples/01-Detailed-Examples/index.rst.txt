@@ -1,0 +1,173 @@
+
+
+.. _sphx_glr_examples_01-Detailed-Examples:
+
+.. _ref_detailed_examples:
+
+PyDPF-Post feature examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use PyDPF-Post features.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Create and manipulate a DPF Dataframe">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_00-dataframe-manipulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_00-dataframe-manipulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create and manipulate a DPF Dataframe</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract results on named selections - Modal Simulation">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_01-named-selections-modal-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_01-named-selections-modal-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract results on named selections - Modal Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract components of results - Modal Simulation">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_02-modal-extract-sub-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_02-modal-extract-sub-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract components of results - Modal Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the data of a result with the DataFrame - Harmonic Simulation">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_03-explore-result-data-harmonic_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_03-explore-result-data-harmonic.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore the data of a result with the DataFrame - Harmonic Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract stress/strain invariants - Static Simulation">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_04-invariants_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_04-invariants.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract stress/strain invariants - Static Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Export data contained in a DataFrame to a new format">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_05-export_data_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_05-export_data.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Export data contained in a DataFrame to a new format</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the mesh">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_05-mesh-exploration_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_05-mesh-exploration.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore the mesh</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compute minimum and maximum of a DataFrame">
+
+.. only:: html
+
+  .. image:: /examples/01-Detailed-Examples/images/thumb/sphx_glr_06-compute-min-max_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_01-Detailed-Examples_06-compute-min-max.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compute minimum and maximum of a DataFrame</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/01-Detailed-Examples/00-dataframe-manipulation
+   /examples/01-Detailed-Examples/01-named-selections-modal-simulation
+   /examples/01-Detailed-Examples/02-modal-extract-sub-results
+   /examples/01-Detailed-Examples/03-explore-result-data-harmonic
+   /examples/01-Detailed-Examples/04-invariants
+   /examples/01-Detailed-Examples/05-export_data
+   /examples/01-Detailed-Examples/05-mesh-exploration
+   /examples/01-Detailed-Examples/06-compute-min-max
+

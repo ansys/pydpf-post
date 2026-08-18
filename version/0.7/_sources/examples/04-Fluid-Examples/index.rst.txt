@@ -1,0 +1,44 @@
+
+
+.. _sphx_glr_examples_04-Fluid-Examples:
+
+.. _ref_fluid_examples:
+
+PyDPF-Post fluid examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you can use PyDPF-Post features for fluid models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Fluid Simulation Result Extraction">
+
+.. only:: html
+
+  .. image:: /examples/04-Fluid-Examples/images/thumb/sphx_glr_00-explore-fluid-simulation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_04-Fluid-Examples_00-explore-fluid-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fluid Simulation Result Extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/04-Fluid-Examples/00-explore-fluid-simulation
+

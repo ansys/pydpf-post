@@ -1,0 +1,32 @@
+﻿ElectricPotential
+=================
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. autoclass:: ElectricPotential
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      ElectricPotential.has_complex_frequencies
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      ElectricPotential.scalar
+   
+   

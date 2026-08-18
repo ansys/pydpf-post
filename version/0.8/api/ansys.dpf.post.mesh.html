@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mesh &#8212; PyDPF-Post</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css?v=f64ca0e9" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+ 
+<link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=040b0d01"></script>
+    <script src="../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys.dpf.post.mesh';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FluidMeshInfo" href="ansys.dpf.post.mesh_info.html" />
+    <link rel="prev" title="Index" href="ansys.dpf.post.index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/api/ansys.dpf.post.mesh.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <script>document.write(`<img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyDPF-Post - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.examples.html">ansys.dpf.post.examples package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.helpers.html">ansys.dpf.post.helpers package</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.common.html">Common</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.connectivity.html"><code class="docutils literal notranslate"><span class="pre">ReturnMode</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dataframe.html">DataFrame</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.displacement.html"><code class="docutils literal notranslate"><span class="pre">Displacement</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_path.html"><code class="docutils literal notranslate"><span class="pre">create_path_on_coordinates()</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html"><code class="docutils literal notranslate"><span class="pre">DpfSolution</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.electric_results.html"><code class="docutils literal notranslate"><span class="pre">ElectricField</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.elements.html"><code class="docutils literal notranslate"><span class="pre">ElementType</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.errors.html"><code class="docutils literal notranslate"><span class="pre">NodalLocationError</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.faces.html"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.fluid_simulation.html">FluidSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.harmonic_mechanical_simulation.html">HarmonicMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.index.html">Index</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Mesh</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.mesh_info.html">FluidMeshInfo</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.meshes.html">Meshes</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc.html">Misc</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.misc_results.html"><code class="docutils literal notranslate"><span class="pre">Misc</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.modal_mechanical_simulation.html">ModalMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.named_selection.html"><code class="docutils literal notranslate"><span class="pre">NamedSelections</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.nodes.html"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.phase.html">Phase</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.post_utility.html">Post-utility</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_data.html"><code class="docutils literal notranslate"><span class="pre">ResultData</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_definition.html"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_evaluation.html"><code class="docutils literal notranslate"><span class="pre">ResultEvaluator</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.result_object.html"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.scalar.html"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.selection.html">Selection</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.simulation.html">Simulation</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.species.html">Species</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_analysis.html"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.static_mechanical_simulation.html">StaticMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.strain.html"><code class="docutils literal notranslate"><span class="pre">ElasticStrain</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.stress.html"><code class="docutils literal notranslate"><span class="pre">Stress</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.temperature.html"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature</span></code></a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tensor.html"><code class="docutils literal notranslate"><span class="pre">Tensor</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.tools.html">tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.transient_mechanical_simulation.html">TransientMechanicalSimulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="ansys.dpf.post.vector.html"><code class="docutils literal notranslate"><span class="pre">Vector</span></code></a></li>
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="ansys.dpf.post.html" class="nav-link">ansys.dpf.post package</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Mesh</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p id="module-ansys.dpf.post.mesh">Module containing the <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> class.</p>
+<section id="mesh">
+<h1>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h1>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.mesh.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshed_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MeshedRegion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh" title="Link to this definition">#</a></dt>
+<dd><p>Exposes the complete mesh of the simulation.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.named_selections">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">named_selections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.named_selection.html#ansys.dpf.post.named_selection.NamedSelections" title="ansys.dpf.post.named_selection.NamedSelections"><span class="pre">NamedSelections</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.named_selections" title="Link to this definition">#</a></dt>
+<dd><p>Returns a dictionary of available named selections for this mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">named_selections</span><span class="p">)</span> 
+<span class="go">NamedSelections dictionary with 1 named selections:</span>
+<span class="go">    - &#39;_FIXEDSU&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.node_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">node_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.node_ids" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of node IDs in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">node_ids</span><span class="p">)</span> 
+<span class="go">[ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</span>
+<span class="go"> 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48</span>
+<span class="go"> 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72</span>
+<span class="go"> 73 74 75 76 77 78 79 80 81]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.num_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.num_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Returns the number of nodes in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">)</span> 
+<span class="go">81</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.element_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.element_ids" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of element IDs in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_ids</span><span class="p">)</span> 
+<span class="go">[5 6 1 2 7 8 3 4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.num_elements">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.num_elements" title="Link to this definition">#</a></dt>
+<dd><p>Returns the number of elements in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">num_elements</span><span class="p">)</span> 
+<span class="go">8</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.elements">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.elements.html#ansys.dpf.post.elements.ElementListByIndex" title="ansys.dpf.post.elements.ElementListByIndex"><span class="pre">ElementListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.elements" title="Link to this definition">#</a></dt>
+<dd><p>Returns a list of elements indexed by ID.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span> 
+<span class="go">[hex20, ..., hex20]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.get_element_by_id">
+<span class="sig-name descname"><span class="pre">get_element_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.get_element_by_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns an element in the mesh from a given ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ansys.dpf.post.elements.html#ansys.dpf.post.elements.Element" title="ansys.dpf.post.elements.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a></span></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">get_element_by_id</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> 
+<span class="go">DPF Element 1</span>
+<span class="go">    Index:            2</span>
+<span class="go">    Nodes:           20</span>
+<span class="go">    Type:         Hex20</span>
+<span class="go">    Shape:        Solid</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.num_faces">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_faces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.num_faces" title="Link to this definition">#</a></dt>
+<dd><p>Returns the number of faces in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_fluent_axial_comp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">FluidSimulation</span><span class="p">(</span><span class="n">cas</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;cas&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dat</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;dat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">num_faces</span><span class="p">)</span> 
+<span class="go">44242</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.face_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">face_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.face_ids" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of face IDs in the mesh.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_fluent_axial_comp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">FluidSimulation</span><span class="p">(</span><span class="n">cas</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;cas&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dat</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;dat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">face_ids</span><span class="p">)</span> 
+<span class="go">[ 1003  1004  1005 ... 45165 45166 45167]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.faces">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">faces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.faces.html#ansys.dpf.post.faces.FaceListByIndex" title="ansys.dpf.post.faces.FaceListByIndex"><span class="pre">FaceListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.faces" title="Link to this definition">#</a></dt>
+<dd><p>Returns a list of faces indexed by ID.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_fluent_axial_comp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">FluidSimulation</span><span class="p">(</span><span class="n">cas</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;cas&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dat</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;dat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="p">)</span> 
+<span class="go">[quad4, ..., quad4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.get_face_by_id">
+<span class="sig-name descname"><span class="pre">get_face_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.get_face_by_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns a face in the mesh from a given ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type">Face</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.nodes.html#ansys.dpf.post.nodes.NodeListByIndex" title="ansys.dpf.post.nodes.NodeListByIndex"><span class="pre">NodeListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.nodes" title="Link to this definition">#</a></dt>
+<dd><p>Returns a list of nodes indexed by ID.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> 
+<span class="go">[Node(id=1, coordinates=[0.015, 0.045, 0.015]), ..., Node(id=81, coordinates=[0.03, 0.045, 0.0075])]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.get_node_by_id">
+<span class="sig-name descname"><span class="pre">get_node_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.get_node_by_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns a node of the mesh from a given ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></span></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">get_node_by_id</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> 
+<span class="go">Node(id=1, coordinates=[0.015, 0.045, 0.015])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.element_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.dataframe.html#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><span class="pre">DataFrame</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.element_types" title="Link to this definition">#</a></dt>
+<dd><p>Returns a DataFrame containing element types ID.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_types</span><span class="p">)</span> 
+<span class="go">     results elem_type_id</span>
+<span class="go"> element_ids</span>
+<span class="go">           5            1</span>
+<span class="go">           6            1</span>
+<span class="go">           1            1</span>
+<span class="go">           2            1</span>
+<span class="go">           7            1</span>
+<span class="go">           8            1</span>
+<span class="go">         ...          ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.materials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">materials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.dataframe.html#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><span class="pre">DataFrame</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.materials" title="Link to this definition">#</a></dt>
+<dd><p>Returns a DataFrame containing element materials ID.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">materials</span><span class="p">)</span> 
+<span class="go">     results material_id</span>
+<span class="go"> element_ids</span>
+<span class="go">           5           1</span>
+<span class="go">           6           1</span>
+<span class="go">           1           1</span>
+<span class="go">           2           1</span>
+<span class="go">           7           1</span>
+<span class="go">           8           1</span>
+<span class="go">         ...         ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.element_to_node_ids_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_to_node_ids_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.element_to_node_ids_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between element index and node IDs.</p>
+<p>To get the connectivity map by element ID, use the ‘by_id’ property of the object returned.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element_to_node_ids_connectivity</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_ids_connectivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_ids_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="go">[1, 26, 14, 12, 2, 27, 15, 13, 33, 64, 59, 30, 37, 65, 61, 34, 28, 81, 63, 58]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element_to_node_ids_connectivity_by_id</span> <span class="o">=</span> <span class="n">element_to_node_ids_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_ids_connectivity</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+<span class="go">[1, 12, 14, 26, 3, 10, 9, 4, 30, 59, 64, 33, 41, 53, 43, 38, 29, 56, 54, 44]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.node_to_element_ids_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">node_to_element_ids_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.node_to_element_ids_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between node index and element IDs.</p>
+<p>To get the connectivity map by node ID, use the ‘by_id’ property of the object returned.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_to_element_ids_connectivity</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_ids_connectivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_ids_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="go">[5, 6, 1, 2, 7, 8, 3, 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_to_element_ids_connectivity_by_id</span> <span class="o">=</span> <span class="n">node_to_element_ids_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_ids_connectivity_by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+<span class="go">[5, 6, 1, 2, 7, 8, 3, 4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.element_to_node_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_to_node_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.element_to_node_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between element index and node indexes.</p>
+<p>To get the connectivity map by element ID, use the ‘by_id’ property of the object returned.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element_to_node_connectivity</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">element_to_node_connectivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="go">[0, 25, 13, 11, 1, 26, 14, 12, 32, 63, 58, 29, 36, 64, 60, 33, 27, 80, 62, 57]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element_to_node_connectivity_by_id</span> <span class="o">=</span> <span class="n">element_to_node_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element_to_node_connectivity_by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+<span class="go">[0, 17, 19, 25, 1, 18, 20, 26, 30, 69, 74, 32, 34, 71, 75, 36, 27, 68, 73, 80]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.node_to_element_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">node_to_element_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.node_to_element_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between node index and element indexes.</p>
+<p>To get the connectivity map by node ID, use the ‘by_id’ property of the object returned.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_to_element_connectivity</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">node_to_element_connectivity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_connectivity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_to_element_connectivity_by_id</span> <span class="o">=</span> <span class="n">node_to_element_connectivity</span><span class="o">.</span><span class="n">by_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node_to_element_connectivity_by_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.face_to_node_ids_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">face_to_node_ids_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.face_to_node_ids_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between face index and node IDs.</p>
+<p>To get the connectivity map by face ID, use the ‘by_id’ property of the object returned.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.face_to_node_connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">face_to_node_connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.connectivity.html#ansys.dpf.post.connectivity.ConnectivityListByIndex" title="ansys.dpf.post.connectivity.ConnectivityListByIndex"><span class="pre">ConnectivityListByIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.face_to_node_connectivity" title="Link to this definition">#</a></dt>
+<dd><p>Returns a connectivity map between face index and node indexes.</p>
+<p>To get the connectivity map by face ID, use the ‘by_id’ property of the object returned.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.unit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.unit" title="Link to this definition">#</a></dt>
+<dd><p>Returns the unit of the mesh (same as coordinates of the mesh).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span> 
+<span class="go">m</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the Mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Additional keyword arguments for the plotter. For additional keyword
+arguments, see <code class="docutils literal notranslate"><span class="pre">help(pyvista.plot)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Plotter instance of the current plotting back-end.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post.common</span> <span class="kn">import</span> <span class="n">elemental_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_path</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_all_kinds_of_complexity</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">StaticMechanicalSimulation</span><span class="p">(</span><span class="n">example_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.mesh.Mesh.coordinates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.dataframe.html#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><span class="pre">DataFrame</span></a></em><a class="headerlink" href="#ansys.dpf.post.mesh.Mesh.coordinates" title="Link to this definition">#</a></dt>
+<dd><p>Returns the nodal coordinates of the Mesh as a DataFrame.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">StaticMechanicalSimulation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">StaticMechanicalSimulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">static_rst</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>  
+<span class="go">             results  coord (m)</span>
+<span class="go"> node_ids components</span>
+<span class="go">        1          X 1.5000e-02</span>
+<span class="go">                   Y 4.5000e-02</span>
+<span class="go">                   Z 1.5000e-02</span>
+<span class="go">        2          X 1.5000e-02</span>
+<span class="go">                   Y 4.5000e-02</span>
+<span class="go">                   Z 0.0000e+00</span>
+<span class="go">      ...        ...        ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Mesh</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.named_selections"><code class="docutils literal notranslate"><span class="pre">Mesh.named_selections</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.node_ids"><code class="docutils literal notranslate"><span class="pre">Mesh.node_ids</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.num_nodes"><code class="docutils literal notranslate"><span class="pre">Mesh.num_nodes</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.element_ids"><code class="docutils literal notranslate"><span class="pre">Mesh.element_ids</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.num_elements"><code class="docutils literal notranslate"><span class="pre">Mesh.num_elements</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.elements"><code class="docutils literal notranslate"><span class="pre">Mesh.elements</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.get_element_by_id"><code class="docutils literal notranslate"><span class="pre">Mesh.get_element_by_id()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.num_faces"><code class="docutils literal notranslate"><span class="pre">Mesh.num_faces</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.face_ids"><code class="docutils literal notranslate"><span class="pre">Mesh.face_ids</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.faces"><code class="docutils literal notranslate"><span class="pre">Mesh.faces</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.get_face_by_id"><code class="docutils literal notranslate"><span class="pre">Mesh.get_face_by_id()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.nodes"><code class="docutils literal notranslate"><span class="pre">Mesh.nodes</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.get_node_by_id"><code class="docutils literal notranslate"><span class="pre">Mesh.get_node_by_id()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.element_types"><code class="docutils literal notranslate"><span class="pre">Mesh.element_types</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.materials"><code class="docutils literal notranslate"><span class="pre">Mesh.materials</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.element_to_node_ids_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.element_to_node_ids_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.node_to_element_ids_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.node_to_element_ids_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.element_to_node_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.element_to_node_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.node_to_element_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.node_to_element_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.face_to_node_ids_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.face_to_node_ids_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.face_to_node_connectivity"><code class="docutils literal notranslate"><span class="pre">Mesh.face_to_node_connectivity</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.unit"><code class="docutils literal notranslate"><span class="pre">Mesh.unit</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.plot"><code class="docutils literal notranslate"><span class="pre">Mesh.plot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.mesh.Mesh.coordinates"><code class="docutils literal notranslate"><span class="pre">Mesh.coordinates</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/ansys.dpf.post.mesh.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.14.0. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

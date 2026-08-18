@@ -1,0 +1,6 @@
+elemental\_elastic\_strain
+==========================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_elastic_strain

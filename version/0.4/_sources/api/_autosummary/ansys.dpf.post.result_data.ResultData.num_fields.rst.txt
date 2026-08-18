@@ -1,0 +1,6 @@
+num\_fields
+===========
+
+.. currentmodule:: ansys.dpf.post.result_data
+
+.. autoproperty:: ResultData.num_fields

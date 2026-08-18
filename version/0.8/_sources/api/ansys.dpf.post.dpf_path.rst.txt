@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.dpf_path
+   :inherited-members:
