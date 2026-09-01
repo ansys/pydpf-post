@@ -1628,6 +1628,70 @@ def test_shell_layer_extraction_contacts(
         assert max_val > 7.7 and max_val < 7.8
 
 
+def test_elemental_shell_mid_layer_with_contact_matches_core(
+    mixed_shell_solid_with_contact_simulation,
+):
+    """Check elemental shell-layer extraction on a model containing contact."""
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        return
+
+    simulation = mixed_shell_solid_with_contact_simulation
+    core_stress = dpf.operators.result.stress(
+        streams_container=simulation._model.metadata.meshed_region._stream_provider,
+        requested_location=locations.elemental,
+        shell_layer=shell_layers.mid,
+        split_shells=False,
+    ).outputs.fields_container()[0]
+    core_stress_xx = dpf.operators.logic.component_selector(
+        field=core_stress, component_number=[0]
+    ).outputs.field()
+    post_stress = simulation._get_result(
+        base_name="S",
+        location=locations.elemental,
+        category=ResultCategory.matrix,
+        components=["X"],
+        shell_layer=shell_layers.mid,
+    )._fc
+
+    assert len(post_stress) == 1
+    assert post_stress[0].scoping.size == core_stress.scoping.size == 20
+    for element_id in [65, 66, 67, 68]:
+        np.testing.assert_allclose(
+            post_stress[0].get_entity_data_by_id(element_id),
+            core_stress_xx.get_entity_data_by_id(element_id),
+        )
+
+
+@pytest.mark.parametrize(
+    ("skin", "expected_entity_count"),
+    [
+        (True, 52),
+        ([65, 66, 67, 68], 4),
+        ([65, 66, 67, 68, 15], 10),
+    ],
+)
+def test_elemental_skin_with_contact_merges_solid_and_shell_fields(
+    mixed_shell_solid_with_contact_simulation, skin, expected_entity_count
+):
+    """Check that elemental skin stress does not remain split on ``elshape``."""
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        return
+
+    stress = mixed_shell_solid_with_contact_simulation._get_result(
+        base_name="S",
+        location=locations.elemental,
+        category=ResultCategory.matrix,
+        components=["X"],
+        skin=skin,
+    )._fc
+
+    assert stress.labels == ["time"]
+    assert len(stress) == 1
+    assert stress[0].location == locations.elemental
+    assert stress[0].component_count == 1
+    assert stress[0].scoping.size == expected_entity_count
+
+
 @pytest.mark.parametrize("skin", all_configuration_ids)
 @pytest.mark.parametrize("result_name", ["stress", "elastic_strain", "displacement"])
 @pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
