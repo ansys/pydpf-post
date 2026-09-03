@@ -259,9 +259,10 @@ def _create_initial_result_workflow(
             initial_result_op.connect(
                 26, False
             )  # do not split (=merge) solid and shell fields
-        _connect_any(
-            initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
-        )
+        if hasattr(initial_result_op.inputs, "shell_layer"):
+            _connect_any(
+                initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
+            )
 
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping
