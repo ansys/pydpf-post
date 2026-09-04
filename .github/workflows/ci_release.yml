@@ -56,7 +56,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/code-style@d946b24b9a765f4169bcc94afdb27bd1a0533741 # v10.3.2
+      - uses: ansys/actions/code-style@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
         with:
           use-python-cache: false
 
@@ -72,7 +72,7 @@ jobs:
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -131,7 +131,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
   retro:
     name: "Test ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} on ${{ matrix.os }}"
@@ -146,7 +146,7 @@ jobs:
         ANSYS_VERSION: ${{ fromJson(vars.ANSYS_VERSIONS_RETRO_WITH_PATCH) }}
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -198,7 +198,7 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
   examples:
     permissions:
@@ -241,7 +241,7 @@ jobs:
         run: ls -R
 
       - name: "Create draft release"
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           files: |
             ./**/*.whl
