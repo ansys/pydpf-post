@@ -1,0 +1,81 @@
+
+
+.. _sphx_glr_examples_02-Performance-Improvements:
+
+.. _ref_perf_examples:
+
+Improve performance
+~~~~~~~~~~~~~~~~~~~
+These examples show how you can use PyDPF-Post more efficiently to improve computation performance
+when necessary.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Reduce Model Size by using Mesh External Layer for Result and Mesh extraction">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_01-mesh-external-layer_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_01-mesh-external-layer.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce Model Size by using Mesh External Layer for Result and Mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Reduce Model Size by using Mesh Skin for Result and Mesh extraction">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_02-mesh-skin_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_02-mesh-skin.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce Model Size by using Mesh Skin for Result and Mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Validate External Layer results with full Mesh">
+
+.. only:: html
+
+  .. image:: /examples/02-Performance-Improvements/images/thumb/sphx_glr_03-mesh-external-layer-compare_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_02-Performance-Improvements_03-mesh-external-layer-compare.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Validate External Layer results with full Mesh</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/02-Performance-Improvements/01-mesh-external-layer
+   /examples/02-Performance-Improvements/02-mesh-skin
+   /examples/02-Performance-Improvements/03-mesh-external-layer-compare
+

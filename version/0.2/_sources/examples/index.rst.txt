@@ -1,0 +1,262 @@
+:orphan:
+
+.. _gallery:
+
+========
+Examples
+========
+
+End-to-end examples show how you can use PyDPF-Post. If PyDPF-Post is installed
+on your machine, you can download these examples as Python files or Jupyter
+notebooks and run them locally.
+
+.. note::
+    Some examples require additional Python packages.
+
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    </div>
+
+
+DPF-Post overview
+-----------------
+This example provides an overview of how you use DPF-Post.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="DPF-Post overview">
+
+.. only:: html
+
+  .. image:: /examples/00-Overview/images/thumb/sphx_glr_00-overview_example_thumb.png
+    :alt: DPF-Post overview
+
+  :ref:`sphx_glr_examples_00-Overview_00-overview_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">DPF-Post overview</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+DPF-Post analysis types
+~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use DFP-Post analysis types.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Static analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_01-static-analysis_thumb.png
+    :alt: Static analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_01-static-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Static analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Modal analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_02-modal-analysis_thumb.png
+    :alt: Modal analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_02-modal-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modal analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_03-harmonic-analysis_thumb.png
+    :alt: Harmonic analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_03-harmonic-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Transient analysis">
+
+.. only:: html
+
+  .. image:: /examples/01-Different-analysis-types/images/thumb/sphx_glr_04-transient-analysis_thumb.png
+    :alt: Transient analysis
+
+  :ref:`sphx_glr_examples_01-Different-analysis-types_04-transient-analysis.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transient analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+DPF-Post feature examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use DPF-Post features.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Introduction">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_01-introduction_thumb.png
+    :alt: Introduction
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_01-introduction.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Introduction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Basic features">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_02-basics_thumb.png
+    :alt: Basic features
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_02-basics.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Basic features</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Result keywords">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_03-result_keywords_thumb.png
+    :alt: Result keywords
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_03-result_keywords.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Result keywords</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Complex results from a modal or harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_04-complex_results_thumb.png
+    :alt: Complex results from a modal or harmonic analysis
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_04-complex_results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Complex results from a modal or harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Request result on a specific path">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_05-result_on_path_of_coordinates_thumb.png
+    :alt: Request result on a specific path
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_05-result_on_path_of_coordinates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Request result on a specific path</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+   /examples/00-Overview/index.rst
+   /examples/01-Different-analysis-types/index.rst
+   /examples/02-Detailed-Examples/index.rst
+
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

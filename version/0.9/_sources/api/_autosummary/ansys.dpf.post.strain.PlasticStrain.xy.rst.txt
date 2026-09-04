@@ -1,0 +1,6 @@
+xy
+==
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. autoproperty:: PlasticStrain.xy

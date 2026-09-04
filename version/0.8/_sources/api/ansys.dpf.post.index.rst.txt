@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.index
+   :inherited-members:

@@ -1,0 +1,6 @@
+x
+=
+
+.. currentmodule:: ansys.dpf.post.temperature
+
+.. autoproperty:: HeatFlux.x

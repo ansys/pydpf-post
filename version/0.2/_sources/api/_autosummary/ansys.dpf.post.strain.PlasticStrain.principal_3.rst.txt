@@ -1,0 +1,6 @@
+principal\_3
+============
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. autoproperty:: PlasticStrain.principal_3
