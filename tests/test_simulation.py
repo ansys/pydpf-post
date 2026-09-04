@@ -2695,6 +2695,7 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2710,6 +2711,7 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2740,6 +2742,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2755,6 +2759,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2785,6 +2791,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2800,6 +2808,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2841,6 +2851,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2856,6 +2868,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2890,6 +2904,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_2()[0]
@@ -2909,6 +2925,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_3()[0]
@@ -2943,6 +2961,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental_nodal)
+        op.connect(26, False)
+
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_nodal_fc")
@@ -2962,6 +2982,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental_nodal)
+        op.connect(26, False)
+
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_elemental_fc")
