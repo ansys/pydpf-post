@@ -65,7 +65,9 @@ def test_meshes_get_item(meshes):
         assert len(mesh1.node_ids) == 248
     else:
         assert len(mesh1.node_ids) == 240
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 16}]
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 1}]
     else:
         mesh2 = meshes[{elt_prop.material: 1, elt_prop.element_shape: 0}]
