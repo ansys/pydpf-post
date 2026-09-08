@@ -1686,8 +1686,10 @@ def test_elemental_skin_with_contact_merges_solid_and_shell_fields(
         skin=skin,
     )._fc
 
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0:
-        # Solid and shell fields are merged into a single field
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 or expected_entity_count == 4:
+        # Solid and shell fields are merged into a single field for newer version
+        # For the expected_entity_count == 4 only the shell elements are selected,
+        # so the result is also a single field
         assert stress.labels == ["time"]
         assert len(stress) == 1
     else:
