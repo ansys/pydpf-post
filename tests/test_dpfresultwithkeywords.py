@@ -297,7 +297,6 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
             "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
             "time": 1,
         }
-
     else:
         assert disp.num_fields == 4
         assert disp.result_fields_container.get_label_space(3) == {
