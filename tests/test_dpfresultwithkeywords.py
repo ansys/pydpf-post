@@ -297,6 +297,7 @@ def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
             "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
             "time": 1,
         }
+
     else:
         assert disp.num_fields == 4
         assert disp.result_fields_container.get_label_space(3) == {
@@ -383,11 +384,11 @@ def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_stress(grouping=post.grouping.by_el_shape)
     if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
-            assert stress.num_fields == 5
-            assert stress.result_fields_container.get_label_space(3) == {
-                "elshape": 16,
-                "time": 1,
-            }
+        assert stress.num_fields == 5
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 16,
+            "time": 1,
+        }
     elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
         assert stress.result_fields_container.get_label_space(3) == {
