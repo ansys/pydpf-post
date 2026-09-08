@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 #
 #
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -29,7 +30,7 @@ from textwrap import wrap
 from ansys.dpf.core import FieldsContainer, Operator
 from ansys.dpf.core import errors as core_errors
 from ansys.dpf.core.common import DefinitionLabels, types
-from ansys.dpf.core.plotter import Plotter as DpfPlotter
+from ansys.dpf.core.plotter import DpfPlotter, plot_chart
 
 from ansys.dpf.post import errors as dpf_errors
 from ansys.dpf.post.result_evaluation import ResultEvaluator
@@ -304,11 +305,16 @@ class ResultData:
         The obtained figure depends on the support. It can be a meshed region or a
         time frequency support.  For a transient analysis, plot the last result.
 
-        This method is private. It publishes a VTK file and uses PyVista to print from this file.
+        This method is private. It uses the DPF plotter to display the result.
         """
         self._evaluate_result()
-        pl = DpfPlotter(self._evaluator._model.metadata.meshed_region)
-        pl._plot_contour_using_vtk_file(self.result_fields_container)
+        mesh = self._evaluator._model.metadata.meshed_region
+        pl = DpfPlotter()
+        pl.add_fields_container(
+            fields_container=self.result_fields_container,
+            meshed_region=mesh,
+        )
+        pl.show_figure()
 
     def _sort_fields_container_with_labels(self, option_id, display_option):
         ids = option_id
@@ -394,13 +400,8 @@ class ResultData:
 
         # If plotting on a path
         if self._evaluator._path is not None:
-            # Try and use the new DpfPlotter from PyDPF-Core
-            try:
-                from ansys.dpf.core.plotter import DpfPlotter as DpfPlotterObj
-            except ImportError:
-                raise dpf_errors.CoreVersionError(version="0.3.4")
             # Initialize the plotter
-            pl = DpfPlotterObj(**kwargs)
+            pl = DpfPlotter(**kwargs)
             # Sort the fields according to options
             new_fields_container = self._sort_fields_container_with_labels(
                 option_id, display_option
@@ -422,8 +423,8 @@ class ResultData:
 
         # If not plotting on a path
         else:
-            # Initialize a Plotter
-            pl = DpfPlotter(self._evaluator._model.metadata.meshed_region, **kwargs)
+            # Initialize the plotter
+            pl = DpfPlotter(**kwargs)
             # Create an equivalent field container
             if len(self.result_fields_container) == 1:
                 fc = self.result_fields_container
@@ -431,7 +432,14 @@ class ResultData:
                 # sorts and creates a new fields_container with only the desired labels
                 fc = self._sort_fields_container_with_labels(option_id, display_option)
 
-            pl.plot_contour(fc, **kwargs)
+            pl.add_fields_container(
+                fields_container=fc,
+                meshed_region=self._evaluator._model.metadata.meshed_region,
+                show_axes=kwargs.pop("show_axes", True),
+                **kwargs,
+            )
+            kwargs.pop("notebook", None)
+            pl.show_figure(**kwargs)
 
     def _plot_chart(self):
         """Plot the minimum and maximum result values over time.
@@ -448,5 +456,4 @@ class ResultData:
         # res_op = self._evaluator._result_operator
         # res_op.inputs.time_scoping.connect(timeids)
         # new_fields_container = res_op.get_output(0, types.fields_container)
-        pl = DpfPlotter(None)
-        pl.plot_chart(self.result_fields_container)
+        plot_chart(self.result_fields_container)
