@@ -1685,11 +1685,17 @@ def test_elemental_skin_with_contact_merges_solid_and_shell_fields(
         skin=skin,
     )._fc
 
-    assert stress.labels == ["time"]
-    assert len(stress) == 1
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        # Solid and shell fields are merged into a single field
+        assert stress.labels == ["time"]
+        assert len(stress) == 1
+    else:
+        # Older servers keep the results split on the 'elshape' label
+        assert sorted(stress.labels) == ["elshape", "time"]
+        assert len(stress) == 2
     assert stress[0].location == locations.elemental
     assert stress[0].component_count == 1
-    assert stress[0].scoping.size == expected_entity_count
+    assert sum(field.scoping.size for field in stress) == expected_entity_count
 
 
 @pytest.mark.parametrize("skin", all_configuration_ids)
@@ -2686,7 +2692,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_elemental(self, modal_simulation):
         result = modal_simulation.stress_elemental(components=1, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
@@ -2702,7 +2711,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_nodal(self, modal_simulation):
         result = modal_simulation.stress_nodal(components=1, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
@@ -2733,7 +2745,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_principal_nodal(self, modal_simulation):
         result = modal_simulation.stress_principal_nodal(components=2, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S2")
@@ -2750,7 +2765,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_principal_elemental(self, modal_simulation):
         result = modal_simulation.stress_principal_elemental(components=3, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S3")
@@ -2782,7 +2800,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_eqv_von_mises_elemental(self, modal_simulation):
         result = modal_simulation.stress_eqv_von_mises_elemental(set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
@@ -2799,7 +2820,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_eqv_von_mises_nodal(self, modal_simulation):
         result = modal_simulation.stress_eqv_von_mises_nodal(set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
@@ -2842,7 +2866,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_elemental(self, modal_simulation):
         result = modal_simulation.elastic_strain_elemental(components=1, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
@@ -2859,7 +2886,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_nodal(self, modal_simulation):
         result = modal_simulation.elastic_strain_nodal(components=1, set_ids=[2])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
@@ -2895,7 +2925,10 @@ class TestModalMechanicalSimulation:
         result = modal_simulation.elastic_strain_principal_nodal(
             components=2, set_ids=[2]
         )
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2916,7 +2949,10 @@ class TestModalMechanicalSimulation:
         result = modal_simulation.elastic_strain_principal_elemental(
             components=3, set_ids=[2]
         )
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2952,7 +2988,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_nodal(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2974,7 +3013,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_elemental(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
-        assert len(result._fc) == 1
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
