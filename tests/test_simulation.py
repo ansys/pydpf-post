@@ -2966,6 +2966,7 @@ class TestModalMechanicalSimulation:
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(26, True)
         average_op.connect(0, equivalent_op.outputs.fields_container)
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
@@ -2987,6 +2988,8 @@ class TestModalMechanicalSimulation:
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(26, True)
+
         average_op.connect(0, equivalent_op.outputs.fields_container)
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
