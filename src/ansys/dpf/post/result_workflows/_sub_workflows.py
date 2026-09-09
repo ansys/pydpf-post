@@ -200,12 +200,16 @@ def _create_initial_result_workflow(
     name: str,
     server,
     shell_layer: Optional[shell_layers],
+    read_beams: Optional[bool],
     is_nodal: bool,
     create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
+
+    if read_beams is not None and hasattr(initial_result_op.inputs, "read_beams"):
+        initial_result_op.inputs.read_beams.connect(read_beams)
 
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)

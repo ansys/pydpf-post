@@ -74,6 +74,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
         averaging_config: AveragingConfig = AveragingConfig(),
         rescoping: Optional[_Rescoping] = None,
         shell_layer: Optional[shell_layers] = None,
+        read_beams: Optional[bool] = None,
     ) -> Tuple[dpf.Workflow, Union[str, list[str], None], str]:
         """Generate (without evaluating) the Workflow to extract results."""
         result_workflow_inputs = _create_result_workflow_inputs(
@@ -88,6 +89,7 @@ class ModalMechanicalSimulation(MechanicalSimulation):
             averaging_config=averaging_config,
             rescoping=rescoping,
             shell_layer=shell_layer,
+            read_beams=read_beams,
         )
         result_workflows = _create_result_workflows(
             server=self._model._server,
