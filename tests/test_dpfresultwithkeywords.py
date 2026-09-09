@@ -285,7 +285,13 @@ def test_stress_with_invariant_subresult(allkindofcomplexity):
 def test_groupingelshape_nodallocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     disp = result.misc.nodal_displacement(grouping=post.grouping.by_el_shape)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert disp.num_fields == 5
+        assert disp.result_fields_container.get_label_space(2) == {
+            "elshape": 16,
+            "time": 1,
+        }
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert disp.num_fields == 5
         assert disp.result_fields_container.get_label_space(2) == {
             "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
@@ -377,7 +383,13 @@ def test_groupingelshape_nodallocation(allkindofcomplexity):
 def test_groupingelshape_elemlocation_verbose_api(allkindofcomplexity):
     result = post.load_solution(allkindofcomplexity)
     stress = result.misc.elemental_stress(grouping=post.grouping.by_el_shape)
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert stress.num_fields == 5
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 16,
+            "time": 1,
+        }
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
         assert stress.result_fields_container.get_label_space(3) == {
             "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
@@ -403,7 +415,13 @@ def test_groupingelshape_elemlocation(allkindofcomplexity):
         grouping=post.grouping.by_el_shape, location=post.locations.elemental
     )
     stress = s.tensor
-    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert stress.num_fields == 5
+        assert stress.result_fields_container.get_label_space(3) == {
+            "elshape": 16,
+            "time": 1,
+        }
+    elif SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
         assert stress.num_fields == 5
         assert stress.result_fields_container.get_label_space(3) == {
             "elshape": elements._element_shapes.UNKNOWN_SHAPE.value,
