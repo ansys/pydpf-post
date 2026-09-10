@@ -1,0 +1,964 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Create and manipulate a DPF Dataframe &#8212; PyDPF-Post</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=f64ca0e9" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=040b0d01"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/01-Detailed-Examples/00-dataframe-manipulation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Extract results on named selections - Modal Simulation" href="01-named-selections-modal-simulation.html" />
+    <link rel="prev" title="PyDPF-Post feature examples" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/examples/01-Detailed-Examples/00-dataframe-manipulation.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyDPF-Post - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00-Different-analysis-types/index.html">PyDPF-Post analysis types</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyDPF-Post feature examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Create and manipulate a DPF Dataframe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-named-selections-modal-simulation.html">Extract results on named selections - Modal Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-modal-extract-sub-results.html">Extract components of results - Modal Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-explore-result-data-harmonic.html">Explore the data of a result with the DataFrame - Harmonic Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-invariants.html">Extract stress/strain invariants - Static Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-export_data.html">Export data contained in a DataFrame to a new format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-mesh-exploration.html">Explore the mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-compute-min-max.html">Compute minimum and maximum of a DataFrame</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../02-Performance-Improvements/index.html">Improve performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03-Cyclic-Examples/index.html">PyDPF-Post cyclic examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04-Fluid-Examples/index.html">PyDPF-Post fluid examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05-Legacy/index.html">PyDPF-Post legacy examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PyDPF-Post feature examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Create and manipulate a DPF Dataframe</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-01-detailed-examples-00-dataframe-manipulation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="create-and-manipulate-a-dpf-dataframe">
+<span id="ref-dataframe-example"></span><span id="sphx-glr-examples-01-detailed-examples-00-dataframe-manipulation-py"></span><h1>Create and manipulate a DPF Dataframe<a class="headerlink" href="#create-and-manipulate-a-dpf-dataframe" title="Link to this heading">#</a></h1>
+<p>In this script a Dataframe is generated by extracting a result from a static simulation.
+It then showcases different Dataframe viewing and manipulation possibilities.</p>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform required imports. # This example uses a supplied file that you can
+get by importing the DPF <code class="docutils literal notranslate"><span class="pre">examples</span></code> package.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="get-the-simulation-object">
+<h2>Get the <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object<a class="headerlink" href="#get-the-simulation-object" title="Link to this heading">#</a></h2>
+<p>Get the <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object that allows access to the result. The <code class="docutils literal notranslate"><span class="pre">Simulation</span></code>
+object must be instantiated with the path for the result file. For example,
+<code class="docutils literal notranslate"><span class="pre">&quot;C:/Users/user/my_result.rst&quot;</span></code> on Windows or <code class="docutils literal notranslate"><span class="pre">&quot;/home/user/my_result.rst&quot;</span></code>
+on Linux.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_crankshaft</span><span class="p">()</span>
+<span class="c1"># to automatically detect the simulation type, use:</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># to enable auto-completion, use the equivalent:</span>
+<span class="n">simulation</span> <span class="o">=</span> <a href="https://docs.python.org/dev/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">post</span><span class="o">.</span><span class="n">StaticMechanicalSimulation</span></a><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># print the simulation to get an overview of what&#39;s available</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Static Mechanical Simulation.
+
+
+Data Sources
+------------------------------
+/opt/hostedtoolcache/Python/3.10.14/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/crankshaft/crankshaft.rst
+
+DPF Model
+------------------------------
+Static analysis
+Unit system: MKS: m, kg, N, s, V, A, degC
+Physics Type: Mechanical
+Available results:
+     -  displacement: Nodal Displacement
+     -  velocity: Nodal Velocity
+     -  acceleration: Nodal Acceleration
+     -  reaction_force: Nodal Force
+     -  stress: ElementalNodal Stress
+     -  elemental_volume: Elemental Volume
+     -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+     -  artificial_hourglass_energy: Elemental Hourglass Energy
+     -  thermal_dissipation_energy: Elemental thermal dissipation energy
+     -  kinetic_energy: Elemental Kinetic Energy
+     -  co_energy: Elemental co-energy
+     -  incremental_energy: Elemental incremental energy
+     -  elastic_strain: ElementalNodal Strain
+     -  element_euler_angles: ElementalNodal Element Euler Angles
+     -  structural_temperature: ElementalNodal Structural temperature
+------------------------------
+DPF  Meshed Region:
+  69762 nodes
+  39315 elements
+  Unit: m
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support:
+  Number of sets: 3
+Cumulative     Time (s)       LoadStep       Substep
+1              1.000000       1              1
+2              2.000000       1              2
+3              3.000000       1              3
+</pre></div>
+</div>
+</section>
+<section id="get-a-dataframe-object">
+<h2>Get a <code class="docutils literal notranslate"><span class="pre">Dataframe</span></code> object<a class="headerlink" href="#get-a-dataframe-object" title="Link to this heading">#</a></h2>
+<p>Extract a result as a Dataframe</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">displacement_dataframe</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># The Dataframe is displayed as a table, with row and column labels to identify the data.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results       U (m)
+            set_ids           1           2           3
+node_ids components
+    4872          X  5.6781e-06 -5.9469e-06 -3.4137e-05
+                  Y  5.1667e-04  1.0318e-03  1.5417e-03
+                  Z -3.2535e-06 -4.1346e-06 -2.6398e-06
+    9005          X -2.6323e-06 -2.1432e-05 -5.5625e-05
+                  Y  4.8445e-04  9.6717e-04  1.4448e-03
+                  Z -4.9795e-07  1.2790e-06  5.3134e-06
+     ...        ...         ...         ...         ...
+</pre></div>
+</div>
+</section>
+<section id="explore-index-objects">
+<h2>Explore <code class="docutils literal notranslate"><span class="pre">Index</span></code> objects<a class="headerlink" href="#explore-index-objects" title="Link to this heading">#</a></h2>
+<p>The data labels are each defined by an Index object or one of its specialized subtypes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The Dataframe&#39;s column labels are defined in Dataframe.columns.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MultiIndex&lt;[ResultIndex&lt;[&#39;U (m)&#39;]&gt;, SetIndex&lt;values=[1, 2, 3]&gt;]&gt;
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">ResultIndex</span></code> index defines the result stored in the Dataframe.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># print(displacement_dataframe.columns.results_index)  # equivalent</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ResultsIndex &quot;results&quot; with 1 values of &lt;class &#39;str&#39;&gt; type
+</pre></div>
+</div>
+<p>You can check values available for an Index</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;U (m)&#39;]
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">SetIndex</span></code> index defines the available set IDs available.
+A set ID is a unique identifier associated to each time-step, step and sub-step, or frequency
+available in a simulation.
+As shown next, an Index has a name and a list of values of a given type.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>SetIndex &quot;set_ids&quot; with 3 values of &lt;class &#39;int&#39;&gt; type
+[1, 2, 3]
+</pre></div>
+</div>
+<p>The Dataframe’s row labels are defined in Dataframe.index.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MultiIndex&lt;[MeshIndex&lt;name=&quot;node_ids&quot;, dtype=&lt;class &#39;int&#39;&gt;&gt;, CompIndex&lt;name=&quot;components&quot;, dtype=&lt;class &#39;str&#39;&gt;&gt;]&gt;
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">MeshIndex</span></code> defines the mesh entities for which data is available.
+It can store node IDs, element IDs, or face IDs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># print(displacement_dataframe.index.mesh_index)  # equivalent</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MeshIndex &quot;node_ids&quot; with uncounted values of &lt;class &#39;int&#39;&gt; type
+</pre></div>
+</div>
+<p>Since the list of possible values can be long and querying it can be costly,
+the list of available values may not be determined unless explicitly asked.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[ 4872  9005  9373 ... 34314 19123 19114]
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">MeshIndex</span></code> will then be updated to display the actual number of entities available.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># IMPORTANT: Note that the mesh entity IDs ordered based on the internal data storage structure,</span>
+<span class="c1"># they are not by ascending order by default!</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MeshIndex &quot;node_ids&quot; with 69762 values of &lt;class &#39;int&#39;&gt; type
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">CompIndex</span></code> defines the result components for which data is available.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>CompIndex &quot;components&quot; with 3 values of &lt;class &#39;str&#39;&gt; type
+[&#39;X&#39;, &#39;Y&#39;, &#39;Z&#39;]
+</pre></div>
+</div>
+</section>
+<section id="change-the-dataframe-print">
+<h2>Change the Dataframe print<a class="headerlink" href="#change-the-dataframe-print" title="Link to this heading">#</a></h2>
+<p>Options exist to configure the way a Dataframe is displayed.
+You can change the number of data rows displayed with:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">display_max_rows</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results       U (m)
+            set_ids           1           2           3
+node_ids components
+    4872          X  5.6781e-06 -5.9469e-06 -3.4137e-05
+                  Y  5.1667e-04  1.0318e-03  1.5417e-03
+                  Z -3.2535e-06 -4.1346e-06 -2.6398e-06
+    9005          X -2.6323e-06 -2.1432e-05 -5.5625e-05
+                  Y  4.8445e-04  9.6717e-04  1.4448e-03
+                  Z -4.9795e-07  1.2790e-06  5.3134e-06
+    9373          X -2.6475e-05 -6.9632e-05 -1.2845e-04
+                  Y  4.9502e-04  9.8751e-04  1.4741e-03
+                  Z  6.9526e-06  1.6184e-05  2.7631e-05
+     ...        ...         ...         ...         ...
+</pre></div>
+</div>
+<p>Or the number of data columns displayed with:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">display_max_columns</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_dataframe</span><span class="p">)</span>
+<span class="c1"># Notice that the ``...`` symbols specify that the Dataframe is truncated in that direction.</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results       U (m)             ...
+            set_ids           1           2 ...
+node_ids components                         ...
+    4872          X  5.6781e-06 -5.9469e-06 ...
+                  Y  5.1667e-04  1.0318e-03 ...
+                  Z -3.2535e-06 -4.1346e-06 ...
+    9005          X -2.6323e-06 -2.1432e-05 ...
+                  Y  4.8445e-04  9.6717e-04 ...
+                  Z -4.9795e-07  1.2790e-06 ...
+    9373          X -2.6475e-05 -6.9632e-05 ...
+                  Y  4.9502e-04  9.8751e-04 ...
+                  Z  6.9526e-06  1.6184e-05 ...
+     ...        ...         ...         ... ...
+</pre></div>
+</div>
+</section>
+<section id="the-special-case-of-elementalnodal-results">
+<h2>The special case of ElementalNodal results<a class="headerlink" href="#the-special-case-of-elementalnodal-results" title="Link to this heading">#</a></h2>
+<p>When dealing with results located on each node of each element (aka. ElementalNodal),
+an <code class="docutils literal notranslate"><span class="pre">ElementNodeIndex</span></code> index is added at creation to specify the node number in the
+element’s connectivity.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">stress</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">stress</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stress</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stress</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                results      S (Pa)
+                set_ids           3
+                   node           0           1           2           3
+ element_ids components
+       18357         XX  4.6183e+06 -1.5497e+06 -1.8339e+06 -5.5596e+06
+                     YY  5.9405e+07  4.6302e+07  1.2961e+08 -1.2675e+07
+                     ZZ  2.2825e+07  4.1579e+07  1.4117e+08 -1.4662e+08
+                     XY -3.5088e+05  2.7884e+07  1.5350e+08  1.6123e+08
+                     YZ -5.9452e+08 -4.9103e+08 -5.1941e+08 -4.5894e+08
+                     XZ  7.6945e+06  2.3978e+07  3.2925e+07 -2.2203e+07
+         ...        ...         ...         ...         ...         ...
+
+ElementNodeIndex &quot;node&quot; with 1 values of &lt;class &#39;int&#39;&gt; type
+</pre></div>
+</div>
+</section>
+<section id="data-selection">
+<h2>Data selection<a class="headerlink" href="#data-selection" title="Link to this heading">#</a></h2>
+<p>To select specific columns or rows, use the index names as arguments for the <code class="docutils literal notranslate"><span class="pre">DataFrame.select</span></code>
+method, taking lists of values:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">disp_X_1</span> <span class="o">=</span> <span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="n">set_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">node_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">4872</span><span class="p">,</span> <span class="mi">9005</span><span class="p">],</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">disp_X_1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results       U (m)
+            set_ids           1
+node_ids components
+    4872          X  5.6781e-06
+    9005            -2.6323e-06
+</pre></div>
+</div>
+<p>You can also select along an index using a zero-based position with <code class="docutils literal notranslate"><span class="pre">Dataframe.iselect</span></code>:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">disp_Y_9005_3</span> <span class="o">=</span> <span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">iselect</span><span class="p">(</span>
+    <span class="n">set_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">node_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">disp_Y_9005_3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results      U (m)
+            set_ids          3
+node_ids components
+    9005          Y 1.4448e-03
+</pre></div>
+</div>
+</section>
+<section id="extract-data">
+<h2>Extract data<a class="headerlink" href="#extract-data" title="Link to this heading">#</a></h2>
+<p>Once the Dataframe contains the specific data you require, extract it as an array with:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">disp_X_1</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="c1"># IMPORTANT: Note that for the extraction of the Dataframe&#39;s data as an array to make sense,</span>
+<span class="c1"># you must first filter the columns label values to a unique combination of values.</span>
+<span class="c1"># The exception is for ElementalNodal data, which is returned as a 2D array.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stress</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[ 5.67807472e-06 -2.63230351e-06]
+(157260, 6)
+</pre></div>
+</div>
+</section>
+<section id="plot-a-dataframe">
+<h2>Plot a Dataframe<a class="headerlink" href="#plot-a-dataframe" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_00-dataframe-manipulation_001.png" srcset="../../_images/sphx_glr_00-dataframe-manipulation_001.png" alt="00 dataframe manipulation" class = "sphx-glr-single-img"/></section>
+<section id="animate-a-transient-dataframe">
+<h2>Animate a transient Dataframe<a class="headerlink" href="#animate-a-transient-dataframe" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">displacement_dataframe</span><span class="o">.</span><span class="n">animate</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_00-dataframe-manipulation_002.png" srcset="../../_images/sphx_glr_00-dataframe-manipulation_002.png" alt="00 dataframe manipulation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.428 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-01-detailed-examples-00-dataframe-manipulation-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/635542d108efaeb0f954ed745cd65e84/00-dataframe-manipulation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">00-dataframe-manipulation.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/8aec8ada5412e4de443c59f3c5ab5bb0/00-dataframe-manipulation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">00-dataframe-manipulation.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-the-simulation-object">Get the <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-a-dataframe-object">Get a <code class="docutils literal notranslate"><span class="pre">Dataframe</span></code> object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explore-index-objects">Explore <code class="docutils literal notranslate"><span class="pre">Index</span></code> objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#change-the-dataframe-print">Change the Dataframe print</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-special-case-of-elementalnodal-results">The special case of ElementalNodal results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-selection">Data selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-data">Extract data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-a-dataframe">Plot a Dataframe</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#animate-a-transient-dataframe">Animate a transient Dataframe</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/examples/01-Detailed-Examples/00-dataframe-manipulation.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.14.0. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

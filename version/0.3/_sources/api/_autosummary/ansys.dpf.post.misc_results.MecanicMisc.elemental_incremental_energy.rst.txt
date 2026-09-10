@@ -1,0 +1,6 @@
+elemental\_incremental\_energy
+==============================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_incremental_energy

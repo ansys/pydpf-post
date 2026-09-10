@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.post_utility
+   :inherited-members:

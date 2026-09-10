@@ -1,0 +1,17 @@
+ansys.dpf.post.helpers package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ansys.dpf.post.helpers.selections
+   ansys.dpf.post.helpers.streamlines
+
+Module contents
+---------------
+
+.. automodule:: ansys.dpf.post.helpers
+   :inherited-members:

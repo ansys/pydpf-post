@@ -1,0 +1,6 @@
+elemental\_nodal\_stress\_ratio
+===============================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_nodal_stress_ratio

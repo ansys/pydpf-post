@@ -1,0 +1,18 @@
+
+:orphan:
+
+.. _sphx_glr_examples_00-Different-analysis-types_sg_execution_times:
+
+Computation times
+=================
+**00:25.262** total execution time for **examples_00-Different-analysis-types** files:
+
++--------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_00-Different-analysis-types_01-static-simulation.py` (``01-static-simulation.py``)               | 00:10.229 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_00-Different-analysis-types_04-harmonic-complex-results.py` (``04-harmonic-complex-results.py``) | 00:06.133 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_00-Different-analysis-types_02-modal-simulation.py` (``02-modal-simulation.py``)                 | 00:05.652 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_00-Different-analysis-types_03-transient-simulation.py` (``03-transient-simulation.py``)         | 00:03.249 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------+-----------+--------+

@@ -1,0 +1,13 @@
+
+:orphan:
+
+.. _sphx_glr_examples_04-Fluid-Examples_sg_execution_times:
+
+
+Computation times
+=================
+**00:05.051** total execution time for **examples_04-Fluid-Examples** files:
+
++----------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_04-Fluid-Examples_00-explore-fluid-simulation.py` (``00-explore-fluid-simulation.py``) | 00:05.051 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------------+-----------+--------+

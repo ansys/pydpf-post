@@ -1,0 +1,6 @@
+nodal\_elastic\_strain\_energy\_density
+=======================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.nodal_elastic_strain_energy_density

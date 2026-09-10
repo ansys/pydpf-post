@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.stress
+   :inherited-members:

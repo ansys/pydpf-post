@@ -1,0 +1,6 @@
+﻿load\_solution
+==============
+
+.. currentmodule:: ansys.dpf.post
+
+.. autofunction:: load_solution

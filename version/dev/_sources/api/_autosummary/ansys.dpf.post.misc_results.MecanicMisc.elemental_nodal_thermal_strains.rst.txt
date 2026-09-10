@@ -1,0 +1,6 @@
+elemental\_nodal\_thermal\_strains
+==================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_nodal_thermal_strains

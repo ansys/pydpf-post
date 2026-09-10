@@ -1,0 +1,6 @@
+vector
+======
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. autoproperty:: ElectricField.vector

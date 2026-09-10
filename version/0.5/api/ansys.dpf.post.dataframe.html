@@ -1,0 +1,967 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DataFrame &#8212; PyDPF-Post</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b849a4e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css?v=068850c2" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=0838db9f"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=040b0d01"></script>
+    <script src="../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys.dpf.post.dataframe';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5';
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="ansys.dpf.post.displacement.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="ansys.dpf.post.connectivity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/api/ansys.dpf.post.dataframe.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.5  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../index.html">PyDPF-Post</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="index.html" >API reference</a> » </li>
+          <li class="nav-item nav-item-2"><a href="ansys.dpf.post.html" accesskey="U">ansys.dpf.post package</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">DataFrame</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.5  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ansys.dpf.post.html">ansys.dpf.post package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.examples.html">ansys.dpf.post.examples package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.common.html">Common</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.connectivity.html"><code class="docutils literal notranslate"><span class="pre">ReturnMode</span></code></a></li>
+
+
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DataFrame</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.displacement.html"><code class="docutils literal notranslate"><span class="pre">Displacement</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_path.html"><code class="docutils literal notranslate"><span class="pre">create_path_on_coordinates()</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.dpf_solution.html"><code class="docutils literal notranslate"><span class="pre">DpfSolution</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.electric_results.html"><code class="docutils literal notranslate"><span class="pre">ElectricField</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.elements.html"><code class="docutils literal notranslate"><span class="pre">ElementType</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.errors.html"><code class="docutils literal notranslate"><span class="pre">NodalLocationError</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.faces.html"><code class="docutils literal notranslate"><span class="pre">Face</span></code></a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.fluid_simulation.html">FluidSimulation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_analysis.html"><code class="docutils literal notranslate"><span class="pre">HarmonicAnalysisSolution</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.harmonic_mechanical_simulation.html">HarmonicMechanicalSimulation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.index.html">Index</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.mesh.html">Mesh</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.mesh_info.html">FluidMeshInfo</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.meshes.html">Meshes</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc.html">Misc</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.misc_results.html"><code class="docutils literal notranslate"><span class="pre">Misc</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_analysis.html"><code class="docutils literal notranslate"><span class="pre">ModalAnalysisSolution</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.modal_mechanical_simulation.html">ModalMechanicalSimulation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.named_selection.html"><code class="docutils literal notranslate"><span class="pre">NamedSelections</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.nodes.html"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.phase.html">Phase</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.post_utility.html">Post-utility</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_data.html"><code class="docutils literal notranslate"><span class="pre">ResultData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_definition.html"><code class="docutils literal notranslate"><span class="pre">Definition</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_evaluation.html"><code class="docutils literal notranslate"><span class="pre">ResultEvaluator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.result_object.html"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.scalar.html"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.selection.html">Selection</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.simulation.html">Simulation</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.species.html">Species</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_analysis.html"><code class="docutils literal notranslate"><span class="pre">StaticAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.static_mechanical_simulation.html">StaticMechanicalSimulation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.strain.html"><code class="docutils literal notranslate"><span class="pre">ElasticStrain</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.stress.html"><code class="docutils literal notranslate"><span class="pre">Stress</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.temperature.html"><code class="docutils literal notranslate"><span class="pre">StructuralTemperature</span></code></a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tensor.html"><code class="docutils literal notranslate"><span class="pre">Tensor</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.tools.html">tools</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_analysis.html"><code class="docutils literal notranslate"><span class="pre">TransientAnalysisSolution</span></code></a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.transient_mechanical_simulation.html">TransientMechanicalSimulation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="ansys.dpf.post.vector.html"><code class="docutils literal notranslate"><span class="pre">Vector</span></code></a></li>
+
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <span class="target" id="module-ansys.dpf.post.dataframe"></span><p>Module containing the <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> class.</p>
+<section id="dataframe">
+<h1>DataFrame<a class="headerlink" href="#dataframe" title="Permalink to this heading">#</a></h1>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.dpf.post.dataframe.</span></span><span class="sig-name descname"><span class="pre">DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>A DataFrame style API to manipulate DPF data.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.display_max_columns">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_max_columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.display_max_columns" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the current maximum number of columns to display for this Dataframe.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.display_max_rows">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_max_rows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.display_max_rows" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the current maximum number of rows to display for this Dataframe.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.columns">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.index.html#ansys.dpf.post.index.MultiIndex" title="ansys.dpf.post.index.MultiIndex"><span class="pre">MultiIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.columns" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the MultiIndex for the columns of the DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.index.html#ansys.dpf.post.index.MultiIndex" title="ansys.dpf.post.index.MultiIndex"><span class="pre">MultiIndex</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.index" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the MultiIndex for the rows of the DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.axes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">axes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ansys.dpf.post.index.html#ansys.dpf.post.index.MultiIndex" title="ansys.dpf.post.index.MultiIndex"><span class="pre">MultiIndex</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.axes" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a list with the row MultiIndex first and the columns MultiIndex second.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.results_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.index.html#ansys.dpf.post.index.ResultsIndex" title="ansys.dpf.post.index.ResultsIndex"><span class="pre">ResultsIndex</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.results_index" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the available ResultsIndex is present.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.mesh_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mesh_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ansys.dpf.post.index.html#ansys.dpf.post.index.MeshIndex" title="ansys.dpf.post.index.MeshIndex"><span class="pre">MeshIndex</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.mesh_index" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the available MeshIndex is present.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.labels" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a list of the names of available LabelIndex indexes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.array">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">array</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0.dev0)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.array" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the data as a np.ndarray for a single combination of column label values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.select">
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.select" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a new DataFrame based on selection criteria (value-based).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – <p>This function accepts as argument any of the Index names available associated with a
+value or a list of values.
+For example, if ‘time’ is an available class:<cite>Index &lt;ansys.dpf.post.index.Index&gt;</cite>
+of the class:<cite>DataFrame &lt;ansys.dpf.post.DataFrame&gt;</cite> <cite>df</cite>, then you can select the time 1</p>
+<blockquote>
+<div><p>by using <cite>df.select(time=1)</cite>.</p>
+</div></blockquote>
+<p>One can get the list of available axes using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">DataFrame.axes</span></code>.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A DataFrame of the selected values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.iselect">
+<span class="sig-name descname"><span class="pre">iselect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.iselect" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a new DataFrame based on selection criteria (index-based).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – This function accepts as argument any of the Index names available associated with a
+value or a list of values.
+For example, if ‘time’ is an available class:<cite>Index &lt;ansys.dpf.post.index.Index&gt;</cite>
+of the class:<cite>DataFrame &lt;ansys.dpf.post.DataFrame&gt;</cite> <cite>df</cite>, then you can select the first
+<cite>time</cite> value by using <cite>df.select(set_id=0)</cite>.
+One can get the list of available axes using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">DataFrame.axes</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A DataFrame of the selected values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">shell_layers.top</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shell_layer</strong> (default: <code class="docutils literal notranslate"><span class="pre">&lt;shell_layers.top:</span> <span class="pre">0&gt;</span></code>) – Shell layer to show if multi-layered shell data is present. Defaults to top.</p></li>
+<li><p><strong>**kwargs</strong> – This function accepts as argument any of the Index names available associated with a
+single value.
+For example, if ‘set_ids’ is an available class:<cite>Index &lt;ansys.dpf.post.index.Index&gt;</cite>
+of the class:<cite>DataFrame &lt;ansys.dpf.post.DataFrame&gt;</cite> <cite>df</cite>, then you can plot the data at
+<cite>set_id</cite> 1 by using <cite>df.plot(set_ids=1)</cite>.
+One can get the list of available axes using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">DataFrame.axes</span></code>.
+If the combination of arguments on axes does not return data, this returns None.
+Also supports additional keyword arguments for the plotter. For additional keyword
+arguments, see <code class="docutils literal notranslate"><span class="pre">help(pyvista.plot)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DpfPlotter</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The interactive plotter object used for plotting.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.animate">
+<span class="sig-name descname"><span class="pre">animate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_as</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">shell_layers.top</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.animate" title="Permalink to this definition">#</a></dt>
+<dd><p>Animate the DataFrame along its ‘set’ axis.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the moment only useful to produce a temporal animation. Each frame will correspond
+to data for a value of the SetIndex in the columns MultiIndex.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_as</strong> (<em>Path</em><em> of </em><em>file to save the animation to. Defaults to None. Can be</em><em> of </em><em>any format</em>) – supported by pyvista.Plotter.write_frame (.gif, .mp4, …).</p></li>
+<li><p><strong>deform</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether to plot the deformed mesh.</p></li>
+<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Scale factor to apply when warping the mesh. Defaults to 1.0. Can be a list to make
+scaling frequency-dependent.</p></li>
+<li><p><strong>shell_layer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">shell_layers</span></code>, default: <code class="docutils literal notranslate"><span class="pre">&lt;shell_layers.top:</span> <span class="pre">0&gt;</span></code>) – Shell layer to show if multi-layered shell data is present. Defaults to top.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interactive plotter object used for animation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.min">
+<span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.min" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the minimum value over the requested axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]], default: <code class="docutils literal notranslate"><span class="pre">0</span></code>) – Axis to perform minimum across.
+Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+This computes the minimum across the mesh for each set.
+Can also be the SetIndex (1), the column index containing set (time/frequency) IDs.
+This computes the minimum across sets (time/frequency) for each mesh entity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>, <a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A scalar if the result of the query is a single number,
+or a DataFrame if several numbers along one or several axes.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">StaticMechanicalSimulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">download_crankshaft</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement value for each component at each time-step</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minimum_over_mesh</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;node_ids&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">minimum_over_mesh</span><span class="p">)</span>  
+<span class="go">   results       U (m)</span>
+<span class="go">   set_ids           1           2           3</span>
+<span class="go">components</span>
+<span class="go">         X -7.4732e-04 -1.5081e-03 -2.2755e-03</span>
+<span class="go">         Y -4.0138e-04 -8.0316e-04 -1.2014e-03</span>
+<span class="go">         Z -2.1555e-04 -4.3299e-04 -6.5101e-04</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement for each node and component across time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minimum_over_time</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;set_ids&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">minimum_over_time</span><span class="p">)</span>  
+<span class="go">            results       U (m)</span>
+<span class="go"> node_ids components</span>
+<span class="go">     4872          X -3.4137e-05</span>
+<span class="go">                   Y  5.1667e-04</span>
+<span class="go">                   Z -4.1346e-06</span>
+<span class="go">     9005          X -5.5625e-05</span>
+<span class="go">                   Y  4.8445e-04</span>
+<span class="go">                   Z -4.9795e-07</span>
+<span class="go">      ...        ...         ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement overall</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minimum_overall</span> <span class="o">=</span> <span class="n">minimum_over_time</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">minimum_overall</span><span class="p">)</span>  
+<span class="go">   results       U (m)</span>
+<span class="go">components</span>
+<span class="go">         X -2.2755e-03</span>
+<span class="go">         Y -1.2014e-03</span>
+<span class="go">         Z -6.5101e-04</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.dpf.post.dataframe.DataFrame.max">
+<span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.dpf.post.dataframe.DataFrame.max" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the maximum value over the requested axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]], default: <code class="docutils literal notranslate"><span class="pre">0</span></code>) – Axis to perform maximum across.
+Defaults to the MeshIndex (0), the row index containing mesh entity IDs.
+This computes the maximum across the mesh for each set.
+Can also be the SetIndex (1), the column index containing set (time/frequency) IDs.
+This computes the maximum across sets (time/frequency) for each mesh entity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="#ansys.dpf.post.dataframe.DataFrame" title="ansys.dpf.post.dataframe.DataFrame"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>, <a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A scalar if the result of the query is a single number,
+or a DataFrame if several numbers along one or several axes.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">StaticMechanicalSimulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">download_crankshaft</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement value for each component at each time-step</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maximum_over_mesh</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;node_ids&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">maximum_over_mesh</span><span class="p">)</span>  
+<span class="go">   results       U (m)</span>
+<span class="go">   set_ids           1           2           3</span>
+<span class="go">components</span>
+<span class="go">         X  7.3303e-04  1.4495e-03  2.1441e-03</span>
+<span class="go">         Y  1.3962e-03  2.7884e-03  4.1656e-03</span>
+<span class="go">         Z  2.1567e-04  4.3321e-04  6.5135e-04</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement for each node and component across time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maximum_over_time</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;set_ids&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">maximum_over_time</span><span class="p">)</span>  
+<span class="go">             results       U (m)</span>
+<span class="go"> node_ids components</span>
+<span class="go">     4872          X  5.6781e-06</span>
+<span class="go">                   Y  1.5417e-03</span>
+<span class="go">                   Z -2.6398e-06</span>
+<span class="go">     9005          X -2.6323e-06</span>
+<span class="go">                   Y  1.4448e-03</span>
+<span class="go">                   Z  5.3134e-06</span>
+<span class="go">      ...        ...         ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute the maximum displacement overall</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maximum_overall</span> <span class="o">=</span> <span class="n">maximum_over_time</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">maximum_overall</span><span class="p">)</span>  
+<span class="go">   results       U (m)</span>
+<span class="go">components</span>
+<span class="go">         X  2.1441e-03</span>
+<span class="go">         Y  4.1656e-03</span>
+<span class="go">         Z  6.5135e-04</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">DataFrame</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame"><code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.display_max_columns"><code class="docutils literal notranslate"><span class="pre">DataFrame.display_max_columns</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.display_max_rows"><code class="docutils literal notranslate"><span class="pre">DataFrame.display_max_rows</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.columns"><code class="docutils literal notranslate"><span class="pre">DataFrame.columns</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.index"><code class="docutils literal notranslate"><span class="pre">DataFrame.index</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.axes"><code class="docutils literal notranslate"><span class="pre">DataFrame.axes</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.results_index"><code class="docutils literal notranslate"><span class="pre">DataFrame.results_index</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.mesh_index"><code class="docutils literal notranslate"><span class="pre">DataFrame.mesh_index</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.labels"><code class="docutils literal notranslate"><span class="pre">DataFrame.labels</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.array"><code class="docutils literal notranslate"><span class="pre">DataFrame.array</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.select"><code class="docutils literal notranslate"><span class="pre">DataFrame.select()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.iselect"><code class="docutils literal notranslate"><span class="pre">DataFrame.iselect()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.plot"><code class="docutils literal notranslate"><span class="pre">DataFrame.plot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.animate"><code class="docutils literal notranslate"><span class="pre">DataFrame.animate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.min"><code class="docutils literal notranslate"><span class="pre">DataFrame.min()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.dpf.post.dataframe.DataFrame.max"><code class="docutils literal notranslate"><span class="pre">DataFrame.max()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/ansys.dpf.post.dataframe.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.10.0. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

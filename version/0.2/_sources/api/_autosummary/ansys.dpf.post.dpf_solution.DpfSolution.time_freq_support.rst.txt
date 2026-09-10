@@ -1,0 +1,6 @@
+time\_freq\_support
+===================
+
+.. currentmodule:: ansys.dpf.post.dpf_solution
+
+.. autoproperty:: DpfSolution.time_freq_support

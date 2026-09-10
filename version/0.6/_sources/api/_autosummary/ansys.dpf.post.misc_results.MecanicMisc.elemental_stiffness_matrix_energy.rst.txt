@@ -1,0 +1,6 @@
+elemental\_stiffness\_matrix\_energy
+====================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_stiffness_matrix_energy

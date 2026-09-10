@@ -1,0 +1,6 @@
+xy
+==
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. autoproperty:: Stress.xy

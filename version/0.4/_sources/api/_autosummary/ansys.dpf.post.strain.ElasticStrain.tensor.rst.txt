@@ -1,0 +1,6 @@
+tensor
+======
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. autoproperty:: ElasticStrain.tensor
