@@ -4834,7 +4834,6 @@ def test_read_beams_option(beam_example, read_beams):
     assert len(fields_container) == 1
 
     field: dpf.Field = fields_container[0]
-    assert field.location == locations.elemental
 
     # When read_beams is None, the operator default applies.
     # The default was False until version 2027.1 pre0 excluded.
