@@ -38,7 +38,7 @@ from ansys.dpf.core import (
     operators,
     shell_layers,
 )
-from ansys.dpf.core.common import locations
+from ansys.dpf.core.common import locations, types
 import numpy as np
 import pytest
 from pytest import fixture
@@ -4803,6 +4803,47 @@ def test_beam_results_on_skin(beam_example):
         assert element_count_dict[element_types.Line2.value] == 40
 
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
+
+
+@pytest.mark.parametrize("read_beams", [None, True, False])
+def test_read_beams_option(beam_example, read_beams):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=beam_example,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    selection, rescoping = simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.equivalent,
+        selection=None,
+        times=None,
+        set_ids=None,
+    )
+
+    wf, _, _ = simulation._get_result_workflow(
+        base_name="S",
+        location=dpf.locations.elemental,
+        category=ResultCategory.equivalent,
+        selection=selection,
+        rescoping=rescoping,
+        read_beams=read_beams,
+    )
+
+    fields_container = wf.get_output(_WfNames.output_data, types.fields_container)
+
+    assert len(fields_container) == 1
+
+    field: dpf.Field = fields_container[0]
+
+    # When read_beams is None, the operator default applies.
+    # The default was False until version 2027.1 pre0 excluded.
+    if read_beams is True or (
+        read_beams is None and SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
+    ):
+        assert np.isclose(field.min().data[0], 0.4351, rtol=1.0e-3)
+        assert np.isclose(field.max().data[0], 5.512, rtol=1.0e-3)
+    else:
+        assert field.size == 0
 
 
 def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):

@@ -116,6 +116,7 @@ class _CreateWorkflowInputs:
     should_extract_components: bool
     averaging_config: AveragingConfig
     shell_layer: Optional[shell_layers]
+    read_beams: Optional[bool] = None
     sweeping_phase_workflow_inputs: Optional[_SweepingPhaseWorkflowInputs] = None
     rescoping_workflow_inputs: Optional[_Rescoping] = None
 
@@ -173,6 +174,7 @@ def _create_result_workflows(
         server=server,
         is_nodal=is_nodal,
         shell_layer=create_workflow_inputs.shell_layer,
+        read_beams=create_workflow_inputs.read_beams,
         create_operator_callable=create_operator_callable,
     )
 
@@ -275,6 +277,7 @@ def _create_result_workflow_inputs(
     averaging_config: AveragingConfig,
     shell_layer: Optional[shell_layers],
     rescoping: Optional[_Rescoping] = None,
+    read_beams: Optional[bool] = None,
     amplitude: bool = False,
     sweeping_phase: Union[float, None] = 0.0,
 ) -> _CreateWorkflowInputs:
@@ -327,4 +330,5 @@ def _create_result_workflow_inputs(
         averaging_config=averaging_config,
         rescoping_workflow_inputs=rescoping,
         shell_layer=shell_layer,
+        read_beams=read_beams,
     )
