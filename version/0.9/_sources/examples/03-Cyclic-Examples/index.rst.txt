@@ -1,0 +1,119 @@
+
+
+.. _sphx_glr_examples_03-Cyclic-Examples:
+
+.. _ref_cyclic_examples:
+
+PyDPF-Post cyclic examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you can use PyDPF-Post features for cyclic symmetry models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract cyclic results">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_01-cyclic-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_01-cyclic-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract cyclic results</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extract multi-stage cyclic results">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_02-multi-stage-cyclic-results_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_02-multi-stage-cyclic-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract multi-stage cyclic results</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Reduce Cyclic Model Size by using Mesh External Layer for Result and Mesh extraction">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_03-cyclic-mesh-external-layer_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_03-cyclic-mesh-external-layer.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce Cyclic Model Size by using Mesh External Layer for Result and Mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Reduce Cyclic Model Size by using Mesh Skin for Result and Mesh extraction">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_04-cyclic-mesh-skin_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_04-cyclic-mesh-skin.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reduce Cyclic Model Size by using Mesh Skin for Result and Mesh extraction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to extract results from a modal cyclic symmetry model.">
+
+.. only:: html
+
+  .. image:: /examples/03-Cyclic-Examples/images/thumb/sphx_glr_05-modal_cyclic_no_expansion_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_03-Cyclic-Examples_05-modal_cyclic_no_expansion.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Get base and duplicate sectors (real and imaginary) results for modal cyclic symmetry</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/03-Cyclic-Examples/01-cyclic-results
+   /examples/03-Cyclic-Examples/02-multi-stage-cyclic-results
+   /examples/03-Cyclic-Examples/03-cyclic-mesh-external-layer
+   /examples/03-Cyclic-Examples/04-cyclic-mesh-skin
+   /examples/03-Cyclic-Examples/05-modal_cyclic_no_expansion
+

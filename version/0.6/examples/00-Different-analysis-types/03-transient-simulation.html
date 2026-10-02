@@ -1,0 +1,834 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transient Simulation with Animation &#8212; PyDPF-Post</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=18fd1f76" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=dda85ae5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=040b0d01"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/00-Different-analysis-types/03-transient-simulation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.6';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Harmonic Simulation" href="04-harmonic-complex-results.html" />
+    <link rel="prev" title="Modal Simulation" href="02-modal-simulation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/examples/00-Different-analysis-types/03-transient-simulation.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="versionswitcherbutton" type="button" role="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="listbox" aria-controls="versionswitcherlist" aria-label="Version switcher list">
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="versionswitcherlist" class="version-switcher__menu dropdown-menu list-group-flush py-0" role="listbox" aria-labelledby="versionswitcherbutton">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="versionswitcherbutton" type="button" role="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="listbox" aria-controls="versionswitcherlist" aria-label="Version switcher list">
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="versionswitcherlist" class="version-switcher__menu dropdown-menu list-group-flush py-0" role="listbox" aria-labelledby="versionswitcherbutton">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyDPF-Post analysis types</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-static-simulation.html">Static Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-modal-simulation.html">Modal Simulation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Transient Simulation with Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-harmonic-complex-results.html">Harmonic Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-fluid-simulation.html">Fluid Simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../01-Detailed-Examples/index.html">PyDPF-Post feature examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02-Performance-Improvements/index.html">Improve performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03-Cyclic-Examples/index.html">PyDPF-Post cyclic examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04-Fluid-Examples/index.html">PyDPF-Post fluid examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05-Legacy/index.html">PyDPF-Post legacy examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+      
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+      
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i
+      ></a>
+    </li> 
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PyDPF-Post analysis types</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Transient Simulation with Animation</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-00-different-analysis-types-03-transient-simulation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="transient-simulation-with-animation">
+<span id="ref-transient-example"></span><span id="sphx-glr-examples-00-different-analysis-types-03-transient-simulation-py"></span><h1>Transient Simulation with Animation<a class="headerlink" href="#transient-simulation-with-animation" title="Link to this heading">#</a></h1>
+<p>In this script transient simulation is processed to extract results like
+stress, strain, displacement.
+Extracting data for chosen time steps and animating is also displayed.</p>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform required imports. # This example uses a supplied file that you can
+get by importing the DPF <code class="docutils literal notranslate"><span class="pre">examples</span></code> package.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.dpf</span> <span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span> <span class="nn">ansys.dpf.post</span> <span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="get-simulation-object">
+<h2>Get <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object<a class="headerlink" href="#get-simulation-object" title="Link to this heading">#</a></h2>
+<p>Get the <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object that allows access to the result. The <code class="docutils literal notranslate"><span class="pre">Simulation</span></code>
+object must be instantiated with the path for the result file. For example,
+<code class="docutils literal notranslate"><span class="pre">&quot;C:/Users/user/my_result.rst&quot;</span></code> on Windows or <code class="docutils literal notranslate"><span class="pre">&quot;/home/user/my_result.rst&quot;</span></code>
+on Linux.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">find_msup_transient</span><span class="p">()</span>
+<span class="c1"># to automatically detect the simulation type, use:</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># to enable auto-completion, use the equivalent:</span>
+<span class="n">simulation</span> <span class="o">=</span> <a href="https://docs.python.org/dev/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">post</span><span class="o">.</span><span class="n">TransientMechanicalSimulation</span></a><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># print the simulation to get an overview of what&#39;s available</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Transient Mechanical Simulation.
+
+
+Data Sources
+------------------------------
+/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/msup_transient_plate1.rst
+
+DPF Model
+------------------------------
+Transient analysis
+Unit system: MKS: m, kg, N, s, V, A, degC
+Physics Type: Mechanical
+Available results:
+     -  displacement: Nodal Displacement
+     -  velocity: Nodal Velocity
+     -  acceleration: Nodal Acceleration
+     -  reaction_force: Nodal Force
+     -  stress: ElementalNodal Stress
+     -  elemental_volume: Elemental Volume
+     -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+     -  artificial_hourglass_energy: Elemental Hourglass Energy
+     -  thermal_dissipation_energy: Elemental thermal dissipation energy
+     -  kinetic_energy: Elemental Kinetic Energy
+     -  co_energy: Elemental co-energy
+     -  incremental_energy: Elemental incremental energy
+     -  elastic_strain: ElementalNodal Strain
+------------------------------
+DPF  Meshed Region:
+  393 nodes
+  40 elements
+  Unit: m
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support:
+  Number of sets: 20
+Cumulative     Time (s)       LoadStep       Substep
+1              0.010000       1              1
+2              0.020000       1              2
+3              0.030000       1              3
+4              0.040000       1              4
+5              0.050000       1              5
+6              0.060000       1              6
+7              0.070000       1              7
+8              0.080000       1              8
+9              0.090000       1              9
+10             0.100000       1              10
+11             0.110000       1              11
+12             0.120000       1              12
+13             0.130000       1              13
+14             0.140000       1              14
+15             0.150000       1              15
+16             0.160000       1              16
+17             0.170000       1              17
+18             0.180000       1              18
+19             0.190000       1              19
+20             0.200000       1              20
+</pre></div>
+</div>
+</section>
+<section id="extract-displacement-at-all-times-or-on-a-selection">
+<h2>Extract displacement at all times or on a selection<a class="headerlink" href="#extract-displacement-at-all-times-or-on-a-selection" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># query the displacement vectorial field for all times</span>
+<span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement</span><span class="p">)</span>
+<span class="c1"># animation shows the norm of vectorial fields with several components</span>
+<span class="n">displacement</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">deform</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># get specific components with &quot;components&quot;</span>
+<span class="n">x_displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_displacement</span><span class="p">)</span>
+<span class="n">x_displacement</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">deform</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;UX&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># get the norm of a vectorial result with &quot;norm=True&quot;</span>
+<span class="n">displacement_norm</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement_norm</span><span class="p">)</span>
+<span class="n">displacement_norm</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">deform</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;U norm&quot;</span><span class="p">)</span>
+
+<span class="c1"># get the available time set ids in the simulation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">set_ids</span><span class="p">)</span>
+
+<span class="c1"># extract displacement on given time steps or select the times steps from the already evaluated</span>
+<span class="c1"># displacement DataFrame</span>
+<span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">set_ids</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">set_ids</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span>
+<span class="n">displacement</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">set_ids</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">set_ids</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_03-transient-simulation_001.png" srcset="../../_images/sphx_glr_03-transient-simulation_001.png" alt="03 transient simulation" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_03-transient-simulation_002.png" srcset="../../_images/sphx_glr_03-transient-simulation_002.png" alt="03 transient simulation" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_03-transient-simulation_003.png" srcset="../../_images/sphx_glr_03-transient-simulation_003.png" alt="03 transient simulation" class = "sphx-glr-multi-img"/></li>
+</ul>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>             results      U (m)                                                             ...
+             set_ids          1           2           3           4           5           6 ...
+ node_ids components                                                                        ...
+        9          X 1.6236e-14  8.6224e-14  2.1451e-13  3.6103e-13  4.9262e-13  5.7822e-13 ...
+                   Y 1.4763e-04  5.8099e-04  1.2121e-03  1.9949e-03  2.7524e-03  3.1675e-03 ...
+                   Z 1.9644e-06  9.6317e-06  2.2793e-05  3.8222e-05  5.2323e-05  6.1003e-05 ...
+       96          X 2.6765e-08 -4.9606e-08 -3.7405e-07 -6.8920e-07 -8.8899e-07 -1.1142e-06 ...
+                   Y 1.4776e-04  5.8073e-04  1.2102e-03  1.9914e-03  2.7480e-03  3.1619e-03 ...
+                   Z 1.9663e-06  9.6467e-06  2.2825e-05  3.8272e-05  5.2398e-05  6.1085e-05 ...
+      ...        ...        ...         ...         ...         ...         ...         ... ...
+
+
+  results     U_X (m)                                                             ...
+  set_ids           1           2           3           4           5           6 ...
+ node_ids                                                                         ...
+        9  1.6236e-14  8.6224e-14  2.1451e-13  3.6103e-13  4.9262e-13  5.7822e-13 ...
+       96  2.6765e-08 -4.9606e-08 -3.7405e-07 -6.8920e-07 -8.8899e-07 -1.1142e-06 ...
+       95  2.9067e-08 -2.1748e-08 -3.0981e-07 -5.8388e-07 -7.3503e-07 -9.4097e-07 ...
+       10  1.9354e-14  1.0285e-13  2.5600e-13  4.3087e-13  5.8790e-13  6.9009e-13 ...
+       30  1.3959e-14  7.4010e-14  1.8369e-13  3.0883e-13  4.2175e-13  4.9490e-13 ...
+       68 -2.6765e-08  4.9606e-08  3.7405e-07  6.8920e-07  8.8899e-07  1.1142e-06 ...
+      ...         ...         ...         ...         ...         ...         ... ...
+
+
+  results    U_N (m)                                                        ...
+  set_ids          1          2          3          4          5          6 ...
+ node_ids                                                                   ...
+        9 1.4764e-04 5.8107e-04 1.2123e-03 1.9952e-03 2.7529e-03 3.1680e-03 ...
+       96 1.4777e-04 5.8081e-04 1.2104e-03 1.9918e-03 2.7485e-03 3.1625e-03 ...
+       95 1.6695e-04 6.7794e-04 1.4446e-03 2.3856e-03 3.2866e-03 3.7912e-03 ...
+       10 1.6681e-04 6.7805e-04 1.4462e-03 2.3885e-03 3.2903e-03 3.7959e-03 ...
+       30 1.4764e-04 5.8107e-04 1.2123e-03 1.9952e-03 2.7529e-03 3.1680e-03 ...
+       68 1.4777e-04 5.8081e-04 1.2104e-03 1.9918e-03 2.7485e-03 3.1625e-03 ...
+      ...        ...        ...        ...        ...        ...        ... ...
+
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+             results       U (m)                                                             ...
+             set_ids           6           7           8           9          10          11 ...
+ node_ids components                                                                         ...
+        9          X  5.7822e-13  5.9149e-13  5.3316e-13  4.1647e-13  2.7073e-13  1.3329e-13 ...
+                   Y  3.1675e-03  3.2277e-03  2.9633e-03  2.3102e-03  1.5053e-03  8.1690e-04 ...
+                   Z  6.1003e-05  6.2516e-05  5.6466e-05  4.4106e-05  2.8780e-05  1.4367e-05 ...
+       96          X -1.1142e-06 -1.1700e-06 -9.7434e-07 -7.7403e-07 -5.1423e-07 -1.5231e-07 ...
+                   Y  3.1619e-03  3.2218e-03  2.9585e-03  2.3064e-03  1.5027e-03  8.1613e-04 ...
+                   Z  6.1085e-05  6.2600e-05  5.6545e-05  4.4166e-05  2.8819e-05  1.4388e-05 ...
+      ...        ...         ...         ...         ...         ...         ...         ... ...
+</pre></div>
+</div>
+</section>
+<section id="extract-strain-at-all-times-or-on-a-selection">
+<h2>Extract strain at all times or on a selection<a class="headerlink" href="#extract-strain-at-all-times-or-on-a-selection" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">strain</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">elastic_strain_nodal</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">strain</span><span class="p">)</span>
+
+<span class="n">strain</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">elastic_strain_nodal</span><span class="p">(</span><span class="n">set_ids</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">set_ids</span><span class="p">[</span><span class="mi">10</span><span class="p">:])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">strain</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results        EPEL                                                             ...
+            set_ids           1           2           3           4           5           6 ...
+node_ids components                                                                         ...
+       9         XX -5.1055e-07  1.0529e-06  7.5275e-06  1.3842e-05  1.7878e-05  2.2371e-05 ...
+                 YY -5.8226e-07  8.7907e-07  7.4010e-06  1.3689e-05  1.7612e-05  2.2143e-05 ...
+                 ZZ  1.8693e-06 -3.1040e-06 -2.4796e-05 -4.5782e-05 -5.8972e-05 -7.4037e-05 ...
+                 XY  1.1102e-16  2.2812e-16  4.7184e-16  7.9103e-16  1.3323e-15  1.2212e-15 ...
+                 YZ -3.7610e-09 -5.8703e-08 -1.2875e-07 -2.0941e-07 -3.1235e-07 -3.4685e-07 ...
+                 XZ -1.0658e-14 -5.6843e-14 -1.1369e-13 -1.7053e-13 -3.4106e-13 -3.4106e-13 ...
+     ...        ...         ...         ...         ...         ...         ...         ... ...
+
+
+            results        EPEL                                                             ...
+            set_ids          11          12          13          14          15          16 ...
+node_ids components                                                                         ...
+       9         XX  3.1091e-06 -1.7232e-07 -5.0382e-07 -3.0068e-08  4.7140e-06  1.1642e-05 ...
+                 YY  2.9312e-06 -2.7887e-07 -5.6070e-07 -1.7267e-07  4.5633e-06  1.1516e-05 ...
+                 ZZ -9.9484e-06  8.2313e-07  1.8122e-06  4.3304e-07 -1.5362e-05 -3.8511e-05 ...
+                 XY  4.7184e-16  3.6082e-16  1.1102e-16  4.0246e-16  4.6491e-16  7.3552e-16 ...
+                 YZ -8.3922e-08 -2.5142e-08  6.5868e-09 -3.7990e-08 -9.8658e-08 -1.7393e-07 ...
+                 XZ -8.5265e-14 -2.1316e-14 -6.6613e-15 -4.2633e-14 -1.1369e-13 -1.7053e-13 ...
+     ...        ...         ...         ...         ...         ...         ...         ... ...
+</pre></div>
+</div>
+</section>
+<section id="animate-strain-eqv-over-all-times">
+<h2>Animate strain eqv over all times<a class="headerlink" href="#animate-strain-eqv-over-all-times" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">strain_eqv</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">elastic_strain_eqv_von_mises_nodal</span><span class="p">(</span><span class="n">all_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">strain_eqv</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">deform</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;E_eqv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_03-transient-simulation_004.png" srcset="../../_images/sphx_glr_03-transient-simulation_004.png" alt="03 transient simulation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 6.528 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-00-different-analysis-types-03-transient-simulation-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ed5d73cc59b374051adf888973cdc101/03-transient-simulation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">03-transient-simulation.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/239115c6e1aad84f4fadb8170f98a640/03-transient-simulation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03-transient-simulation.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-simulation-object">Get <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-displacement-at-all-times-or-on-a-selection">Extract displacement at all times or on a selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-strain-at-all-times-or-on-a-selection">Extract strain at all times or on a selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#animate-strain-eqv-over-all-times">Animate strain eqv over all times</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/examples/00-Different-analysis-types/03-transient-simulation.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.12.3. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+elemental\_thermal\_dissipation\_energy
+=======================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_thermal_dissipation_energy

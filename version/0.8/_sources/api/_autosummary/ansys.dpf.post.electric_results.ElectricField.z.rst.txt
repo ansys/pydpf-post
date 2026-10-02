@@ -1,0 +1,6 @@
+z
+=
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. autoproperty:: ElectricField.z

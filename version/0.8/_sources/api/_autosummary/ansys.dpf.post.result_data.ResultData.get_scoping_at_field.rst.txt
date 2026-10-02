@@ -1,0 +1,6 @@
+get\_scoping\_at\_field
+=======================
+
+.. currentmodule:: ansys.dpf.post.result_data
+
+.. automethod:: ResultData.get_scoping_at_field

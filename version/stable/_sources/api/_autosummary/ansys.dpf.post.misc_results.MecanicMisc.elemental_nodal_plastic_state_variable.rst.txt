@@ -1,0 +1,6 @@
+elemental\_nodal\_plastic\_state\_variable
+==========================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_nodal_plastic_state_variable

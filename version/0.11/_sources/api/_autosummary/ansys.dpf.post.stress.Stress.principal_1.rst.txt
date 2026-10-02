@@ -1,0 +1,6 @@
+principal\_1
+============
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. autoproperty:: Stress.principal_1

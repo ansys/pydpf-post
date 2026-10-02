@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.named_selection
+   :inherited-members:

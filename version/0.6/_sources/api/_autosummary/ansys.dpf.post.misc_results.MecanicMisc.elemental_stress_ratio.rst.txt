@@ -1,0 +1,6 @@
+elemental\_stress\_ratio
+========================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_stress_ratio
