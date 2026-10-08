@@ -1,0 +1,6 @@
+von\_mises
+==========
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. autoproperty:: Stress.von_mises

@@ -1,0 +1,67 @@
+
+:orphan:
+
+.. _sphx_glr_examples_05-Legacy_sg_execution_times:
+
+
+Computation times
+=================
+**00:10.159** total execution time for 11 files **from examples/05-Legacy**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_examples_05-Legacy_01-get_data_from_static_simulation.py` (``01-get_data_from_static_simulation.py``)
+     - 00:03.342
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_00-overview_example.py` (``00-overview_example.py``)
+     - 00:01.294
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_02-static-analysis.py` (``02-static-analysis.py``)
+     - 00:01.169
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_04-harmonic-analysis.py` (``04-harmonic-analysis.py``)
+     - 00:01.154
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_03-modal-analysis.py` (``03-modal-analysis.py``)
+     - 00:01.031
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_08-result_on_path_of_coordinates.py` (``08-result_on_path_of_coordinates.py``)
+     - 00:00.936
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_05-transient-analysis.py` (``05-transient-analysis.py``)
+     - 00:00.572
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_01-introduction.py` (``01-introduction.py``)
+     - 00:00.400
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_09-basics.py` (``09-basics.py``)
+     - 00:00.145
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_07-result_keywords.py` (``07-result_keywords.py``)
+     - 00:00.081
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_06-complex_results.py` (``06-complex_results.py``)
+     - 00:00.034
+     - 0.0

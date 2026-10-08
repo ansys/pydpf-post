@@ -1,0 +1,6 @@
+elemental\_contactgap\_distance
+===============================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_contactgap_distance

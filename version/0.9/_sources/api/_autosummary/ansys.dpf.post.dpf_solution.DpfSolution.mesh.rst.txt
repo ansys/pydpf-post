@@ -1,0 +1,6 @@
+mesh
+====
+
+.. currentmodule:: ansys.dpf.post.dpf_solution
+
+.. autoproperty:: DpfSolution.mesh

@@ -1,0 +1,6 @@
+elemental\_artificial\_hourglass\_energy
+========================================
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.elemental_artificial_hourglass_energy
