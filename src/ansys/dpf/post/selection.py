@@ -451,12 +451,14 @@ class SpatialSelection:
         """
         try:
             skin_operator = Operator("result_explorer::skin", server=self._server)
+            skin_operator.inputs.add_beam_point(True)
         except KeyError:
             skin_operator = operators.mesh.skin(server=self._server)
-        if self._server.meet_version("10.0"):
-            # Add beam argument available since 9.1, but produces inconsistent
-            # facets_to_elem mappings before 10.0
-            skin_operator.inputs.add_beam(True)
+            if self._server.meet_version("10.0"):
+                # Add beam argument available since 9.1, but produces inconsistent
+                # facets_to_elem mappings before 10.0
+                skin_operator.inputs.add_beam(True)
+
         self._selection.add_operator(skin_operator)
 
         initial_mesh_fwd_op = operators.utility.forward(server=self._server)
