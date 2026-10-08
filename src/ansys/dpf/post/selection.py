@@ -41,6 +41,7 @@ from typing import Union
 from ansys.dpf.core import (
     Field,
     MeshedRegion,
+    Operator,
     Scoping,
     Workflow,
     locations,
@@ -448,7 +449,10 @@ class SpatialSelection:
             Use cached skin mesh instead of reevaluating the skin operator. Only supported
             for non-cyclic meshes without an elemental selection.
         """
-        skin_operator = operators.mesh.skin(server=self._server)
+        try:
+            skin_operator = Operator("result_explorer::skin", server=self._server)
+        except KeyError:
+            skin_operator = operators.mesh.skin(server=self._server)
         if self._server.meet_version("10.0"):
             # Add beam argument available since 9.1, but produces inconsistent
             # facets_to_elem mappings before 10.0
