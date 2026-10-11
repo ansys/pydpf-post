@@ -32,3 +32,4 @@
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
 * [Ricardo Peixoto Coelho](https://github.com/ricardopeixotocoelho)
 * [Roberto Pastor Muela](https://github.com/RobPasMue)
+* [Yamina Seïté](https://github.com/YaminaSeite)
