@@ -372,8 +372,8 @@ def license_context():
         yield
 
 
-SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_13_0 = meets_version(
-    get_server_version(core._global_server()), "13.0"
+SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0 = meets_version(
+    get_server_version(core._global_server()), "2027.1.0pre0"
 )  # 2027.1.pre0
 
 SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0 = meets_version(

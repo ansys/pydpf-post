@@ -13,9 +13,11 @@ repos:
   hooks:
   - id: isort
     args: [
-    "--profile", "black",
-    "--force-sort-within-sections",
-    "--skip-glob", "*__init__.py",
+      "--profile",
+      "black",
+      "--force-sort-within-sections",
+      "--skip-glob",
+      "*__init__.py",
     ]
 
 - repo: https://github.com/PyCQA/flake8

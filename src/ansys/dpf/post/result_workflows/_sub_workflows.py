@@ -103,9 +103,10 @@ def _create_averaging_workflow(
         else:
             operator_name = "to_elemental_fc"
         mesh_average_op = create_operator_callable(name=operator_name)
-        if server.meet_version("10.0") and shell_layer is not None:
+        if server.meet_version("10.0"):
             mesh_average_op.connect(26, True)  # merge solid and shell fields
-            mesh_average_op.connect(27, shell_layer.value)
+            if shell_layer is not None:
+                mesh_average_op.connect(27, shell_layer.value)
         average_wf.add_operator(mesh_average_op)
         mesh_average_op.connect(0, mesh_averaging_input_fwd, 0)
         averaged_data_fwd.connect(0, mesh_average_op, 0)
@@ -200,12 +201,16 @@ def _create_initial_result_workflow(
     name: str,
     server,
     shell_layer: Optional[shell_layers],
+    read_beams: Optional[bool],
     is_nodal: bool,
     create_operator_callable: _CreateOperatorCallable,
 ):
     initial_result_workflow = Workflow(server=server)
 
     initial_result_op = create_operator_callable(name=name)
+
+    if read_beams is not None and hasattr(initial_result_op.inputs, "read_beams"):
+        initial_result_op.inputs.read_beams.connect(read_beams)
 
     initial_result_workflow.set_input_name(_WfNames.mesh, initial_result_op, 7)
     initial_result_workflow.set_input_name(_WfNames.location, initial_result_op, 9)
@@ -254,14 +259,14 @@ def _create_initial_result_workflow(
             _WfNames.output_data, initial_result_op, 0
         )
 
-    if hasattr(initial_result_op.inputs, "shell_layer"):
-        if server.meet_version("10.0") and shell_layer is not None:
+        if server.meet_version("10.0"):
             initial_result_op.connect(
                 26, False
             )  # do not split (=merge) solid and shell fields
-        _connect_any(
-            initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
-        )
+        if hasattr(initial_result_op.inputs, "shell_layer"):
+            _connect_any(
+                initial_result_op.inputs.shell_layer, forward_shell_layer_op.outputs.any
+            )
 
     initial_result_workflow.set_input_name(
         "time_scoping", initial_result_op.inputs.time_scoping

@@ -31,6 +31,7 @@ from typing import List, Union
 import weakref
 
 import ansys.dpf.core as dpf
+from ansys.dpf.core.check_version import get_server_version, meets_version
 
 from ansys.dpf import post
 
@@ -181,7 +182,7 @@ class MeshIndex(Index):
             fc = self._fc()
             if fc is not None:
                 merge_op = dpf.operators.utility.merge_scopings(server=fc._server)
-                if float(fc._server.version) >= 5.0:
+                if meets_version(get_server_version(fc._server), "5.0"):
                     scopings = dpf.operators.utility.extract_scoping(
                         field_or_fields_container=fc,
                         server=fc._server,

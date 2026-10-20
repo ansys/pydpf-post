@@ -38,7 +38,7 @@ from ansys.dpf.core import (
     operators,
     shell_layers,
 )
-from ansys.dpf.core.common import locations
+from ansys.dpf.core.common import locations, types
 import numpy as np
 import pytest
 from pytest import fixture
@@ -62,7 +62,9 @@ from conftest import (
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_1,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0,
     SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0,
+    SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0,
     ReferenceCsvFilesNodal,
 )
 
@@ -81,6 +83,14 @@ def mode_suffix(mode: Optional[str]) -> str:
     elif mode == "principal":
         return "_principal"
     return ""
+
+
+SURFACE_ELTYPES = [
+    dpf.element_types.Surface3.value,
+    dpf.element_types.Surface4.value,
+    dpf.element_types.Surface6.value,
+    dpf.element_types.Surface8.value,
+]
 
 
 def get_expected_elemental_average_skin_value(
@@ -117,7 +127,14 @@ def get_expected_elemental_average_skin_value(
                 connected_node_id
             )
         )
-        skin_element_ids.update(skin_mesh.elements.scoping.ids[skin_element_index])
+        # Filter surface elements, as results are not found on them
+        if skin_element_index.size > 0:
+            for index in skin_element_index:
+                eltype = skin_mesh.elements.element_types_field.get_entity_data(index)[
+                    0
+                ]
+                if not eltype in SURFACE_ELTYPES:
+                    skin_element_ids.add(skin_mesh.elements.scoping.ids[index])
 
     expected_average_skin_values = {}
     for skin_element_id in skin_element_ids:
@@ -631,7 +648,9 @@ def test_simulation_split_mesh_by_properties(allkindofcomplexity):
     )
     assert isinstance(meshes, Meshes)
 
-    if (
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        expected_len = 17
+    elif (
         SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_9_0
         and not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0
     ):
@@ -1610,6 +1629,78 @@ def test_shell_layer_extraction_contacts(
         assert max_val > 7.7 and max_val < 7.8
 
 
+def test_elemental_shell_mid_layer_with_contact_matches_core(
+    mixed_shell_solid_with_contact_simulation,
+):
+    """Check elemental shell-layer extraction on a model containing contact."""
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        return
+
+    simulation = mixed_shell_solid_with_contact_simulation
+    core_stress = dpf.operators.result.stress(
+        streams_container=simulation._model.metadata.meshed_region._stream_provider,
+        requested_location=locations.elemental,
+        shell_layer=shell_layers.mid,
+        split_shells=False,
+    ).outputs.fields_container()[0]
+    core_stress_xx = dpf.operators.logic.component_selector(
+        field=core_stress, component_number=[0]
+    ).outputs.field()
+    post_stress = simulation._get_result(
+        base_name="S",
+        location=locations.elemental,
+        category=ResultCategory.matrix,
+        components=["X"],
+        shell_layer=shell_layers.mid,
+    )._fc
+
+    assert len(post_stress) == 1
+    assert post_stress[0].scoping.size == core_stress.scoping.size == 20
+    for element_id in [65, 66, 67, 68]:
+        np.testing.assert_allclose(
+            post_stress[0].get_entity_data_by_id(element_id),
+            core_stress_xx.get_entity_data_by_id(element_id),
+        )
+
+
+@pytest.mark.parametrize(
+    ("skin", "expected_entity_count"),
+    [
+        (True, 52),
+        ([65, 66, 67, 68], 4),
+        ([65, 66, 67, 68, 15], 10),
+    ],
+)
+def test_elemental_skin_with_contact_merges_solid_and_shell_fields(
+    mixed_shell_solid_with_contact_simulation, skin, expected_entity_count
+):
+    """Check that elemental skin stress does not remain split on ``elshape``."""
+    if not SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_10_0:
+        return
+
+    stress = mixed_shell_solid_with_contact_simulation._get_result(
+        base_name="S",
+        location=locations.elemental,
+        category=ResultCategory.matrix,
+        components=["X"],
+        skin=skin,
+    )._fc
+
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 or expected_entity_count == 4:
+        # Solid and shell fields are merged into a single field for newer version
+        # For the expected_entity_count == 4 only the shell elements are selected,
+        # so the result is also a single field
+        assert stress.labels == ["time"]
+        assert len(stress) == 1
+    else:
+        # Older servers keep the results split on the 'elshape' label
+        assert sorted(stress.labels) == ["elshape", "time"]
+        assert len(stress) == 2
+    assert stress[0].location == locations.elemental
+    assert stress[0].component_count == 1
+    assert sum(field.scoping.size for field in stress) == expected_entity_count
+
+
 @pytest.mark.parametrize("skin", all_configuration_ids)
 @pytest.mark.parametrize("result_name", ["stress", "elastic_strain", "displacement"])
 @pytest.mark.parametrize("mode", [None, "principal", "equivalent"])
@@ -1659,19 +1750,17 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     if isinstance(skin, list):
         element_ids = skin
     else:
-        if isinstance(simulation, post.ModalMechanicalSimulation):
-            # The modal result contains different element types. Here
-            # we just extract the solid elements
-            solid_elements_mesh = simulation.split_mesh_by_properties(
-                {elemental_properties.element_type: element_types.Hex20.value}
-            )
-            if isinstance(solid_elements_mesh, Meshes):
-                element_ids = solid_elements_mesh[0].element_ids
-            else:
-                element_ids = solid_elements_mesh.element_ids
-            skin = element_ids
+        # Here we just extract the solid elements to avoid trying to
+        # get results on SURF elements
+        solid_elements_mesh = simulation.split_mesh_by_properties(
+            {elemental_properties.element_type: element_types.Hex20.value}
+        )
+        if isinstance(solid_elements_mesh, Meshes):
+            element_ids = solid_elements_mesh[0].element_ids
         else:
-            element_ids = simulation.mesh.element_ids
+            element_ids = solid_elements_mesh.element_ids
+        if isinstance(simulation, post.ModalMechanicalSimulation):
+            skin = element_ids
 
     scoping = None
     if isinstance(skin, list):
@@ -1741,6 +1830,54 @@ def test_skin_extraction(skin, result_name, mode, simulation_str, request):
     # Todo: Elemental nodal does not work
     # Returns just the element nodal data of the solid
     # result_skin_scoped_elemental_nodal
+
+
+def test_cached_skin(static_simulation: post.StaticMechanicalSimulation):
+    selection = static_simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        selection=None,
+        set_ids=None,
+        times=None,
+    )[0]
+
+    selection.select_skin(
+        result_native_location=dpf.locations.elemental_nodal
+    )  # use elemental nodal to test scpoing output of skin operator
+    selection.spatial_selection._selection.connect(
+        "initial_mesh", static_simulation.mesh._meshed_region
+    )
+    skin_mesh = selection.spatial_selection._selection.get_output(
+        "skin", dpf.MeshedRegion
+    )
+    scoping = selection.spatial_selection._selection.get_output("scoping", dpf.Scoping)
+
+    cache_selection = static_simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.matrix,
+        selection=None,
+        set_ids=None,
+        times=None,
+    )[0]
+
+    cache_selection.select_skin(
+        result_native_location=dpf.locations.elemental_nodal, cached_skin_mesh=skin_mesh
+    )  # use elemental nodal to test scpoing output of skin operator
+    selection.spatial_selection._selection.connect(
+        "initial_mesh", static_simulation.mesh._meshed_region
+    )
+    cached_skin = selection.spatial_selection._selection.get_output(
+        "skin", dpf.MeshedRegion
+    )
+    cached_scoping = selection.spatial_selection._selection.get_output(
+        "scoping", dpf.Scoping
+    )
+
+    assert np.all(cached_skin.nodes.scoping.ids == skin_mesh.nodes.scoping.ids)
+    assert np.all(cached_scoping.ids == scoping.ids)
+
+    # Note: Instance comparison of skin mesh is not possible, because dpf
+    # objects get new _internal_objs when passed through the forward operator.
 
 
 class TestTransientMechanicalSimulation:
@@ -2558,7 +2695,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_elemental(self, modal_simulation):
         result = modal_simulation.stress_elemental(components=1, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
@@ -2567,13 +2707,17 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_nodal(self, modal_simulation):
         result = modal_simulation.stress_nodal(components=1, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("SX")
@@ -2582,6 +2726,7 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2603,7 +2748,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_principal_nodal(self, modal_simulation):
         result = modal_simulation.stress_principal_nodal(components=2, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S2")
@@ -2612,13 +2760,18 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_principal_elemental(self, modal_simulation):
         result = modal_simulation.stress_principal_elemental(components=3, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S3")
@@ -2627,6 +2780,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2648,7 +2803,10 @@ class TestModalMechanicalSimulation:
 
     def test_stress_eqv_von_mises_elemental(self, modal_simulation):
         result = modal_simulation.stress_eqv_von_mises_elemental(set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
@@ -2657,13 +2815,18 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
     def test_stress_eqv_von_mises_nodal(self, modal_simulation):
         result = modal_simulation.stress_eqv_von_mises_nodal(set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("S_eqv")
@@ -2672,6 +2835,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2704,7 +2869,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_elemental(self, modal_simulation):
         result = modal_simulation.elastic_strain_elemental(components=1, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
@@ -2713,13 +2881,18 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
 
     def test_elastic_strain_nodal(self, modal_simulation):
         result = modal_simulation.elastic_strain_nodal(components=1, set_ids=[2])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPELX")
@@ -2728,6 +2901,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         field_ref = op.eval()[0]
         assert field.component_count == 1
         assert np.allclose(field.data, field_ref.data)
@@ -2753,7 +2928,10 @@ class TestModalMechanicalSimulation:
         result = modal_simulation.elastic_strain_principal_nodal(
             components=2, set_ids=[2]
         )
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2762,6 +2940,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.nodal)
+        op.connect(26, False)
+
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_2()[0]
@@ -2772,7 +2952,10 @@ class TestModalMechanicalSimulation:
         result = modal_simulation.elastic_strain_principal_elemental(
             components=3, set_ids=[2]
         )
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [2]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2781,6 +2964,8 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental)
+        op.connect(26, False)
+
         principal_op = modal_simulation._model.operator(name="invariants_fc")
         principal_op.connect(0, op.outputs.fields_container)
         field_ref = principal_op.outputs.fields_eig_3()[0]
@@ -2806,7 +2991,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_nodal(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_nodal(set_ids=[1])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2815,9 +3003,12 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental_nodal)
+        op.connect(26, False)
+
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_nodal_fc")
+        average_op.connect(26, True)
         average_op.connect(0, equivalent_op.outputs.fields_container)
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
@@ -2825,7 +3016,10 @@ class TestModalMechanicalSimulation:
 
     def test_elastic_strain_eqv_von_mises_elemental(self, modal_simulation):
         result = modal_simulation.elastic_strain_eqv_von_mises_elemental(set_ids=[1])
-        assert len(result._fc) == 2
+        expected_merged_field_count = (
+            1 if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_11_0 else 2
+        )
+        assert len(result._fc) == expected_merged_field_count
         assert result._fc.get_time_scoping().ids == [1]
         field = result._fc[0]
         op = modal_simulation._model.operator("EPEL")
@@ -2834,9 +3028,13 @@ class TestModalMechanicalSimulation:
         )
         op.connect(0, time_scoping)
         op.connect(9, post.locations.elemental_nodal)
+        op.connect(26, False)
+
         equivalent_op = modal_simulation._model.operator(name="eqv_fc")
         equivalent_op.connect(0, op.outputs.fields_container)
         average_op = modal_simulation._model.operator(name="to_elemental_fc")
+        average_op.connect(26, True)
+
         average_op.connect(0, equivalent_op.outputs.fields_container)
         field_ref = average_op.outputs.fields_container()[0]
         assert field.component_count == 1
@@ -3838,10 +4036,21 @@ def get_bodies_in_scoping(meshed_region: MeshedRegion, scoping: Scoping):
         fields=mat_field,
         mesh_scoping=elemental_scoping,
     )
-
     rescoped_mat_field = rescoped_mat_field_op.outputs.fields_as_property_field()
 
-    return list(set(rescoped_mat_field.data))
+    ety_field = meshed_region.property_field("eltype")
+    rescoped_ety_field_op = dpf.operators.scoping.rescope_property_field(
+        fields=ety_field,
+        mesh_scoping=elemental_scoping,
+    )
+    rescoped_ety_field = rescoped_ety_field_op.outputs.fields_as_property_field()
+
+    mat_set = set()
+    for mat_value, ety_value in zip(rescoped_mat_field.data, rescoped_ety_field.data):
+        if not ety_value in SURFACE_ELTYPES:
+            mat_set.add(mat_value)
+
+    return list(mat_set)
 
 
 def get_ref_result_per_element(
@@ -4200,7 +4409,10 @@ def test_evaluate_per_body_native_nodal(average_per_body_two_cubes):
     expected_max = {1: 5.930437683351532e-05, 2: 0.004870886034030272}
 
     fc = result._fc
-    assert len(fc) == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(fc) == 3
+    else:
+        assert len(fc) == 2
     fc.labels = ["mat", "time"]
     for mat in [1, 2]:
         mat_field = fc.get_field({"mat": mat})
@@ -4231,7 +4443,10 @@ def test_evaluate_per_body_native_elemental(average_per_body_two_cubes):
     expected_max = {1: 0.00044161113328300416, 2: 0.03241598606109619}
 
     fc = result._fc
-    assert len(fc) == 2
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0:
+        assert len(fc) == 3
+    else:
+        assert len(fc) == 2
     fc.labels = ["mat", "time"]
     for mat in [1, 2]:
         mat_field = fc.get_field({"mat": mat})
@@ -4328,7 +4543,12 @@ def test_averaging_per_body_nodal(
     additional_scoping = None
     if selection_name is None:
         mat_field = mesh.property_field("mat")
-        bodies_in_selection = list(set(mat_field.data))
+        ety_field = mesh.property_field("eltype")
+        mat_set = set()
+        for mat_value, ety_value in zip(mat_field.data, ety_field.data):
+            if not ety_value in SURFACE_ELTYPES:
+                mat_set.add(mat_value)
+        bodies_in_selection = list(mat_set)
 
     else:
         if not is_named_selection:
@@ -4387,17 +4607,16 @@ def test_averaging_per_body_nodal(
         }
 
     label_spaces_by_mat_id = {}
-    for idx in range(len(bodies_in_selection)):
+    for idx in range(len(res._fc)):
         label_space = res._fc.get_label_space(idx)
-        label_spaces_by_mat_id[label_space["mat"]] = label_space
+        if label_space["mat"] in bodies_in_selection:
+            label_spaces_by_mat_id[label_space["mat"]] = label_space
 
     assert len(label_spaces_by_mat_id) == len(bodies_in_selection)
     for mat_id in bodies_in_selection:
         assert label_spaces_by_mat_id[mat_id] == get_expected_label_space_by_mat_id(
             mat_id
         )
-
-    assert res._fc.get_label_space(len(bodies_in_selection)) == {}
 
     for node_id in ref_data:
         for mat_id in ref_data[node_id]:
@@ -4576,11 +4795,55 @@ def test_beam_results_on_skin(beam_example):
     unit_converter.inputs.entity_to_convert(res._fc[0])
     converted_field = unit_converter.eval()
 
-    assert element_types.Line2.value in element_count_dict.keys()
-
-    assert element_count_dict[element_types.Line2.value] == 40
+    if SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_12_0:
+        assert element_types.Beam3.value in element_count_dict.keys()
+        assert element_count_dict[element_types.Beam3.value] == 40
+    else:
+        assert element_types.Line2.value in element_count_dict.keys()
+        assert element_count_dict[element_types.Line2.value] == 40
 
     assert converted_field.max().data[0] == pytest.approx(190, 1e-2)
+
+
+@pytest.mark.parametrize("read_beams", [None, True, False])
+def test_read_beams_option(beam_example, read_beams):
+    simulation: StaticMechanicalSimulation = post.load_simulation(
+        data_sources=beam_example,
+        simulation_type=AvailableSimulationTypes.static_mechanical,
+    )
+
+    selection, rescoping = simulation._build_selection(
+        base_name="S",
+        category=ResultCategory.equivalent,
+        selection=None,
+        times=None,
+        set_ids=None,
+    )
+
+    wf, _, _ = simulation._get_result_workflow(
+        base_name="S",
+        location=dpf.locations.elemental,
+        category=ResultCategory.equivalent,
+        selection=selection,
+        rescoping=rescoping,
+        read_beams=read_beams,
+    )
+
+    fields_container = wf.get_output(_WfNames.output_data, types.fields_container)
+
+    assert len(fields_container) == 1
+
+    field: dpf.Field = fields_container[0]
+
+    # When read_beams is None, the operator default applies.
+    # The default was False until version 2027.1 pre0 excluded.
+    if read_beams is True or (
+        read_beams is None and SERVERS_VERSION_GREATER_THAN_OR_EQUAL_TO_2027_1_PRE0
+    ):
+        assert np.isclose(field.min().data[0], 0.4351, rtol=1.0e-3)
+        assert np.isclose(field.max().data[0], 5.512, rtol=1.0e-3)
+    else:
+        assert field.size == 0
 
 
 def test_nodal_averaging_on_elemental_scoping(average_per_body_two_cubes):
