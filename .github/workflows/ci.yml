@@ -49,7 +49,7 @@ jobs:
       - name: PyAnsys Vulnerability check (on ${{ github.ref == 'refs/heads/main' && 'main' || 'dev mode' }})
         uses: ansys/actions/check-vulnerabilities@d946b24b9a765f4169bcc94afdb27bd1a0533741 # v10.3.2
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-version: "3.12"
           python-package-name: "ansys-dpf-post"
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           dev-mode: ${{ github.ref != 'refs/heads/main' }}
