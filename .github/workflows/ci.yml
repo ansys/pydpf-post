@@ -301,7 +301,7 @@ jobs:
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     permissions:
       contents: read # Required by examples.yml jobs
-    uses: ./.github/workflows/examples.yml
+    uses: $/.github/workflows/examples.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_versions: '["3.10"]'
@@ -315,7 +315,7 @@ jobs:
     permissions:
       contents: read # Required by docs.yml jobs
       pull-requests: write # Required by doc-style job
-    uses: ./.github/workflows/docs.yml
+    uses: $/.github/workflows/docs.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_version: "3.10"
