@@ -9,4 +9,7 @@ The following contribution information is specific to PyDPF-Post.
 
 [Contributing]: https://dev.docs.pyansys.com/how-to/contributing.html
 
-<!-- Begin content specific to your library here. -->
+## Development checks
+
+Run `pre-commit run --all-files` before opening a pull request.
+

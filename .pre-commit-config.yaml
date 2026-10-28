@@ -38,15 +38,12 @@ repos:
     ]
     exclude: conf.py
 
-- repo: https://github.com/pycqa/pydocstyle
-  rev: 6.3.0
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.17.3
   hooks:
-  - id: pydocstyle
-    additional_dependencies: [toml]
+  - id: ruff-check
+    types: [python]
     exclude: ^(tests|examples)/
-    args:
-      # http://www.pydocstyle.org/en/latest/error_codes.html
-      - --ignore=D203,D213,D401,D404,D406,D413
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0

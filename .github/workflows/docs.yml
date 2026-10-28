@@ -1,4 +1,4 @@
-name: docs # zizmor: ignore[concurrency-limits] , this is a reusable workflow
+name: docs
 
 on:
 # Can be called by the CI
@@ -56,6 +56,11 @@ on:
         type: string
         default: 'True'
 
+concurrency:
+  # Use a distinct group so reusable workflows do not cancel their callers.
+  group: docs-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   PACKAGE_NAME: ansys-dpf-post
   MODULE: post
@@ -110,7 +115,7 @@ jobs:
 
       - name: "Build Package"
         id: build-package
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           python-version: ${{ inputs.python_version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
@@ -227,5 +232,5 @@ jobs:
           path: PDF-doc-${{env.PACKAGE_NAME}}.zip
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()

@@ -1,4 +1,4 @@
-name: examples # zizmor: ignore[concurrency-limits] , this is a reusable workflow
+name: examples
 
 on:
 # Can be called by the CI
@@ -38,6 +38,11 @@ on:
         required: false
         type: string
         default: ''
+
+concurrency:
+  # Use a distinct group so reusable workflows do not cancel their callers.
+  group: examples-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   PACKAGE_NAME: ansys-dpf-post
@@ -97,7 +102,7 @@ jobs:
         run: pip install -r requirements/requirements_ci.txt
 
       - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
@@ -110,7 +115,7 @@ jobs:
           standalone_suffix: ${{ inputs.standalone_suffix }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           DEBUG: true
 
@@ -126,5 +131,5 @@ jobs:
           python run_examples.py
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()
