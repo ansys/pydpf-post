@@ -1,4 +1,4 @@
-name: docs # zizmor: ignore[concurrency-limits] , this is a reusable workflow
+name: docs
 
 on:
 # Can be called by the CI
@@ -55,6 +55,11 @@ on:
         description: "Whether to build the PDF doc"
         type: string
         default: 'True'
+
+concurrency:
+  # Use a distinct group so reusable workflows do not cancel their callers.
+  group: docs-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   PACKAGE_NAME: ansys-dpf-post
