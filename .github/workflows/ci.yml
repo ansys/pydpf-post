@@ -106,7 +106,7 @@ jobs:
         run: pip install -r requirements/requirements_ci.txt
 
       - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
@@ -120,7 +120,7 @@ jobs:
           standalone_suffix: ${{ inputs.standalone_branch_suffix || ''}}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           DEBUG: true
 
@@ -129,7 +129,7 @@ jobs:
         run: pip list
 
       - name: "Test Docstrings"
-        uses: ansys/pydpf-actions/test_docstrings@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/test_docstrings@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
         with:
           MODULE: ${{env.MODULE}}
@@ -143,7 +143,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()
 
       - name: "Upload Test Results"
@@ -193,7 +193,7 @@ jobs:
         run: pip install -r requirements/requirements_ci.txt
 
       - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{matrix.ANSYS_VERSION.version}}
@@ -205,7 +205,7 @@ jobs:
           standalone_suffix: ${{ matrix.ANSYS_VERSION.patch }}
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           DEBUG: true
 
@@ -220,7 +220,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()
 
       - name: "Upload Test Results"
