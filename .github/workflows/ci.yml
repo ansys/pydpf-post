@@ -72,6 +72,49 @@ jobs:
         with:
           use-python-cache: false
 
+  check-licenses:
+    name: "Check dependency licenses"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          target: all
+          use-uv: false
+
+  build-library:
+    name: "Build wheel and source distribution"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          use-uv: false
+
+  build-wheelhouse:
+    name: "Build wheelhouse"
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        os: ["windows-latest", "ubuntu-22.04"]
+    steps:
+      - uses: ansys/actions/build-wheelhouse@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          operating-system: ${{ matrix.os }}
+          python-version: ${{ matrix.python-version }}
+          check-licenses: false
+          use-uv: false
+
   tests:
     name: tests
     runs-on: ${{ matrix.os }}
@@ -105,19 +148,24 @@ jobs:
         shell: bash
         run: pip install -r requirements/requirements_ci.txt
 
-      - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
-          python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          # Upload the wheel artifact for only one of the OS as it is OS-agnostic
-          wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
-          wheelhouse: true
           standalone_suffix: ${{ inputs.standalone_branch_suffix || ''}}
+
+      - name: "Install local package with graphics"
+        shell: bash
+        run: python -m pip install ".[graphics]"
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
@@ -129,12 +177,21 @@ jobs:
         run: pip list
 
       - name: "Test Docstrings"
-        uses: ansys/pydpf-actions/test_docstrings@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
+        shell: bash
+        working-directory: src
+        run: pytest --doctest-modules $DEBUG --junitxml=junit/test-doctests-results.xml ansys/dpf/${MODULE}
+
+      - name: "Kill servers after docstrings"
+        if: ${{ always() && matrix.python-version == env.MAIN_PYTHON_VERSION }}
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+
+      - name: "Upload Docstring Test Results"
+        if: ${{ always() && matrix.python-version == env.MAIN_PYTHON_VERSION }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          MODULE: ${{env.MODULE}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          working-directory: src
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_doctest
+          path: src/junit/test-doctests-results.xml
 
       - name: "Test API"
         shell: bash
@@ -192,17 +249,24 @@ jobs:
         shell: bash
         run: pip install -r requirements/requirements_ci.txt
 
-      - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
-          python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{matrix.ANSYS_VERSION.version}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          wheel: false
           standalone_suffix: ${{ matrix.ANSYS_VERSION.patch }}
+
+      - name: "Install local package with graphics"
+        shell: bash
+        run: python -m pip install ".[graphics]"
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
@@ -237,11 +301,11 @@ jobs:
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
     permissions:
       contents: read # Required by examples.yml jobs
-    uses: $/.github/workflows/examples.yml
+    uses: ./.github/workflows/examples.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_versions: '["3.10"]'
-      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
+      standalone_suffix: ${{ inputs.standalone_branch_suffix || ''}}
     secrets:
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -251,11 +315,11 @@ jobs:
     permissions:
       contents: read # Required by docs.yml jobs
       pull-requests: write # Required by doc-style job
-    uses: $/.github/workflows/docs.yml
+    uses: ./.github/workflows/docs.yml
     with:
       ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
       python_version: "3.10"
-      standalone_suffix: ${{ inputs.standalone_suffix || ''}}
+      standalone_suffix: ${{ inputs.standalone_branch_suffix || ''}}
       event_name: ${{ github.event_name }}
     secrets:
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}

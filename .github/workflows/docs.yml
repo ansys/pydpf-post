@@ -20,7 +20,6 @@ on:
         description: "Name of event calling"
         required: true
         type: string
-        default: ''
       generate_pdf:
         description: "Whether to build the PDF doc"
         type: string
@@ -113,19 +112,24 @@ jobs:
         shell: bash
         run: pip install -r requirements/requirements_ci.txt
 
-      - name: "Build Package"
-        id: build-package
-        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
-          python-version: ${{ inputs.python_version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          wheel: false
-          wheelhouse: false
           standalone_suffix: ${{ inputs.standalone_suffix }}
+
+      - name: "Install local package with graphics"
+        shell: bash
+        run: python -m pip install ".[graphics]"
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
 
       - name: "Setup headless display"
         uses: pyvista/setup-headless-display-action@b0bf9f57d62d2b3fee9f1c0e0c7e390f05e97a4e # v5.0.0
@@ -141,11 +145,9 @@ jobs:
 
       - name: "Build sphinx doc"
         shell: bash
-        env:
-          BUILD_EXTRAS: ${{ inputs.build_extras }}
         run: |
           export SPHINX_APIDOC_OPTIONS=inherited-members
-          sphinx-apidoc -o doc/source/api src/ansys ${BUILD_EXTRAS} -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
+          sphinx-apidoc -o doc/source/api src/ansys -f --implicit-namespaces --separate --no-headings $DEBUG_SPHINX
 
       - name: "Build HTML Documentation"
         shell: bash
