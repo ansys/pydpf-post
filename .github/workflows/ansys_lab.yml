@@ -1,4 +1,4 @@
-name: Ansys Lab # zizmor: ignore[concurrency-limits] , this is a reusable workflow
+name: Ansys Lab
 
 on:
 # Can be called by the CI
@@ -20,6 +20,10 @@ on:
         required: true
 
 permissions: {}
+
+concurrency:
+  group: ansys-lab-examples
+  cancel-in-progress: true
 
 env:
   DESTINATION_BRANCH_NAME: ansys_lab_examples

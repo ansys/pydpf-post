@@ -1,4 +1,4 @@
-name: examples # zizmor: ignore[concurrency-limits] , this is a reusable workflow
+name: examples
 
 on:
 # Can be called by the CI
@@ -38,6 +38,11 @@ on:
         required: false
         type: string
         default: ''
+
+concurrency:
+  # Use a distinct group so reusable workflows do not cancel their callers.
+  group: examples-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   PACKAGE_NAME: ansys-dpf-post
