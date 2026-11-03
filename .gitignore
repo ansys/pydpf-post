@@ -182,3 +182,4 @@ ansys/dpf/core/examples/_cache/
 
 # Visual studio code settings
 .vscode
+.worktrees/
