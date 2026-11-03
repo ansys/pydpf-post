@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys Vulnerability check (on ${{ github.ref == 'refs/heads/main' && 'main' || 'dev mode' }})
-        uses: ansys/actions/check-vulnerabilities@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        uses: ansys/actions/check-vulnerabilities@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           python-version: "3.12"
           python-package-name: "ansys-dpf-post"
@@ -60,7 +60,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+      - uses: ansys/actions/check-actions-security@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
 
   style:
     name: "Style Check"
@@ -68,7 +68,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/code-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+      - uses: ansys/actions/code-style@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           use-python-cache: false
 
@@ -97,7 +97,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
 
       - name: "Setup Python"
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -147,13 +147,13 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ env.ANSYS_VERSION }}
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
 
   retro:
     name: "Test ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} on ${{ matrix.os }}"
@@ -184,7 +184,7 @@ jobs:
           echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
 
       - name: "Setup Python"
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -224,14 +224,14 @@ jobs:
         if: always()
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_pytest_${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }}
           path: tests/junit/test-results.xml
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
 
   examples:
     if: startsWith(github.head_ref, 'main') || github.event.action == 'ready_for_review' || !github.event.pull_request.draft
@@ -270,7 +270,7 @@ jobs:
       contents: write # Required for pushing documentation to gh-pages
       pull-requests: write # Required for posting deployment status comments
     steps:
-      - uses: ansys/actions/doc-deploy-pr@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+      - uses: ansys/actions/doc-deploy-pr@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           doc-artifact-name: HTML-doc-ansys-dpf-post.zip
@@ -290,7 +290,7 @@ jobs:
       pull-requests: write # Required for posting deployment status comments
     steps:
       - name: "Upload development documentation"
-        uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        uses: ansys/actions/doc-deploy-dev@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
