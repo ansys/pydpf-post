@@ -46,6 +46,7 @@ from ansys.dpf.core import (
     Workflow,
     locations,
     operators,
+    settings,
     time_freq_scoping_factory,
     types,
 )
@@ -452,6 +453,9 @@ class SpatialSelection:
         try:
             skin_operator = Operator("result_explorer::skin", server=self._server)
             skin_operator.inputs.add_beam_point(True)
+            skin_operator.inputs.num_threads(
+                settings.get_runtime_core_config(server=self._server).num_threads
+            )
         except KeyError:
             skin_operator = operators.mesh.skin(server=self._server)
             if self._server.meet_version("10.0"):
