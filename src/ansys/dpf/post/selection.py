@@ -456,6 +456,7 @@ class SpatialSelection:
             skin_operator.inputs.num_threads(
                 settings.get_runtime_core_config(server=self._server).num_threads
             )
+
         except KeyError:
             skin_operator = operators.mesh.skin(server=self._server)
             if self._server.meet_version("10.0"):
