@@ -101,18 +101,24 @@ jobs:
         shell: bash
         run: pip install -r requirements/requirements_ci.txt
 
-      - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
-          python-version: ${{ matrix.python-version }}
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_DEFAULT }}
-          PACKAGE_NAME: ${{ env.PACKAGE_NAME }}
-          MODULE: ${{ env.MODULE }}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          wheelhouse: false
-          wheel: false
           standalone_suffix: ${{ inputs.standalone_suffix }}
+
+      - name: "Install local package with graphics"
+        shell: bash
+        run: python -m pip install ".[graphics]"
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
 
       - name: "Prepare Testing Environment"
         uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
