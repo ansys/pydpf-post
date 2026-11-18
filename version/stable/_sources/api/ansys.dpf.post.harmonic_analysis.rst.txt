@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.harmonic_analysis
+   :inherited-members:

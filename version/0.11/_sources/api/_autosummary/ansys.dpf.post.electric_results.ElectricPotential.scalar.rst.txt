@@ -1,0 +1,6 @@
+scalar
+======
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. autoproperty:: ElectricPotential.scalar

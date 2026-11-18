@@ -1,0 +1,116 @@
+
+
+.. _sphx_glr_examples_02-Detailed-Examples:
+
+.. _ref_detailed_examples:
+
+DPF-Post feature examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how you use DPF-Post features.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Introduction">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_01-introduction_thumb.png
+    :alt: Introduction
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_01-introduction.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Introduction</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Basic features">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_02-basics_thumb.png
+    :alt: Basic features
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_02-basics.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Basic features</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Result keywords">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_03-result_keywords_thumb.png
+    :alt: Result keywords
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_03-result_keywords.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Result keywords</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Complex results from a modal or harmonic analysis">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_04-complex_results_thumb.png
+    :alt: Complex results from a modal or harmonic analysis
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_04-complex_results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Complex results from a modal or harmonic analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Request result on a specific path">
+
+.. only:: html
+
+  .. image:: /examples/02-Detailed-Examples/images/thumb/sphx_glr_05-result_on_path_of_coordinates_thumb.png
+    :alt: Request result on a specific path
+
+  :ref:`sphx_glr_examples_02-Detailed-Examples_05-result_on_path_of_coordinates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Request result on a specific path</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/02-Detailed-Examples/01-introduction
+   /examples/02-Detailed-Examples/02-basics
+   /examples/02-Detailed-Examples/03-result_keywords
+   /examples/02-Detailed-Examples/04-complex_results
+   /examples/02-Detailed-Examples/05-result_on_path_of_coordinates
+

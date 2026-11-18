@@ -1,0 +1,98 @@
+
+
+.. _sphx_glr_examples_00-Different-analysis-types:
+
+.. _ref_different_analysis:
+
+PyDPF-Post analysis types
+~~~~~~~~~~~~~~~~~~~~~~~~~
+These examples show how to post-process different simulation types using PyDPF-Post.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Static Simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_01-static-simulation_thumb.png
+    :alt: Static Simulation
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_01-static-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Static Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Modal Simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_02-modal-simulation_thumb.png
+    :alt: Modal Simulation
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_02-modal-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modal Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Transient Simulation with Animation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_03-transient-simulation_thumb.png
+    :alt: Transient Simulation with Animation
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_03-transient-simulation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transient Simulation with Animation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Harmonic Simulation">
+
+.. only:: html
+
+  .. image:: /examples/00-Different-analysis-types/images/thumb/sphx_glr_04-harmonic-complex-results_thumb.png
+    :alt: Harmonic Simulation
+
+  :ref:`sphx_glr_examples_00-Different-analysis-types_04-harmonic-complex-results.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Harmonic Simulation</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/00-Different-analysis-types/01-static-simulation
+   /examples/00-Different-analysis-types/02-modal-simulation
+   /examples/00-Different-analysis-types/03-transient-simulation
+   /examples/00-Different-analysis-types/04-harmonic-complex-results
+
