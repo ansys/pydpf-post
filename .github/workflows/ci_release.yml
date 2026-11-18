@@ -56,9 +56,52 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/code-style@d946b24b9a765f4169bcc94afdb27bd1a0533741 # v10.3.2
+      - uses: ansys/actions/code-style@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           use-python-cache: false
+
+  check-licenses:
+    name: "Check dependency licenses"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: ansys/actions/check-licenses@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          target: all
+          use-uv: false
+
+  build-library:
+    name: "Build wheel and source distribution"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: ansys/actions/build-library@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
+        with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          use-uv: false
+
+  build-wheelhouse:
+    name: "Build wheelhouse"
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: ["windows-latest", "ubuntu-22.04"]
+    steps:
+      - uses: ansys/actions/build-wheelhouse@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
+        with:
+          library-name: ${{ env.PACKAGE_NAME }}
+          operating-system: ${{ matrix.os }}
+          python-version: ${{ matrix.python-version }}
+          check-licenses: false
+          use-uv: false
 
   tests:
     name: tests
@@ -72,7 +115,7 @@ jobs:
         os: ["windows-latest", "ubuntu-22.04"]
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -84,22 +127,32 @@ jobs:
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
           echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
 
-      - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+      - name: "Setup Python"
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+        with:
           ANSYS_VERSION: ${{ github.event.inputs.ansys_version || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).version }}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          # Upload the wheel artifact for only one of the OS as it is OS-agnostic
-          wheel: ${{ (matrix.python-version == env.MAIN_PYTHON_VERSION) && (matrix.os == 'windows-latest') }}
-          wheelhouse: true
           standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).patch }}
 
+      - name: "Install local package with graphics"
+        shell: bash
+        run: python -m pip install ".[graphics]"
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           DEBUG: true
 
@@ -108,11 +161,20 @@ jobs:
         run: pip list
 
       - name: "Test Docstrings"
-        uses: ansys/pydpf-actions/test_docstrings@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        shell: bash
+        working-directory: src
+        run: pytest --doctest-modules $DEBUG --junitxml=junit/test-doctests-results.xml ansys/dpf/${MODULE}
+
+      - name: "Kill servers after docstrings"
+        if: always()
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+
+      - name: "Upload Docstring Test Results"
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          MODULE: ${{env.MODULE}}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          working-directory: src
+          name: ${{ env.PACKAGE_NAME }}_${{ matrix.python-version }}_${{ matrix.os }}_doctest
+          path: src/junit/test-doctests-results.xml
 
       - name: "Test API"
         shell: bash
@@ -121,7 +183,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()
 
       - name: "Upload Test Results"
@@ -131,7 +193,7 @@ jobs:
           path: tests/junit/test-results.xml
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
   retro:
     name: "Test ${{ matrix.ANSYS_VERSION.version }}${{ matrix.ANSYS_VERSION.patch }} on ${{ matrix.os }}"
@@ -146,7 +208,7 @@ jobs:
         ANSYS_VERSION: ${{ fromJson(vars.ANSYS_VERSIONS_RETRO_WITH_PATCH) }}
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -158,21 +220,34 @@ jobs:
           echo "ANSYS_DPF_ACCEPT_LA=Y" >> $GITHUB_ENV
           echo "ANSYSLMD_LICENSE_FILE=1055@${LICENSE_SERVER}" >> $GITHUB_ENV
 
-      - name: "Build Package"
-        uses: ansys/pydpf-actions/build_package@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+      - name: "Setup Python"
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: "Install DPF"
+        uses: ansys/pydpf-actions/install-dpf-server@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
+        with:
           ANSYS_VERSION: ${{ matrix.ANSYS_VERSION.version }}
           standalone_suffix: ${{ matrix.ANSYS_VERSION.patch }}
-          PACKAGE_NAME: ${{env.PACKAGE_NAME}}
-          MODULE: ${{env.MODULE}}
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
-          install_extras: graphics
-          wheel: false
-          extra-pip-args: ${{ env.extra }}
+
+      - name: "Install local package with graphics"
+        shell: bash
+        env:
+          EXTRA_PIP_ARGS: ${{ env.extra }}
+        run: python -m pip install ".[graphics]" $EXTRA_PIP_ARGS
+
+      - name: "Test package import"
+        shell: bash
+        working-directory: tests
+        run: python -c "from ansys.dpf import post"
+
+      - name: "Kill servers after setup"
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
 
       - name: "Prepare Testing Environment"
-        uses: ansys/pydpf-actions/prepare_tests@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/prepare_tests@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         with:
           DEBUG: true
 
@@ -187,7 +262,7 @@ jobs:
           pytest $DEBUG --cov=ansys.dpf.${MODULE} --cov-report=xml --cov-report=html --cov-append --log-level=ERROR --junitxml=junit/test-results.xml --reruns 2 .
 
       - name: "Kill all servers"
-        uses: ansys/pydpf-actions/kill-dpf-servers@195207a462b23da5645fde44ac685e81b29035a4 # v2.3
+        uses: ansys/pydpf-actions/kill-dpf-servers@c672fc3844d1606e8dc650ee3ab634be7ea60916 # v2.4
         if: always()
 
       - name: "Upload Test Results"
@@ -198,16 +273,16 @@ jobs:
         if: always()
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
   examples:
     permissions:
       contents: read # Required by examples.yml jobs
-    uses: ./.github/workflows/examples.yml
+    uses: $/.github/workflows/examples.yml
     with:
-      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.version }}
+      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).version }}
       python_versions: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.patch }}
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).patch }}
     secrets:
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -216,11 +291,11 @@ jobs:
     permissions:
       contents: read # Required by docs.yml jobs
       pull-requests: write # Required by doc-style job
-    uses: ./.github/workflows/docs.yml
+    uses: $/.github/workflows/docs.yml
     with:
-      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.version }}
+      ANSYS_VERSION: ${{ github.event.inputs.ansys_version || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).version }}
       python_version: "3.10"
-      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH.patch }}
+      standalone_suffix: ${{ github.event.inputs.standalone_branch_suffix || fromJson(vars.ANSYS_VERSION_LAST_RELEASED_WITH_PATCH).patch }}
       event_name: ${{ github.event_name }}
     secrets:
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
@@ -229,7 +304,7 @@ jobs:
   draft_release:
     name: "Draft release"
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [style, tests, retro, examples, docs]
+    needs: [style, check-licenses, build-library, build-wheelhouse, tests, retro, examples, docs]
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required for creating releases
@@ -241,7 +316,7 @@ jobs:
         run: ls -R
 
       - name: "Create draft release"
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: |
             ./**/*.whl
