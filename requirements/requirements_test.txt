@@ -1,6 +1,6 @@
 coverage==7.13.5
 pytest-cov==7.1.0
-pytest-rerunfailures==16.2
+pytest-rerunfailures==16.3
 pytest==9.0.3
 pyvista==0.47.3
 ansys-tools-visualization-interface>=0.13.0
